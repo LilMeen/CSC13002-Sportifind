@@ -38,6 +38,8 @@ dependencies:
   flutter_riverpod: ^2.5.1
   riverpod: ^2.5.1
   google_fonts: ^6.2.1
+  firebase_core: ^3.1.0
+  firebase_auth: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -65,7 +67,10 @@ flutter:
   assets:
      - 'lib/assets/button_icon/tab_4.png'
      - 'lib/assets/button_icon/tab_4s.png'
-     - 'lib/assets/logo.png'
+     - 'lib/assets/logo/logo_white_text.png'
+     - 'lib/assets/logo/logo_black_text.png'
+     - 'lib/assets/logo/logo.png'
+     - 'lib/assets/google_logo.png'
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
