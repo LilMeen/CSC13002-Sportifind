@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/widgets/dropdown_button.dart';
 
 class BasicInformationScreen extends StatelessWidget {
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  const BasicInformationScreen({super.key});
+
 
   String getHint(String type) {
     switch (type) {

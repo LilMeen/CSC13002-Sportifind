@@ -22,6 +22,7 @@ class _SportifindHomeScreenState extends State<SportifindHomeScreen>
 
   @override
   void initState() {
+    super.initState();
     tabIconsList.forEach((TabIconData tab) {
       tab.isSelected = false;
     });

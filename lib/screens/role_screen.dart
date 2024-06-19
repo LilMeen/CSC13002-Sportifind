@@ -23,7 +23,7 @@ class _RoleScreenState extends State<RoleScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image(
-              image: AssetImage('lib/assets/logo.png'),
+              image: AssetImage('lib/assets/logo/logo.png'),
               height: 200,
             ),
             SizedBox(height: 100),

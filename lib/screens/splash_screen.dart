@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sportifind/screens/role_screen.dart';
+import 'package:sportifind/screens/sign_in_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -21,14 +21,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     Future.delayed(const Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => const RoleScreen(),
+          builder: (_) => const SignInScreen(),
         )
       );
     });
   }
 
   late final _controller = AnimationController(
-    duration: const Duration(seconds: 1),
+    duration: const Duration(milliseconds: 1500),
     vsync: this,
   )..forward();
   late final Animation<double> _animation = CurvedAnimation(
@@ -57,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             FadeTransition(
               opacity: _animation,
               child: const Image(
-                image: AssetImage('lib/assets/logo.png'),
+                image: AssetImage('lib/assets/logo/logo_white_text.png'),
                 height: 250,
               )
             )

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/screens/signin.dart';
 
 import 'package:sportifind/widgets/divider_with_text_or.dart';
 import 'package:sportifind/widgets/sign_in_with_google_button.dart';
@@ -45,7 +46,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       color: SportifindTheme.nearlyWhite,
                       child: const Padding(
                         padding: EdgeInsets.all(15.0),
-                        //child: Auth(),
+                        child: SignIn(),
                       ),
                     ),
                   ),

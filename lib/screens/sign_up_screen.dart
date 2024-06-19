@@ -45,7 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       color: SportifindTheme.nearlyWhite,
                       child: const  Padding(
                         padding: EdgeInsets.all(15.0),
-                        //child: SignUp(),
+                        child: SignUp(),
                       ),
                     ),
                   ),

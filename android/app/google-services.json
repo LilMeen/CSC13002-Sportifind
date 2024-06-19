@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "386495976488",
+    "project_id": "sportifind-d0b25",
+    "storage_bucket": "sportifind-d0b25.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386495976488:android:8561019b195d0661f5111d",
+        "android_client_info": {
+          "package_name": "com.example.sportidind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB00ntd8LGgWW2juT_sgMdnRDvqlp93Jng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386495976488:android:794cee37f6ed20abf5111d",
+        "android_client_info": {
+          "package_name": "com.example.sportifind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB00ntd8LGgWW2juT_sgMdnRDvqlp93Jng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

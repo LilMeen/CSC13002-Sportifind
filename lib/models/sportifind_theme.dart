@@ -36,7 +36,7 @@ class SportifindTheme {
     fontSize: 36,
     letterSpacing: 0.4,
     height: 0.9,
-    color: darkerText,
+    color: white,
   );
 
   static const TextStyle headline = TextStyle(
