@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/widgets/green_white_button.dart';
+import 'package:sportifind/screens/auth/widgets/green_white_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 final _firebase = FirebaseAuth.instance;
@@ -21,6 +21,7 @@ class _SignUpState extends State<SignUp> {
 
   var _enteredEmail = '';
   var _enteredPassword = '';
+  var _reenterPassword = '';
   
   void _submit() async {
     final isValid = _form.currentState!.validate();
@@ -30,6 +31,17 @@ class _SignUpState extends State<SignUp> {
     }
 
     _form.currentState!.save(); 
+
+    if (_reenterPassword != _enteredPassword) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Re-entered password does not match!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     try{
       final userCredential = await _firebase.createUserWithEmailAndPassword(
@@ -74,7 +86,7 @@ class _SignUpState extends State<SignUp> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               hintText: "example@gmail.com",
-              hintStyle: SportifindTheme.title,
+              hintStyle: SportifindTheme.greyTitle,
               filled: true,
               fillColor: Colors.white70,
               prefixIcon: const Icon(Icons.email),
@@ -113,7 +125,7 @@ class _SignUpState extends State<SignUp> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               hintText: "At least 8 words",
-              hintStyle: SportifindTheme.title,
+              hintStyle: SportifindTheme.greyTitle,
               filled: true,
               fillColor: Colors.white70,
               prefixIcon: const Icon(Icons.lock), 
@@ -151,17 +163,14 @@ class _SignUpState extends State<SignUp> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               hintText: "At least 8 words",
-              hintStyle: SportifindTheme.title,
+              hintStyle: SportifindTheme.greyTitle,
               filled: true,
               fillColor: Colors.white70,
               prefixIcon: const Icon(Icons.lock), 
             ),
             obscureText: true, 
-            validator: (value) {
-              if (value == null) {
-                return 'Re-entered password does not match!';
-              }
-              return null;
+            onSaved: (value) {
+              _reenterPassword = value!;
             },
           ),
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/screens/signup.dart';
+import 'package:sportifind/screens/auth/sign_in_screen.dart';
+import 'package:sportifind/screens/auth/signup.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -52,29 +53,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(
                     height: 60,
                   ),
-                  RichText(
-                    text: const TextSpan(
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Already has an account?",
+                        style: TextStyle(color: Colors.white),
                       ),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: 'Already has an account?',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        TextSpan(
-                          text: ' Sign in',
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SignInScreen()),
+                          );
+                        },
+                        child: const Text(
+                          'Sign in',
                           style: TextStyle(
-                            color: Color.fromARGB(255, 7, 203, 148),
-                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF00C6AE),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 60,
+                      ),
+                    ],
                   ),
                 ],
               ),

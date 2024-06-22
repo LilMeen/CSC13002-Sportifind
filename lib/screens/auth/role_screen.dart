@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/widgets/role_button.dart';
+import 'package:sportifind/screens/auth/widgets/role_button.dart';
 
 class RoleScreen extends StatefulWidget {
   const RoleScreen ({super.key});

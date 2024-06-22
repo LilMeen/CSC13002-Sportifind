@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/widgets/green_white_button.dart';
+import 'package:sportifind/screens/auth/widgets/green_white_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sportifind/screens/home_screen.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -37,6 +38,7 @@ class _SignInState extends State<SignIn> {
         email: _enteredEmail,
         password: _enteredPassword,
       );
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const SportifindHomeScreen()));
     }  catch (error){
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -75,7 +77,7 @@ class _SignInState extends State<SignIn> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               hintText: "example@gmail.com",
-              hintStyle: SportifindTheme.title,
+              hintStyle: SportifindTheme.greyTitle,
               filled: true,
               fillColor: Colors.white70,
               prefixIcon: const Icon(Icons.email),
@@ -114,7 +116,7 @@ class _SignInState extends State<SignIn> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               hintText: "At least 8 words",
-              hintStyle: SportifindTheme.title,
+              hintStyle: SportifindTheme.greyTitle,
               filled: true,
               fillColor: Colors.white70,
               prefixIcon: const Icon(Icons.lock), 

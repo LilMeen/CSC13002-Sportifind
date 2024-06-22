@@ -55,6 +55,14 @@ class SportifindTheme {
     color: darkerText,
   );
 
+  static const TextStyle greyTitle = TextStyle(
+    fontFamily: fontName,
+    fontWeight: FontWeight.bold,
+    fontSize: 16,
+    letterSpacing: 0.18,
+    color: Colors.grey,
+  );
+
   static const TextStyle subtitle = TextStyle(
     fontFamily: fontName,
     fontWeight: FontWeight.w400,

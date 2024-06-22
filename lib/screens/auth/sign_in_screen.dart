@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/screens/signin.dart';
+import 'package:sportifind/screens/auth/sign_up_screen.dart';
+import 'package:sportifind/screens/auth/signin.dart';
 
-import 'package:sportifind/widgets/divider_with_text_or.dart';
-import 'package:sportifind/widgets/sign_in_with_google_button.dart';
+import 'package:sportifind/screens/auth/widgets/sign_in_with_google_button.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -59,7 +59,12 @@ class _SignInScreenState extends State<SignInScreen> {
                         style: TextStyle(color: Colors.white),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                          );
+                        },
                         child: const Text(
                           'Sign up',
                           style: TextStyle(
@@ -70,7 +75,29 @@ class _SignInScreenState extends State<SignInScreen> {
                     ],
                   ),
                   const SizedBox(height: 5),
-                  const DividerWithTextOR(),
+                  const Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: Colors.white,
+                          thickness: 1,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(
+                          'OR',
+                          style: SportifindTheme.greyTitle
+                          ),
+                        ),                   
+                      Expanded(
+                        child: Divider(
+                          color: Colors.white,
+                          thickness: 1,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 15),
                   SignInWithGoogleButton(onPressed: () {}),
                 ],
