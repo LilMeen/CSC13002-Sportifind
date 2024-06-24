@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/auth/widgets/green_white_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/screens/auth/role_screen.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -48,6 +50,17 @@ class _SignUpState extends State<SignUp> {
         email: _enteredEmail,
         password: _enteredPassword,
       );
+
+      FirebaseFirestore.instance
+        .collection('users')
+        .doc(userCredential.user!.uid)
+        .set({
+          'email': _enteredEmail,
+          'password': _enteredPassword,
+        });
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const RoleScreen()));
+
     }  catch (error){
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(

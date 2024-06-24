@@ -1,10 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/auth/widgets/green_white_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/screens/home_screen.dart';
+import 'package:sportifind/screens/admin/admin_home_screen.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -38,7 +40,14 @@ class _SignInState extends State<SignIn> {
         email: _enteredEmail,
         password: _enteredPassword,
       );
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const SportifindHomeScreen()));
+
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).get();
+      if (snapshot['role'] == 'admin'){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminHomeScreen()));
+      }
+      else {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const SportifindHomeScreen()));
+      }
     }  catch (error){
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
