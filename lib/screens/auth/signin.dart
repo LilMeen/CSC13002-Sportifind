@@ -7,6 +7,7 @@ import 'package:sportifind/screens/auth/widgets/green_white_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/screens/home_screen.dart';
 import 'package:sportifind/screens/admin/admin_home_screen.dart';
+import 'package:sportifind/screens/stadium_owner/stadium_owner_home_screen.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -45,8 +46,11 @@ class _SignInState extends State<SignIn> {
       if (snapshot['role'] == 'admin'){
         Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminHomeScreen()));
       }
-      else {
+      else if (snapshot['role'] == 'player') {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const SportifindHomeScreen()));
+      }
+      else if (snapshot['role'] == 'stadium_owner') {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const StadiumOwnerHomeScreen()));
       }
     }  catch (error){
       ScaffoldMessenger.of(context).clearSnackBars();
