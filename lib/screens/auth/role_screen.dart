@@ -73,7 +73,7 @@ class _RoleScreenState extends State<RoleScreen> {
                   FirebaseFirestore.instance
                     .collection('users')
                     .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .set({
+                    .update({
                       'role': 'stadium_owner',
                     });
 
