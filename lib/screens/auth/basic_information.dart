@@ -1,8 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/screens/home_screen.dart';
+import 'package:sportifind/widgets/dropdown_button.dart';
+import 'package:sportifind/widgets/setting.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class BasicInformationScreen extends StatelessWidget {
+final _formKey = GlobalKey<FormState>();
+final _firebase = FirebaseAuth.instance;
+
+class BasicInformationScreen extends StatefulWidget {
   const BasicInformationScreen({super.key});
 
+  @override
+  BasicInformationState createState() => BasicInformationState();
+}
+
+class BasicInformationState extends State<BasicInformationScreen> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _districtController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+
+  var _enteredName = '';
+  var _enteredPhone = '';
+  var _enteredDob = '';
+  var _enteredAddress = '';
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _dateController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  void _done() {
+    final isValid = _formKey.currentState!.validate();
+
+    if (isValid) {
+      _formKey.currentState!.save();
+
+      try {
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          'name': _enteredName,
+          'phone': _enteredPhone,
+          'dob': _enteredDob,
+          'address': _enteredAddress,
+          'gender': _genderController.text,
+          'city': _cityController.text,
+          'district': _districtController.text,
+          //'height': _enteredHeight,
+          //'weight': _enteredWeight,
+        });
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SportifindHomeScreen(),
+          ),
+        );
+      } catch (error) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to store data: $error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   String getHint(String type) {
     switch (type) {
@@ -10,84 +85,183 @@ class BasicInformationScreen extends StatelessWidget {
         return 'Enter your name';
       case 'Date Of Birth':
         return 'dd/mm/yy';
-      case 'Phone number':
+      case 'Phone Number':
         return 'Enter your phone number';
-      case 'Gender':
-        return 'Gender';
-      case 'City/Province':
-        return 'Ho Chi Minh';
-      case 'District':
-        return 'District';
+      case 'Address':
+        return 'Enter your Address';
+      case 'Height':
+        return 'meters';
+      case 'Weight':
+        return 'kilogram';
       default:
         return 'Enter';
     }
   }
 
-  Widget _buildSection(String type) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      RichText(
-        text: TextSpan(
+  // bool isValidDate(String input) {
+  //   try {
+  //     final date = DateTime.parse(input);
+  //     final originalInput = DateTime(date.day, date.month, date.year);
+  //     final parsedInput = DateTime.parse(input);
+  //     return originalInput == parsedInput;
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
+
+  bool isValidName(String input) {
+    return RegExp(r'^[a-zA-Z\s]+$').hasMatch(input);
+  }
+
+  bool isValidPhoneNumber(String input) {
+    return RegExp(r'^\+?[0-9]{10,15}$').hasMatch(input);
+  }
+
+  Widget _buildSection(String type, TextEditingController controller) {
+    double width = 290; // Default width
+
+    if (type == "Date Of Birth") {
+      width = 154;
+    } else if (type == "Height" || type == "Weight") {
+      width = 137;
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
             style: const TextStyle(color: Colors.white, fontSize: 14),
             children: <TextSpan>[
               TextSpan(text: type),
               const TextSpan(text: '*', style: TextStyle(color: Colors.red))
-            ]),
-      ),
-      const SizedBox(height: 12),
-      SizedBox(
-        width: 290,
-        height: 40,
-        child: TextFormField(
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: width,
+          height: 70,
+          child: TextFormField(
+            controller: controller,
             decoration: InputDecoration(
-                hintText: getHint(type),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                hintStyle: const TextStyle(color: Colors.white54),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6.0),
-                  borderSide: const BorderSide(
-                      width: 1, color: Color.fromARGB(255, 255, 255, 255)),
+              hintText: getHint(type),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              hintStyle: const TextStyle(color: Colors.white54),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                borderSide: const BorderSide(
+                  width: 1,
+                  color: Color.fromARGB(255, 255, 255, 255),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6.0),
-                  borderSide: const BorderSide(
-                      width: 1, color: Color.fromARGB(255, 2, 183, 144)),
-                )),
-            style: const TextStyle(color: Colors.white)),
-      ),
-    ]);
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                borderSide: const BorderSide(
+                  width: 1,
+                  color: Color.fromARGB(255, 2, 183, 144),
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                borderSide: const BorderSide(
+                  width: 1,
+                  color: Colors.red,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                borderSide: const BorderSide(
+                  width: 1,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+            style: const TextStyle(color: Colors.white),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a value';
+              }
+              if (type == "Height" || type == "Weight") {
+                if (double.tryParse(value) == null) {
+                  return 'Please enter a valid number';
+                }
+              }
+              // Additional validation logic
+              return null;
+            },
+            onSaved: (value) {
+              switch (type) {
+                case 'Name':
+                  _enteredName = value!;
+                case 'Date Of Birth':
+                  _enteredDob = value!;
+                case 'Phone Number':
+                  _enteredPhone = value!;
+                case 'Address':
+                  _enteredAddress = value!;
+              }
+            },
+          ),
+        ),
+      ],
+    );
   }
 
-  Widget _buildDropdownSection(String type) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+  Widget _buildDropdownSection(String type, TextEditingController controller) {
+  double width = 137; // Default width
+
+  if (type == "Gender") {
+    width = 120;
+  } else if (type == "Date Of Birth") {
+    width = 137;
+  } else if (type == "District" || type == "City/Province") {
+    width = 290;
+  }
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
       RichText(
         text: TextSpan(
-            style: const TextStyle(color: Colors.white, fontSize: 14),
-            children: <TextSpan>[
-              TextSpan(text: type),
-              const TextSpan(text: '*', style: TextStyle(color: Colors.red))
-            ]),
+          style: const TextStyle(color: Colors.white, fontSize: 14),
+          children: <TextSpan>[
+            TextSpan(text: type),
+            const TextSpan(text: '*', style: TextStyle(color: Colors.red))
+          ],
+        ),
       ),
       const SizedBox(height: 12),
       SizedBox(
-          width: type == "District" ? 290 : 137,
-          height: 40,
-          child: _buildDropDown(type)),
-    ]);
-  }
+        width: width,
+        height: 50,
+        child: Dropdown(
+          type: type,
+          onSaved: (value){ controller.text = value ?? ''; print(controller.text);},          
+        ),
+      ),
+    ],
+  );
+}
 
-  Widget _nextButton() {
+
+  Widget _nextButton(BuildContext context) {
     return SizedBox(
       width: 80,
       height: 40,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          _done();
+        },
         style: ButtonStyle(
-            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-            ),
-            backgroundColor: WidgetStateProperty.all<Color>(Colors.tealAccent),
-            shadowColor: WidgetStateProperty.all<Color>(
-                const Color.fromARGB(255, 213, 211, 211))),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          ),
+          backgroundColor: WidgetStateProperty.all<Color>(Colors.tealAccent),
+          shadowColor: WidgetStateProperty.all<Color>(
+            const Color.fromARGB(255, 213, 211, 211),
+          ),
+        ),
         child: const Text(
           'Next',
           style: TextStyle(
@@ -103,137 +277,60 @@ class BasicInformationScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Basic Information",
-            style: TextStyle(
-              color: Colors.white,
-            ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Basic Information",
+          style: TextStyle(
+            color: Colors.white,
           ),
-          centerTitle: true,
-          backgroundColor: const Color.fromARGB(255, 33, 33, 33),
-          elevation: 0.0,
         ),
+        centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 33, 33, 33),
-        body: Container(
-          child: 
-              SizedBox(
-            height: double.infinity,
-            width: double.infinity,
+        elevation: 0.0,
+      ),
+      backgroundColor: const Color.fromARGB(255, 33, 33, 33),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 27),
-                _buildSection('Name'),
+                _buildSection('Name', _nameController),
+                //const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: _buildDropdownSection('Gender', _genderController),
+                    ),
+                    const SizedBox(width: 15),
+                    Flexible(
+                      child: _buildSection('Date Of Birth', _dateController),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
-                _buildSection('Date Of Birth'),
-                const SizedBox(height: 12),
-                _buildSection('Phone Number'),
-                const SizedBox(height: 12),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-
-                  _buildDropdownSection('Gender'),
-                  const SizedBox(width: 15),
-                  _buildDropdownSection('City/Province'),
-                ]),
-                const SizedBox(height: 12),
-                _buildDropdownSection('District'),
-                const SizedBox(height: 20),
+                _buildSection('Phone Number', _phoneController),
+                const SizedBox(height: 14),
+                _buildDropdownSection('City/Province', _cityController),
+                const SizedBox(height: 38),
+                _buildDropdownSection('District', _districtController),
+                const SizedBox(height: 38),
+                _buildSection('Address', _addressController),
                 Padding(
                   padding: const EdgeInsets.only(left: 210),
-                  child: _nextButton(),
-                )
+                  child: _nextButton(context),
+                ),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class Dropdown extends StatefulWidget {
-  final String type;
-
-  Dropdown({required this.type});
-  @override
-  _DropdownState createState() => _DropdownState();
-}
-
-class _DropdownState extends State<Dropdown> {
-  String? value;
-
-  final List<String> genders = ['Male', 'Female', 'Other'];
-  final List<String> cities = ['Ho Chi Minh', 'Ha Noi', 'Da Nang'];
-  final List<String> districts = ['District 1', 'District 2', 'District 3'];
-
-  List<String> getItems() {
-    switch (widget.type) {
-      case 'Gender':
-        return genders;
-      case 'City/Province':
-        return cities;
-      case 'District':
-        return districts;
-      default:
-        return [];
-    }
-  }
-
-  String getHint() {
-    switch (widget.type) {
-      case 'Gender':
-        return 'Gender';
-      case 'City/Province':
-        return 'City';
-      case 'District':
-        return 'District';
-      default:
-        return 'Select';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<String> items = getItems();
-    String hint = getHint();
-
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 33, 33, 33),
-        borderRadius: BorderRadius.circular(6.0),
-        border: Border.all(color: Colors.white),
-      ),
-      child: DropdownButton<String>(
-        value: value,
-        items: items.map(buildMenuItem).toList(),
-        onChanged: (value) => setState(() => this.value = value),
-        hint: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(
-            hint,
-            style: const TextStyle(
-              color: Color.fromARGB(255, 207, 205, 205),
-            ),
-          ),
-        ),
-        underline: Container(),
-        icon: const Align(
-          alignment: Alignment.center, //padding: const EdgeInsets.all(),
-          child: Icon(Icons.arrow_drop_down),
-        ),
-        iconEnabledColor: const Color.fromARGB(255, 255, 255, 255),
-      ),
-    );
-  }
-
-  DropdownMenuItem<String> buildMenuItem(String items) {
-    return DropdownMenuItem(
-      value: items,
-      child: Text(items),
     );
   }
 }

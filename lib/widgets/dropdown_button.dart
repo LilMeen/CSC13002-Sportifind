@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 
 class Dropdown extends StatefulWidget {
   final String type;
+  final double horizontalPadding;
+  final FormFieldSetter<String>? onSaved;
 
-  Dropdown({required this.type});
+  const Dropdown({
+    required this.type,
+    this.horizontalPadding = 5.0,
+    this.onSaved,
+    super.key
+  });
+
   @override
   _DropdownState createState() => _DropdownState();
 }
@@ -52,33 +60,74 @@ class _DropdownState extends State<Dropdown> {
         borderRadius: BorderRadius.circular(6.0),
         border: Border.all(color: Colors.white),
       ),
-      child: DropdownButton<String>(
-        value: value,
-        items: items.map(buildMenuItem).toList(),
-        onChanged: (value) => setState(() => this.value = value),
-        hint: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(
-            hint,
-            style: const TextStyle(
-              color: Color.fromARGB(255, 207, 205, 205),
+      padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButtonFormField<String>(
+          isExpanded: true,
+          value: value,
+          items: items.map(buildMenuItem).toList(),
+          selectedItemBuilder: (BuildContext context) {
+            return items.map((String item) {
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: 0.0, horizontal: widget.horizontalPadding),
+                child: Text(
+                  item,
+                  style: const TextStyle(color: Colors.white),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            }).toList();
+          },
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+          ),
+          onChanged: (newValue) => setState(() => value = newValue),
+          onSaved: widget.onSaved,
+          hint: Padding(
+            padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),
+            child: Text(
+              hint,
+              style: const TextStyle(
+                color: Colors.white54,
+                fontSize: 16,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          icon: Padding(
+            padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),
+            child: const Icon(Icons.arrow_drop_down, color: Colors.white),
+          ),
+          dropdownColor: const Color.fromARGB(255, 33, 33, 33),
+          decoration: const InputDecoration(
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
+            ),
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
             ),
           ),
         ),
-        underline: Container(),
-        icon: const Align(
-          alignment: Alignment.center, //padding: const EdgeInsets.all(),
-          child: Icon(Icons.arrow_drop_down),
-        ),
-        iconEnabledColor: const Color.fromARGB(255, 255, 255, 255),
       ),
     );
   }
 
-  DropdownMenuItem<String> buildMenuItem(String items) {
+  DropdownMenuItem<String> buildMenuItem(String item) {
     return DropdownMenuItem(
-      value: items,
-      child: Text(items),
+      value: item,
+      child: Text(
+        item,
+        style: const TextStyle(color: Colors.white),
+        overflow: TextOverflow.ellipsis,
+      ),
     );
   }
 }
+
+
+
