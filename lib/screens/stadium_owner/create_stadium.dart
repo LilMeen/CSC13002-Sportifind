@@ -175,7 +175,7 @@ class _CreateStadiumState extends State<CreateStadium> {
                       labelText: 'Open time',
                     ),
                     onTap: () async {
-                      FocusScope.of(context).requestFocus(new FocusNode());
+                      FocusScope.of(context).requestFocus(FocusNode());
                       TimeOfDay? picked = await showTimePicker(
                         context: context,
                         initialTime: const TimeOfDay(hour: 7, minute: 0),
@@ -203,7 +203,7 @@ class _CreateStadiumState extends State<CreateStadium> {
                       labelText: 'Close time',
                     ),
                     onTap: () async {
-                      FocusScope.of(context).requestFocus(new FocusNode());
+                      FocusScope.of(context).requestFocus(FocusNode());
                       TimeOfDay? picked = await showTimePicker(
                         context: context,
                         initialTime: const TimeOfDay(hour: 7, minute: 0),

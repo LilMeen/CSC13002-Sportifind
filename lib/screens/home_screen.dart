@@ -1,3 +1,4 @@
+import 'package:sportifind/screens/player/match_management/screens/match_main_screen.dart';
 import 'package:sportifind/widgets/bottom_navigation.dart';
 import 'package:sportifind/models/tab_icon.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +24,9 @@ class _SportifindHomeScreenState extends State<SportifindHomeScreen>
   @override
   void initState() {
     super.initState();
-    tabIconsList.forEach((TabIconData tab) {
+    for (var tab in tabIconsList) {
       tab.isSelected = false;
-    });
+    }
     tabIconsList[0].isSelected = true;
 
     animationController = AnimationController(
@@ -92,7 +93,15 @@ class _SportifindHomeScreenState extends State<SportifindHomeScreen>
                 if (!mounted) {
                   return;
                 }
-                setState(() {});
+                setState(() {
+                  // comment this section if needed
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const MatchMainScreen()),
+                  );
+                  /////////////////////////////////
+                });
               });
             }
           },

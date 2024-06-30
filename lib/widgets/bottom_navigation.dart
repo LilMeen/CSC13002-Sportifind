@@ -6,8 +6,7 @@ import 'package:sportifind/adapter/hex_color.dart';
 
 class BottomBarView extends StatefulWidget {
   const BottomBarView(
-      {Key? key, this.tabIconsList, this.changeIndex, this.addClick})
-      : super(key: key);
+      {super.key, this.tabIconsList, this.changeIndex, this.addClick});
 
   final Function(int index)? changeIndex;
   final Function()? addClick;
@@ -195,8 +194,7 @@ class _BottomBarViewState extends State<BottomBarView>
 }
 
 class TabIcons extends StatefulWidget {
-  const TabIcons({Key? key, this.tabIconData, this.removeAllSelect})
-      : super(key: key);
+  const TabIcons({super.key, this.tabIconData, this.removeAllSelect});
 
   final TabIconData? tabIconData;
   final Function()? removeAllSelect;

@@ -20,6 +20,8 @@ class SportifindTheme {
   static const Color spacer = Color(0xFFF2F2F2);
   static const String fontName = 'Roboto';
 
+  static const Color matchCard = Color.fromARGB(255, 217, 217, 217);
+
   static const TextTheme textTheme = TextTheme(
     titleSmall: display1,
     titleMedium: headline,
@@ -39,6 +41,15 @@ class SportifindTheme {
     color: white,
   );
 
+  static const TextStyle display2 = TextStyle(
+    fontFamily: fontName,
+    fontWeight: FontWeight.bold,
+    fontSize: 30,
+    letterSpacing: 0.4,
+    height: 0.9,
+    color: white,
+  );
+
   static const TextStyle headline = TextStyle(
     fontFamily: fontName,
     fontWeight: FontWeight.bold,
@@ -53,6 +64,14 @@ class SportifindTheme {
     fontSize: 16,
     letterSpacing: 0.18,
     color: darkerText,
+  );
+
+  static const TextStyle status = TextStyle(
+    fontFamily: fontName,
+    fontWeight: FontWeight.bold,
+    fontSize: 16,
+    letterSpacing: 0.18,
+    color: white,
   );
 
   static const TextStyle greyTitle = TextStyle(
