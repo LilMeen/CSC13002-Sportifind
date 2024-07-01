@@ -5,6 +5,7 @@ import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/match_management/screens/select_stadium_screen.dart';
 import 'package:sportifind/screens/player/match_management/util/booking_calendar.dart';
+import 'package:sportifind/widgets/date_picker.dart';
 
 class DateSelectScreen extends StatefulWidget {
   const DateSelectScreen(
@@ -32,14 +33,6 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     '2h00',
   ];
 
-  int convertDurationStringToInt(String durationString) {
-    final parts = durationString.split('h');
-    final hours = int.parse(parts[0]);
-    final minutes =
-        int.parse(parts.length > 1 ? parts[1].substring(0, 2) : '00');
-    return hours * 60 + minutes;
-  }
-
   DateTime convertStringToDateTime(String timeString, DateTime selectedDate) {
     final dateFormat = DateFormat('HH:mm');
     final time = dateFormat.parse(timeString);
@@ -47,7 +40,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
         time.hour, time.minute);
   }
 
-  // Function for fetching data from firestore  
+  // Function for fetching data from firestore
   Future<void> getMatchData() async {
     final matchesQuery =
         await FirebaseFirestore.instance.collection('matches').get();
@@ -63,7 +56,6 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   Future<List<DateTimeRange>> getMatchDate(DateTime selectedDate) async {
     bookedSlot.clear();
     userMatches.clear();
-    final formatter = DateFormat.yMd();
     final String date = formatter.format(selectedDate);
 
     await getMatchData();
@@ -79,6 +71,21 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     }
     userMatches.clear();
     return bookedSlot;
+  }
+
+  int convertDurationStringToInt(String durationString) {
+    final parts = durationString.split('h');
+    final hours = int.parse(parts[0]);
+    final minutes =
+        int.parse(parts.length > 1 ? parts[1].substring(0, 2) : '00');
+    return hours * 60 + minutes;
+  }
+
+  void refresh(DateTime pickedDate) async {
+    bookedSlot = await getMatchDate(pickedDate);
+    setState(() {
+      selectedDate = pickedDate;
+    });
   }
 
   // Function to build duration dropdown button
@@ -122,65 +129,25 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     );
   }
 
-  // Function to show Date picker
-  void _showDatePicker(List<DateTimeRange> bookedSlot) async {
-    final now = DateTime.now();
-    final firstDate = DateTime(now.year, now.month, now.day);
-    final pickedDate = await showDatePicker(
-      context: context,
-      initialDate: now,
-      firstDate: firstDate,
-      lastDate: DateTime(now.year + 25),
-    );
-    if (pickedDate != null) {
-      bookedSlot = await getMatchDate(pickedDate);
-      print('Booked Date: $bookedSlot');
-      setState(() {
-        selectedDate = pickedDate;
-        print('Selected Date: $selectedDate');
-      });
-    }
-  }
-
-  // Function to build date picker
-  Widget datePicker(double height, double width) {
-    return Row(
-      children: [
-        const Text(
-          "Date",
-          style: SportifindTheme.display2,
-        ),
-        const Spacer(),
-        Container(
-          padding: const EdgeInsets.only(left: 10.0),
-          height: height,
-          width: width,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: SportifindTheme.nearlyGreen,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                selectedDate == null
-                    ? 'Selected Date'
-                    : formatter.format(selectedDate!),
-                style: SportifindTheme.status,
-              ),
-              IconButton(
-                onPressed: () {
-                  _showDatePicker(bookedSlot);
-                },
-                icon: const Icon(Icons.calendar_month),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+  // // Function to show Date picker
+  // void _showDatePicker(List<DateTimeRange> bookedSlot) async {
+  //   final now = DateTime.now();
+  //   final firstDate = DateTime(now.year, now.month, now.day);
+  //   final pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: now,
+  //     firstDate: firstDate,
+  //     lastDate: DateTime(now.year + 25),
+  //   );
+  //   if (pickedDate != null) {
+  //     bookedSlot = await getMatchDate(pickedDate);
+  //     print('Booked Date: $bookedSlot');
+  //     setState(() {
+  //       selectedDate = pickedDate;
+  //       print('Selected Date: $selectedDate');
+  //     });
+  //   }
+  // }
 
   // Function to build booking Calendar
   Widget bookingCalender(double height) {
@@ -309,7 +276,12 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                   ),
                   durationPicker(40, 75),
                   const SizedBox(height: 40),
-                  datePicker(40, 175),
+                  DatePicker(
+                    func: refresh,
+                    height: 40,
+                    width: 175,
+                    selectedDate: selectedDate,
+                  ),
                   const SizedBox(height: 40),
                   bookingCalender(650),
                 ],
