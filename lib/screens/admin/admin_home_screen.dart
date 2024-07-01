@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/screens/search.dart';
+import 'dart:async';
+import 'package:sportifind/screens/search/search.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -10,6 +11,7 @@ class AdminHomeScreen extends StatefulWidget {
 }
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
+  Timer? _debounce;
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   final List<String> _searchFields = ['email', 'role'];
@@ -28,8 +30,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   }
 
   void _onSearchChanged() {
-    setState(() {
-      _searchText = _searchController.text;
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      setState(() {
+        _searchText = _searchController.text;
+      });
     });
   }
 
@@ -88,6 +93,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               }
               if (userSnapshot.hasError) {
                 return Center(child: Text('Error: ${userSnapshot.error}'));
+                //return const Center(child: Text('Something went wrong. Please try again later.'));
               }
 
               final users = userSnapshot.data!.docs;
