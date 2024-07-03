@@ -32,7 +32,7 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
   var stadiums = [
     'Phú Thọ stadium',
     'Mỹ Đình stadium',
-  ];
+  ]; 
 
   Widget dropDownBox(String title, String hintText, double height,
       List<String> list, String? selectedValue, String avatar) {

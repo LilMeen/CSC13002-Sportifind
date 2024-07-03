@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/screens/player/player_home_screen.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
-//import 'package:sportifind/widgets/setting.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _formKey = GlobalKey<FormState>();
-final _firebase = FirebaseAuth.instance;
 
 class BasicInformationScreen extends StatefulWidget {
   const BasicInformationScreen({super.key});
@@ -17,8 +15,6 @@ class BasicInformationScreen extends StatefulWidget {
 
 class BasicInformationState extends State<BasicInformationScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _heightController = TextEditingController();
-  final TextEditingController _weightController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
@@ -57,8 +53,6 @@ class BasicInformationState extends State<BasicInformationScreen> {
           'gender': _genderController.text,
           'city': _cityController.text,
           'district': _districtController.text,
-          //'height': _enteredHeight,
-          //'weight': _enteredWeight,
         });
 
         Navigator.push(
@@ -98,17 +92,6 @@ class BasicInformationState extends State<BasicInformationScreen> {
     }
   }
 
-  // bool isValidDate(String input) {
-  //   try {
-  //     final date = DateTime.parse(input);
-  //     final originalInput = DateTime(date.day, date.month, date.year);
-  //     final parsedInput = DateTime.parse(input);
-  //     return originalInput == parsedInput;
-  //   } catch (e) {
-  //     return false;
-  //   }
-  // }
-
   bool isValidName(String input) {
     return RegExp(r'^[a-zA-Z\s]+$').hasMatch(input);
   }
@@ -141,7 +124,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
         const SizedBox(height: 12),
         SizedBox(
           width: width,
-          height: 70,
+          height: 50,
           child: TextFormField(
             controller: controller,
             decoration: InputDecoration(
@@ -239,7 +222,6 @@ class BasicInformationState extends State<BasicInformationScreen> {
             type: type,
             onSaved: (value) {
               controller.text = value ?? '';
-              print(controller.text);
             },
           ),
         ),

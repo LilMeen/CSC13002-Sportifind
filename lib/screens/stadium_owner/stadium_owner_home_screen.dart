@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/screens/stadium_owner/stadium_screen.dart';
+import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
 
 class StadiumOwnerHomeScreen extends StatefulWidget {
   const StadiumOwnerHomeScreen({super.key});

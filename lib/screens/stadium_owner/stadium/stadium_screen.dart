@@ -1,6 +1,5 @@
-/*
 import 'package:flutter/material.dart';
-import 'package:sportifind/screens/stadium_owner/create_stadium.dart';
+import 'package:sportifind/screens/stadium_owner/stadium/create_stadium.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -67,60 +66,6 @@ class _StadiumScreenState extends State<StadiumScreen> {
         ), 
         child: Icon(Icons.add, color: Colors.amber[800], size: 30),
       ),  
-    );
-  }
-}
-*/
-
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sportifind/search/stadium_search.dart';
-import 'package:sportifind/widgets/card/stadium_card.dart';
-import 'package:sportifind/screens/stadium_owner/create_stadium.dart';
-
-class StadiumScreen extends StatelessWidget {
-  const StadiumScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: StadiumSearch(
-        stream: FirebaseFirestore.instance
-            .collection('stadiums')
-            .where('owner', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-            .snapshots(),
-        buildGridView: (stadiums) {
-          return GridView.builder(
-            padding: const EdgeInsets.all(8.0),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              childAspectRatio: 1.4,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemCount: stadiums.length,
-            itemBuilder: (ctx, index) {
-              final stadium = stadiums[index];
-              final stadiumData = stadium.data() as Map<String, dynamic>;
-              return StadiumCard(stadiumData: stadiumData, imageRatio: 2);
-            },
-          );
-        },
-      ),
-      floatingActionButton: ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CreateStadium()),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          shape: const CircleBorder(),
-          padding: const EdgeInsets.all(15),
-        ),
-        child: Icon(Icons.add, color: Colors.amber[800], size: 30),
-      ),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/screens/home_screen.dart';
+import 'package:sportifind/screens/player/player_home_screen.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 import 'package:sportifind/screens/player/profile/widgets/number_wheel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -71,7 +71,7 @@ class EditInformationState extends State<EditInformationScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const SportifindHomeScreen(),
+            builder: (context) => const PlayerHomeScreen(),
           ),
         );
       } catch (error) {
