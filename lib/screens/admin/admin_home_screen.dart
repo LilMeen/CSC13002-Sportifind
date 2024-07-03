@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/screens/admin/admin.dart';
 import 'dart:async';
 import 'package:sportifind/search/search.dart';
 
@@ -54,7 +55,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           TextButton(
             onPressed: () {
               // Implement user deletion logic here
-              // AuthService().deleteUser(documents[index]['email'], documents[index]['password']);
+              //AuthService().deleteUser(documents[index]['email'], documents[index]['password']);
+              deleteUser(user['email'], user['password'], context);
               Navigator.of(ctx).pop();
             },
             child: const Text('Yes'),
@@ -92,10 +94,20 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 return const Center(child: CircularProgressIndicator());
               }
               if (userSnapshot.hasError) {
-                return Center(child: Text('Error: ${userSnapshot.error}'));
-                //return const Center(child: Text('Something went wrong. Please try again later.'));
-              }
-
+                return AlertDialog(
+                    title: const Text('Delete complete'),
+                    content: const Text('Press continue to return to the user list.'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminHomeScreen()));
+                        },
+                        child: const Text('Continue'),
+                      ),
+                    ],
+                  );
+                //return Center(child: Text('Error: ${userSnapshot.error}'));
+              } 
               final users = userSnapshot.data!.docs;
               final filteredUsers = searchAndSortDocuments(users, _searchText, _searchFields);
 
