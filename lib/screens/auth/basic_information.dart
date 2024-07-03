@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/screens/player/player_home_screen.dart';
+import 'package:sportifind/screens/stadium_owner/stadium_owner_home_screen.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,7 +36,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
     super.dispose();
   }
 
-  void _done() {
+  void _done() async{
     final isValid = _formKey.currentState!.validate();
 
     if (isValid) {
@@ -55,12 +56,19 @@ class BasicInformationState extends State<BasicInformationScreen> {
           'district': _districtController.text,
         });
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PlayerHomeScreen(),
-          ),
-        );
+        DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+        if (snapshot['role'] == 'player') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PlayerHomeScreen()));
+        } else if (snapshot['role'] == 'stadium_owner') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const StadiumOwnerHomeScreen()));
+        }
       } catch (error) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
