@@ -4,6 +4,7 @@ import 'package:sportifind/models/tab_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
+import 'package:sportifind/screens/player/profile/profile_screen.dart';
 
 class PlayerHomeScreen extends StatefulWidget {
   const PlayerHomeScreen({super.key});
@@ -110,10 +111,19 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                 color: SportifindTheme.background,
               );
             } else if (index == 3) {
-              tabBody = Container(
-                // Your first screen widget or use Navigator to push a named route
-                color: SportifindTheme.background,
-              );
+              animationController?.reverse().then<dynamic>((data) {
+                if (!mounted) {
+                  return;
+                }
+                setState(() {
+                  tabBody = const ProfileScreen(
+                            height: '161',
+                            weight: '60',
+                            foot: 'left',
+                            right_foot: true,
+                  );
+                });
+              });
             }
           },
         ),
