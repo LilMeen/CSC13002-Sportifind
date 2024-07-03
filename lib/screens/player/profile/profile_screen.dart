@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/screens/auth/basic_information.dart';
 import 'package:sportifind/widgets/setting.dart';
 import 'package:sportifind/widgets/information_menu.dart';
 import 'package:sportifind/screens/player/profile/widgets/hexagon_stat.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:sportifind/screens/player/profile/edit_information.dart';
-
-import 'dart:io';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key, required this.height, required this.weight, required this.foot, required this.right_foot});
