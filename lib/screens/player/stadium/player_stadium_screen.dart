@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/screens/search/stadium_search.dart';
+import 'package:sportifind/search/stadium_search.dart';
 import 'package:sportifind/widgets/card/stadium_card.dart';
 
 class PlayerStadiumScreen extends StatelessWidget {

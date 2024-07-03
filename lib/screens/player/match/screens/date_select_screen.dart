@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/screens/player/match_management/screens/select_stadium_screen.dart';
-import 'package:sportifind/screens/player/match_management/util/booking_calendar.dart';
+import 'package:sportifind/screens/player/match/screens/select_stadium_screen.dart';
+import 'package:sportifind/screens/player/match/util/booking_calendar.dart';
 import 'package:sportifind/widgets/date_picker.dart';
 
 class DateSelectScreen extends StatefulWidget {

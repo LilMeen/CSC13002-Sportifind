@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/screens/player/match_management/screens/match_main_screen.dart';
-import 'package:sportifind/screens/player/match_management/screens/select_stadium_screen.dart';
+import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
+import 'package:sportifind/screens/player/match/screens/select_stadium_screen.dart';
 import 'package:sportifind/widgets/match_list/match_list.dart';
 
 import '../../models/match_card.dart';

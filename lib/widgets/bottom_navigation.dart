@@ -12,7 +12,7 @@ class BottomBarView extends StatefulWidget {
   final Function()? addClick;
   final List<TabIconData>? tabIconsList;
   @override
-  _BottomBarViewState createState() => _BottomBarViewState();
+  State<BottomBarView> createState() => _BottomBarViewState();
 }
 
 class _BottomBarViewState extends State<BottomBarView>
@@ -60,20 +60,20 @@ class _BottomBarViewState extends State<BottomBarView>
                           children: <Widget>[
                             Expanded(
                               child: TabIcons(
-                                  tabIconData: widget.tabIconsList?[3],
+                                  tabIconData: widget.tabIconsList?[0],
                                   removeAllSelect: () {
                                     setRemoveAllSelection(
-                                        widget.tabIconsList?[3]);
-                                    widget.changeIndex!(3);
+                                        widget.tabIconsList?[0]);
+                                    widget.changeIndex!(0);
                                   }),
                             ),
                             Expanded(
                               child: TabIcons(
-                                  tabIconData: widget.tabIconsList?[3],
+                                  tabIconData: widget.tabIconsList?[1],
                                   removeAllSelect: () {
                                     setRemoveAllSelection(
-                                        widget.tabIconsList?[3]);
-                                    widget.changeIndex!(3);
+                                        widget.tabIconsList?[1]);
+                                    widget.changeIndex!(1);
                                   }),
                             ),
                             SizedBox(
@@ -86,11 +86,11 @@ class _BottomBarViewState extends State<BottomBarView>
                             ),
                             Expanded(
                               child: TabIcons(
-                                  tabIconData: widget.tabIconsList?[3],
+                                  tabIconData: widget.tabIconsList?[2],
                                   removeAllSelect: () {
                                     setRemoveAllSelection(
-                                        widget.tabIconsList?[3]);
-                                    widget.changeIndex!(3);
+                                        widget.tabIconsList?[2]);
+                                    widget.changeIndex!(2);
                                   }),
                             ),
                             Expanded(

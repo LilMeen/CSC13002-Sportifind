@@ -1,17 +1,18 @@
-import 'package:sportifind/screens/player/match_management/screens/match_main_screen.dart';
+import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
 import 'package:sportifind/widgets/bottom_navigation.dart';
 import 'package:sportifind/models/tab_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
 
-class SportifindHomeScreen extends StatefulWidget {
-  const SportifindHomeScreen({super.key});
+class PlayerHomeScreen extends StatefulWidget {
+  const PlayerHomeScreen({super.key});
 
   @override
-  State<SportifindHomeScreen> createState() => _SportifindHomeScreenState();
+  State<PlayerHomeScreen> createState() => _PlayerHomeScreenState();
 }
 
-class _SportifindHomeScreenState extends State<SportifindHomeScreen>
+class _PlayerHomeScreenState extends State<PlayerHomeScreen>
     with TickerProviderStateMixin {
   AnimationController? animationController;
 
@@ -27,7 +28,6 @@ class _SportifindHomeScreenState extends State<SportifindHomeScreen>
     for (var tab in tabIconsList) {
       tab.isSelected = false;
     }
-    tabIconsList[0].isSelected = true;
 
     animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
@@ -79,30 +79,41 @@ class _SportifindHomeScreenState extends State<SportifindHomeScreen>
         ),
         BottomBarView(
           tabIconsList: tabIconsList,
-          addClick: () {},
+          addClick: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PlayerHomeScreen()),
+            );
+          },
           changeIndex: (int index) {
-            if (index == 0 || index == 2) {
-              animationController?.reverse().then<dynamic>((data) {
-                if (!mounted) {
-                  return;
-                }
-                setState(() {});
-              });
-            } else if (index == 1 || index == 3) {
+            if (index == 0) {
               animationController?.reverse().then<dynamic>((data) {
                 if (!mounted) {
                   return;
                 }
                 setState(() {
-                  // comment this section if needed
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const MatchMainScreen()),
-                  );
-                  /////////////////////////////////
+                  tabBody = const MatchMainScreen();
                 });
               });
+            } else if (index == 1) {
+              animationController?.reverse().then<dynamic>((data) {
+                if (!mounted) {
+                  return;
+                }
+                setState(() {
+                  tabBody = const PlayerStadiumScreen();
+                });
+              });
+            } else if (index == 2) {
+              tabBody = Container(
+                // Your first screen widget or use Navigator to push a named route
+                color: SportifindTheme.background,
+              );
+            } else if (index == 3) {
+              tabBody = Container(
+                // Your first screen widget or use Navigator to push a named route
+                color: SportifindTheme.background,
+              );
             }
           },
         ),

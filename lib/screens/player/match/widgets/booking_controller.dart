@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/models/booking_service.dart';
 import 'package:sportifind/models/match_card.dart';
-import 'package:sportifind/screens/player/match_management/screens/match_main_screen.dart';
-import 'package:sportifind/screens/player/match_management/util/booking_util.dart';
+import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
+import 'package:sportifind/screens/player/match/util/booking_util.dart';
 import 'package:flutter/material.dart';
 
 class BookingController extends ChangeNotifier {

@@ -75,7 +75,7 @@ class _StadiumScreenState extends State<StadiumScreen> {
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sportifind/screens/search/stadium_search.dart';
+import 'package:sportifind/search/stadium_search.dart';
 import 'package:sportifind/widgets/card/stadium_card.dart';
 import 'package:sportifind/screens/stadium_owner/create_stadium.dart';
 

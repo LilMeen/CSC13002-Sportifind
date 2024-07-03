@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/screens/player/match_management/screens/date_select_screen.dart';
-import 'package:sportifind/screens/player/match_management/screens/match_main_screen.dart';
-import 'package:sportifind/screens/player/match_management/widgets/common_button.dart';
+import 'package:sportifind/screens/player/match/screens/date_select_screen.dart';
+import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
+import 'package:sportifind/screens/player/match/widgets/common_button.dart';
 
 class SelectStadiumScreen extends StatefulWidget {
   const SelectStadiumScreen({super.key, required this.addMatchCard});

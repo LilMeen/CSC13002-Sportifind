@@ -1,4 +1,4 @@
-import 'package:sportifind/screens/player/match_management/widgets/common_card.dart';
+import 'package:sportifind/screens/player/match/widgets/common_card.dart';
 import 'package:flutter/material.dart';
 
 class BookingDialog extends StatelessWidget {

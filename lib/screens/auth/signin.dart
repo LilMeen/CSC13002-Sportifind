@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/auth/widgets/green_white_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sportifind/screens/home_screen.dart';
+import 'package:sportifind/screens/player/player_home_screen.dart';
 import 'package:sportifind/screens/admin/admin_home_screen.dart';
 import 'package:sportifind/screens/stadium_owner/stadium_owner_home_screen.dart';
 
@@ -22,11 +22,11 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final _form = GlobalKey<FormState>();
-  
+
   bool _rememberMe = false;
   var _enteredEmail = '';
   var _enteredPassword = '';
-  
+
   void _submit() async {
     final isValid = _form.currentState!.validate();
 
@@ -34,35 +34,41 @@ class _SignInState extends State<SignIn> {
       return;
     }
 
-    _form.currentState!.save(); 
-    
-    try{
+    _form.currentState!.save();
+
+    try {
       final userCredential = await _firebase.signInWithEmailAndPassword(
         email: _enteredEmail,
         password: _enteredPassword,
       );
 
-      DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).get();
-      if (snapshot['role'] == 'admin'){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminHomeScreen()));
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
+      if (snapshot['role'] == 'admin') {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const AdminHomeScreen()));
+      } else if (snapshot['role'] == 'player') {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const PlayerHomeScreen()));
+      } else if (snapshot['role'] == 'stadium_owner') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const StadiumOwnerHomeScreen()));
       }
-      else if (snapshot['role'] == 'player') {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const SportifindHomeScreen()));
-      }
-      else if (snapshot['role'] == 'stadium_owner') {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const StadiumOwnerHomeScreen()));
-      }
-    }  catch (error){
+    } catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Incorrect email or password.'),
           backgroundColor: Colors.red,
         ),
-      ); 
+      );
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -82,7 +88,7 @@ class _SignInState extends State<SignIn> {
             ),
           ),
           const SizedBox(height: 5),
-          TextFormField(      
+          TextFormField(
             textAlign: TextAlign.left,
             textAlignVertical: TextAlignVertical.bottom,
             decoration: InputDecoration(
@@ -96,9 +102,11 @@ class _SignInState extends State<SignIn> {
               prefixIcon: const Icon(Icons.email),
             ),
             autocorrect: false,
-            textCapitalization: TextCapitalization.none,   
+            textCapitalization: TextCapitalization.none,
             validator: (value) {
-              if (value == null || value.trim().isEmpty || !value.contains('@')) {
+              if (value == null ||
+                  value.trim().isEmpty ||
+                  !value.contains('@')) {
                 return 'Invalid email!';
               }
               return null;
@@ -121,7 +129,7 @@ class _SignInState extends State<SignIn> {
             ),
           ),
           const SizedBox(height: 5),
-          TextFormField(      
+          TextFormField(
             textAlign: TextAlign.left,
             textAlignVertical: TextAlignVertical.bottom,
             decoration: InputDecoration(
@@ -132,9 +140,9 @@ class _SignInState extends State<SignIn> {
               hintStyle: SportifindTheme.greyTitle,
               filled: true,
               fillColor: Colors.white70,
-              prefixIcon: const Icon(Icons.lock), 
+              prefixIcon: const Icon(Icons.lock),
             ),
-            obscureText: true, 
+            obscureText: true,
             validator: (value) {
               if (value == null || value.length < 8) {
                 return 'Password must be at least 8 characters!';
@@ -157,16 +165,14 @@ class _SignInState extends State<SignIn> {
                     child: Checkbox(
                       value: _rememberMe,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(5),
                       ),
                       onChanged: (value) {
                         setState(() {
                           _rememberMe = value!;
                         });
                       },
-                      activeColor: const Color.fromARGB(
-                          255, 4, 203, 148),
+                      activeColor: const Color.fromARGB(255, 4, 203, 148),
                     ),
                   ),
                   const Text(

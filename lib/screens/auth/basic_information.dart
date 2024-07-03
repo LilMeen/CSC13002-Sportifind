@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/screens/home_screen.dart';
+import 'package:sportifind/screens/player/player_home_screen.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 //import 'package:sportifind/widgets/setting.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,7 +64,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const SportifindHomeScreen(),
+            builder: (context) => const PlayerHomeScreen(),
           ),
         );
       } catch (error) {
@@ -209,41 +209,43 @@ class BasicInformationState extends State<BasicInformationScreen> {
   }
 
   Widget _buildDropdownSection(String type, TextEditingController controller) {
-  double width = 137; // Default width
+    double width = 137; // Default width
 
-  if (type == "Gender") {
-    width = 120;
-  } else if (type == "Date Of Birth") {
-    width = 137;
-  } else if (type == "District" || type == "City/Province") {
-    width = 290;
+    if (type == "Gender") {
+      width = 120;
+    } else if (type == "Date Of Birth") {
+      width = 137;
+    } else if (type == "District" || type == "City/Province") {
+      width = 290;
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            children: <TextSpan>[
+              TextSpan(text: type),
+              const TextSpan(text: '*', style: TextStyle(color: Colors.red))
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: width,
+          height: 50,
+          child: Dropdown(
+            type: type,
+            onSaved: (value) {
+              controller.text = value ?? '';
+              print(controller.text);
+            },
+          ),
+        ),
+      ],
+    );
   }
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      RichText(
-        text: TextSpan(
-          style: const TextStyle(color: Colors.white, fontSize: 14),
-          children: <TextSpan>[
-            TextSpan(text: type),
-            const TextSpan(text: '*', style: TextStyle(color: Colors.red))
-          ],
-        ),
-      ),
-      const SizedBox(height: 12),
-      SizedBox(
-        width: width,
-        height: 50,
-        child: Dropdown(
-          type: type,
-          onSaved: (value){ controller.text = value ?? ''; print(controller.text);},          
-        ),
-      ),
-    ],
-  );
-}
-
 
   Widget _nextButton(BuildContext context) {
     return SizedBox(

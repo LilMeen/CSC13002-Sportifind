@@ -74,6 +74,12 @@ flutter:
   assets:
      - 'lib/assets/button_icon/tab_4.png'
      - 'lib/assets/button_icon/tab_4s.png'
+     - 'lib/assets/button_icon/tab_3.png'
+     - 'lib/assets/button_icon/tab_3s.png'
+     - 'lib/assets/button_icon/tab_2.png'
+     - 'lib/assets/button_icon/tab_2s.png'
+     - 'lib/assets/button_icon/tab_1.png'
+     - 'lib/assets/button_icon/tab_1s.png'
      - 'lib/assets/logo/logo_white_text.png'
      - 'lib/assets/logo/logo_black_text.png'
      - 'lib/assets/logo/logo.png'
