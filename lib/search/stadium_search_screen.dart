@@ -1,42 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/models/owner_data.dart';
+import 'package:sportifind/models/stadium_data.dart';
 import 'dart:async';
 import 'package:sportifind/search/search.dart';
+import 'package:sportifind/widgets/card/stadium_card.dart';
 import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';
 import 'package:sportifind/widgets/dropdown_button/district_dropdown.dart';
 
-class StadiumSearch extends StatefulWidget {
-  final Stream<QuerySnapshot> stream;
-  final GridView Function(List<DocumentSnapshot>) buildGridView;
+class StadiumSearchScreen extends StatefulWidget {
+  final int gridCol;
+  final double gridRatio;
+  final List<StadiumData> stadiums;
+  final List<OwnerData> owners;
 
-  const StadiumSearch({
+  const StadiumSearchScreen({
     super.key,
-    required this.stream,
-    required this.buildGridView,
+    required this.gridCol,
+    required this.gridRatio,
+    required this.stadiums,
+    required this.owners,
   });
 
   @override
-  State<StadiumSearch> createState() => _StadiumSearchState();
+  State<StadiumSearchScreen> createState() => _StadiumSearchScreenState();
 }
 
-class _StadiumSearchState extends State<StadiumSearch> {
+class _StadiumSearchScreenState extends State<StadiumSearchScreen> {
   Timer? _debounce;
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   String _selectedCity = '';
   String _selectedDistrict = '';
-  final List<String> _searchFields = ['name'];
+  List<StadiumData> filteredStadiums = [];
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    _searchText = _searchController.text;
+    filteredStadiums = widget.stadiums;
   }
 
   @override
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -45,8 +54,18 @@ class _StadiumSearchState extends State<StadiumSearch> {
     _debounce = Timer(const Duration(milliseconds: 500), () {
       setState(() {
         _searchText = _searchController.text;
+        _performSearch();
       });
     });
+  }
+
+  void _performSearch() {
+    filteredStadiums = searchingStadiums(
+      stadiums: widget.stadiums,
+      searchText: _searchText,
+      selectedCity: _selectedCity,
+      selectedDistrict: _selectedDistrict,
+    );
   }
 
   @override
@@ -77,6 +96,7 @@ class _StadiumSearchState extends State<StadiumSearch> {
                           setState(() {
                             _selectedCity = value ?? '';
                             _selectedDistrict = '';
+                            _performSearch();
                           });
                         },
                       ),
@@ -89,6 +109,7 @@ class _StadiumSearchState extends State<StadiumSearch> {
                         onChanged: (value) {
                           setState(() {
                             _selectedDistrict = value ?? '';
+                            _performSearch();
                           });
                         },
                       ),
@@ -98,37 +119,34 @@ class _StadiumSearchState extends State<StadiumSearch> {
               ),
               const SizedBox(height: 8.0),
               Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: widget.stream,
-                  builder: (ctx, stadiumSnapshot) {
-                    if (stadiumSnapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (stadiumSnapshot.hasError) {
-                      return Center(
-                          child: Text('Error: ${stadiumSnapshot.error}'));
-                      //return const Center(child: Text('Something went wrong. Please try again later.'));
-                    }
+                child: filteredStadiums.isEmpty
+                    ? const Center(child: Text('No stadiums found.'))
+                    : GridView.builder(
+                        padding: const EdgeInsets.all(8.0),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: widget.gridCol,
+                          childAspectRatio: widget.gridRatio,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                        ),
+                        itemCount: filteredStadiums.length,
+                        itemBuilder: (ctx, index) {
+                          final stadium = filteredStadiums[index];
+                          String ownerName = 'Unknonw';
 
-                    final stadiums = stadiumSnapshot.data!.docs;
-                    var filteredStadiums = stadiums.where((doc) {
-                      final data = doc.data() as Map<String, dynamic>;
-                      final matchesCity = _selectedCity.isEmpty ||
-                          data['city'] == _selectedCity;
-                      final matchesDistrict = _selectedDistrict.isEmpty ||
-                          data['district'] == _selectedDistrict;
-                      return matchesCity && matchesDistrict;
-                    }).toList();
-                    filteredStadiums = searchAndSortDocuments(
-                        filteredStadiums, _searchText, _searchFields);
-
-                    if (filteredStadiums.isEmpty) {
-                      return const Center(child: Text('No stadiums found.'));
-                    }
-
-                    return widget.buildGridView(filteredStadiums);
-                  },
-                ),
+                          for (var i = 0; i < widget.owners.length; ++i) {
+                            if (widget.owners[i].id == stadium.owner) {
+                              ownerName = widget.owners[i].name;
+                              break;
+                            }
+                          }
+                          
+                          return StadiumCard(
+                            stadium: stadium,
+                            ownerName: ownerName,
+                          );
+                        },
+                      ),
               ),
             ],
           ),

@@ -1,32 +1,92 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/search/stadium_search.dart';
-import 'package:sportifind/widgets/card/stadium_card.dart';
+import 'package:sportifind/models/owner_data.dart';
+import 'package:sportifind/models/stadium_data.dart';
+import 'package:sportifind/search/stadium_search_screen.dart';
 
-class PlayerStadiumScreen extends StatelessWidget {
+class PlayerStadiumScreen extends StatefulWidget {
   const PlayerStadiumScreen({super.key});
 
   @override
+  State<PlayerStadiumScreen> createState() {
+    return _PlayerStadiumScreenState();
+  }
+}
+
+class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
+  List<StadiumData> stadiums = [];
+  List<OwnerData> owners = [];
+
+  final int gridCol = 2;
+  final double gridRatio = 0.7;
+  bool isLoading = true;
+  String errorMessage = '';
+
+  Future<void> getStadiumsData() async {
+    try {
+      final stadiumsQuery =
+          await FirebaseFirestore.instance.collection('stadiums').get();
+      setState(() {
+        stadiums = stadiumsQuery.docs
+            .map((stadium) => StadiumData.fromSnapshot(stadium))
+            .toList();
+        isLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        errorMessage = 'Failed to load stadiums data: $error';
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> getOwnersData() async {
+  final ownersQuery = await FirebaseFirestore.instance
+      .collection('users')
+      .where('role', isEqualTo: 'stadium_owner')
+      .get();
+  setState(() {
+    owners = ownersQuery.docs
+        .map((owner) => OwnerData.fromSnapshot(owner))
+        .toList();
+  });
+}
+
+
+  @override
+  void initState() {
+    super.initState();
+    getStadiumsData();
+    getOwnersData();
+  }
+
+  Future<void> _refreshStadiums() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+    await getStadiumsData();
+    await getOwnersData();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return StadiumSearch(
-      stream: FirebaseFirestore.instance.collection('stadiums').snapshots(),
-      buildGridView: (stadiums) {
-        return GridView.builder(
-          padding: const EdgeInsets.all(8.0),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 0.7,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-          ),
-          itemCount: stadiums.length,
-          itemBuilder: (ctx, index) {
-            final stadium = stadiums[index];
-            final stadiumData = stadium.data() as Map<String, dynamic>;
-            return StadiumCard(stadiumData: stadiumData);
-          },
-        );
-      },
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (errorMessage.isNotEmpty) {
+      return Center(child: Text(errorMessage));
+    }
+
+    return RefreshIndicator(
+      onRefresh: _refreshStadiums,
+      child: StadiumSearchScreen(
+        gridCol: gridCol,
+        gridRatio: gridRatio,
+        stadiums: stadiums,
+        owners: owners,
+      ),
     );
   }
 }
