@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/models/stadium_data.dart';
+import 'package:sportifind/screens/player/match/util/pop_result.dart';
 
 class StadiumInfoScreen extends StatefulWidget {
   final StadiumData stadium;
   final String ownerName;
+  final bool? forMatchCreate;
 
   const StadiumInfoScreen({
     super.key,
     required this.stadium,
     required this.ownerName,
+    required this.forMatchCreate,
   });
 
   @override
@@ -21,6 +25,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
   @override
   void initState() {
     super.initState();
+    print(widget.forMatchCreate);
     selectedImage = widget.stadium.avatar;
   }
 
@@ -100,17 +105,16 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
   }
 
   String formatPrice(double price) {
-  final priceString = price.toStringAsFixed(0);
-  final buffer = StringBuffer();
-  for (int i = 0; i < priceString.length; i++) {
-    if (i > 0 && (priceString.length - i) % 3 == 0) {
-      buffer.write('.');
+    final priceString = price.toStringAsFixed(0);
+    final buffer = StringBuffer();
+    for (int i = 0; i < priceString.length; i++) {
+      if (i > 0 && (priceString.length - i) % 3 == 0) {
+        buffer.write('.');
+      }
+      buffer.write(priceString[i]);
     }
-    buffer.write(priceString[i]);
+    return buffer.toString();
   }
-  return buffer.toString();
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -202,6 +206,37 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              widget.forMatchCreate == true
+                  ? Container(
+                      width: double.infinity,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15.0),
+                        color: SportifindTheme.nearlyGreen,
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.popUntil(
+                              context,
+                              (route) =>
+                                  route.settings.name == 'Select_stadium');
+                          Navigator.pop(
+                            context,
+                            PopWithResults(
+                              fromPage: 'Stadium_info',
+                              toPage: 'Select_stadium',
+                              results: [widget.stadium.id, widget.stadium.name],
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "Pick this stadium",
+                          style: SportifindTheme.status,
+                        ),
+                      ),
+                    )
+                  : const SizedBox(),
             ],
           ),
         ),

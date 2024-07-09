@@ -4,8 +4,11 @@ import 'package:sportifind/models/owner_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/search/stadium_search_screen.dart';
 
+// ignore: must_be_immutable
 class PlayerStadiumScreen extends StatefulWidget {
-  const PlayerStadiumScreen({super.key});
+  PlayerStadiumScreen({super.key, this.forMatchCreate});
+
+  bool? forMatchCreate = false;
 
   @override
   State<PlayerStadiumScreen> createState() {
@@ -86,6 +89,7 @@ class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
         gridRatio: gridRatio,
         stadiums: stadiums,
         owners: owners,
+        forMatchCreate: widget.forMatchCreate!,
       ),
     );
   }

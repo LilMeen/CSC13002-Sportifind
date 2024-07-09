@@ -33,11 +33,45 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     '2h00',
   ];
 
-  DateTime convertStringToDateTime(String timeString, DateTime selectedDate) {
-    final dateFormat = DateFormat('HH:mm');
-    final time = dateFormat.parse(timeString);
-    return DateTime(selectedDate.year, selectedDate.month, selectedDate.day,
-        time.hour, time.minute);
+  List<DateTimeRange> generatePauseSlot(int selectedPlayTime) {
+    if (selectedPlayTime == 60) {
+      return [
+        DateTimeRange(
+          start: DateTime(selectedDate!.year, selectedDate!.month,
+              selectedDate!.day, 22, 30),
+          end: DateTime(selectedDate!.year, selectedDate!.month,
+              selectedDate!.day, 23, 00),
+        ),
+      ];
+    } else if (selectedPlayTime == 90) {
+      return [
+        DateTimeRange(
+          start: DateTime(selectedDate!.year, selectedDate!.month,
+              selectedDate!.day, 22, 00),
+          end: DateTime(selectedDate!.year, selectedDate!.month,
+              selectedDate!.day, 23, 00),
+        ),
+      ];
+    } else if (selectedPlayTime == 120) {
+      return [
+        DateTimeRange(
+          start: DateTime(selectedDate!.year, selectedDate!.month,
+              selectedDate!.day, 21, 30),
+          end: DateTime(selectedDate!.year, selectedDate!.month,
+              selectedDate!.day, 23, 00),
+        ),
+      ];
+    } else {
+      return [];
+    }
+  }
+
+  DateTime convertStringToDateTime(String timeString, String selectedDate) {
+    final hourFormat = DateFormat('HH:mm');
+    final dateFormat = DateFormat('M/D/yyyy');
+    final time = hourFormat.parse(timeString);
+    final date = dateFormat.parse(selectedDate);
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
   }
 
   // Function for fetching data from firestore
@@ -60,13 +94,13 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
 
     await getMatchData();
     for (var i = 0; i < userMatches.length; i++) {
-      final String matchDate = formatter.format(userMatches[i].date);
+      final String matchDate = userMatches[i].date;
       if (date == matchDate) {
         bookedSlot.add(DateTimeRange(
             start: convertStringToDateTime(
-                userMatches[i].startHour, userMatches[i].date),
+                userMatches[i].start, userMatches[i].date),
             end: convertStringToDateTime(
-                userMatches[i].endHour, userMatches[i].date)));
+                userMatches[i].end, userMatches[i].date)));
       }
     }
     userMatches.clear();
@@ -129,30 +163,11 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     );
   }
 
-  // // Function to show Date picker
-  // void _showDatePicker(List<DateTimeRange> bookedSlot) async {
-  //   final now = DateTime.now();
-  //   final firstDate = DateTime(now.year, now.month, now.day);
-  //   final pickedDate = await showDatePicker(
-  //     context: context,
-  //     initialDate: now,
-  //     firstDate: firstDate,
-  //     lastDate: DateTime(now.year + 25),
-  //   );
-  //   if (pickedDate != null) {
-  //     bookedSlot = await getMatchDate(pickedDate);
-  //     print('Booked Date: $bookedSlot');
-  //     setState(() {
-  //       selectedDate = pickedDate;
-  //       print('Selected Date: $selectedDate');
-  //     });
-  //   }
-  // }
-
   // Function to build booking Calendar
-  Widget bookingCalender(double height) {
+  Widget bookingCalender(double bookingHeight) {
+    final double width = MediaQuery.of(context).size.width;
     return SizedBox(
-      height: height,
+      height: bookingHeight,
       child: selectedDate != null
           ? BookingCalendar(
               bookingService: BookingService(
@@ -171,8 +186,11 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               selectedStadium: widget.selectedStadium,
               selectedTeam: widget.selectedTeam,
               selectedDate: selectedDate!,
+              pauseSlots: generatePauseSlot(
+                  convertDurationStringToInt(selectedPlayTime)),
               addMatchCard: widget.addMatchCard,
               bookedSlot: bookedSlot,
+              bookingGridCrossAxisCount: width < 400 ? 3 : 4,
               wholeDayIsBookedWidget:
                   const Text('Sorry, for this day everything is booked'),
             )

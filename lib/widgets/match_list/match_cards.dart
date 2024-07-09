@@ -2,18 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
-import 'package:sportifind/screens/player/match/screens/select_stadium_screen.dart';
+import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/widgets/match_list/match_list.dart';
 
 import '../../models/match_card.dart';
 
-// Test Data for displaying match card
-
-final List<MatchCard> _nearByMatch = [];
-
 class MatchCards extends StatefulWidget {
-  const MatchCards({super.key});
+  const MatchCards(
+      {super.key, required this.yourMatch, required this.nearByMatch});
+
+  final List<MatchCard> yourMatch;
+  final List<MatchCard> nearByMatch;
 
   @override
   State<StatefulWidget> createState() => _MatchCardsState();
@@ -21,50 +20,81 @@ class MatchCards extends StatefulWidget {
 
 class _MatchCardsState extends State<MatchCards> {
   final user = FirebaseAuth.instance.currentUser!;
-  final List<MatchCard> _yourMatch = [];
 
-  void _addMatchCard(MatchCard matchcard) {
-    setState(() {
-      _yourMatch.add(matchcard);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MatchMainScreen(),
-        ),
-      );
-    });
+  void _openFilterOverlay() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => const Text("hhehehehe"),
+    );
   }
 
-  void getMatchData() async {
+  void getPersonalMatchData() async {
     final List<MatchCard> userMatches = [];
     final matchesQuery =
         await FirebaseFirestore.instance.collection('matches').get();
     final matches = matchesQuery.docs
         .map((match) => MatchCard.fromSnapshot(match))
         .toList();
+
     for (var i = 0; i < matches.length; ++i) {
       if (matches[i].userId == user.uid) {
         userMatches.add(matches[i]);
       }
     }
     setState(() {
-      _yourMatch.addAll(userMatches);
+      widget.yourMatch.addAll(userMatches);
     });
+  }
+
+  void getNearbyMatchData() async {
+    final List<MatchCard> userMatches = [];
+
+    final user = FirebaseAuth.instance.currentUser!;
+    final userData = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    final matchesQuery =
+        await FirebaseFirestore.instance.collection('matches').get();
+    final matches = matchesQuery.docs
+        .map((match) => MatchCard.fromSnapshot(match))
+        .toList();
+
+    final stadiumsQuery =
+        await FirebaseFirestore.instance.collection('stadiums').get();
+    final stadiums = stadiumsQuery.docs
+        .map((stadium) => StadiumData.fromSnapshot(stadium))
+        .toList();
+
+    for (var i = 0; i < stadiums.length; ++i) {
+      for (var j = 0; j < matches.length; ++j) {
+        if (matches[j].stadium == stadiums[i].name &&
+            stadiums[i].city == userData.data()!['city'] &&
+            stadiums[i].district == userData.data()!['district'] &&
+            matches[j].userId != user.uid) {
+              userMatches.add(matches[j]);
+              print('find nearby match');
+            }
+      }
+      setState(() {
+        widget.nearByMatch.addAll(userMatches);
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      getMatchData();
+      getPersonalMatchData();
+      getNearbyMatchData();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.sizeOf(context).height;
-    return SizedBox(
-      height: height - 160,
+    return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -77,35 +107,39 @@ class _MatchCardsState extends State<MatchCards> {
             ),
           ),
           const SizedBox(height: 20),
-          MatchCardList(matches: _yourMatch),
+          SizedBox(
+            height: 240,
+            child: MatchCardList(matches: widget.yourMatch),
+          ),
           const SizedBox(height: 30),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30),
-            child: Text(
-              "Nearby match",
-              style: SportifindTheme.display1,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                const Text(
+                  "Nearby match",
+                  style: SportifindTheme.display1,
+                ),
+                const Spacer(),
+                IconButton(
+                    onPressed: () {
+                      _openFilterOverlay();
+                    },
+                    icon: const Icon(
+                      Icons.filter_alt,
+                      color: SportifindTheme.nearlyGreen,
+                      size: 40,
+                    ))
+              ],
             ),
           ),
           const SizedBox(height: 20),
-          MatchCardList(matches: _nearByMatch),
-          const SizedBox(height: 100),
-          Padding(
-            padding: const EdgeInsets.only(left: 360.0),
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        SelectStadiumScreen(addMatchCard: _addMatchCard),
-                  ),
-                );
-              },
-              backgroundColor: SportifindTheme.nearlyDarkGreen,
-              shape: const CircleBorder(),
-              child: const Icon(Icons.add, color: SportifindTheme.white,),
-            ),
+          SizedBox(
+            height: 240,
+            child: MatchCardList(matches: widget.nearByMatch),
           ),
+          const SizedBox(height: 100),
         ],
       ),
     );

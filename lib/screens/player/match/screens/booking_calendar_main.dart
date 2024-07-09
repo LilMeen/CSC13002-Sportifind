@@ -42,9 +42,11 @@ class BookingCalendarMain extends StatefulWidget {
     required this.selectedPlayTime,
     required this.selectedStadium,
     required this.selectedTeam,
+    required this.selectedDate,
     required this.bookedSlot,
     required this.addMatchCard,
   });
+
   ///Customizable
   final Widget? bookingExplanation;
   final int? bookingGridCrossAxisCount;
@@ -86,6 +88,8 @@ class BookingCalendarMain extends StatefulWidget {
   final String selectedTeam;
   // Selected Stadium
   final String selectedStadium;
+  // Selected Date
+  final DateTime selectedDate;
   // get bookedSlot
   final List<DateTimeRange> bookedSlot;
   final void Function(MatchCard matchcard) addMatchCard;
@@ -121,50 +125,48 @@ class _BookingCalendarMainState extends State<BookingCalendarMain> {
                     // child: (widget.wholeDayIsBookedWidget != null &&
                     //         controller.isWholeDayBooked())
                     //     ? widget.wholeDayIsBookedWidget! :
-                        child: GridView.builder(
-                            physics: widget.gridScrollPhysics ??
-                                const BouncingScrollPhysics(),
-                            itemCount: controller.allBookingSlots.length,
-                            itemBuilder: (context, index) {
-                              TextStyle? getTextStyle() {
-                                if (controller.isSlotBooked(index)) {
-                                  return widget.bookedSlotTextStyle;
-                                } else if (index == controller.selectedSlot) {
-                                  return widget.selectedSlotTextStyle;
-                                } else {
-                                  return widget.availableSlotTextStyle;
-                                }
-                              }
+                    child: GridView.builder(
+                      physics: widget.gridScrollPhysics ??
+                          const BouncingScrollPhysics(),
+                      itemCount: controller.allBookingSlots.length,
+                      itemBuilder: (context, index) {
+                        TextStyle? getTextStyle() {
+                          if (controller.isSlotBooked(index)) {
+                            return widget.bookedSlotTextStyle;
+                          } else if (index == controller.selectedSlot) {
+                            return widget.selectedSlotTextStyle;
+                          } else {
+                            return widget.availableSlotTextStyle;
+                          }
+                        }
 
-                              final slot =
-                                  controller.allBookingSlots.elementAt(index);
-                              return BookingSlot(
-                                hideBreakSlot: widget.hideBreakTime,
-                                pauseSlotColor: widget.pauseSlotColor,
-                                availableSlotColor: widget.availableSlotColor,
-                                bookedSlotColor: widget.bookedSlotColor,
-                                selectedSlotColor: widget.selectedSlotColor,
-                                isPauseTime: controller.isSlotInPauseTime(slot),
-                                isBooked: controller.isSlotBooked(index),
-                                isSelected: index == controller.selectedSlot,
-                                onTap: () => controller.selectSlot(index),
-                                child: Center(
-                                  child: Text(
-                                    widget.formatDateTime?.call(slot) ??
-                                        BookingUtil.formatDateTime(slot),
-                                    style: getTextStyle(),
-                                  ),
-                                ),
-                              );
-                            },
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount:
-                                  widget.bookingGridCrossAxisCount ?? 4,
-                              childAspectRatio:
-                                  widget.bookingGridChildAspectRatio ?? 1.5,
+                        final slot =
+                            controller.allBookingSlots.elementAt(index);
+                        return BookingSlot(
+                          hideBreakSlot: widget.hideBreakTime,
+                          pauseSlotColor: widget.pauseSlotColor,
+                          availableSlotColor: widget.availableSlotColor,
+                          bookedSlotColor: widget.bookedSlotColor,
+                          selectedSlotColor: widget.selectedSlotColor,
+                          isPauseTime: controller.isSlotInPauseTime(slot),
+                          isBooked: controller.isSlotBooked(index),
+                          isSelected: index == controller.selectedSlot,
+                          onTap: () => controller.selectSlot(index),
+                          child: Center(
+                            child: Text(
+                              widget.formatDateTime?.call(slot) ??
+                                  BookingUtil.formatDateTime(slot),
+                              style: getTextStyle(),
                             ),
                           ),
+                        );
+                      },
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: widget.bookingGridCrossAxisCount ?? 4,
+                        childAspectRatio:
+                            widget.bookingGridChildAspectRatio ?? 1.5,
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     height: 8,
@@ -184,6 +186,10 @@ class _BookingCalendarMainState extends State<BookingCalendarMain> {
                           BookingExplanation(
                               color: widget.bookedSlotColor ?? Colors.redAccent,
                               text: widget.bookedSlotText ?? "Booked"),
+                          BookingExplanation(
+                              color: widget.pauseSlotColor ??
+                                  const Color.fromARGB(255, 71, 71, 71),
+                              text: widget.pauseSlotText ?? "Pause"),
                         ],
                       ),
                   const SizedBox(height: 16),

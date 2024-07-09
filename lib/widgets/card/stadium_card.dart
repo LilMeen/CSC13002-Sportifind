@@ -2,18 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/player/stadium/stadium_info_screen.dart';
 
-class StadiumCard extends StatelessWidget {
+class StadiumCard extends StatefulWidget {
   final StadiumData stadium;
   final String ownerName;
   final double imageRatio;
+  final bool? forMatchCreate;
 
   const StadiumCard({
     required this.stadium,
     required this.ownerName,
+    required this.forMatchCreate,
     this.imageRatio = 1,
     super.key,
   });
 
+  @override
+  State<StatefulWidget> createState() => _StadiumCardState();
+}
+
+class _StadiumCardState extends State<StadiumCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -21,7 +28,7 @@ class StadiumCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => StadiumInfoScreen(stadium: stadium, ownerName: ownerName)),
+              builder: (context) => StadiumInfoScreen(stadium: widget.stadium, ownerName: widget.ownerName, forMatchCreate: widget.forMatchCreate,)),
         );
       },
       child: Card(
@@ -34,7 +41,7 @@ class StadiumCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AspectRatio(
-              aspectRatio: imageRatio,
+              aspectRatio: widget.imageRatio,
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(8.0),
@@ -55,7 +62,7 @@ class StadiumCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        stadium.name,
+                        widget.stadium.name,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
@@ -65,13 +72,13 @@ class StadiumCard extends StatelessWidget {
                     const SizedBox(height: 4.0),
                     Expanded(
                       child: Text(
-                        '${stadium.district}, ${stadium.city}',
+                        '${widget.stadium.district}, ${widget.stadium.city}',
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Expanded(
                       child: Text(
-                        stadium.address,
+                        widget.stadium.address,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

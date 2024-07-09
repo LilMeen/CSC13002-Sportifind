@@ -63,9 +63,9 @@ class MatchListItem extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  roundedRectangleBuilder(80, matchCard.startHour, false,
+                  roundedRectangleBuilder(80, matchCard.start, false,
                       SportifindTheme.nearlyWhite),
-                  roundedRectangleBuilder(120, matchCard.formattedDate, false,
+                  roundedRectangleBuilder(120, matchCard.date, false,
                       SportifindTheme.nearlyWhite),
                   roundedRectangleBuilder(80, matchCard.playTime, true,
                       SportifindTheme.nearlyWhite),

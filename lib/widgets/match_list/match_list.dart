@@ -9,11 +9,12 @@ class MatchCardList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-          itemCount: matches.length,
-          itemBuilder: (ctx, index) =>
-              MatchListItem(matchCard: matches[index])),
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: matches.length,
+      itemBuilder: (ctx, index) => MatchListItem(
+        matchCard: matches[index],
+      ),
     );
   }
 }

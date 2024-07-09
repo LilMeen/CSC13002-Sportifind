@@ -12,6 +12,7 @@ class StadiumSearchScreen extends StatefulWidget {
   final double gridRatio;
   final List<StadiumData> stadiums;
   final List<OwnerData> owners;
+  final bool forMatchCreate; 
 
   const StadiumSearchScreen({
     super.key,
@@ -19,6 +20,7 @@ class StadiumSearchScreen extends StatefulWidget {
     required this.gridRatio,
     required this.stadiums,
     required this.owners,
+    required this.forMatchCreate,
   });
 
   @override
@@ -144,6 +146,7 @@ class _StadiumSearchScreenState extends State<StadiumSearchScreen> {
                           return StadiumCard(
                             stadium: stadium,
                             ownerName: ownerName,
+                            forMatchCreate: widget.forMatchCreate,
                           );
                         },
                       ),
