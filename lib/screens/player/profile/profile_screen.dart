@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/widgets/setting.dart';
 import 'package:sportifind/widgets/information_menu.dart';
 import 'package:sportifind/screens/player/profile/widgets/hexagon_stat.dart';
 import 'package:sportifind/screens/player/profile/edit_information.dart';
+import 'package:sportifind/widgets/image_picker.dart';
 import 'package:sportifind/screens/player/profile/widgets/rating.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:flutter/services.dart' show rootBundle;
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,6 +22,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late Future<DocumentSnapshot> userDataFuture;
+
+  //final FirebaseStorage _storage = FirebaseStorage.instance;
 
   @override
   void initState() {
@@ -105,6 +113,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  final ImagePicker _picker = ImagePicker();
+
+  Future<File> get getImageFileFromAssets async {
+    final byteData = await rootBundle.load('lib/assets/logo/google_logo.png');
+    final tempDir = await getTemporaryDirectory();
+
+    final tempFile = File('${tempDir.path}/your_image.jpg');
+    await tempFile.writeAsBytes(byteData.buffer.asUint8List(), flush: true);
+
+    return tempFile;
+  }
+
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  XFile? image;
+  UploadTask? uploadTask;
+
+  Future<void> _pickImageFromGallery() async {
+    final picture = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if(picture != null){
+      image = picture;
+      setState(() {});
+    }
+
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final storageRef = FirebaseStorage.instance
+      .ref()
+      .child('users')
+      .child(userId)
+      .child('avatar')
+      .child('avatar.jpg');
+
+    uploadTask = storageRef.putFile(File(image!.path));
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    final picture = await ImagePicker().pickImage(source: ImageSource.camera);
+
+    if(picture != null){
+      image = picture;
+      setState(() {});
+    }
+
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final storageRef = FirebaseStorage.instance
+      .ref()
+      .child('users')
+      .child(userId)
+      .child('avatar')
+      .child('avatar.jpg');
+
+    uploadTask = storageRef.putFile(File(image!.path));
+  }
+
+  void _showImagePickerOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Container(
+            child: Wrap(
+              children: <Widget>[
+                ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Pick from Gallery'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _pickImageFromGallery();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.camera_alt),
+                  title: const Text('Take a Picture'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _pickImageFromCamera();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Default ratings with all values set to 0
@@ -173,9 +268,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 120,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(100),
-                            child: const Image(
-                              image: AssetImage("lib/assets/google_logo.png"),
-                            ),
+                            child: image == null ? const Image(image: AssetImage("lib/assets/google_logo.png"),)
+                            : Image.file(File(image!.path)),
                           ),
                         ),
                         Positioned(
@@ -189,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               color: Colors.tealAccent,
                             ),
                             child: IconButton(
-                              onPressed: () {},
+                              onPressed: () => _showImagePickerOptions(context),
                               icon: const Icon(
                                 Icons.create_rounded,
                                 color: Colors.black,
