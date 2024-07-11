@@ -116,12 +116,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   return;
                 }
                 setState(() {
-                  tabBody = const ProfileScreen(
-                            height: '161',
-                            weight: '60',
-                            foot: 'left',
-                            right_foot: true,
-                  );
+                  tabBody = const ProfileScreen();
                 });
               });
             }
