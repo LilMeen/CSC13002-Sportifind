@@ -1,4 +1,5 @@
 import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
+import 'package:sportifind/screens/player/team/screens/team_main_screen.dart';
 import 'package:sportifind/widgets/bottom_navigation.dart';
 import 'package:sportifind/models/tab_icon.dart';
 import 'package:flutter/material.dart';
@@ -88,37 +89,59 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
           },
           changeIndex: (int index) {
             if (index == 0) {
-              animationController?.reverse().then<dynamic>((data) {
-                if (!mounted) {
-                  return;
-                }
-                setState(() {
-                  tabBody = const MatchMainScreen();
-                });
-              });
+              animationController?.reverse().then<dynamic>(
+                (data) {
+                  if (!mounted) {
+                    return;
+                  }
+                  setState(
+                    () {
+                      tabBody = const MatchMainScreen();
+                    },
+                  );
+                },
+              );
             } else if (index == 1) {
-              animationController?.reverse().then<dynamic>((data) {
-                if (!mounted) {
-                  return;
-                }
-                setState(() {
-                  tabBody = PlayerStadiumScreen(forMatchCreate: false,);
-                });
-              });
+              animationController?.reverse().then<dynamic>(
+                (data) {
+                  if (!mounted) {
+                    return;
+                  }
+                  setState(
+                    () {
+                      tabBody = PlayerStadiumScreen(
+                        forMatchCreate: false,
+                      );
+                    },
+                  );
+                },
+              );
             } else if (index == 2) {
-              tabBody = Container(
-                // Your first screen widget or use Navigator to push a named route
-                color: SportifindTheme.background,
+              animationController?.reverse().then<dynamic>(
+                (data) {
+                  if (!mounted) {
+                    return;
+                  }
+                  setState(
+                    () {
+                      tabBody = const TeamMainScreen();
+                    },
+                  );
+                },
               );
             } else if (index == 3) {
-              animationController?.reverse().then<dynamic>((data) {
-                if (!mounted) {
-                  return;
-                }
-                setState(() {
-                  tabBody = const ProfileScreen();
-                });
-              });
+              animationController?.reverse().then<dynamic>(
+                (data) {
+                  if (!mounted) {
+                    return;
+                  }
+                  setState(
+                    () {
+                      tabBody = const ProfileScreen();
+                    },
+                  );
+                },
+              );
             }
           },
         ),
