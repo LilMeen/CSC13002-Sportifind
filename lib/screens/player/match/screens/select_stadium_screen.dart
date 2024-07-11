@@ -23,6 +23,7 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
   String? _selectedTeam;
   String? _selectedStadiumName;
   String? _selectedStadiumId;
+  int? _numberOfField;
 
   var avatar = ['lib/assets/logo/real_madrid.png', 'lib/assets/logo/logo.png'];
 
@@ -130,6 +131,7 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
                 setState(() {
                   _selectedStadiumId = result.results![0];
                   _selectedStadiumName = result.results![1];
+                  _numberOfField = int.parse(result.results![2]);
                   print(_selectedStadiumId);
                   print(_selectedStadiumName);
                 });
@@ -199,7 +201,8 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
                           MaterialPageRoute(
                             builder: (context) => DateSelectScreen(
                               selectedTeam: _selectedTeam!,
-                              selectedStadium: _selectedStadiumName!,
+                              selectedStadium: _selectedStadiumId!,
+                              numberOfField: _numberOfField!,
                               addMatchCard: widget.addMatchCard,
                             ),
                           ),

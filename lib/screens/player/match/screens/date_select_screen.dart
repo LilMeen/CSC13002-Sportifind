@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/match/screens/select_stadium_screen.dart';
 import 'package:sportifind/screens/player/match/util/booking_calendar.dart';
+import 'package:sportifind/screens/player/match/widgets/field_picker.dart';
 import 'package:sportifind/widgets/date_picker.dart';
 
 class DateSelectScreen extends StatefulWidget {
@@ -12,10 +14,12 @@ class DateSelectScreen extends StatefulWidget {
       {super.key,
       required this.selectedStadium,
       required this.selectedTeam,
+      required this.numberOfField,
       required this.addMatchCard});
 
   final String selectedTeam;
   final String selectedStadium;
+  final int numberOfField;
   final void Function(MatchCard matchcard) addMatchCard;
   @override
   State<StatefulWidget> createState() => _DateSelectScreenState();
@@ -23,6 +27,7 @@ class DateSelectScreen extends StatefulWidget {
 
 class _DateSelectScreenState extends State<DateSelectScreen> {
   DateTime? selectedDate;
+  String selectedField = "1";
   List<MatchCard> userMatches = [];
   List<DateTimeRange> bookedSlot = [];
   String selectedPlayTime = '1h00';
@@ -87,7 +92,8 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   }
 
   // Function for parsing data
-  Future<List<DateTimeRange>> getMatchDate(DateTime selectedDate) async {
+  Future<List<DateTimeRange>> getMatchDate(
+      DateTime selectedDate, String selectedField) async {
     bookedSlot.clear();
     userMatches.clear();
     final String date = formatter.format(selectedDate);
@@ -95,7 +101,11 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     await getMatchData();
     for (var i = 0; i < userMatches.length; i++) {
       final String matchDate = userMatches[i].date;
-      if (date == matchDate) {
+      print(selectedField);
+      print(userMatches[i].field);
+      if (date == matchDate &&
+          selectedField == userMatches[i].field &&
+          widget.selectedStadium == userMatches[i].stadium) {
         bookedSlot.add(DateTimeRange(
             start: convertStringToDateTime(
                 userMatches[i].start, userMatches[i].date),
@@ -115,10 +125,17 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     return hours * 60 + minutes;
   }
 
-  void refresh(DateTime pickedDate) async {
-    bookedSlot = await getMatchDate(pickedDate);
+  void refreshByDate(DateTime pickedDate) async {
+    bookedSlot = await getMatchDate(pickedDate, selectedField);
     setState(() {
       selectedDate = pickedDate;
+    });
+  }
+
+  void refreshByField(String pickedField) async {
+    bookedSlot = await getMatchDate(selectedDate!, pickedField);
+    setState(() {
+      selectedField = pickedField;
     });
   }
 
@@ -186,6 +203,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               selectedStadium: widget.selectedStadium,
               selectedTeam: widget.selectedTeam,
               selectedDate: selectedDate!,
+              selectedField: selectedField,
               pauseSlots: generatePauseSlot(
                   convertDurationStringToInt(selectedPlayTime)),
               addMatchCard: widget.addMatchCard,
@@ -293,9 +311,18 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                     height: 40,
                   ),
                   durationPicker(40, 75),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  FieldPicker(
+                      func: refreshByField,
+                      numberOfField: widget.numberOfField,
+                      selectedField: selectedField,
+                      height: 40,
+                      width: 75),
                   const SizedBox(height: 40),
                   DatePicker(
-                    func: refresh,
+                    func: refreshByDate,
                     height: 40,
                     width: 175,
                     selectedDate: selectedDate,

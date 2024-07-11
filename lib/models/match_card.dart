@@ -18,7 +18,8 @@ class MatchCard {
       required this.avatarTeam2,
       required this.team1,
       required this.team2,
-      required this.userId,})
+      required this.userId,
+      required this.field,})
       : id = uuid.v4();
 
   MatchCard.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
@@ -32,7 +33,8 @@ class MatchCard {
         team1 = snapshot['team'],
         avatarTeam2 = snapshot['opponent_avatar'],
         team2 = snapshot['opponent'],
-        userId = snapshot['userId'];
+        userId = snapshot['userId'],
+        field = snapshot['field'];
 
   final String userId;
   final String id;
@@ -45,4 +47,5 @@ class MatchCard {
   final String team1;
   final String avatarTeam2;
   final String team2;
+  final String field;
 }

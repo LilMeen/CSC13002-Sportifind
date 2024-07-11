@@ -25,7 +25,6 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
   @override
   void initState() {
     super.initState();
-    print(widget.forMatchCreate);
     selectedImage = widget.stadium.avatar;
   }
 
@@ -226,7 +225,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                             PopWithResults(
                               fromPage: 'Stadium_info',
                               toPage: 'Select_stadium',
-                              results: [widget.stadium.id, widget.stadium.name],
+                              results: [widget.stadium.id, widget.stadium.name, widget.stadium.fields.toString()],
                             ),
                           );
                         },

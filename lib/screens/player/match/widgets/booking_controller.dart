@@ -16,6 +16,7 @@ class BookingController extends ChangeNotifier {
     required this.addMatchCard,
     required this.bookedTime,
     required this.selectedDate,
+    required this.selectedField,
   }) {
     serviceOpening = bookingService.bookingStart;
     serviceClosing = bookingService.bookingEnd;
@@ -32,6 +33,7 @@ class BookingController extends ChangeNotifier {
   final String selectedTeam;
   final String selectedStadium;
   final DateTime selectedDate;
+  final String selectedField;
   final void Function(MatchCard matchcard) addMatchCard;
 
   DateTime? serviceOpening;
@@ -128,8 +130,6 @@ class BookingController extends ChangeNotifier {
   void generateBookedSlots(List<DateTimeRange> data) {
     bookedSlots.clear();
     _generateBookingSlots();
-    print("booked slots");
-    print(data);
 
     for (var i = 0; i < data.length; i++) {
       final item = data[i];
@@ -165,6 +165,7 @@ class BookingController extends ChangeNotifier {
       avatarTeam2: 'lib/assets/logo/logo.png',
       team2: "?",
       userId: user.uid,
+      field: selectedField,
     );
     addMatchCard(newMatchCard);
 
@@ -179,6 +180,7 @@ class BookingController extends ChangeNotifier {
       'team_avatar': newMatchCard.avatarTeam1,
       'opponent_avatar': newMatchCard.avatarTeam2,
       'userId': user.uid,
+      'field': selectedField,
     });
   }
 
@@ -187,13 +189,10 @@ class BookingController extends ChangeNotifier {
       context,
       MaterialPageRoute(builder: (context) => const MatchMainScreen()),
     );
-    print("go to main screen");
   }
 
   bool isSlotInPauseTime(DateTime slot) {
     bool result = false;
-    print("Pause slot");
-    print(pauseSlots);
     if (pauseSlots == null) {
       return result;
     }

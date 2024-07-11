@@ -74,7 +74,6 @@ class _MatchCardsState extends State<MatchCards> {
             stadiums[i].district == userData.data()!['district'] &&
             matches[j].userId != user.uid) {
               userMatches.add(matches[j]);
-              print('find nearby match');
             }
       }
       setState(() {
