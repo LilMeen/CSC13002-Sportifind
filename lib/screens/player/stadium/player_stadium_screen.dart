@@ -72,7 +72,7 @@ class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
     await getOwnersData();
   }
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());

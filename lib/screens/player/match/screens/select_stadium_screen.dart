@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
@@ -6,6 +7,7 @@ import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
 import 'package:sportifind/screens/player/match/util/pop_result.dart';
 import 'package:sportifind/screens/player/match/widgets/common_button.dart';
 import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
+import 'package:sportifind/screens/player/team/models/team_information.dart';
 
 class SelectStadiumScreen extends StatefulWidget {
   const SelectStadiumScreen({
@@ -25,16 +27,26 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
   String? _selectedStadiumId;
   int? _numberOfField;
 
+  late Future<List<String>> _teamFuture;
+
+  final List<String> team = [];
+
   var avatar = ['lib/assets/logo/real_madrid.png', 'lib/assets/logo/logo.png'];
 
-  var teams = [
-    'Team 1',
-    'Team 2',
-    'Team 3',
-    'Team 4',
-    'Team 5',
-    'Team 6',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _teamFuture = getTeamData();
+  }
+
+  Future<List<String>> getTeamData() async {
+    final teamQuery = await FirebaseFirestore.instance.collection('teams').get();
+    final teams = teamQuery.docs.map((match) => TeamInformation.fromSnapshot(match)).toList();
+    for (var i = 0; i < teams.length; ++i) {
+      team.add(teams[i].name);
+    }
+    return team;
+  }
 
   Widget dropDownBox(String title, String hintText, double height,
       List<String> list, String? selectedValue, String avatar) {
@@ -132,8 +144,6 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
                   _selectedStadiumId = result.results![0];
                   _selectedStadiumName = result.results![1];
                   _numberOfField = int.parse(result.results![2]);
-                  print(_selectedStadiumId);
-                  print(_selectedStadiumName);
                 });
               }
             },
@@ -179,40 +189,52 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
           body: Padding(
             padding: const EdgeInsets.only(
                 left: 50.0, right: 50.0, bottom: 130, top: 50),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                dropDownBox("Team", "Choose your team", 40, teams,
-                    _selectedTeam, avatar[0]),
-                const SizedBox(height: 40),
-                stadiumPicker("Stadium", "Choose your stadium", 40),
-                const SizedBox(
-                  height: 40,
-                ),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: CommonButton(
-                      text: 'Next',
-                      width: 100,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DateSelectScreen(
-                              selectedTeam: _selectedTeam!,
-                              selectedStadium: _selectedStadiumId!,
-                              numberOfField: _numberOfField!,
-                              addMatchCard: widget.addMatchCard,
-                            ),
+            child: FutureBuilder<List<String>>(
+              future: _teamFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading teams'));
+                } else {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      dropDownBox("Team", "Choose your team", 40, snapshot.data!,
+                          _selectedTeam, avatar[0]),
+                      const SizedBox(height: 40),
+                      stadiumPicker("Stadium", "Choose your stadium", 40),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: CommonButton(
+                            text: 'Next',
+                            width: 100,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DateSelectScreen(
+                                    selectedTeam: _selectedTeam!,
+                                    selectedStadiumId: _selectedStadiumId!,
+                                    selectedStadiumName: _selectedStadiumName!,
+                                    numberOfField: _numberOfField!,
+                                    addMatchCard: widget.addMatchCard,
+                                  ),
+                                ),
+                              );
+                            },
+                            isDisabled: (_selectedTeam == null),
                           ),
-                        );
-                      },
-                      isDisabled: (_selectedTeam == null),
-                    ),
-                  ),
-                ),
-              ],
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              },
             ),
           ),
         ),

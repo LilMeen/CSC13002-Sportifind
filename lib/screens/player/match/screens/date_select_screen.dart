@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
@@ -12,13 +11,15 @@ import 'package:sportifind/widgets/date_picker.dart';
 class DateSelectScreen extends StatefulWidget {
   const DateSelectScreen(
       {super.key,
-      required this.selectedStadium,
+      required this.selectedStadiumId,
+      required this.selectedStadiumName,
       required this.selectedTeam,
       required this.numberOfField,
       required this.addMatchCard});
 
   final String selectedTeam;
-  final String selectedStadium;
+  final String selectedStadiumId;
+  final String selectedStadiumName;
   final int numberOfField;
   final void Function(MatchCard matchcard) addMatchCard;
   @override
@@ -105,7 +106,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
       print(userMatches[i].field);
       if (date == matchDate &&
           selectedField == userMatches[i].field &&
-          widget.selectedStadium == userMatches[i].stadium) {
+          widget.selectedStadiumId == userMatches[i].stadium) {
         bookedSlot.add(DateTimeRange(
             start: convertStringToDateTime(
                 userMatches[i].start, userMatches[i].date),
@@ -182,7 +183,6 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
 
   // Function to build booking Calendar
   Widget bookingCalender(double bookingHeight) {
-    final double width = MediaQuery.of(context).size.width;
     return SizedBox(
       height: bookingHeight,
       child: selectedDate != null
@@ -200,7 +200,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               uploadingWidget: const CircularProgressIndicator(),
               locale: 'en',
               selectedPlayTime: convertDurationStringToInt(selectedPlayTime),
-              selectedStadium: widget.selectedStadium,
+              selectedStadium: widget.selectedStadiumName,
               selectedTeam: widget.selectedTeam,
               selectedDate: selectedDate!,
               selectedField: selectedField,
@@ -208,7 +208,6 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                   convertDurationStringToInt(selectedPlayTime)),
               addMatchCard: widget.addMatchCard,
               bookedSlot: bookedSlot,
-              bookingGridCrossAxisCount: width < 400 ? 3 : 4,
               wholeDayIsBookedWidget:
                   const Text('Sorry, for this day everything is booked'),
             )
@@ -259,7 +258,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String selectedStadium = widget.selectedStadium;
+    final String selectedStadium = widget.selectedStadiumName;
     final String selectedTeam = widget.selectedTeam;
     return MaterialApp(
       home: SafeArea(

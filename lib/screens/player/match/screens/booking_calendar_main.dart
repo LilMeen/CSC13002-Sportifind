@@ -13,7 +13,6 @@ class BookingCalendarMain extends StatefulWidget {
   const BookingCalendarMain({
     super.key,
     this.bookingExplanation,
-    this.bookingGridCrossAxisCount,
     this.bookingGridChildAspectRatio,
     this.formatDateTime,
     this.bookingButtonText,
@@ -49,7 +48,6 @@ class BookingCalendarMain extends StatefulWidget {
 
   ///Customizable
   final Widget? bookingExplanation;
-  final int? bookingGridCrossAxisCount;
   final double? bookingGridChildAspectRatio;
   final String Function(DateTime dt)? formatDateTime;
   final String? bookingButtonText;
@@ -161,8 +159,8 @@ class _BookingCalendarMainState extends State<BookingCalendarMain> {
                           ),
                         );
                       },
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: widget.bookingGridCrossAxisCount ?? 4,
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 120,
                         childAspectRatio:
                             widget.bookingGridChildAspectRatio ?? 1.5,
                       ),

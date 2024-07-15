@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TeamInformation {
   TeamInformation({
     required this.name,
@@ -8,6 +10,15 @@ class TeamInformation {
     required this.members, 
     required this.captain,
   });
+
+  TeamInformation.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
+      : name = snapshot['name'],
+        address = snapshot['address'],
+        district = snapshot['district'],
+        city = snapshot['city'],
+        avatarImageUrl = snapshot['avatarImage'],
+        members = (snapshot['members'] as List).map((item) => item as String).toList(),
+        captain = snapshot['captain'];
 
   String name;
   String address;
