@@ -9,10 +9,11 @@ class MatchListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () => print("I was tapped"),
       child: Container(
-        height: 240,
+        width: width - 40,
         padding: const EdgeInsets.all(8.0),
         child: Card(
           shape:
@@ -31,11 +32,16 @@ class MatchListItem extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      profileBuilder(40, matchCard.avatarTeam1),
+                      profileBuilder(
+                          getRadius(matchCard.team1), matchCard.avatarTeam1),
                       const SizedBox(height: 4),
-                      Text(
-                        matchCard.team1,
-                        style: SportifindTheme.title,
+                      SizedBox(
+                        width: 90,
+                        child: Text(
+                          matchCard.team1,
+                          style: SportifindTheme.title,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ],
                   ),
@@ -50,6 +56,7 @@ class MatchListItem extends StatelessWidget {
                       Text(
                         matchCard.team2,
                         style: SportifindTheme.title,
+                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
@@ -63,10 +70,10 @@ class MatchListItem extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  roundedRectangleBuilder(80, matchCard.start, false,
-                      SportifindTheme.nearlyWhite),
-                  roundedRectangleBuilder(120, matchCard.date, false,
-                      SportifindTheme.nearlyWhite),
+                  roundedRectangleBuilder(
+                      80, matchCard.start, false, SportifindTheme.nearlyWhite),
+                  roundedRectangleBuilder(
+                      120, matchCard.date, false, SportifindTheme.nearlyWhite),
                   roundedRectangleBuilder(80, matchCard.playTime, true,
                       SportifindTheme.nearlyWhite),
                 ],
@@ -128,4 +135,14 @@ Widget roundedRectangleBuilder(
             ],
           ),
   );
+}
+
+double getRadius(String name) {
+  double radius;
+  if (name.length > 12) {
+    radius = 29;
+  } else {
+    radius = 40;
+  }
+  return radius;
 }

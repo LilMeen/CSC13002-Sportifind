@@ -36,9 +36,18 @@ class _MatchCardsState extends State<MatchCards> {
         .map((match) => MatchCard.fromSnapshot(match))
         .toList();
 
+    final stadiumsQuery =
+        await FirebaseFirestore.instance.collection('stadiums').get();
+    final stadiums = stadiumsQuery.docs
+        .map((stadium) => StadiumData.fromSnapshot(stadium))
+        .toList();
+
     for (var i = 0; i < matches.length; ++i) {
-      if (matches[i].userId == user.uid) {
-        userMatches.add(matches[i]);
+      for (var j = 0; j < stadiums.length; ++j) {
+        if (matches[i].userId == user.uid && stadiums[j].id == matches[i].stadium) {
+          matches[i].stadium = stadiums[j].name;
+          userMatches.add(matches[i]);
+        }
       }
     }
     setState(() {
@@ -73,8 +82,8 @@ class _MatchCardsState extends State<MatchCards> {
             stadiums[i].location.city == userData.data()!['city'] &&
             stadiums[i].location.district == userData.data()!['district'] &&
             matches[j].userId != user.uid) {
-              userMatches.add(matches[j]);
-            }
+          userMatches.add(matches[j]);
+        }
       }
       setState(() {
         widget.nearByMatch.addAll(userMatches);

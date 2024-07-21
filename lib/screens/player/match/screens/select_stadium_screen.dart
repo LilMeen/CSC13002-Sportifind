@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
@@ -26,6 +27,7 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
   String? _selectedStadiumName;
   String? _selectedStadiumId;
   int? _numberOfField;
+  final user = FirebaseAuth.instance.currentUser!;
 
   late Future<List<String>> _teamFuture;
 
@@ -40,11 +42,18 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
   }
 
   Future<List<String>> getTeamData() async {
-    final teamQuery = await FirebaseFirestore.instance.collection('teams').get();
-    final teams = teamQuery.docs.map((match) => TeamInformation.fromSnapshot(match)).toList();
+    final teamQuery =
+        await FirebaseFirestore.instance.collection('teams').get();
+    final teams = teamQuery.docs
+        .map((match) => TeamInformation.fromSnapshot(match))
+        .toList();
+
     for (var i = 0; i < teams.length; ++i) {
-      team.add(teams[i].name);
+      if (teams[i].captain == user.uid) {
+        team.add(teams[i].name);
+      }
     }
+    print(team);
     return team;
   }
 
@@ -200,8 +209,8 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      dropDownBox("Team", "Choose your team", 40, snapshot.data!,
-                          _selectedTeam, avatar[0]),
+                      dropDownBox("Team", "Choose your team", 40,
+                          snapshot.data!, _selectedTeam, avatar[0]),
                       const SizedBox(height: 40),
                       stadiumPicker("Stadium", "Choose your stadium", 40),
                       const SizedBox(
