@@ -40,36 +40,38 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   ];
 
   List<DateTimeRange> generatePauseSlot(int selectedPlayTime) {
+    List<DateTimeRange> pauseSlot = [];
     if (selectedPlayTime == 60) {
-      return [
+      pauseSlot.add(
         DateTimeRange(
           start: DateTime(selectedDate!.year, selectedDate!.month,
               selectedDate!.day, 22, 30),
           end: DateTime(selectedDate!.year, selectedDate!.month,
               selectedDate!.day, 23, 00),
         ),
-      ];
+      );
     } else if (selectedPlayTime == 90) {
-      return [
+      pauseSlot.add(
         DateTimeRange(
           start: DateTime(selectedDate!.year, selectedDate!.month,
               selectedDate!.day, 22, 00),
           end: DateTime(selectedDate!.year, selectedDate!.month,
               selectedDate!.day, 23, 00),
         ),
-      ];
+      );
     } else if (selectedPlayTime == 120) {
-      return [
+      pauseSlot.add(
         DateTimeRange(
           start: DateTime(selectedDate!.year, selectedDate!.month,
               selectedDate!.day, 21, 30),
           end: DateTime(selectedDate!.year, selectedDate!.month,
               selectedDate!.day, 23, 00),
         ),
-      ];
+      );
     } else {
-      return [];
+      return pauseSlot;
     }
+    return pauseSlot;
   }
 
   DateTime convertStringToDateTime(String timeString, String selectedDate) {
@@ -200,7 +202,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               uploadingWidget: const CircularProgressIndicator(),
               locale: 'en',
               selectedPlayTime: convertDurationStringToInt(selectedPlayTime),
-              selectedStadium: widget.selectedStadiumName,
+              selectedStadium: widget.selectedStadiumId,
               selectedTeam: widget.selectedTeam,
               selectedDate: selectedDate!,
               selectedField: selectedField,

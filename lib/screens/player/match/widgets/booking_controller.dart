@@ -112,6 +112,65 @@ class BookingController extends ChangeNotifier {
     return result;
   }
 
+  bool isSlotInPauseTime(int index, int selectedPlayTime) {
+    DateTime slot = allBookingSlots.elementAt(index);
+    bool result = false;
+    if (pauseSlots == null) {
+      return result;
+    }
+    for (var pauseSlot in pauseSlots!) {
+      if (BookingUtil.isOverLapping(pauseSlot.start, pauseSlot.end, slot,
+          slot.add(Duration(minutes: bookingService.serviceDuration)))) {
+        result = true;
+        return result;
+      }
+    }
+    if (selectedPlayTime == 60) {
+      if (index == 0 &&
+          isSlotBooked(index + 1) == true &&
+          isSlotBooked(index) == false) {
+        result = true;
+        return result;
+      } else if (index != 0 &&
+          isSlotBooked(index - 1) == true &&
+          isSlotBooked(index + 1) == true &&
+          isSlotBooked(index) == false) {
+        result = true;
+        return result;
+      }
+    } else if (selectedPlayTime == 90) {
+      if (index == 0 &&
+          isSlotBooked(index + 2) == true &&
+          isSlotBooked(index) == false) {
+        result = true;
+        return result;
+      } else if (index != 0 && isSlotBooked(index) == false && index < 28) {
+        for (var i = 1; i <= 2; i++) {
+          if (isSlotBooked(index + i) == true) {
+            result = true;
+            return result;
+          }
+        }
+      }
+    } else if (selectedPlayTime == 120) {
+      if (index == 0 &&
+          isSlotBooked(index + 3) == true &&
+          isSlotBooked(index) == false) {
+        result = true;
+        return result;
+      } else if (index != 0 && isSlotBooked(index) == false && index < 27) {
+        for (var i = 1; i <= 3; i++) {
+          if (isSlotBooked(index + i) == true) {
+            result = true;
+            return result;
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
   void selectSlot(int idx) {
     _selectedSlot = idx;
     notifyListeners();
@@ -189,20 +248,5 @@ class BookingController extends ChangeNotifier {
       context,
       MaterialPageRoute(builder: (context) => const MatchMainScreen()),
     );
-  }
-
-  bool isSlotInPauseTime(DateTime slot) {
-    bool result = false;
-    if (pauseSlots == null) {
-      return result;
-    }
-    for (var pauseSlot in pauseSlots!) {
-      if (BookingUtil.isOverLapping(pauseSlot.start, pauseSlot.end, slot,
-          slot.add(Duration(minutes: bookingService.serviceDuration)))) {
-        result = true;
-        break;
-      }
-    }
-    return result;
   }
 }

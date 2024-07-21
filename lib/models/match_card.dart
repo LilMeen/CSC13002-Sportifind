@@ -38,7 +38,7 @@ class MatchCard {
 
   final String userId;
   final String id;
-  final String stadium;
+  String stadium;
   final String start;
   final String end;
   final String date;
