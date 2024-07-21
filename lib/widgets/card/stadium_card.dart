@@ -6,13 +6,13 @@ class StadiumCard extends StatefulWidget {
   final StadiumData stadium;
   final String ownerName;
   final double imageRatio;
-  final bool? forMatchCreate;
+  final bool forMatchCreate;
 
   const StadiumCard({
     required this.stadium,
     required this.ownerName,
     required this.forMatchCreate,
-    this.imageRatio = 1,
+    required this.imageRatio,
     super.key,
   });
 
@@ -28,7 +28,11 @@ class _StadiumCardState extends State<StadiumCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => StadiumInfoScreen(stadium: widget.stadium, ownerName: widget.ownerName, forMatchCreate: widget.forMatchCreate,)),
+              builder: (context) => StadiumInfoScreen(
+                    stadium: widget.stadium,
+                    ownerName: widget.ownerName,
+                    forMatchCreate: widget.forMatchCreate,
+                  )),
         );
       },
       child: Card(
@@ -72,13 +76,13 @@ class _StadiumCardState extends State<StadiumCard> {
                     const SizedBox(height: 4.0),
                     Expanded(
                       child: Text(
-                        '${widget.stadium.district}, ${widget.stadium.city}',
+                        '${widget.stadium.location.district}, ${widget.stadium.location.city}',
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Expanded(
                       child: Text(
-                        widget.stadium.address,
+                        widget.stadium.location.address,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

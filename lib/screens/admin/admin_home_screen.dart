@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/screens/admin/admin.dart';
 import 'dart:async';
-import 'package:sportifind/search/search.dart';
+import 'package:sportifind/search/widgets/custom_search_bar.dart';
+import 'package:sportifind/search/util/search_service.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -16,6 +17,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   final List<String> _searchFields = ['email', 'role'];
+  SearchService srchService = SearchService();
 
   @override
   void initState() {
@@ -109,7 +111,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 //return Center(child: Text('Error: ${userSnapshot.error}'));
               } 
               final users = userSnapshot.data!.docs;
-              final filteredUsers = searchAndSortDocuments(users, _searchText, _searchFields);
+              final filteredUsers = srchService.searchAndSortDocuments(users, _searchText, _searchFields);
 
               if (filteredUsers.isEmpty) {
                 return const Center(child: Text('No users found.'));

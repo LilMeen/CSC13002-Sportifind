@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:diacritic/diacritic.dart';
 import 'package:sportifind/widgets/dropdown_button/general_dropdown.dart';
-
 
 class DistrictDropdown extends StatefulWidget {
   final String selectedCity;
   final String selectedDistrict;
   final ValueChanged<String?> onChanged;
+  final Map<String, String> citiesNameAndId;
   final Color fillColor;
 
   const DistrictDropdown({
     super.key,
     required this.selectedCity,
+    required this.citiesNameAndId,
     required this.selectedDistrict,
     required this.onChanged,
     this.fillColor = Colors.white,
@@ -23,6 +26,7 @@ class DistrictDropdown extends StatefulWidget {
 
 class _DistrictDropdownState extends State<DistrictDropdown> {
   List<String> _districts = [];
+  bool _isLoading = false;
 
   @override
   void didUpdateWidget(covariant DistrictDropdown oldWidget) {
@@ -32,27 +36,57 @@ class _DistrictDropdownState extends State<DistrictDropdown> {
     }
   }
 
+  String eraseType(String input) {
+    final List<String> typesToRemove = [
+      'Huyen ',
+      'Quan ',
+      'Thi xa ',
+      'Thanh pho ',
+    ];
+
+    for (String type in typesToRemove) {
+      input = input.replaceAll(type, '').trim();
+    }
+
+    return input.replaceAll(RegExp(r'\s+'), ' ');
+  }
+
   Future<void> _fetchDistricts(String city) async {
+    setState(() {
+      _isLoading = true;
+      _districts.clear();
+    });
+
     if (city.isEmpty) {
       setState(() {
-        _districts.clear();
+        _isLoading = false;
       });
       return;
     }
-    final cityDoc = await FirebaseFirestore.instance
-        .collection('location')
-        .where('city', isEqualTo: city)
-        .limit(1)
-        .get();
-    if (cityDoc.docs.isNotEmpty) {
-      final districtSnapshot = await FirebaseFirestore.instance
-          .collection('location')
-          .doc(cityDoc.docs.first.id)
-          .collection('district')
-          .get();
+
+    try {
+      final response = await http.get(Uri.parse(
+          'https://vapi.vnappmob.com/api/province/district/${widget.citiesNameAndId[city]}'));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body)['results'];
+        setState(() {
+          _districts = data
+              .map((item) =>
+                  eraseType(removeDiacritics(item['district_name'] as String)))
+              .toList();
+          _isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to fetch districts');
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString())),
+      );
+    } finally {
       setState(() {
-        _districts =
-            districtSnapshot.docs.map((doc) => doc['name'] as String).toList();
+        _isLoading = false;
       });
     }
   }
@@ -65,6 +99,7 @@ class _DistrictDropdownState extends State<DistrictDropdown> {
       items: _districts,
       onChanged: widget.onChanged,
       fillColor: widget.fillColor,
+      isLoading: _isLoading,
     );
   }
 }

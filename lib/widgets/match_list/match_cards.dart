@@ -70,8 +70,8 @@ class _MatchCardsState extends State<MatchCards> {
     for (var i = 0; i < stadiums.length; ++i) {
       for (var j = 0; j < matches.length; ++j) {
         if (matches[j].stadium == stadiums[i].name &&
-            stadiums[i].city == userData.data()!['city'] &&
-            stadiums[i].district == userData.data()!['district'] &&
+            stadiums[i].location.city == userData.data()!['city'] &&
+            stadiums[i].location.district == userData.data()!['district'] &&
             matches[j].userId != user.uid) {
               userMatches.add(matches[j]);
             }

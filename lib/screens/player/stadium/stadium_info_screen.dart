@@ -6,7 +6,7 @@ import 'package:sportifind/screens/player/match/util/pop_result.dart';
 class StadiumInfoScreen extends StatefulWidget {
   final StadiumData stadium;
   final String ownerName;
-  final bool? forMatchCreate;
+  final bool forMatchCreate;
 
   const StadiumInfoScreen({
     super.key,
@@ -192,7 +192,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                       const SizedBox(height: 16),
                       _buildDetailRow(Icons.person, 'Owner', widget.ownerName),
                       _buildDetailRow(Icons.location_on, 'Address',
-                          '${widget.stadium.address}, ${widget.stadium.district}, ${widget.stadium.city}'),
+                          '${widget.stadium.location.address}, ${widget.stadium.location.district}, ${widget.stadium.location.city}'),
                       _buildDetailRow(Icons.access_time, 'Opening Time',
                           '${widget.stadium.openTime} ~ ${widget.stadium.closeTime}'),
                       _buildDetailRow(

@@ -1,71 +1,110 @@
-import 'package:flutter/material.dart';
-import 'package:sportifind/screens/stadium_owner/stadium/create_stadium.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/models/owner_data.dart';
+import 'package:sportifind/models/stadium_data.dart';
+import 'package:sportifind/search/screens/stadium_search_screen.dart';
 
 class StadiumScreen extends StatefulWidget {
   const StadiumScreen({super.key});
 
   @override
-  State<StadiumScreen> createState() {
-    return _StadiumScreenState();
-  }
+  State<StadiumScreen> createState() => _StadiumScreenState();
 }
 
 class _StadiumScreenState extends State<StadiumScreen> {
+  List<StadiumData> stadiums = [];
+  List<OwnerData> owners = [];
+  late OwnerData user;
 
-  @override
-  Widget build (context){
-    return  Scaffold(
-      appBar: AppBar (
-        title: const Text('Stadium management')
-      ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
+  final int gridCol = 1;
+  final double gridRatio = 1.4;
+  final double imageRatio = 2;
+  bool isLoadingStadiums = true;
+  bool isLoadingUser = true;
+  String errorMessage = '';
+
+  Future<void> getStadiumsData() async {
+    try {
+      final stadiumsQuery = await FirebaseFirestore.instance
           .collection('stadiums')
           .where('owner', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-          .snapshots(),
-        builder: (ctx, AsyncSnapshot<QuerySnapshot> stadiumSnapshot) {
-          if (stadiumSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final stadiums = stadiumSnapshot.data!.docs;
-          return ListView.builder(
-            itemCount: stadiums.length,
-            itemBuilder: (ctx, index) => Card(
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: ListTile(
-                leading: Container (
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration (
-                    shape: BoxShape.circle,
-                    border: Border.all (color: Colors.black),
-                  ),
-                  child: const Icon(Icons.person),
-                ),
-                title: Text(stadiums[index]['name']),
-                subtitle: Text('${stadiums[index]['address']}, ${stadiums[index]['district']}, ${stadiums[index]['city']}'),
-              ),
-            ),
-          );
-        },
+          .get();
+      setState(() {
+        stadiums = stadiumsQuery.docs
+            .map((stadium) => StadiumData.fromSnapshot(stadium))
+            .toList();
+        isLoadingStadiums = false;
+      });
+    } catch (error) {
+      setState(() {
+        errorMessage = 'Failed to load stadiums data: $error';
+        isLoadingStadiums = false;
+      });
+    }
+  }
+
+  Future<void> getUserData() async {
+    try {
+      User? userFB = FirebaseAuth.instance.currentUser;
+      if (userFB != null) {
+        String uid = userFB.uid;
+        DocumentSnapshot<Map<String, dynamic>> snapshot =
+            await FirebaseFirestore.instance.collection('users').doc(uid).get();
+        if (snapshot.exists) {
+          setState(() {
+            user = OwnerData.fromSnapshot(snapshot);
+            isLoadingUser = false;
+          });
+        }
+      }
+      owners.add(user);
+    } catch (error) {
+      setState(() {
+        isLoadingUser = false;
+        errorMessage = 'Failed to load user data: $error';
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getStadiumsData();
+    getUserData();
+  }
+
+  Future<void> _refreshStadiums() async {
+    setState(() {
+      isLoadingStadiums = true;
+      isLoadingUser = true;
+      errorMessage = '';
+    });
+    await getStadiumsData();
+    await getUserData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoadingStadiums || isLoadingUser) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (errorMessage.isNotEmpty) {
+      return Center(child: Text(errorMessage));
+    }
+
+    return RefreshIndicator(
+      onRefresh: _refreshStadiums,
+      child: StadiumSearchScreen(
+        userLocation: user.location,
+        gridCol: gridCol,
+        gridRatio: gridRatio,
+        imageRatio: imageRatio,
+        stadiums: stadiums,
+        owners: owners,
+        forStadiumCreate: true,
       ),
-      floatingActionButton: ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CreateStadium()),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          shape: const CircleBorder(),
-          padding: const EdgeInsets.all(15),
-        ), 
-        child: Icon(Icons.add, color: Colors.amber[800], size: 30),
-      ),  
     );
   }
 }

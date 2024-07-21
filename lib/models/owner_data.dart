@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/models/location_info.dart';
 import 'package:uuid/uuid.dart';
 //import 'package:intl/intl.dart';
 
@@ -14,9 +15,7 @@ class OwnerData {
   final String role;
   final String gender;
   final String dob;
-  final String address;
-  final String city;
-  final String district;
+  final LocationInfo location;
   final String phone;
 
   OwnerData({
@@ -26,13 +25,11 @@ class OwnerData {
     required this.role,
     required this.gender,
     required this.dob,
-    required this.address,
-    required this.city,
-    required this.district,
+    required this.location,
     required this.phone,
   }) : id = uuid.v4();
 
-  OwnerData.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
+  OwnerData.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         name = snapshot['name'],
         email = snapshot['email'],
@@ -40,8 +37,11 @@ class OwnerData {
         role = snapshot['role'],
         gender = snapshot['gender'],
         dob = snapshot['dob'],
-        address = snapshot['address'],
-        city = snapshot['city'],
-        district = snapshot['district'],
+        location = LocationInfo(
+          district: snapshot['district'],
+          city: snapshot['city'],
+          latitude: 10.762622,
+          longitude: 106.660172,
+        ),
         phone = snapshot['phone'];
 }

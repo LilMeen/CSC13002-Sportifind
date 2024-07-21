@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/models/location_info.dart';
 import 'package:uuid/uuid.dart';
 //import 'package:intl/intl.dart';
 
@@ -10,9 +11,7 @@ class StadiumData {
   final String id;
   final String name;
   final String owner;
-  final String address;
-  final String city;
-  final String district;
+  final LocationInfo location;
   final String openTime;
   final String closeTime;
   final String phone;
@@ -22,9 +21,7 @@ class StadiumData {
   StadiumData({
     required this.name,
     required this.owner,
-    required this.address,
-    required this.city,
-    required this.district,
+    required this.location,
     required this.openTime,
     required this.closeTime,
     required this.phone,
@@ -36,9 +33,13 @@ class StadiumData {
       : id = snapshot.id,
         name = snapshot['name'],
         owner = snapshot['owner'],
-        address = snapshot['address'],
-        city = snapshot['city'],
-        district = snapshot['district'],
+        location = LocationInfo(
+          address: snapshot['address'],
+          district: snapshot['district'],
+          city: snapshot['city'],
+          latitude: 10.762622 + snapshot['name'].length / 20,
+          longitude: 106.660172+ snapshot['address'].length / 40,
+        ),
         openTime = snapshot['open_time'],
         closeTime = snapshot['close_time'],
         phone = snapshot['phone_number'],

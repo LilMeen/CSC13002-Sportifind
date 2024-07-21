@@ -109,9 +109,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   }
                   setState(
                     () {
-                      tabBody = PlayerStadiumScreen(
-                        forMatchCreate: false,
-                      );
+                      tabBody = const PlayerStadiumScreen();
                     },
                   );
                 },

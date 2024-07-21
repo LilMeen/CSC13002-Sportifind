@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:diacritic/diacritic.dart';
 import 'package:sportifind/widgets/dropdown_button/general_dropdown.dart';
 
 class CityDropdown extends StatefulWidget {
   final String selectedCity;
   final ValueChanged<String?> onChanged;
   final Color fillColor;
+  final Map<String, String> citiesNameAndId;
 
   const CityDropdown({
     super.key,
     required this.selectedCity,
     required this.onChanged,
+    required this.citiesNameAndId,
     this.fillColor = Colors.white,
   });
 
@@ -20,29 +24,68 @@ class CityDropdown extends StatefulWidget {
 
 class _CityDropdownState extends State<CityDropdown> {
   List<String> _cities = [];
-  static final Map<String, List<String>> _cityCache = {};
+  static List<String> _citiesCache = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    if (!_cityCache.containsKey('cities')) {
+    if (_citiesCache.isEmpty) {
       _fetchCities();
     } else {
       setState(() {
-        _cities = _cityCache['cities']!;
+        _cities = _citiesCache;
       });
     }
   }
 
+  String eraseType(String input) {
+    final List<String> typesToRemove = [
+      'Thanh pho ',
+      'Tinh ',
+    ];
+
+    for (String type in typesToRemove) {
+      input = input.replaceAll(type, '').trim();
+    }
+
+    return input.replaceAll(RegExp(r'\s+'), ' ');
+  }
+
   Future<void> _fetchCities() async {
-    final citySnapshot =
-        await FirebaseFirestore.instance.collection('location').get();
-    final cities =
-        citySnapshot.docs.map((doc) => doc['city'] as String).toList();
-    _cityCache['cities'] = cities;
     setState(() {
-      _cities = cities;
+      _isLoading = true;
     });
+    try {
+      final response =
+          await http.get(Uri.parse('https://vapi.vnappmob.com/api/province'));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body)['results'];
+        setState(() {
+          for (var item in data) {
+            final String provinceName =
+                eraseType(removeDiacritics(item['province_name'] as String));
+            final String provinceId = item['province_id'] as String;
+            _cities.add(provinceName);
+            widget.citiesNameAndId[provinceName] = provinceId;
+          }
+
+          _citiesCache = _cities;
+          _isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to fetch cities');
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString())),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -53,6 +96,7 @@ class _CityDropdownState extends State<CityDropdown> {
       items: _cities,
       onChanged: widget.onChanged,
       fillColor: widget.fillColor,
+      isLoading: _isLoading,
     );
   }
 }

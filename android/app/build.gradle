@@ -10,7 +10,7 @@ plugins {
 
 dependencies {
     // Fix Duplicate class
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.0")) // Ensure this matches the Kotlin version
 }
 
 def localProperties = new Properties()
