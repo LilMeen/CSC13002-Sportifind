@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/location_info.dart';
-import 'package:sportifind/models/location_service.dart';
+import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/models/owner_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/create_stadium.dart';
 import 'dart:async';
 import 'package:sportifind/search/widgets/custom_search_bar.dart';
-import 'package:sportifind/search/util/search_service.dart';
+import 'package:sportifind/util/search_service.dart';
 import 'package:sportifind/search/screens/stadium_map_search.dart';
 import 'package:sportifind/widgets/card/stadium_card.dart';
 import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';

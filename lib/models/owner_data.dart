@@ -11,7 +11,6 @@ class OwnerData {
   final String id;
   final String name;
   final String email;
-  final String password;
   final String role;
   final String gender;
   final String dob;
@@ -21,7 +20,6 @@ class OwnerData {
   OwnerData({
     required this.name,
     required this.email,
-    required this.password,
     required this.role,
     required this.gender,
     required this.dob,
@@ -33,7 +31,6 @@ class OwnerData {
       : id = snapshot.id,
         name = snapshot['name'],
         email = snapshot['email'],
-        password = snapshot['password'],
         role = snapshot['role'],
         gender = snapshot['gender'],
         dob = snapshot['dob'],
@@ -44,4 +41,6 @@ class OwnerData {
           longitude: 106.660172,
         ),
         phone = snapshot['phone'];
+
+    
 }
