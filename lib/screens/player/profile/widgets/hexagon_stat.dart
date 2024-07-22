@@ -2,43 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/screens/player/profile/widgets/rating.dart';
 import 'dart:math';
 
-
 class Hexagon extends StatelessWidget {
   const Hexagon({super.key, required this.screenWidth, required this.ratings});
 
   final double screenWidth;
   final List<Rating> ratings;
-  double get diameter => screenWidth - 200;
+  double get diameter => screenWidth - 200; // Increase size
   double get radius => diameter / 2;
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        width: diameter,
-        height: diameter,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Labels(radius: radius, diameter: diameter, ratings: ratings),
-            CustomPaint(painter: HexagonPainter(radius: radius)),
-            ClipPath(
-              clipper: HexagonClipper(
-                radius: radius,
-                multipliers: ratings.map((rating) => rating.value / 100.0).toList(),
-              ),
-              child: SizedBox(
-                width: diameter,
-                height: diameter,
-                child: ColoredBox(
-                  color: Colors.teal.withOpacity(0.7),
-                ),
-              ),
+    // return SingleChildScrollView(
+    //   child: Center(
+    //     child: Container(
+    //       width: diameter,
+    //       height: diameter,
+          return Center(
+            child: SizedBox(
+              width: diameter + 100,
+              height: diameter + 100,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Labels(radius: radius, diameter: diameter, ratings: ratings),
+                  CustomPaint(painter: HexagonPainter(radius: radius), size: Size(diameter, diameter)),
+                  ClipPath(
+                    clipper: HexagonClipper(
+                      radius: radius,
+                      multipliers: ratings.map((rating) => rating.value / 100.0).toList(),
+                    ),
+                    child: SizedBox(
+                      width: diameter,
+                      height: diameter,
+                      child: ColoredBox(
+                        color: Colors.teal.withOpacity(0.7),
+                      ),
+                    ),
+                  ),
+                ],
+                     //   ),
+                    //   ),
+                    // ),
+                  ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }
 
@@ -58,12 +65,8 @@ class HexagonClipper extends CustomClipper<Path> {
       [
         for (int i = 0; i < 6; i++)
           Offset(
-            radius * multipliers[i] *
-                    cos(pi * 2 * (angleMul[i] * 30) / 360) +
-                center.dx,
-            radius * multipliers[i] *
-                    sin(pi * 2 * (angleMul[i] * 30) / 360) +
-                center.dy,
+            radius * multipliers[i] * cos(pi * 2 * (angleMul[i] * 30) / 360) + center.dx,
+            radius * multipliers[i] * sin(pi * 2 * (angleMul[i] * 30) / 360) + center.dy,
           ),
       ],
       true,
@@ -91,52 +94,129 @@ class Labels extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final center = Offset(diameter / 2, diameter / 2);
+    final center = Offset(diameter / 2 + 50, diameter / 2 + 50);
+    const style = TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      );
 
-    return Stack(
-      children: [
-        for (int i = 0; i < 6; i++)
-          Positioned(
-            top: center.dy - radius * 1.5, // Adjust the multiplier as needed
-            left: center.dx +
-                radius *
-                    cos(pi / 3 * i + pi / 6), // Adjust the angle for hexagon vertices
-            child: SizedBox(
-              width: 80,
-              height: 60,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      ratings[i].name,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    Text(
-                      ratings[i].value.toString(),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+    return Center(
+      child: Stack(
+        children: [
+          Positioned.fromRect(
+            rect: Rect.fromCenter(
+              center: Offset(
+                radius * cos(pi * 2 * 30 / 360) + center.dx + 30,
+                radius * sin(pi * 2 * 30 / 360) + center.dy,
               ),
+            width: 100,
+            height: 40,
+            ),
+            child: Center(
+              child: Column(
+                children:[
+                  Text(ratings[0].name, textAlign: TextAlign.center, style: style),
+                  Text(ratings[0].value.toString(),textAlign: TextAlign.center, style: style),
+                ]
+              )
             ),
           ),
-      ],
+          Positioned.fromRect(
+            rect: Rect.fromCenter(
+              center: Offset(
+                radius * cos(pi * 2 * 90 / 360) + center.dx,
+                radius * sin(pi * 2 * 90 / 360) + center.dy + 30,
+              ),
+            width: 100,
+            height: 40,
+            ),
+            child: Center(
+              child: Column(
+                children:[
+                  Text(ratings[1].name, textAlign: TextAlign.center, style: style),
+                  Text(ratings[1].value.toString(),textAlign: TextAlign.center, style: style),
+                ]
+              )
+            ),
+          ),
+          Positioned.fromRect(
+            rect: Rect.fromCenter(
+              center: Offset(
+                radius * cos(pi * 2 * 150 / 360) + center.dx - 30,
+                radius * sin(pi * 2 * 150 / 360) + center.dy,
+              ),
+            width: 100,
+            height: 40,
+            ),
+            child: Center(
+              child: Column(
+                children:[
+                  Text(ratings[2].name, textAlign: TextAlign.center, style: style),
+                  Text(ratings[2].value.toString(),textAlign: TextAlign.center, style: style),
+                ]
+              )
+            ),
+          ),
+          Positioned.fromRect(
+            rect: Rect.fromCenter(
+              center: Offset(
+                radius * cos(pi * 2 * 210 / 360) + center.dx - 30,
+                radius * sin(pi * 2 * 210 / 360) + center.dy,
+              ),
+            width: 100,
+            height: 40,
+            ),
+            child: Center(
+              child: Column(
+                children:[
+                  Text(ratings[3].name, textAlign: TextAlign.center, style: style),
+                  Text(ratings[3].value.toString(),textAlign: TextAlign.center, style: style),
+                ]
+              )
+            ),
+          ),
+          Positioned.fromRect(
+            rect: Rect.fromCenter(
+              center: Offset(
+                radius * cos(pi * 2 * 270 / 360) + center.dx,
+                radius * sin(pi * 2 * 270 / 360) + center.dy - 30,
+              ),
+            width: 100,
+            height: 40,
+            ),
+            child: Center(
+              child: Column(
+                children:[
+                  Text(ratings[4].name, textAlign: TextAlign.center, style: style),
+                  Text(ratings[4].value.toString(),textAlign: TextAlign.center, style: style),
+                ]
+              )
+            ),
+          ),
+          Positioned.fromRect(
+            rect: Rect.fromCenter(
+              center: Offset(
+                radius * cos(pi * 2 * 330 / 360) + center.dx + 30,
+                radius * sin(pi * 2 * 330 / 360) + center.dy,
+              ),
+            width: 100,
+            height: 40,
+            ),
+            child: Center(
+              child: Column(
+                children:[
+                  Text(ratings[5].name, textAlign: TextAlign.center, style: style),
+                  Text(ratings[5].value.toString(),textAlign: TextAlign.center, style: style),
+                ]
+              )
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
-
-
 
 class HexagonPainter extends CustomPainter {
   HexagonPainter({required this.radius});
@@ -158,24 +238,12 @@ class HexagonPainter extends CustomPainter {
       for (int i = 0; i < 6; i++) {
         canvas.drawLine(
           Offset(
-            j / 5 *
-                    radius *
-                    cos(pi * 2 * (angleMul[i] * 30 / 360)) +
-                center.dx,
-            j / 5 *
-                    radius *
-                    sin(pi * 2 * (angleMul[i] * 30 / 360)) +
-                center.dy,
+            j / 5 * radius * cos(pi * 2 * (angleMul[i] * 30 / 360)) + center.dx,
+            j / 5 * radius * sin(pi * 2 * (angleMul[i] * 30 / 360)) + center.dy,
           ),
           Offset(
-            j / 5 *
-                    radius *
-                    cos(pi * 2 * (angleMul[(i + 1) % 6] * 30 / 360)) +
-                center.dx,
-            j / 5 *
-                    radius *
-                    sin(pi * 2 * (angleMul[(i + 1) % 6] * 30 / 360)) +
-                center.dy,
+            j / 5 * radius * cos(pi * 2 * (angleMul[(i + 1) % 6] * 30 / 360)) + center.dx,
+            j / 5 * radius * sin(pi * 2 * (angleMul[(i + 1) % 6] * 30 / 360)) + center.dy,
           ),
           borderPaint,
         );

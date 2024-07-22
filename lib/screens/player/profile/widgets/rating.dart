@@ -11,4 +11,13 @@ class Rating {
       map['value'] as int,
     );
   }
+
+    Rating.fromMapEntry(MapEntry<String, dynamic> entry)
+      : name = entry.key,
+        value = entry.value as int;
+
+  @override
+  String toString() {
+    return 'Rating(name: $name, value: $value)';
+  }
 }

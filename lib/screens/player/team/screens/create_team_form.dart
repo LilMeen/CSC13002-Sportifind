@@ -238,6 +238,7 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
             onSaved: (value) {
               controller.text = value ?? '';
             },
+            textController: controller,
           ),
         ),
       ],

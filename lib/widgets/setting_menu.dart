@@ -9,6 +9,19 @@ class SettingMenu extends StatelessWidget {
     required this.textColor,
   });
 
+  IconData getIcon(String title){
+    switch(title){
+      case "Help & Feedback":
+        return Icons.feedback_rounded;
+      case "Policy":
+        return Icons.policy_rounded;
+      case "About us":
+        return Icons.info_rounded;
+      default:
+        return Icons.settings;
+    }
+  }
+
   final String title;
   final VoidCallback onPress;
   final bool endIcon;
@@ -25,8 +38,8 @@ class SettingMenu extends StatelessWidget {
           borderRadius: BorderRadius.circular(100),
           color: Colors.grey.withOpacity(0.3),
         ),
-        child: const Icon(
-          Icons.settings,
+        child: Icon(
+          getIcon(title),
           color: Colors.tealAccent,
         ),
       ),

@@ -4,9 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/widgets/setting.dart';
 import 'package:sportifind/widgets/information_menu.dart';
-import 'package:sportifind/screens/player/profile/widgets/hexagon_stat.dart';
 import 'package:sportifind/screens/player/profile/edit_information.dart';
-import 'package:sportifind/widgets/image_picker.dart';
 import 'package:sportifind/screens/player/profile/widgets/rating.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -47,11 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case "weight":
         return data['weight'] ?? '';
       case "foot":
-        if (data['preferred_foot'] != null) {
-        return data['preferred_foot'] ? 'Right' : 'Left';
-      } else {
-        return '';
-      }
+        return data['foot'] ?? '';
       case "address":
         return data['address'] ?? '';
       case "city":
@@ -80,7 +74,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         } else {
           return '';
         }
-
       default:
         return "nothing"; // Default text if no match is found
     }
@@ -150,14 +143,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       .child('avatar.jpg');
 
     uploadTask = storageRef.putFile(File(image!.path));
-
-    await storageRef.putFile(File(image!.path));
-        final imageUrl = await storageRef.getDownloadURL();
-
-        firestore.collection('users').doc(userId).update({
-          'avatarImage': imageUrl,
-        });
-
   }
 
   Future<void> _pickImageFromCamera() async {
@@ -213,16 +198,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Default ratings with all values set to 0
-    List<Rating> defaultRatings = [
-      const Rating('PACE', 0),
-      const Rating('SHOOT', 0),
-      const Rating('PASS', 0),
-      const Rating('DRI', 0),
-      const Rating('DEF', 0),
-      const Rating('PHY', 0),
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -259,15 +234,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           Map<String, dynamic> userData = snapshot.data!.data() as Map<String, dynamic>;
 
-          print(userData['avatarImage']);
-
-          List<Rating> ratings = defaultRatings;
-          if (userData['stats'] is Map) {
-            final statsMap = userData['stats'] as Map<String, dynamic>;
-            ratings = statsMap.entries.map((entry) => Rating.fromMapEntry(entry)).toList();
-          }
-
-          print(userData['dob']);
 
           return 
               Padding(
@@ -284,8 +250,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             height: 120,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(100),
-                              child: userData['avatarImage'] == null ? const Image(image: AssetImage("lib/assets/google_logo.png"),)
-                              : Image.network(userData['avatarImage']),
+                              child: image == null ? const Image(image: AssetImage("lib/assets/google_logo.png"),)
+                              : Image.file(File(image!.path)),
                             ),
                           ),
                           Positioned(
@@ -338,21 +304,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       InformationMenu(textContent: userData['phone'] ?? "Phone", icon: "phone"),
                       InformationMenu(textContent: userData['address'] ?? "address", icon: "location"),
                       InformationMenu(textContent: userData['dob'] ?? "Date of Birth", icon: "dob"),
-                      const SizedBox(height: 15),
-                      Row(
-                        children: [
-                          buildSection("height", userData),
-                          const SizedBox(width: 15),
-                          buildSection("weight", userData),
-                          const SizedBox(width: 15),
-                          buildSection("foot", userData),
-                        ],
-                      ),
-                    const SizedBox(height: 50),
-                    Hexagon(
-                        screenWidth: MediaQuery.of(context).size.width,
-                        ratings: ratings,
-                      ),  
+                      const SizedBox(height: 15),  
                     ],
                   ),
                 ),

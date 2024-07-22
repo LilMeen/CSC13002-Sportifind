@@ -4,9 +4,11 @@ class Dropdown extends StatefulWidget {
   final String type;
   final double horizontalPadding;
   final FormFieldSetter<String>? onSaved;
+  final TextEditingController textController;
 
   const Dropdown({
     required this.type,
+    required this.textController,
     this.horizontalPadding = 5.0,
     this.onSaved,
     super.key
@@ -39,14 +41,20 @@ class _DropdownState extends State<Dropdown> {
   String getHint() {
     switch (widget.type) {
       case 'Gender':
-        return 'Gender';
+        return 'Select gender';
       case 'City/Province':
-        return 'City';
+        return 'Select city';
       case 'District':
-        return 'District';
+        return 'Select district';
       default:
         return 'Select';
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    value = widget.textController.text.isNotEmpty ? widget.textController.text : null;
   }
 
   @override
@@ -83,7 +91,12 @@ class _DropdownState extends State<Dropdown> {
             color: Colors.white,
             fontSize: 16,
           ),
-          onChanged: (newValue) => setState(() => value = newValue),
+          onChanged: (newValue) {
+            setState(() {
+              value = newValue;
+              widget.textController.text = newValue!;
+            });
+          },
           onSaved: widget.onSaved,
           hint: Padding(
             padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),
@@ -128,6 +141,3 @@ class _DropdownState extends State<Dropdown> {
     );
   }
 }
-
-
-

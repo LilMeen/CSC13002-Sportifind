@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class SettingScreen extends StatelessWidget {
   SettingScreen({Key? key}) : super(key: key);
 
-  final user = FirebaseAuth.instance.currentUser!;
+  final user = FirebaseAuth.instance.currentUser;
 
   void signOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
@@ -17,9 +17,10 @@ class SettingScreen extends StatelessWidget {
   }
 
   Future<void> deleteUserData() async {
-    final userDoc =
-        FirebaseFirestore.instance.collection('users').doc(user.uid);
-    await userDoc.delete();
+    if (user != null) {
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(user!.uid);
+      await userDoc.delete();
+    }
   }
 
   void deleteAccount(BuildContext context) async {
@@ -52,7 +53,7 @@ class SettingScreen extends StatelessWidget {
       try {
         await deleteUserData();
 
-        await user.delete();
+        await user!.delete();
 
         signOut(context);
       } catch (e) {
@@ -98,6 +99,10 @@ class SettingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (user == null) {
+      return SignInScreen();
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
