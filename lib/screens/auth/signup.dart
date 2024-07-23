@@ -56,7 +56,6 @@ class _SignUpState extends State<SignUp> {
         .doc(userCredential.user!.uid)
         .set({
           'email': _enteredEmail,
-          'password': _enteredPassword,
         });
 
       Navigator.push(context, MaterialPageRoute(builder: (context) => const RoleScreen()));
