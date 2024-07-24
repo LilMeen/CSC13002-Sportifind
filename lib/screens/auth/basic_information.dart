@@ -31,7 +31,6 @@ class BasicInformationState extends State<BasicInformationScreen> {
 
   var _enteredName = '';
   var _enteredPhone = '';
-  var _enteredDob = '';
   var _enteredAddress = '';
 
   @override
@@ -115,278 +114,289 @@ class BasicInformationState extends State<BasicInformationScreen> {
   }
 
   Widget _buildDobSection(String type, TextEditingController controller) {
-  double width = 290; // Default width for Date Of Birth
+    double width = 290; // Default width for Date Of Birth
 
-  GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      RichText(
-        text: TextSpan(
-          style: const TextStyle(color: Colors.white, fontSize: 14),
-          children: <TextSpan>[
-            TextSpan(text: type),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            children: <TextSpan>[
+              TextSpan(text: type),
+            ],
+          ),
         ),
-      ),
-      const SizedBox(height: 12),
-      SizedBox(
-        width: width,
-        child: FormField<String>(
-          key: _fieldKey,
-          validator: (value) {
-            if (controller.text.isEmpty) {
-              return 'Please select a date';
-            }
-            return null;
-          },
-          builder: (FormFieldState<String> state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    SizedBox(
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime.now(),
-                          );
+        const SizedBox(height: 12),
+        SizedBox(
+          width: width,
+          child: FormField<String>(
+            key: _fieldKey,
+            validator: (value) {
+              if (controller.text.isEmpty) {
+                return 'Please select a date';
+              }
+              return null;
+            },
+            builder: (FormFieldState<String> state) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime.now(),
+                            );
 
-                          if (pickedDate != null) {
-                            String formattedDate =
-                                "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                            setState(() {
-                              controller.text = formattedDate;
-                              _enteredDob = controller.text;
-                            });
-                            state.didChange(controller.text);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent, // Remove background color
-                          shadowColor: Colors.transparent, // Remove shadow
-                          side: const BorderSide(
-                            color: Colors.white, // Match the border color
+                            if (pickedDate != null) {
+                              String formattedDate =
+                                  "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                              setState(() {
+                                controller.text = formattedDate;
+                              });
+                              state.didChange(controller.text);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Colors.transparent, // Remove background color
+                            shadowColor: Colors.transparent, // Remove shadow
+                            side: const BorderSide(
+                              color: Colors.white, // Match the border color
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6.0),
+                            ),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6.0),
-                          ),
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            controller.text.isEmpty ? getHint(type) : controller.text,
-                            style: TextStyle(
-                              color: controller.text.isEmpty ? Colors.grey : Colors.white,
-                              fontSize: 16,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              controller.text.isNotEmpty
+                                  ? controller.text
+                                  : getHint(type),
+                              style: TextStyle(
+                                color: controller.text.isEmpty
+                                    ? Colors.grey
+                                    : Colors.white,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                if (state.hasError)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5.0),
-                    child: Text(
-                      state.errorText ?? '',
-                      style: const TextStyle(color: Colors.red, fontSize: 12),
-                    ),
+                    ],
                   ),
-              ],
-            );
-          },
-          onSaved: (value) {
-            controller.text = value ?? '';
-          },
+                  if (state.hasError)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5.0),
+                      child: Text(
+                        state.errorText ?? '',
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                      ),
+                    ),
+                ],
+              );
+            },
+            onSaved: (value) {
+              if (value != null && value.isNotEmpty) {
+                controller.text = value;
+              }
+            },
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
 
   Widget _buildSection(String type, TextEditingController controller) {
-  double width = 290; // Default width
+    double width = 290; // Default width
 
-  if (type == "Height" || type == "Weight") {
-    width = 137;
-  }
+    if (type == "Height" || type == "Weight") {
+      width = 137;
+    }
 
-  GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      RichText(
-        text: TextSpan(
-          style: const TextStyle(color: Colors.white, fontSize: 14),
-          children: <TextSpan>[
-            TextSpan(text: type),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            children: <TextSpan>[
+              TextSpan(text: type),
+            ],
+          ),
         ),
-      ),
-      const SizedBox(height: 12),
-      SizedBox(
-        width: width,
-        child: FormField<String>(
-          key: _fieldKey,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter a value';
-            }
-            if (type == "Height" || type == "Weight") {
-              if (double.tryParse(value) == null) {
-                return 'Please enter a valid number';
-              }
-            }
-            return null;
-          },
-          builder: (FormFieldState<String> state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    TextFormField(
-                      controller: controller,
-                      decoration: InputDecoration(
-                        hintText: getHint(type),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                        hintStyle: const TextStyle(color: Colors.white54),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                          borderSide: const BorderSide(
-                            width: 1,
-                            color: Color.fromARGB(255, 255, 255, 255),
-                          ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Stack(
+                children: [
+                  TextFormField(
+                    key: _fieldKey,
+                    controller: controller,
+                    decoration: InputDecoration(
+                      hintText: controller.text.isEmpty
+                          ? getHint(type)
+                          : controller.text,
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 12),
+                      hintStyle: const TextStyle(color: Colors.white54),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6.0),
+                        borderSide: const BorderSide(
+                          width: 1,
+                          color: Color.fromARGB(255, 255, 255, 255),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                          borderSide: const BorderSide(
-                            width: 1,
-                            color: Color.fromARGB(255, 2, 183, 144),
-                          ),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                          borderSide: const BorderSide(
-                            width: 1,
-                            color: Colors.red,
-                          ),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                          borderSide: const BorderSide(
-                            width: 1,
-                            color: Colors.red,
-                          ),
-                        ),
-                        errorStyle: const TextStyle(height: 0), // Hide the default error message
                       ),
-                      style: const TextStyle(color: Colors.white),
-                      onSaved: (value) {
-                        switch (type) {
-                          case 'Name':
-                            _enteredName = value!;
-                            break;
-                          case 'Phone Number':
-                            _enteredPhone = value!;
-                            break;
-                          case 'Address':
-                            _enteredAddress = value!;
-                            break;
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6.0),
+                        borderSide: const BorderSide(
+                          width: 1,
+                          color: Colors.white,
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6.0),
+                        borderSide: const BorderSide(
+                          width: 1,
+                          color: Colors.white,
+                        ),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6.0),
+                        borderSide: const BorderSide(
+                          width: 1,
+                          color: Colors.white,
+                        ),
+                      ),
+                      errorStyle: const TextStyle(
+                          height: 0), // Hide the default error message
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a value';
+                      }
+                      if (type == "Height" || type == "Weight") {
+                        if (double.tryParse(value) == null) {
+                          return 'Please enter a valid number';
                         }
+                      }
+                      // Additional validation logic
+                      return null;
+                    },
+                    onSaved: (value) {
+                      switch (type) {
+                        case 'Name':
+                          _enteredName = value!;
+                          break;
+                        case 'Phone Number':
+                          _enteredPhone = value!;
+                          break;
+                        case 'Address':
+                          _enteredAddress = value!;
+                          break;
+                      }
+                    },
+                  ),
+                  Positioned(
+                    bottom: -20,
+                    left: 0,
+                    child: Builder(
+                      builder: (context) {
+                        final formFieldState = _fieldKey.currentState;
+                        return Text(
+                          formFieldState?.errorText ?? '',
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
+                        );
                       },
                     ),
-                  ],
-                ),
-                if (state.hasError)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5.0),
-                    child: Text(
-                      state.errorText ?? '',
-                      style: const TextStyle(color: Colors.red, fontSize: 12),
-                    ),
                   ),
-              ],
-            );
-          },
-          onSaved: (value) {
-            controller.text = value ?? '';
-          },
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   Widget _buildDropdownSection(String type, TextEditingController controller) {
-  double width = 290; // Default width
-  GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
+    double width = 290; // Default width
+    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      RichText(
-        text: TextSpan(
-          style: const TextStyle(color: Colors.white, fontSize: 14),
-          children: <TextSpan>[
-            TextSpan(text: type),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            children: <TextSpan>[
+              TextSpan(text: type),
+            ],
+          ),
         ),
-      ),
-      const SizedBox(height: 12),
-      SizedBox(
-        width: width,
-        child: FormField<String>(
-          key: _fieldKey,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please select a value';
-            }
-            return null;
-          },
-          builder: (FormFieldState<String> state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Dropdown(
-                  type: type,
-                  onSaved: (value) {
-                    state.didChange(value);
-                    controller.text = value ?? '';
-                  },
-                  horizontalPadding: 5.0,
-                  textController: controller,
-                ),
-                if (state.hasError)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5.0),
-                    child: Text(
-                      state.errorText ?? '',
-                      style: const TextStyle(color: Colors.red, fontSize: 12),
-                    ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: width,
+          child: FormField<String>(
+            key: _fieldKey,
+            initialValue: controller.text.isNotEmpty ? controller.text : null,
+            validator: (value) {
+              if (controller.text.isEmpty) {
+                return 'Please select a value';
+              }
+              return null;
+            },
+            builder: (FormFieldState<String> state) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Dropdown(
+                    type: type,
+                    textController: controller,
+                    onSaved: (value) {
+                      state.didChange(value);
+                      controller.text = value ?? '';
+                    },
+                    horizontalPadding: 5.0,
                   ),
-              ],
-            );
-          },
-          onSaved: (value) {
-            controller.text = value ?? '';
-          },
+                  if (state.hasError)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5.0),
+                      child: Text(
+                        state.errorText ?? '',
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                      ),
+                    ),
+                ],
+              );
+            },
+            onSaved: (value) {
+              controller.text = value ?? '';
+            },
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
 
 
