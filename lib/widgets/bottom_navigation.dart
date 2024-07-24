@@ -138,19 +138,19 @@ class _BottomBarViewState extends State<BottomBarView>
                     child: Container(
                       // alignment: Alignment.center,s
                       decoration: BoxDecoration(
-                        color: SportifindTheme.nearlyDarkGreen,
+                        color: SportifindTheme.bluePurple3,
                         gradient: LinearGradient(
                             colors: [
-                              SportifindTheme.nearlyDarkGreen,
-                              HexColor('#90EB6C'),
+                              SportifindTheme.bluePurple3,
+                              SportifindTheme.bluePurple2.withOpacity(0.5),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight),
                         shape: BoxShape.circle,
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                              color: SportifindTheme.nearlyDarkGreen
-                                  .withOpacity(0.4),
+                              color: SportifindTheme.bluePurple3.withOpacity(0.6),
+                                 
                               offset: const Offset(8.0, 16.0),
                               blurRadius: 16.0),
                         ],
@@ -266,8 +266,8 @@ class _TabIconsState extends State<TabIcons> with TickerProviderStateMixin {
                     child: Container(
                       width: 8,
                       height: 8,
-                      decoration: const BoxDecoration(
-                        color: SportifindTheme.nearlyDarkGreen,
+                      decoration:  BoxDecoration(
+                        color: SportifindTheme.bluePurple3,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -287,8 +287,8 @@ class _TabIconsState extends State<TabIcons> with TickerProviderStateMixin {
                     child: Container(
                       width: 4,
                       height: 4,
-                      decoration: const BoxDecoration(
-                        color: SportifindTheme.nearlyDarkGreen,
+                      decoration:  BoxDecoration(
+                        color: SportifindTheme.bluePurple3,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -308,8 +308,8 @@ class _TabIconsState extends State<TabIcons> with TickerProviderStateMixin {
                     child: Container(
                       width: 6,
                       height: 6,
-                      decoration: const BoxDecoration(
-                        color: SportifindTheme.nearlyDarkGreen,
+                      decoration:  BoxDecoration(
+                        color: SportifindTheme.bluePurple3,
                         shape: BoxShape.circle,
                       ),
                     ),

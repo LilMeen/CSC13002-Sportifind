@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/adapter/hex_color.dart';
 
 class SportifindTheme {
   SportifindTheme._();
   static const Color nearlyWhite = Color(0xFFFAFAFA);
   static const Color white = Color(0xFFFFFFFF);
-  static const Color background = Color.fromARGB(255, 14, 15, 14);
-  static const Color nearlyDarkGreen = Color.fromARGB(255, 6, 138, 28);
+  static const Color background = Color.fromARGB(255, 242, 242, 242);
+  static Color bluePurple2 = HexColor("4B70F5");
+  static Color bluePurple1 = HexColor("3DC2EC");
+  static Color bluePurple3 = HexColor("4C3BCF");
+  static Color bluePurple4 = HexColor("402E7A");
 
-  static const Color nearlyGreen = Color.fromARGB(255, 113, 224, 150);
   static const Color nearlyBlack = Color(0xFF213333);
   static const Color grey = Color(0xFF3A5160);
   static const Color darkGrey = Color(0xFF313A44);

@@ -35,11 +35,11 @@ class SportifindSearchBar extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 16, right: 16),
                         child: Form(
                           child: TextFormField(
-                            style: const TextStyle(
+                            style:  TextStyle(
                               fontFamily: SportifindTheme.fontName,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: SportifindTheme.nearlyDarkGreen,
+                              color: SportifindTheme.bluePurple3,
                             ),
                             keyboardType: TextInputType.text,
                             decoration: InputDecoration(

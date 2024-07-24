@@ -74,20 +74,22 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
                 ),
               ),
               TextButton(
-                child: const Row(
+                child:  Row(
                   children: [
-                     Icon(
+                    Icon(
                       Icons.add_circle_outline,
-                      color: SportifindTheme.nearlyGreen,
+                      color: SportifindTheme.bluePurple1,
                     ),
-                     SizedBox(width: 4,),
+                    const SizedBox(
+                      width: 4,
+                    ),
                     Text(
                       'Create Team',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
                         letterSpacing: 0.27,
-                        color: SportifindTheme.nearlyGreen,
+                        color: SportifindTheme.bluePurple1,
                       ),
                     ),
                   ],
@@ -107,7 +109,9 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16),
-          child: MyTeamsListView(callBack: callBack,),
+          child: MyTeamsListView(
+            callBack: callBack,
+          ),
         ),
       ],
     );

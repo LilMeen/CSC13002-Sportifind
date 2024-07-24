@@ -12,6 +12,16 @@ class TeamInformation {
     required this.captain,
   });
 
+  TeamInformation.empty()
+      : teamId = '',
+        name = '',
+        address = '',
+        district = '',
+        city = '',
+        avatarImageUrl = '',
+        members = [],
+        captain = '';
+
   TeamInformation.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot)
       : name = snapshot['name'],

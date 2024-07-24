@@ -4,10 +4,11 @@ import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
+import 'package:sportifind/screens/player/team/screens/team_details.dart';
 
 class MyTeamsListView extends StatefulWidget {
   const MyTeamsListView({super.key, required this.callBack});
-  final Function()? callBack; 
+  final Function()? callBack;
 
   @override
   State<MyTeamsListView> createState() => _MyTeamsListViewState();
@@ -51,7 +52,6 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
           final DocumentSnapshot teamSnapshot = await teamRef.get();
 
           if (teamSnapshot.exists) {
-          
             final teamInformation = TeamInformation(
               name: teamSnapshot['name'],
               address: teamSnapshot['address'],
@@ -60,10 +60,10 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
               avatarImageUrl: teamSnapshot['avatarImage'],
               members: List<String>.from(teamSnapshot['members']),
               captain: teamSnapshot['captain'],
+              teamId: teamSnapshot.id,
             );
             fetchedTeams.add(teamInformation);
-          } 
-          
+          }
         }
 
         setState(() {
@@ -71,15 +71,16 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
           isLoading = false; // Update loading state
         });
       } else {
-          ScaffoldMessenger.of(context).clearSnackBars(); 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('User document does not exist. Please sign out and sign in again.'),
-        ),
-      );
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'User document does not exist. Please sign out and sign in again.'),
+          ),
+        );
       }
     } catch (e) {
-        ScaffoldMessenger.of(context).clearSnackBars(); 
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('An error occurred while fetching your teams list'),
@@ -176,7 +177,16 @@ class TeamBox extends StatelessWidget {
                 100 * (1.0 - animation!.value), 0.0, 0.0),
             child: InkWell(
               splashColor: Colors.transparent,
-              onTap: callback,
+              onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return TeamDetails(teamId: teamInformation!.teamId);
+                    },
+                  ),
+                ),
+              },
               child: SizedBox(
                 width: 300,
                 child: Stack(
@@ -247,10 +257,10 @@ class TeamBox extends StatelessWidget {
                                                     color: SportifindTheme.grey,
                                                   ),
                                                 ),
-                                                const SizedBox(
+                                               SizedBox(
                                                   child: Row(
                                                     children: <Widget>[
-                                                      Text(
+                                                      const Text(
                                                         '5',
                                                         textAlign:
                                                             TextAlign.left,
@@ -266,7 +276,7 @@ class TeamBox extends StatelessWidget {
                                                       Icon(
                                                         Icons.star,
                                                         color: SportifindTheme
-                                                            .nearlyGreen,
+                                                            .bluePurple1,
                                                         size: 20,
                                                       ),
                                                     ],
@@ -285,7 +295,7 @@ class TeamBox extends StatelessWidget {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
-                                                const Text(
+                                                 Text(
                                                   'Medium Level',
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
@@ -293,16 +303,16 @@ class TeamBox extends StatelessWidget {
                                                     fontSize: 14,
                                                     letterSpacing: 0.27,
                                                     color: SportifindTheme
-                                                        .nearlyDarkGreen,
+                                                        .bluePurple3,
                                                   ),
                                                 ),
                                                 Container(
                                                   decoration:
-                                                      const BoxDecoration(
+                                                       BoxDecoration(
                                                     color: SportifindTheme
-                                                        .nearlyDarkGreen,
+                                                        .bluePurple3,
                                                     borderRadius:
-                                                        BorderRadius.all(
+                                                        const BorderRadius.all(
                                                             Radius.circular(
                                                                 8.0)),
                                                   ),
@@ -310,8 +320,7 @@ class TeamBox extends StatelessWidget {
                                                     padding:
                                                         EdgeInsets.all(4.0),
                                                     child: Icon(
-                                                      Icons
-                                                          .notifications,
+                                                      Icons.notifications,
                                                       color:
                                                           SportifindTheme.white,
                                                     ),
@@ -338,15 +347,17 @@ class TeamBox extends StatelessWidget {
                         child: Row(
                           children: <Widget>[
                             ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(16.0)),
-                                child: AspectRatio(
-                                    aspectRatio: 1.0,
-                                    child: Image.network(
-                                      teamInformation!.avatarImageUrl,
-                                      height: 64.0,
-                                      width: 64.0,
-                                    )))
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(16.0)),
+                              child: AspectRatio(
+                                aspectRatio: 1.0,
+                                child: Image.network(
+                                  teamInformation!.avatarImageUrl,
+                                  height: 64.0,
+                                  width: 64.0,
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       ),

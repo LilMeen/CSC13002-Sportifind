@@ -332,17 +332,17 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: _pickImage,
-                        child: const Row(
+                        child:  Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.add_a_photo,
-                              color: SportifindTheme.nearlyDarkGreen,
+                              color: SportifindTheme.bluePurple3,
                             ),
                             SizedBox(width: 10),
                             Text('Add Image',
                                 style: TextStyle(
-                                    color: SportifindTheme.nearlyDarkGreen)),
+                                    color: SportifindTheme.bluePurple3)),
                           ],
                         ),
                       ),

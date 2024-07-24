@@ -60,6 +60,7 @@ class _NearbyTeamListViewState extends State<NearbyTeamListView>
                 avatarImageUrl: doc['avatarImage'],
                 members: List<String>.from(doc['members']),
                 captain: doc['captain'],
+                teamId: doc.id,
               ),
             );
           }
@@ -218,10 +219,10 @@ class NearbyTeamBox extends StatelessWidget {
                                                     color: SportifindTheme.grey,
                                                   ),
                                                 ),
-                                                const SizedBox(
+                                                 SizedBox(
                                                   child: Row(
                                                     children: <Widget>[
-                                                      Text(
+                                                      const Text(
                                                         '5',
                                                         textAlign:
                                                             TextAlign.left,
@@ -237,7 +238,7 @@ class NearbyTeamBox extends StatelessWidget {
                                                       Icon(
                                                         Icons.star,
                                                         color: SportifindTheme
-                                                            .nearlyGreen,
+                                                            .bluePurple1,
                                                         size: 20,
                                                       ),
                                                     ],
