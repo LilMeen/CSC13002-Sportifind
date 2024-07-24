@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/screens/auth/forgot_password_screen.dart';
 import 'package:sportifind/screens/auth/widgets/green_white_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/screens/player/player_home_screen.dart';
@@ -45,7 +46,19 @@ class _SignInState extends State<SignIn> {
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(userCredential.user!.uid)
-          .get();
+          .get(); 
+          
+      if (!snapshot.exists) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Your account is banned.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       if (snapshot['role'] == 'admin') {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const AdminHomeScreen()));
@@ -182,7 +195,7 @@ class _SignInState extends State<SignIn> {
                 ],
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));} ,
                 child: const Text(
                   'Forgot Password',
                   style: SportifindTheme.body2,

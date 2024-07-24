@@ -36,11 +36,7 @@ class EditInformationState extends State<EditInformationScreen> {
 
   var _enteredName = '';
   var _enteredPhone = '';
-  var _enteredDob = '';
   var _enteredAddress = '';
-  var _enteredHeight = '';
-  var _enteredWeight = '';
-  bool _isDatePicked = false;
 
   late Future<DocumentSnapshot> userDataFuture;
 
@@ -341,21 +337,21 @@ class EditInformationState extends State<EditInformationScreen> {
                         borderRadius: BorderRadius.circular(6.0),
                         borderSide: const BorderSide(
                           width: 1,
-                          color: Color.fromARGB(255, 2, 183, 144),
+                          color: Colors.white,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.0),
                         borderSide: const BorderSide(
                           width: 1,
-                          color: Colors.red,
+                          color: Colors.white,
                         ),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.0),
                         borderSide: const BorderSide(
                           width: 1,
-                          color: Colors.red,
+                          color: Colors.white,
                         ),
                       ),
                       errorStyle: const TextStyle(

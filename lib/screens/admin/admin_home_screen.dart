@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/screens/admin/admin.dart';
 import 'dart:async';
 import 'package:sportifind/search/widgets/custom_search_bar.dart';
 import 'package:sportifind/util/search_service.dart';
@@ -56,9 +55,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
           TextButton(
             onPressed: () {
-              // Implement user deletion logic here
-              //AuthService().deleteUser(documents[index]['email'], documents[index]['password']);
-              deleteUser(user['email'], user['password'], context);
+              FirebaseFirestore.instance.collection('users').doc(user.id).delete();
               Navigator.of(ctx).pop();
             },
             child: const Text('Yes'),
@@ -107,7 +104,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         child: const Text('Continue'),
                       ),
                     ],
-                  );
+                  ); 
                 //return Center(child: Text('Error: ${userSnapshot.error}'));
               } 
               final users = userSnapshot.data!.docs;

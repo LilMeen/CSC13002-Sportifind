@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/screens/auth/google_signin.dart';
 import 'package:sportifind/screens/auth/sign_up_screen.dart';
 import 'package:sportifind/screens/auth/signin.dart';
 
@@ -99,7 +100,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ],
                   ),
                   const SizedBox(height: 15),
-                  SignInWithGoogleButton(onPressed: () {}),
+                  SignInWithGoogleButton(onPressed: () => signInwithGoogle(context)),
                 ],
               ),
             ),

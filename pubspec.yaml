@@ -52,9 +52,11 @@ dependencies:
   flutter_timeline_calendar: ^1.0.9
   table_calendar: ^3.1.2
   provider: ^6.1.2
+  syncfusion_flutter_calendar: ^26.1.40+1
   meta: ^1.12.0
   path_provider: ^2.0.9
-  firebase_storage: ^12.1.1
+  firebase_storage: 12.1.1
+  google_sign_in: ^6.2.1
   flutter_svg: ^1.0.0
 
   
