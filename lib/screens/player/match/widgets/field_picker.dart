@@ -42,7 +42,7 @@ class _FieldPickerState extends State<FieldPicker> {
           width: widget.width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: SportifindTheme.nearlyGreen,
+            color: SportifindTheme.grey,
           ),
           child: DropdownButton(
             borderRadius: BorderRadius.circular(5.0),

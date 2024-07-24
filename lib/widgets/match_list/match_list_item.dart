@@ -25,7 +25,7 @@ class MatchListItem extends StatelessWidget {
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: roundedRectangleBuilder(320, matchCard.stadium, false,
-                      SportifindTheme.nearlyGreen)),
+                      SportifindTheme.grey)),
               const SizedBox(height: 4),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

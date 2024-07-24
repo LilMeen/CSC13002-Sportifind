@@ -157,7 +157,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
           width: width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: SportifindTheme.nearlyGreen,
+            color: SportifindTheme.grey,
           ),
           child: DropdownButton(
             borderRadius: BorderRadius.circular(5.0),
@@ -238,7 +238,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: SportifindTheme.nearlyGreen,
+            color: SportifindTheme.grey,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -268,7 +268,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
           appBar: AppBar(
             backgroundColor: SportifindTheme.background,
             leading: BackButton(
-              color: SportifindTheme.nearlyGreen,
+              color: SportifindTheme.grey,
               onPressed: () {
                 Navigator.push(
                   context,

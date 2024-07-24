@@ -212,7 +212,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                       height: 40,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),
-                        color: SportifindTheme.nearlyGreen,
+                        color: SportifindTheme.grey,
                       ),
                       child: TextButton(
                         onPressed: () {

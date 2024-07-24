@@ -136,7 +136,7 @@ class _MatchCardsState extends State<MatchCards> {
                     },
                     icon: const Icon(
                       Icons.filter_alt,
-                      color: SportifindTheme.nearlyGreen,
+                      color: SportifindTheme.grey,
                       size: 40,
                     ))
               ],

@@ -57,7 +57,7 @@ class _DatePickerState extends State<DatePicker> {
           width: widget.width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: SportifindTheme.nearlyGreen,
+            color: SportifindTheme.grey,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

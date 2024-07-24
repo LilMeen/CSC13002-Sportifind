@@ -69,7 +69,7 @@ class _MatchMainScreenState extends State<MatchMainScreen>
                   ),
                 );
               },
-              backgroundColor: SportifindTheme.nearlyDarkGreen,
+              backgroundColor: SportifindTheme.darkGrey,
               shape: const CircleBorder(),
               child: const Icon(
                 Icons.add,

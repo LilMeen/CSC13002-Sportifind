@@ -76,7 +76,7 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: SportifindTheme.nearlyGreen,
+              color: SportifindTheme.darkGrey,
             ),
             child: DropdownButton(
               borderRadius: BorderRadius.circular(5.0),
@@ -134,7 +134,7 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: SportifindTheme.nearlyGreen,
+            color: SportifindTheme.grey,
           ),
           child: TextButton(
             onPressed: () async {
@@ -179,7 +179,7 @@ class _SelectStadiumScreenState extends State<SelectStadiumScreen> {
           appBar: AppBar(
             backgroundColor: SportifindTheme.background,
             leading: BackButton(
-              color: SportifindTheme.nearlyGreen,
+              color: SportifindTheme.grey,
               onPressed: () {
                 Navigator.push(
                   context,

@@ -25,7 +25,7 @@ class CommonButton extends StatelessWidget {
 
   Color _getButtonColor() {
     if (isActive == true && isDisabled == false) {
-      return buttonActiveColor ?? SportifindTheme.nearlyGreen;
+      return buttonActiveColor ?? SportifindTheme.grey;
     } else if (isActive == false && isDisabled == false) {
       return Colors.white;
     } else {
@@ -55,7 +55,7 @@ class CommonButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: _getButtonColor(),
           borderRadius: const BorderRadius.all(Radius.circular(30)),
-          border: (isActive == false && isDisabled == false) ? Border.all(color: SportifindTheme.nearlyGreen, width: 2) : null,
+          border: (isActive == false && isDisabled == false) ? Border.all(color: SportifindTheme.grey, width: 2) : null,
         ),
         child: Text(
           text,
