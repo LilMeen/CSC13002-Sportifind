@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/models/owner_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
@@ -12,6 +13,8 @@ class StadiumMapSearchScreen extends StatefulWidget {
   final List<StadiumData> stadiums;
   final List<OwnerData> owners;
   final bool forMatchCreate;
+  final String? selectedTeam;
+  final void Function(MatchCard matchcard)? addMatchCard;
 
   const StadiumMapSearchScreen({
     super.key,
@@ -19,6 +22,8 @@ class StadiumMapSearchScreen extends StatefulWidget {
     required this.stadiums,
     required this.owners,
     required this.forMatchCreate,
+    this.addMatchCard,
+    this.selectedTeam
   });
 
   @override
@@ -160,8 +165,7 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
     Set<Marker> markers = widget.stadiums.map((stadium) {
       return Marker(
         markerId: MarkerId(stadium.id),
-        position:
-            LatLng(stadium.location.latitude, stadium.location.longitude),
+        position: LatLng(stadium.location.latitude, stadium.location.longitude),
         infoWindow: InfoWindow(
           title: stadium.name,
           snippet:
@@ -173,8 +177,8 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
     markers.add(
       Marker(
         markerId: const MarkerId('userLocation'),
-        position: LatLng(
-            widget.userLocation.latitude, widget.userLocation.longitude),
+        position:
+            LatLng(widget.userLocation.latitude, widget.userLocation.longitude),
         infoWindow: widget.userLocation.address.isEmpty
             ? InfoWindow(
                 title: 'Your location',
@@ -210,8 +214,8 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
           GoogleMap(
             onMapCreated: _onMapCreated,
             initialCameraPosition: CameraPosition(
-              target: LatLng(widget.userLocation.latitude,
-                  widget.userLocation.longitude),
+              target: LatLng(
+                  widget.userLocation.latitude, widget.userLocation.longitude),
               zoom: 11.0,
             ),
             markers: _createMarkers(),
@@ -268,6 +272,8 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                           ownerName: ownerName,
                           imageRatio: 1,
                           forMatchCreate: widget.forMatchCreate,
+                          selectedTeam: widget.selectedTeam,
+                          addMatchCard: widget.addMatchCard,
                         ),
                       ),
                     );

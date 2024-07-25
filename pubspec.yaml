@@ -58,6 +58,7 @@ dependencies:
   firebase_storage: 12.1.1
   google_sign_in: ^6.2.1
   flutter_svg: ^1.0.0
+  toggle_switch: ^2.3.0
 
   
 dev_dependencies:
@@ -69,7 +70,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -101,6 +102,8 @@ flutter:
      - 'lib/assets/left_unpicked.png'
      - 'lib/assets/right_picked.png'
      - 'lib/assets/right_unpicked.png'
+     - 'lib/assets/images/match.png'
+     - 'lib/assets/images/bg.jpg'
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

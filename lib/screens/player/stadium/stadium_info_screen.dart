@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/models/stadium_data.dart';
+import 'package:sportifind/screens/player/match/screens/date_select_screen.dart';
 import 'package:sportifind/screens/player/match/util/pop_result.dart';
 
 class StadiumInfoScreen extends StatefulWidget {
   final StadiumData stadium;
   final String ownerName;
   final bool forMatchCreate;
+  final String selectedTeam;
+  final void Function(MatchCard matchcard)? addMatchCard;
 
   const StadiumInfoScreen({
     super.key,
     required this.stadium,
     required this.ownerName,
     required this.forMatchCreate,
+    this.addMatchCard,
+    required this.selectedTeam,
   });
 
   @override
@@ -31,6 +37,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
   void _onImageTap(String imageUrl) {
     setState(() {
       selectedImage = imageUrl;
+      
     });
   }
 
@@ -216,16 +223,16 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                       ),
                       child: TextButton(
                         onPressed: () {
-                          Navigator.popUntil(
-                              context,
-                              (route) =>
-                                  route.settings.name == 'Select_stadium');
-                          Navigator.pop(
+                          Navigator.push(
                             context,
-                            PopWithResults(
-                              fromPage: 'Stadium_info',
-                              toPage: 'Select_stadium',
-                              results: [widget.stadium.id, widget.stadium.name, widget.stadium.fields.toString()],
+                            MaterialPageRoute(
+                              builder: (context) => DateSelectScreen(
+                                selectedStadiumId: widget.stadium.id,
+                                selectedStadiumName: widget.stadium.name,
+                                selectedTeam: widget.selectedTeam,
+                                numberOfField: widget.stadium.fields,
+                                addMatchCard: widget.addMatchCard,
+                              ),
                             ),
                           );
                         },

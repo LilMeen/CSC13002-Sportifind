@@ -9,9 +9,12 @@ class MatchCardList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
+    return ListView.separated(
+      scrollDirection: Axis.vertical,
       itemCount: matches.length,
+      separatorBuilder: (BuildContext context, int index) {
+        return const SizedBox(height: 20);
+      },
       itemBuilder: (ctx, index) => MatchListItem(
         matchCard: matches[index],
       ),

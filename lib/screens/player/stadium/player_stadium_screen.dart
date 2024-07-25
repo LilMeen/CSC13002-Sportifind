@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/owner_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/models/player_data.dart';
@@ -10,9 +11,14 @@ class PlayerStadiumScreen extends StatefulWidget {
   const PlayerStadiumScreen({
     super.key,
     this.forMatchCreate = false,
+    this.selectedTeam,
+    this.addMatchCard,
   });
 
   final bool forMatchCreate;
+  final String? selectedTeam;
+  final void Function(MatchCard matchcard)? addMatchCard;
+
 
   @override
   State<PlayerStadiumScreen> createState() => _PlayerStadiumScreenState();
@@ -127,6 +133,8 @@ class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
         stadiums: stadiums,
         owners: owners,
         forMatchCreate: widget.forMatchCreate,
+        addMatchCard: widget.addMatchCard,
+        selectedTeam: widget.selectedTeam,
       ),
     );
   }
