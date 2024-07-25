@@ -177,6 +177,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       .child('avatar.jpg');
 
     uploadTask = storageRef.putFile(File(image!.path));
+    await storageRef.putFile(File(image!.path));
+        final imageUrl = await storageRef.getDownloadURL();
+
+        firestore.collection('users').doc(userId).update({
+          'avatarImage': imageUrl,
+    });
   }
 
   void _showImagePickerOptions(BuildContext context) {
