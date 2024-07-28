@@ -34,8 +34,8 @@ class StadiumData {
       city: data['city'],
       district: data['district'],
       address: data['address'],
-      latitude: 10.762622 + data['name'].length / 20,
-      longitude: 106.660172 + data['address'].length / 40,
+      latitude: data['latitude'],
+      longitude: data['longitude'],
     );
 
     return StadiumData(

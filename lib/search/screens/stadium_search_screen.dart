@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/models/match_card.dart';
+import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/models/owner_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/create_stadium_screen.dart';
@@ -22,6 +24,9 @@ class StadiumSearchScreen extends StatefulWidget {
   final List<OwnerData> owners;
   final bool forMatchCreate;
   final bool forStadiumCreate;
+  final String? selectedTeam;
+  final void Function(MatchCard matchcard)? addMatchCard;
+
 
   const StadiumSearchScreen({
     super.key,
@@ -33,6 +38,8 @@ class StadiumSearchScreen extends StatefulWidget {
     required this.owners,
     this.forMatchCreate = false,
     this.forStadiumCreate = false,
+    this.addMatchCard,
+    this.selectedTeam,
   });
 
   @override
@@ -55,7 +62,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
   StadiumService stadService = StadiumService();
   LocationService locService = LocationService();
 
-  @override
+  @override 
   void initState() {
     super.initState();
     searchController.addListener(onSearchChanged);
@@ -229,6 +236,8 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                             ownerName: ownerName,
                             imageRatio: widget.imageRatio,
                             forMatchCreate: widget.forMatchCreate,
+                            selectedTeam: widget.selectedTeam!,
+                            addMatchCard: widget.addMatchCard,
                           );
                         },
                       ),
@@ -276,6 +285,8 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                         stadiums: searchedStadiums,
                         owners: widget.owners,
                         forMatchCreate: widget.forMatchCreate,
+                        selectedTeam: widget.selectedTeam,
+                        addMatchCard: widget.addMatchCard,
                       ),
                     ),
                   );
