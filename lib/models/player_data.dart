@@ -1,18 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/models/location_info.dart';
-import 'package:uuid/uuid.dart';
-//import 'package:intl/intl.dart';
-
-//final formatter = DateFormat.yMd();
-
-const uuid = Uuid();
 
 class PlayerData {
   final String id;
   final String name;
   final String email;
   //final String avatarImageUrl;
-  final String password;
   final String role;
   final LocationInfo location;
   final String dob;
@@ -21,24 +14,23 @@ class PlayerData {
   final List<String> teams;
 
   PlayerData({
+    required this.id,
     required this.name,
     //required this.avatarImageUrl,
     required this.email,
-    required this.password,
     required this.role,
     required this.location,
     required this.dob,
     required this.gender,
     required this.phoneNumber,
     required this.teams,
-  }) : id = uuid.v4();
+  });
 
   PlayerData.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         name = snapshot['name'],
         //avatarImageUrl = snapshot['avatarImageUrl'],
         email = snapshot['email'],
-        password = snapshot['password'],
         role = snapshot['role'],
         location = LocationInfo(
           district: snapshot['district'],

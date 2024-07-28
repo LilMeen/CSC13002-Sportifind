@@ -1,10 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/models/owner_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/search/screens/stadium_search_screen.dart';
+import 'package:sportifind/util/stadium_service.dart';
+import 'package:sportifind/util/user_service.dart';
 
 class PlayerStadiumScreen extends StatefulWidget {
   const PlayerStadiumScreen({
@@ -29,61 +29,27 @@ class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
   bool isLoadingStadiums = true;
   bool isLoadingUser = true;
   String errorMessage = '';
+  
+  final StadiumService stadService = StadiumService();
+  final UserService userService = UserService();
 
-  Future<void> getStadiumsData() async {
+  Future<void> fetchData() async {
     try {
-      final stadiumsQuery =
-          await FirebaseFirestore.instance.collection('stadiums').get();
+      final stadiumsData = await stadService.getStadiumsData();
+      final ownersData = await userService.getOwnersData();
+      final userData = await userService.getUserPlayerData();
       setState(() {
-        stadiums = stadiumsQuery.docs
-            .map((stadium) => StadiumData.fromSnapshot(stadium))
-            .toList();
+        stadiums = stadiumsData;
+        owners = ownersData;
+        user = userData;
         isLoadingStadiums = false;
-      });
-    } catch (error) {
-      setState(() {
-        errorMessage = 'Failed to load stadiums data: $error';
-        isLoadingStadiums = false;
-      });
-    }
-  }
-
-  Future<void> getOwnersData() async {
-    try {
-      final ownersQuery = await FirebaseFirestore.instance
-          .collection('users')
-          .where('role', isEqualTo: 'stadium_owner')
-          .get();
-      setState(() {
-        owners = ownersQuery.docs
-            .map((owner) => OwnerData.fromSnapshot(owner))
-            .toList();
-      });
-    } catch (error) {
-      setState(() {
-        errorMessage = 'Failed to load owners data: $error';
-      });
-    }
-  }
-
-  Future<void> getUserData() async {
-    try {
-      User? userFB = FirebaseAuth.instance.currentUser;
-      if (userFB != null) {
-        String uid = userFB.uid;
-        DocumentSnapshot<Map<String, dynamic>> snapshot =
-            await FirebaseFirestore.instance.collection('users').doc(uid).get();
-        if (snapshot.exists) {
-          setState(() {
-            user = PlayerData.fromSnapshot(snapshot);
-            isLoadingUser = false;
-          });
-        }
-      }
-    } catch (error) {
-      setState(() {
         isLoadingUser = false;
-        errorMessage = 'Failed to load user data: $error';
+      });
+    } catch (error) {
+      setState(() {
+        errorMessage = 'Failed to load data: $error';
+        isLoadingStadiums = false;
+        isLoadingUser = false;
       });
     }
   }
@@ -91,20 +57,16 @@ class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
   @override
   void initState() {
     super.initState();
-    getStadiumsData();
-    getOwnersData();
-    getUserData();
+    fetchData();
   }
 
-  Future<void> _refreshStadiums() async {
+  Future<void> _refreshData() async {
     setState(() {
       isLoadingStadiums = true;
       isLoadingUser = true;
       errorMessage = '';
     });
-    await getStadiumsData();
-    await getOwnersData();
-    await getUserData();
+    await fetchData();
   }
 
   @override
@@ -118,7 +80,7 @@ class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
     }
 
     return RefreshIndicator(
-      onRefresh: _refreshStadiums,
+      onRefresh: _refreshData,
       child: StadiumSearchScreen(
         userLocation: user.location,
         gridCol: gridCol,

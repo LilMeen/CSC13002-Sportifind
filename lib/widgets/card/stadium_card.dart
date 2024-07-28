@@ -51,7 +51,7 @@ class _StadiumCardState extends State<StadiumCard> {
                   top: Radius.circular(8.0),
                 ),
                 child: Image.network(
-                  'https://bizweb.dktcdn.net/100/017/070/files/kich-thuoc-san-bong-da-1-jpeg.jpg?v=1671246300021',
+                  widget.stadium.avatar,
                   width: double.infinity,
                   height: double.infinity,
                   fit: BoxFit.cover,

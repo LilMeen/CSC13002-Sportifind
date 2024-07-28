@@ -3,11 +3,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:diacritic/diacritic.dart';
 import 'package:sportifind/widgets/dropdown_button/general_dropdown.dart';
+import 'package:sportifind/widgets/dropdown_button/stadium_form_dropdown.dart';
 
 class CityDropdown extends StatefulWidget {
   final String selectedCity;
   final ValueChanged<String?> onChanged;
   final Color fillColor;
+  final String type;
   final Map<String, String> citiesNameAndId;
 
   const CityDropdown({
@@ -16,6 +18,7 @@ class CityDropdown extends StatefulWidget {
     required this.onChanged,
     required this.citiesNameAndId,
     this.fillColor = Colors.white,
+    this.type = 'genearal',
   });
 
   @override
@@ -25,16 +28,18 @@ class CityDropdown extends StatefulWidget {
 class _CityDropdownState extends State<CityDropdown> {
   List<String> _cities = [];
   static List<String> _citiesCache = [];
+  static Map<String, String> _citiesNameAndIdCache = {};
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    if (_citiesCache.isEmpty) {
+    if (_citiesCache.isEmpty || _citiesNameAndIdCache.isEmpty) {
       _fetchCities();
     } else {
       setState(() {
         _cities = _citiesCache;
+        widget.citiesNameAndId.addAll(_citiesNameAndIdCache);
       });
     }
   }
@@ -69,9 +74,8 @@ class _CityDropdownState extends State<CityDropdown> {
             _cities.add(provinceName);
             widget.citiesNameAndId[provinceName] = provinceId;
           }
-
           _citiesCache = _cities;
-          _isLoading = false;
+          _citiesNameAndIdCache = widget.citiesNameAndId;
         });
       } else {
         throw Exception('Failed to fetch cities');
@@ -90,6 +94,17 @@ class _CityDropdownState extends State<CityDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.type == 'stadium form') {
+      return StadiumFormDropdown(
+        selectedValue: widget.selectedCity,
+        hint: 'Select city',
+        items: _cities,
+        onChanged: widget.onChanged,
+        fillColor: widget.fillColor,
+        isLoading: _isLoading,
+        validatorText: 'Please select the city',
+      );
+    }
     return GeneralDropdown(
       selectedValue: widget.selectedCity,
       hint: 'Select city',

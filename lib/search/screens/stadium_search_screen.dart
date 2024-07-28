@@ -1,13 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/location_info.dart';
-import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/models/owner_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
-import 'package:sportifind/screens/stadium_owner/stadium/create_stadium.dart';
-import 'dart:async';
+import 'package:sportifind/screens/stadium_owner/stadium/create_stadium_screen.dart';
 import 'package:sportifind/search/widgets/custom_search_bar.dart';
-import 'package:sportifind/util/search_service.dart';
 import 'package:sportifind/search/screens/stadium_map_search.dart';
+import 'package:sportifind/util/location_service.dart';
+import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/widgets/card/stadium_card.dart';
 import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';
 import 'package:sportifind/widgets/dropdown_button/district_dropdown.dart';
@@ -46,14 +46,14 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
   String searchText = '';
   String textResult = '-Nearby stadiums-';
   late Map<String, String> ownerMap;
-  static final Map<String, String> citiesNameAndId = {};
+  final Map<String, String> citiesNameAndId = {};
   String selectedCity = '';
   String selectedDistrict = '';
   late LocationInfo currentLocation;
   bool isLoadingLocation = false;
   double floatingDistance = 0.0;
+  StadiumService stadService = StadiumService();
   LocationService locService = LocationService();
-  SearchService srchService = SearchService();
 
   @override
   void initState() {
@@ -63,7 +63,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
 
     searchedStadiums = widget.stadiums;
     currentLocation = widget.userLocation;
-    sortNearbyStadiums();
+    searchedStadiums = stadService.sortNearbyStadiums(searchedStadiums, currentLocation);
 
     ownerMap = {for (var owner in widget.owners) owner.id: owner.name};
     if (widget.forStadiumCreate) {
@@ -79,7 +79,6 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
     super.dispose();
   }
 
-  // Debounced search text change handler
   void onSearchChanged() {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () {
@@ -90,25 +89,13 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
     });
   }
 
-  // Sort stadiums by distance from the user's location
-  void sortNearbyStadiums() {
-    locService.sortByDistance<StadiumData>(
-      searchedStadiums,
-      currentLocation,
-      (stadium) => stadium.location,
-    );
-  }
-
-  // Perform search based on the search text, selected city, and selected district
   void performSearch() {
     setState(() {
-      searchedStadiums = srchService.searchingNameAndLocation(
-        listItems: widget.stadiums,
-        searchText: searchText,
-        selectedCity: selectedCity,
-        selectedDistrict: selectedDistrict,
-        getNameOfItem: (stadium) => stadium.name,
-        getLocationOfItem: (stadium) => stadium.location,
+      searchedStadiums = stadService.performStadiumSearch(
+        widget.stadiums,
+        searchText,
+        selectedCity,
+        selectedDistrict,
       );
       textResult = '-Searching results-';
       if (searchText.isEmpty &&
@@ -119,7 +106,6 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
     });
   }
 
-  // Get current location and sort stadiums
   Future<void> getCurrentLocationAndSort() async {
     setState(() {
       isLoadingLocation = true;
@@ -130,7 +116,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
       if (location != null) {
         setState(() {
           currentLocation = location;
-          sortNearbyStadiums();
+          searchedStadiums = stadService.sortNearbyStadiums(searchedStadiums, currentLocation);
           textResult = '-Nearby stadiums-';
         });
       } else {
@@ -264,7 +250,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const CreateStadium()),
+                              builder: (context) => const CreateStadiumScreen()),
                         );
                       },
                       backgroundColor: Colors.teal,

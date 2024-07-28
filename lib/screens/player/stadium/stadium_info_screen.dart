@@ -197,10 +197,63 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                           '${widget.stadium.openTime} ~ ${widget.stadium.closeTime}'),
                       _buildDetailRow(
                           Icons.phone, 'Phone', widget.stadium.phone),
-                      _buildDetailRow(Icons.attach_money, 'Price',
-                          '${formatPrice(widget.stadium.price)}/h'),
-                      _buildDetailRow(Icons.sports_soccer, 'Fields',
-                          widget.stadium.fields.toString()),
+                      if (widget.stadium.getNumberOfTypeField('5-Player') > 0)
+                        Row(
+                          children: [
+                            Flexible(
+                              child: _buildDetailRow(
+                                  Icons.sports_soccer,
+                                  '5-Player fields',
+                                  widget.stadium
+                                      .getNumberOfTypeField('5-Player')
+                                      .toString()),
+                            ),
+                            Flexible(
+                              child: _buildDetailRow(
+                                  Icons.attach_money,
+                                  'Price',
+                                  '${formatPrice(widget.stadium.getPriceOfTypeField('5-Player'))}/h'),
+                            ),
+                          ],
+                        ),
+                      if (widget.stadium.getNumberOfTypeField('7-Player') > 0)
+                        Row(
+                          children: [
+                            Flexible(
+                              child: _buildDetailRow(
+                                  Icons.sports_soccer,
+                                  '7-Player fields',
+                                  widget.stadium
+                                      .getNumberOfTypeField('7-Player')
+                                      .toString()),
+                            ),
+                            Flexible(
+                              child: _buildDetailRow(
+                                  Icons.attach_money,
+                                  'Price',
+                                  '${formatPrice(widget.stadium.getPriceOfTypeField('7-Player'))}/h'),
+                            ),
+                          ],
+                        ),
+                      if (widget.stadium.getNumberOfTypeField('11-Player') > 0)
+                        Row(
+                          children: [
+                            Flexible(
+                              child: _buildDetailRow(
+                                  Icons.sports_soccer,
+                                  '11-Player fields',
+                                  widget.stadium
+                                      .getNumberOfTypeField('11-Player')
+                                      .toString()),
+                            ),
+                            Flexible(
+                              child: _buildDetailRow(
+                                  Icons.attach_money,
+                                  'Price',
+                                  '${formatPrice(widget.stadium.getPriceOfTypeField('11-Player'))}/h'),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                 ),
@@ -225,7 +278,11 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                             PopWithResults(
                               fromPage: 'Stadium_info',
                               toPage: 'Select_stadium',
-                              results: [widget.stadium.id, widget.stadium.name, widget.stadium.fields.toString()],
+                              results: [
+                                widget.stadium.id,
+                                widget.stadium.name,
+                                widget.stadium.fields.toString()
+                              ],
                             ),
                           );
                         },

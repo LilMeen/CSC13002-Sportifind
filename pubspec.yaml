@@ -101,6 +101,7 @@ flutter:
      - 'lib/assets/left_unpicked.png'
      - 'lib/assets/right_picked.png'
      - 'lib/assets/right_unpicked.png'
+     - 'lib/assets/avatar/default_stadium_avatar.jpg'
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

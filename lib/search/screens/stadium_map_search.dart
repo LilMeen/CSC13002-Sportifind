@@ -4,6 +4,7 @@ import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/models/owner_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
+import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/widgets/card/stadium_card.dart';
 import 'package:sportifind/widgets/location_button/current_location_icon_button.dart';
 
@@ -33,7 +34,8 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
   late Map<String, String> ownerMap;
   bool isLoadingLocation = false;
   LocationInfo? searchLocation;
-  LocationService service = LocationService();
+  LocationService locService = LocationService();
+  StadiumService stadService = StadiumService();
 
   @override
   void initState() {
@@ -49,21 +51,13 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
     });
   }
 
-  void sortNearbyStadiums() {
-    service.sortByDistance<StadiumData>(
-      nearbyStadiums,
-      searchLocation!,
-      (stadium) => stadium.location,
-    );
-  }
-
   Future<void> _getCurrentLocationAndSortOnMap() async {
     setState(() {
       isLoadingLocation = true;
     });
 
     try {
-      LocationInfo? location = await service.getCurrentLocation();
+      LocationInfo? location = await locService.getCurrentLocation();
       if (location != null) {
         setState(() {
           searchLocation = location;
@@ -81,7 +75,7 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                 BitmapDescriptor.hueAzure),
           );
 
-          sortNearbyStadiums();
+          nearbyStadiums =  stadService.sortNearbyStadiums(nearbyStadiums, searchLocation!);
         });
 
         mapController?.animateCamera(
@@ -116,8 +110,23 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
       return;
     }
 
+    for (var stadium in widget.stadiums) {
+      if (searchText.toLowerCase() == stadium.name.toLowerCase()) {
+        mapController?.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target:
+                  LatLng(stadium.location.latitude, stadium.location.longitude),
+              zoom: 14.0,
+            ),
+          ),
+        );
+        return;
+      }
+    }
+
     try {
-      searchLocation = await service.findLocation(searchText);
+      searchLocation = await locService.findLocation(searchText);
 
       if (searchLocation != null) {
         setState(() {
@@ -133,7 +142,7 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                 BitmapDescriptor.hueOrange),
           );
 
-          sortNearbyStadiums();
+          nearbyStadiums =  stadService.sortNearbyStadiums(nearbyStadiums, searchLocation!);
         });
 
         mapController?.animateCamera(
