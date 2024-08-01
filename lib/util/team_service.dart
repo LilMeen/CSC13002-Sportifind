@@ -19,18 +19,6 @@ class TeamService {
   PlayerInformation? playerInformation;
   bool isLoading = true;
 
-  // get Team information from Database
-  Future<TeamInformation> fetchTeamDetails(String teamId) async {
-    TeamInformation? fetchedTeam = await getTeamInformation(teamId);
-    if (fetchedTeam == null) {
-      return TeamInformation
-          .empty(); // Replace with the appropriate default value
-    }
-
-    isLoading = false;
-    return fetchedTeam;
-  }
-
   Future<TeamInformation?> getTeamInformation(String teamId) async {
     try {
       // Reference to the specific team document

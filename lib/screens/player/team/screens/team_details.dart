@@ -29,13 +29,20 @@ class _TeamDetailsState extends State<TeamDetails>
   late AnimationController animationController;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     animationController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    teamInformation = await TeamService().fetchTeamDetails(widget.teamId);
+    fetchTeamDetails(widget.teamId);
+  }
+
+  Future<void> fetchTeamDetails(String teamId) async {
+    TeamService teamService = TeamService();
+    teamInformation = await teamService.getTeamInformation(teamId);
+
+    teamInformation ?? TeamInformation.empty();
   }
 
   @override
@@ -457,7 +464,7 @@ class _PlayerBoxState extends State<PlayerBox> {
                                                     color: SportifindTheme.grey,
                                                   ),
                                                 ),
-                                                 SizedBox(
+                                                SizedBox(
                                                   child: Row(
                                                     children: <Widget>[
                                                       const Text(

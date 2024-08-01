@@ -80,6 +80,8 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
           'district': _districtController.text,
           'captain': userId,
           'members': [userId],
+          'sentRequest': [],
+          'joinRequest': [], 
         });
         final teamId = docRef.id;
         // final constantImageUrl = FirebaseStorage.instance
