@@ -140,10 +140,17 @@ class BookingController extends ChangeNotifier {
           isSlotBooked(index) == false) {
         result = true;
         return result;
+      } else if (index != 0 &&
+          isSlotBooked(index - 1) == false &&
+          isSlotBooked(index + 1) == true &&
+          isSlotBooked(index) == false) {
+        result = true;
+        return result;
       }
     } else if (selectedPlayTime == 90) {
       if (index == 0 &&
-          isSlotBooked(index + 2) == true &&
+          (isSlotBooked(index + 1) == true ||
+              isSlotBooked(index + 2) == true) &&
           isSlotBooked(index) == false) {
         result = true;
         return result;
@@ -157,7 +164,9 @@ class BookingController extends ChangeNotifier {
       }
     } else if (selectedPlayTime == 120) {
       if (index == 0 &&
-          isSlotBooked(index + 3) == true &&
+          (isSlotBooked(index + 1) == true ||
+              isSlotBooked(index + 2) == true ||
+              isSlotBooked(index + 3) == true) &&
           isSlotBooked(index) == false) {
         result = true;
         return result;
@@ -261,17 +270,12 @@ class BookingController extends ChangeNotifier {
 
     // Get the query snapshot
     QuerySnapshot querySnapshot = await query.get();
-
-    // Loop through the documents and update each one
-    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-      // Get the document reference
-      DocumentReference docRef = doc.reference;
-
-      // Update the document (example: updating a field 'status' to 'active')
-      await docRef.update({
-        'incoming' : {newMatchCard.id : false}, // replace with the actual field(s) you want to update
-      });
-    }
+    List<QueryDocumentSnapshot> doc = querySnapshot.docs;
+    DocumentReference docRef = doc[0].reference;
+    await docRef.update({
+      'incoming.${newMatchCard.id}': false
+      // replace with the actual field(s) you want to update
+    });
   }
 
   void returnToMainScreen(BuildContext context) {
