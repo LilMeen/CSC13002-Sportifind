@@ -38,8 +38,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
         .then((value) => value['role'])
         .toString();
       return Result.success(null, message: role);
-    } on FirebaseAuthException catch (e) {
-      //throw Exception(e.message);
+    } catch (error) {
       return Result.failure("Incorrect email or password.");
     }
   }
