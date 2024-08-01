@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/util/image_service.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/services/image_service.dart';
 import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';
 import 'package:sportifind/widgets/dropdown_button/district_dropdown.dart';
 

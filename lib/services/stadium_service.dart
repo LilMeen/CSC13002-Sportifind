@@ -4,9 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/models/stadium_data.dart';
-import 'package:sportifind/util/image_service.dart';
-import 'package:sportifind/util/location_service.dart';
-import 'package:sportifind/util/search_service.dart';
+import 'package:sportifind/services/image_service.dart';
+import 'package:sportifind/services/location_service.dart';
+import 'package:sportifind/services/search_service.dart';
 
 class StadiumService {
   get defaultAvatar => 'lib/assets/avatar/default_stadium_avatar.jpg';

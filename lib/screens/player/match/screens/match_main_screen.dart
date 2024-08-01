@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/models/tab_icon.dart';
 import 'package:sportifind/screens/player/match/screens/select_team_screen.dart';
 import 'package:sportifind/widgets/match_list/match_cards.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 
 class CommonButton extends StatelessWidget {
   const CommonButton({

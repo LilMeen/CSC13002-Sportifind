@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/screens/player/team/widgets/search_bar.dart';
 import 'package:sportifind/screens/player/team/widgets/app_bar.dart';
 import 'package:sportifind/screens/player/team/widgets/my_teams_listview.dart';

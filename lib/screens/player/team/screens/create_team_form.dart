@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

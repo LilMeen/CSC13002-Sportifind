@@ -6,7 +6,6 @@ import 'package:sportifind/widgets/setting.dart';
 import 'package:sportifind/widgets/information_menu.dart';
 import 'package:sportifind/screens/player/profile/widgets/hexagon_stat.dart';
 import 'package:sportifind/screens/player/profile/edit_information.dart';
-import 'package:sportifind/widgets/image_picker.dart';
 import 'package:sportifind/screens/player/profile/widgets/rating.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';

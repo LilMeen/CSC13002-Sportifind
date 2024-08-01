@@ -1,8 +1,7 @@
 import 'dart:math' as math;
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/models/tab_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:sportifind/adapter/hex_color.dart';
 
 class BottomBarView extends StatefulWidget {
   const BottomBarView(

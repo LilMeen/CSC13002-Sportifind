@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Rating {
   final String name;
   final int value;

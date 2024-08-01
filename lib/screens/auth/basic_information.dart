@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/screens/player/player_home_screen.dart';
 import 'package:sportifind/screens/stadium_owner/stadium_owner_home_screen.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
-import 'package:sportifind/widgets/date_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

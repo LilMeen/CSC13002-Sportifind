@@ -3,7 +3,7 @@ import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/screens/player/team/screens/create_team_form.dart';
-import 'package:sportifind/util/match_service.dart';
+import 'package:sportifind/services/match_service.dart';
 
 class SelectTeamScreen extends StatefulWidget {
   const SelectTeamScreen({super.key, required this.addMatchCard});

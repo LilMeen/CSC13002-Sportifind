@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 
 // ignore: must_be_immutable
 class DatePicker extends StatefulWidget {

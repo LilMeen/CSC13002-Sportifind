@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/models/owner_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/search/screens/stadium_search_screen.dart';
-import 'package:sportifind/util/stadium_service.dart';
-import 'package:sportifind/util/user_service.dart';
+import 'package:sportifind/services/stadium_service.dart';
+import 'package:sportifind/services/user_service.dart';
 
 class StadiumScreen extends StatefulWidget {
   const StadiumScreen({super.key});

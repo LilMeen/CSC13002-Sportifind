@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/screens/player/match/util/booking_calendar.dart';
 import 'package:sportifind/screens/player/match/widgets/field_picker.dart';
 import 'package:sportifind/widgets/date_picker.dart';
-import 'package:sportifind/util/match_service.dart';
+import 'package:sportifind/services/match_service.dart';
 
 class DateSelectScreen extends StatefulWidget {
   const DateSelectScreen(

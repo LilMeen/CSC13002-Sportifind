@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/models/stadium_data.dart';
-import 'package:sportifind/screens/player/match/screens/date_select_screen.dart';
 
 class StadiumInfoScreen extends StatefulWidget {
   final StadiumData stadium;

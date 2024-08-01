@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:sportifind/search/widgets/custom_search_bar.dart';
-import 'package:sportifind/util/search_service.dart';
+import 'package:sportifind/services/search_service.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});

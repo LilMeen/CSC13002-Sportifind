@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/screens/stadium_owner/widget/stadium_form.dart';
-import 'package:sportifind/util/location_service.dart';
-import 'package:sportifind/util/stadium_service.dart';
-import 'package:sportifind/util/image_service.dart';
+import 'package:sportifind/services/location_service.dart';
+import 'package:sportifind/services/stadium_service.dart';
+import 'package:sportifind/services/image_service.dart';
 import 'package:sportifind/widgets/location_button/current_location_button.dart';
 
 class CreateStadiumScreen extends StatefulWidget {

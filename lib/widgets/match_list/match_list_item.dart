@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
-import 'package:sportifind/util/match_service.dart';
+import 'package:sportifind/services/match_service.dart';
 
 class MatchListItem extends StatelessWidget {
   const MatchListItem({super.key, required this.matchCard});

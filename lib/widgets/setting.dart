@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SettingScreen extends StatelessWidget {
-  SettingScreen({Key? key}) : super(key: key);
+  SettingScreen({super.key});
 
   final user = FirebaseAuth.instance.currentUser;
 

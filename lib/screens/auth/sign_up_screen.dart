@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/screens/auth/sign_in_screen.dart';
 import 'package:sportifind/screens/auth/signup.dart';
 
@@ -13,8 +13,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  bool isSigningUp = false;
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(

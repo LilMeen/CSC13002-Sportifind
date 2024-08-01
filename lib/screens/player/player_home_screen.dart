@@ -3,7 +3,7 @@ import 'package:sportifind/screens/player/team/screens/team_main_screen.dart';
 import 'package:sportifind/widgets/bottom_navigation.dart';
 import 'package:sportifind/models/tab_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
 import 'package:sportifind/screens/player/profile/profile_screen.dart';
 
