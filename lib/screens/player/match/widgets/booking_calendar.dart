@@ -11,6 +11,7 @@ class BookingCalendar extends StatelessWidget {
     required this.bookingService,
     required this.selectedPlayTime,
     required this.selectedStadium,
+    required this.selectedStadiumOwner,
     required this.selectedTeam,
     required this.selectedDate,
     required this.selectedField,
@@ -126,6 +127,7 @@ class BookingCalendar extends StatelessWidget {
   final int selectedPlayTime;
   final String selectedTeam;
   final String selectedStadium;
+  final String selectedStadiumOwner;
   final DateTime selectedDate;
   final String selectedField;
   final List<DateTimeRange>? bookedSlot;
@@ -139,6 +141,7 @@ class BookingCalendar extends StatelessWidget {
         bookingService: bookingService,
         pauseSlots: pauseSlots,
         selectedStadium: selectedStadium,
+        selectedStadiumOwner: selectedStadiumOwner,
         selectedTeam: selectedTeam,
         addMatchCard: addMatchCard,
         bookedTime: bookedSlot!,

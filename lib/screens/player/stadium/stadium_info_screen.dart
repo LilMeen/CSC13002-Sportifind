@@ -281,6 +281,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                               builder: (context) => DateSelectScreen(
                                 selectedStadiumId: widget.stadium.id,
                                 selectedStadiumName: widget.stadium.name,
+                                selectedStadiumOwner: widget.stadium.owner,
                                 selectedTeam: widget.selectedTeam!,
                                 fields: widget.stadium.fields,
                                 addMatchCard: widget.addMatchCard,

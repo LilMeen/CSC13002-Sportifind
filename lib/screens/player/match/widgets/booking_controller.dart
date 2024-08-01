@@ -12,6 +12,7 @@ class BookingController extends ChangeNotifier {
     required this.bookingService,
     this.pauseSlots,
     required this.selectedStadium,
+    required this.selectedStadiumOwner,
     required this.selectedTeam,
     required this.addMatchCard,
     required this.bookedTime,
@@ -33,8 +34,10 @@ class BookingController extends ChangeNotifier {
   final String selectedTeam;
   final String selectedStadium;
   final DateTime selectedDate;
+  final String selectedStadiumOwner;
   final String selectedField;
   final void Function(MatchCard matchcard) addMatchCard;
+  final user = FirebaseAuth.instance.currentUser!;
 
   DateTime? serviceOpening;
   DateTime? serviceClosing;
@@ -212,9 +215,9 @@ class BookingController extends ChangeNotifier {
   }
 
   void addData(BookingService bookingDate, int selectedPlayTime) {
-    final user = FirebaseAuth.instance.currentUser!;
     MatchCard newMatchCard = MatchCard(
       stadium: selectedStadium,
+      stadiumOwner: selectedStadiumOwner,
       start: formattedTime.format(bookingDate.bookingStart),
       end: formattedTime.format(bookingDate.bookingEnd),
       date: formatter.format(selectedDate),
@@ -230,6 +233,7 @@ class BookingController extends ChangeNotifier {
 
     FirebaseFirestore.instance.collection('matches').doc(newMatchCard.id).set({
       'stadium': newMatchCard.stadium,
+      'stadiumOwner': newMatchCard.stadiumOwner,
       'start': newMatchCard.start,
       'end': newMatchCard.end,
       'playTime': newMatchCard.playTime,
@@ -241,6 +245,33 @@ class BookingController extends ChangeNotifier {
       'userId': user.uid,
       'field': selectedField,
     });
+
+    updateTeamsWhereCaptainIsUser(newMatchCard);
+  }
+
+  // Assume `user` is already defined and has a `uid` field
+  Future<void> updateTeamsWhereCaptainIsUser(MatchCard newMatchCard) async {
+    String userUid = user.uid;
+    // Reference to the Firestore collection
+    CollectionReference teamsCollection =
+        FirebaseFirestore.instance.collection('teams');
+
+    // Query to find documents where 'captain' is equal to `user.uid`
+    Query query = teamsCollection.where('captain', isEqualTo: userUid);
+
+    // Get the query snapshot
+    QuerySnapshot querySnapshot = await query.get();
+
+    // Loop through the documents and update each one
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      // Get the document reference
+      DocumentReference docRef = doc.reference;
+
+      // Update the document (example: updating a field 'status' to 'active')
+      await docRef.update({
+        'incoming' : {newMatchCard.id : false}, // replace with the actual field(s) you want to update
+      });
+    }
   }
 
   void returnToMainScreen(BuildContext context) {

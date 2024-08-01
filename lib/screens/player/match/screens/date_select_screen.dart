@@ -12,6 +12,7 @@ class DateSelectScreen extends StatefulWidget {
       {super.key,
       required this.selectedStadiumId,
       required this.selectedStadiumName,
+      required this.selectedStadiumOwner,
       required this.selectedTeam,
       required this.fields,
       required this.addMatchCard});
@@ -19,6 +20,7 @@ class DateSelectScreen extends StatefulWidget {
   final String selectedTeam;
   final String selectedStadiumId;
   final String selectedStadiumName;
+  final String selectedStadiumOwner;
   final List<FieldData> fields;
   final void Function(MatchCard matchcard)? addMatchCard;
   @override
@@ -159,6 +161,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               locale: 'en',
               selectedPlayTime: convertDurationStringToInt(selectedPlayTime),
               selectedStadium: widget.selectedStadiumId,
+              selectedStadiumOwner: widget.selectedStadiumOwner,
               selectedTeam: widget.selectedTeam,
               selectedDate: selectedDate!,
               selectedField: selectedField,

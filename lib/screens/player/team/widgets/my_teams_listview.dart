@@ -58,6 +58,7 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
               district: teamSnapshot['district'],
               city: teamSnapshot['city'],
               avatarImageUrl: teamSnapshot['avatarImage'],
+              incoming: Map<String, bool>.from(teamSnapshot['incoming']),
               members: List<String>.from(teamSnapshot['members']),
               captain: teamSnapshot['captain'],
               teamId: teamSnapshot.id,

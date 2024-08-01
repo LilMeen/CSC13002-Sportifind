@@ -58,6 +58,7 @@ class _NearbyTeamListViewState extends State<NearbyTeamListView>
                 district: doc['district'],
                 city: doc['city'],
                 avatarImageUrl: doc['avatarImage'],
+                incoming: Map<String, bool>.from(doc['incoming']),
                 members: List<String>.from(doc['members']),
                 captain: doc['captain'],
                 teamId: doc.id,

@@ -9,6 +9,7 @@ class TeamInformation {
     required this.city,
     required this.avatarImageUrl,
     required this.members,
+    required this.incoming,
     required this.captain,
   });
 
@@ -19,6 +20,7 @@ class TeamInformation {
         district = '',
         city = '',
         avatarImageUrl = '',
+        incoming = {},
         members = [],
         captain = '';
 
@@ -29,6 +31,7 @@ class TeamInformation {
         district = snapshot['district'],
         city = snapshot['city'],
         avatarImageUrl = snapshot['avatarImage'],
+        incoming = Map<String, bool>.from(snapshot['incoming']),
         members = (snapshot['members'] as List)
             .map((item) => item as String)
             .toList(),
@@ -42,5 +45,6 @@ class TeamInformation {
   String city;
   String avatarImageUrl;
   String captain;
+  Map<String, bool> incoming;
   List<String> members;
 }
