@@ -2,8 +2,12 @@ import 'package:flutter/widgets.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/show_snackbar.dart';
+import 'package:sportifind/features/auth/domain/usecases/forgot_password.dart';
+import 'package:sportifind/features/auth/domain/usecases/set_basic_info.dart';
+import 'package:sportifind/features/auth/domain/usecases/set_role.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_in.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_in_with_google.dart';
+import 'package:sportifind/features/auth/domain/usecases/sign_out.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_up.dart';
 import 'package:sportifind/screens/admin/admin_home_screen.dart';
 import 'package:sportifind/screens/auth/role_screen.dart';
@@ -67,19 +71,29 @@ class AuthBloc {
     }
   }
 
-  void signOut(){
-
+  void signOut() async{
+    await UseCaseProvider.getUseCase<SignOut>().call(
+      NoParams()
+    );
   }
 
-  void forgotPassword(String email) {
-
+  void forgotPassword(String email) async {
+    await UseCaseProvider.getUseCase<ForgotPassword>().call(
+      ForgotPasswordParams(
+        email: email,
+      )
+    );
   }
 
-  void setRole(String role){
-
+  void setRole(String role) async{
+    await UseCaseProvider.getUseCase<SetRole>().call(
+      SetRoleParams(
+        role: role,
+      )
+    );  
   }
 
-  void setBasicInfo(
+  void setBasicInfo (
     String name,
     String dob,
     String gender,
@@ -87,7 +101,17 @@ class AuthBloc {
     String district,
     String address,
     String phone
-  ){
-
+  ) async {
+    await UseCaseProvider.getUseCase<SetBasicInfo>().call(
+      SetBasicInfoParams(
+        name: name,
+        dob: dob,
+        gender: gender,
+        city: city,
+        district: district,
+        address: address,
+        phone: phone,
+      )
+    );
   }
 }

@@ -5,7 +5,6 @@ import 'package:sportifind/features/auth/data/repositories/auth_repository_impl.
 import 'package:sportifind/features/auth/domain/repositories/auth_repository.dart';
 import 'package:sportifind/features/auth/domain/usecases/forgot_password.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_in.dart';
-import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_up.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_out.dart';
