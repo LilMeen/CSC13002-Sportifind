@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/screens/auth/basic_information.dart';
 
 class RoleScreen extends StatefulWidget {
+  static route () =>
+    MaterialPageRoute(builder: (context) => const RoleScreen());
   const RoleScreen ({super.key});
 
   @override 

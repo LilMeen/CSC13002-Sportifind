@@ -34,20 +34,13 @@ void initializeDependencies (){
   );
 
   // Use cases
-  _authUseCases([
-    SignIn(sl()),
-    SignInWithGoogle(sl()),
-    SignUp(sl()),
-    SignOut(sl()),
-    ForgotPassword(sl()),
-    SetRole(sl()),
-    SetBasicInfo(sl())
-  ]);
+  sl.registerLazySingleton<SignIn>(() => SignIn(sl()));
+  sl.registerLazySingleton<SignInWithGoogle>(() => SignInWithGoogle(sl()));
+  sl.registerLazySingleton<SignUp>(() => SignUp(sl()));
+  sl.registerLazySingleton<SignOut>(() => SignOut(sl()));
+  sl.registerLazySingleton<ForgotPassword>(() => ForgotPassword(sl()));
+  sl.registerLazySingleton<SetRole>(() => SetRole(sl()));
+  sl.registerLazySingleton<SetBasicInfo>(() => SetBasicInfo(sl()));
 }
 
-void _authUseCases(List<UseCase> useCases){
-  for (final useCase in useCases) {
-    sl.registerLazySingleton(() => useCase);
-  }
-}
 

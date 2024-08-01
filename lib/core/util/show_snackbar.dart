@@ -6,6 +6,7 @@ void showSnackBar(BuildContext context, String content) {
     ..showSnackBar(
       SnackBar(
         content: Text(content),
+        backgroundColor: Colors.red,
       ),
     );
 }

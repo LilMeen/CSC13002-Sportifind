@@ -8,6 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 final _formKey = GlobalKey<FormState>();
 
 class BasicInformationScreen extends StatefulWidget {
+  static route() =>
+      MaterialPageRoute(builder: (context) => const BasicInformationScreen());
   const BasicInformationScreen({super.key});
 
   @override

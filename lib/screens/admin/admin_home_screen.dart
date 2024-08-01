@@ -5,6 +5,8 @@ import 'package:sportifind/search/widgets/custom_search_bar.dart';
 import 'package:sportifind/services/search_service.dart';
 
 class AdminHomeScreen extends StatefulWidget {
+  static route() =>
+      MaterialPageRoute(builder: (context) => const AdminHomeScreen());
   const AdminHomeScreen({super.key});
 
   @override

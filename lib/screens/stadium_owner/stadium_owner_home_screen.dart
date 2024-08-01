@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
 
 class StadiumOwnerHomeScreen extends StatefulWidget {
+  static route () =>
+      MaterialPageRoute(builder: (context) => const StadiumOwnerHomeScreen());
   const StadiumOwnerHomeScreen({super.key});
 
   @override

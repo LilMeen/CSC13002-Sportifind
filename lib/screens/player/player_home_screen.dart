@@ -8,6 +8,8 @@ import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
 import 'package:sportifind/screens/player/profile/profile_screen.dart';
 
 class PlayerHomeScreen extends StatefulWidget {
+  static route() =>
+      MaterialPageRoute(builder: (context) => const PlayerHomeScreen());
   const PlayerHomeScreen({super.key});
 
   @override

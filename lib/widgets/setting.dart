@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/features/auth/presentations/screens/sign_in_screen.dart';
 import 'package:sportifind/widgets/setting_menu.dart';
-import 'package:sportifind/screens/auth/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -11,9 +11,7 @@ class SettingScreen extends StatelessWidget {
 
   void signOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => SignInScreen()),
-    );
+    SignInScreen.route();
   }
 
   Future<void> deleteUserData() async {

@@ -31,10 +31,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
       if (!snapshot.exists) {
         return Result.failure("Your account is banned.");
       }
-      return Result.success(null);
-
+      final role = FirebaseFirestore.instance
+        .collection('users')
+        .doc(_firebaseAuth.currentUser!.uid)
+        .get()
+        .then((value) => value['role'])
+        .toString();
+      return Result.success(null, message: role);
     } on FirebaseAuthException catch (e) {
-      throw Exception(e.message);
+      //throw Exception(e.message);
+      return Result.failure("Incorrect email or password.");
     }
   }
 
@@ -76,8 +82,26 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    await _firebaseAuth.signInWithCredential(credential);
-    return Result.success(null);
+    final userCredential = await _firebaseAuth.signInWithCredential(credential);
+
+    if (userCredential.additionalUserInfo!.isNewUser) {
+      initUser(userCredential.user!.uid.toString());
+      FirebaseFirestore.instance
+        .collection('users')
+        .doc(userCredential.user!.uid)
+        .set({
+          'email': userCredential.user!.email,
+        });
+      return Result.success(null, message: 'role');
+    }
+
+    final role = FirebaseFirestore.instance
+      .collection('users')
+      .doc(_firebaseAuth.currentUser!.uid)
+      .get()
+      .then((value) => value['role'])
+      .toString();
+    return Result.success(null, message: role);
   }
 
   @override

@@ -1,7 +1,8 @@
 import 'package:sportifind/core/usecases/usecase.dart';
-import 'package:sportifind/core/di/injection_container.dart';
+import 'package:get_it/get_it.dart';
+
 class UseCaseProvider {
   static T getUseCase<T extends UseCase>() {
-    return sl<T>();
+    return GetIt.I<T>();
   }
 }

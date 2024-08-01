@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/core/di/injection_container.dart';
 import 'package:sportifind/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sportifind/firebase_options.dart';
@@ -10,6 +11,7 @@ Future <void> main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  initializeDependencies();
   runApp(const MyApp());
 }
 

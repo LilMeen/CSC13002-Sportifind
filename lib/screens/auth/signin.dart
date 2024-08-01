@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/screens/auth/forgot_password_screen.dart';
-import 'package:sportifind/screens/auth/widgets/green_white_button.dart';
+import 'package:sportifind/features/auth/presentations/widgets/green_white_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/screens/player/player_home_screen.dart';
 import 'package:sportifind/screens/admin/admin_home_screen.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/screens/auth/sign_in_screen.dart';
+import 'package:sportifind/features/auth/presentations/screens/sign_in_screen.dart';
 import 'package:sportifind/screens/auth/signup.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -60,10 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const SignInScreen()),
-                          );
+                          SignInScreen.route();
                         },
                         child: const Text(
                           'Sign in',
