@@ -11,10 +11,11 @@ import 'package:sportifind/features/auth/domain/usecases/sign_in.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_out.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_up.dart';
-import 'package:sportifind/screens/admin/admin_home_screen.dart';
-import 'package:sportifind/screens/auth/role_screen.dart';
-import 'package:sportifind/screens/player/player_home_screen.dart';
-import 'package:sportifind/screens/stadium_owner/stadium_owner_home_screen.dart';
+import 'package:sportifind/features/auth/presentations/screens/basic_info_screen.dart';
+import 'package:sportifind/features/auth/presentations/screens/home/admin_home_screen.dart';
+import 'package:sportifind/features/auth/presentations/screens/role_screen.dart';
+import 'package:sportifind/features/auth/presentations/screens/home/player_home_screen.dart';
+import 'package:sportifind/features/auth/presentations/screens/home/stadium_owner_home_screen.dart';
 
 
 
@@ -105,7 +106,8 @@ class AuthBloc {
       SetRoleParams(
         role: role,
       )
-    );  
+    );
+    Navigator.of(context).pushReplacement(BasicInfoScreen.route());
   }
 
   void setBasicInfo (
@@ -129,4 +131,5 @@ class AuthBloc {
       )
     );
   }
+  
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/features/auth/presentations/screens/sign_in_screen.dart';
+import 'package:sportifind/features/auth/presentations/bloc/auth_bloc.dart';
 import 'package:sportifind/features/auth/presentations/widgets/green_white_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sportifind/features/auth/presentations/widgets/auth_field.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
+  static route () =>
+    MaterialPageRoute(builder: (context) => const ForgotPasswordScreen());
   const ForgotPasswordScreen({super.key});
 
   @override
@@ -14,42 +16,13 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  final emailController = TextEditingController();
   final _form = GlobalKey<FormState>();
-  var _enteredEmail = '';
 
-  void _submit() async {
-    final isValid = _form.currentState!.validate();
-
-    if (!isValid) {
-      return;
-    }
-
-    _form.currentState!.save();
-
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: _enteredEmail);
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog (
-          title: const Text('Password reset email sent!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacement(SignInScreen.route());
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        )
-      );
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.toString()),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
   }
 
   @override   
@@ -89,48 +62,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              // EMAIL
-                              const SizedBox(
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 15),
-                                  child: Text(
-                                    "Email",
-                                    style: SportifindTheme.headline,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              TextFormField(
-                                textAlign: TextAlign.left,
-                                textAlignVertical: TextAlignVertical.bottom,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                  hintText: "example@gmail.com",
-                                  hintStyle: SportifindTheme.greyTitle,
-                                  filled: true,
-                                  fillColor: Colors.white70,
-                                  prefixIcon: const Icon(Icons.email),
-                                ),
-                                autocorrect: false,
-                                textCapitalization: TextCapitalization.none,
+                              AuthField(
+                                label: 'Email',
+                                hintText: 'example@mail.com',
+                                icon: const Icon(Icons.email),
+                                controller: emailController,
+                                obscureText: false,
                                 validator: (value) {
                                   if (value == null ||
                                       value.trim().isEmpty ||
                                       !value.contains('@')) {
-                                    return 'Invalid email!';
+                                    return 'Invalid email.';
                                   }
                                   return null;
-                                },
-                                onSaved: (value) {
-                                  _enteredEmail = value!;
                                 },
                               ),
                               const SizedBox(height: 20),
                               GreenWhiteButton(
                                 text: "Reset password",
-                                onTap: _submit,
+                                onTap: () {
+                                  if (_form.currentState!.validate()) {
+                                    AuthBloc(context).forgotPassword(emailController.text);
+                                  }
+                                },
                                 height: 50,
                                 width: double.infinity,
                               ),

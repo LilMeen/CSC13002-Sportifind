@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/screens/player/player_home_screen.dart';
-import 'package:sportifind/screens/stadium_owner/stadium_owner_home_screen.dart';
+import 'package:sportifind/features/auth/presentations/screens/home/player_home_screen.dart';
+import 'package:sportifind/features/auth/presentations/screens/home/stadium_owner_home_screen.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _formKey = GlobalKey<FormState>();
 
-class BasicInformationScreen extends StatefulWidget {
+class BasicInfoScreen extends StatefulWidget {
   static route() =>
-      MaterialPageRoute(builder: (context) => const BasicInformationScreen());
-  const BasicInformationScreen({super.key});
+      MaterialPageRoute(builder: (context) => const BasicInfoScreen());
+  const BasicInfoScreen({super.key});
 
   @override
   BasicInformationState createState() => BasicInformationState();
 }
 
-class BasicInformationState extends State<BasicInformationScreen> {
+class BasicInformationState extends State<BasicInfoScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();

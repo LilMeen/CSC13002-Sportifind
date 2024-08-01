@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/screens/player/player_home_screen.dart';
+import 'package:sportifind/features/auth/presentations/screens/home/player_home_screen.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 import 'package:sportifind/screens/player/profile/widgets/number_wheel.dart';
 import 'package:sportifind/screens/player/profile/widgets/pick_foot.dart';

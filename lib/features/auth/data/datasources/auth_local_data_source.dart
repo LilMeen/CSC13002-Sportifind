@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/core/models/result.dart';
 
 abstract interface class AuthLocalDataSource {
@@ -17,13 +18,14 @@ abstract interface class AuthLocalDataSource {
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
-  final _usersData = FirebaseFirestore.instance.collection('users');
-
   @override
   Future<Result<void>> setRole(String role) async {
-    await _usersData.doc().update({
-      'role': role,
-    });
+    await FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update({
+        'role': role,
+      });
     return Result.success(null);
   }
 
@@ -37,15 +39,24 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     String address,
     String phone,
   ) async {
-    await _usersData.doc().update({
-      'name': name,
-      'dob': dob,
-      'gender': gender,
-      'city': city,
-      'district': district,
-      'address': address,
-      'phone': phone,
-    });
-    return Result.success(null);
+    await FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update({
+        'name': name,
+        'phone': phone,
+        'dob': dob,
+        'address': address,
+        'gender': gender,
+        'city': city,
+        'district': district,
+      });
+
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .get();
+    final role = snapshot['role'];
+    return Result.success(null, message: role);
   }
 }

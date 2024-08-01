@@ -1,8 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sportifind/screens/auth/basic_information.dart';
+import 'package:sportifind/features/auth/presentations/bloc/auth_bloc.dart';
 
 class RoleScreen extends StatefulWidget {
   static route () =>
@@ -37,17 +35,7 @@ class _RoleScreenState extends State<RoleScreen> {
               width: 300,
               child: ElevatedButton(
                 onPressed: (){
-                  FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({
-                      'role': 'player',
-                    });
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const BasicInformationScreen()),
-                  );
+                  AuthBloc(context).setRole("player");
                 },
                 style:  ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(217, 217, 217, 1),
@@ -72,17 +60,7 @@ class _RoleScreenState extends State<RoleScreen> {
               width: 300,
               child: ElevatedButton(
                 onPressed: (){
-                  FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({
-                      'role': 'stadium_owner',
-                    });
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const BasicInformationScreen()),
-                  );
+                  AuthBloc(context).setRole('stadium_owner');
                 },
                 style:  ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(217, 217, 217, 1),

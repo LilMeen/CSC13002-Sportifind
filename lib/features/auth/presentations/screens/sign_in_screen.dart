@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/features/auth/presentations/bloc/auth_bloc.dart';
+import 'package:sportifind/features/auth/presentations/screens/forgot_password_screen.dart';
 import 'package:sportifind/features/auth/presentations/widgets/auth_field.dart';
-import 'package:sportifind/screens/auth/forgot_password_screen.dart';
 import 'package:sportifind/features/auth/presentations/widgets/green_white_button.dart';
-import 'package:sportifind/screens/auth/widgets/sign_in_with_google_button.dart'; 
+import 'package:sportifind/features/auth/presentations/widgets/sign_in_with_google_button.dart'; 
 import 'package:sportifind/features/auth/presentations/screens/sign_up_screen.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -24,6 +24,13 @@ class _SignInScreenState extends State<SignInScreen> {
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   bool _rememberMe = false;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,10 +129,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => const ForgotPasswordScreen())
-                                    );
+                                    Navigator.of(context).pushReplacement(ForgotPasswordScreen.route());
                                   },
                                   child: const Text(
                                     'Forgot Password',

@@ -22,6 +22,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final reenterPasswordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
+  @override
+  void dispose () {
+    emailController.dispose();
+    passwordController.dispose();
+    reenterPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
