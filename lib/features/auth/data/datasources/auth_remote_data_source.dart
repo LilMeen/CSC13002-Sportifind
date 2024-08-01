@@ -31,16 +31,40 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
       if (!snapshot.exists) {
         return Result.failure("Your account is banned.");
       }
-      final role = FirebaseFirestore.instance
-        .collection('users')
-        .doc(_firebaseAuth.currentUser!.uid)
-        .get()
-        .then((value) => value['role'])
-        .toString();
+      final String role = snapshot['role'];
       return Result.success(null, message: role);
     } catch (error) {
       return Result.failure("Incorrect email or password.");
     }
+  }
+
+  @override
+  Future<Result<void>> signInWithGoogle() async {
+    await GoogleSignIn().signOut();
+    final googleSignIn = GoogleSignIn();
+    final googleUser = await googleSignIn.signIn();
+    final googleAuth = await googleUser!.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    final userCredential = await _firebaseAuth.signInWithCredential(credential);
+
+    if (userCredential.additionalUserInfo!.isNewUser) {
+      initUser(userCredential.user!.uid.toString());
+      FirebaseFirestore.instance
+        .collection('users')
+        .doc(userCredential.user!.uid)
+        .set({
+          'email': userCredential.user!.email,
+        });
+    }
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(userCredential.user!.uid)
+      .get(); 
+    final String role = snapshot['role'];
+    return Result.success(null, message: role);
   }
 
   @override
@@ -69,38 +93,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
   Future<Result<void>> signOut() async {
     await _firebaseAuth.signOut();
     return Result.success(null);
-  }
-
-  @override
-  Future<Result<void>> signInWithGoogle() async {
-    await GoogleSignIn().signOut();
-    final googleSignIn = GoogleSignIn();
-    final googleUser = await googleSignIn.signIn();
-    final googleAuth = await googleUser!.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    final userCredential = await _firebaseAuth.signInWithCredential(credential);
-
-    if (userCredential.additionalUserInfo!.isNewUser) {
-      initUser(userCredential.user!.uid.toString());
-      FirebaseFirestore.instance
-        .collection('users')
-        .doc(userCredential.user!.uid)
-        .set({
-          'email': userCredential.user!.email,
-        });
-      return Result.success(null, message: 'role');
-    }
-
-    final role = FirebaseFirestore.instance
-      .collection('users')
-      .doc(_firebaseAuth.currentUser!.uid)
-      .get()
-      .then((value) => value['role'])
-      .toString();
-    return Result.success(null, message: role);
   }
 
   @override

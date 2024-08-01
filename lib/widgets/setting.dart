@@ -11,7 +11,7 @@ class SettingScreen extends StatelessWidget {
 
   void signOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
-    SignInScreen.route();
+    Navigator.of(context).pushReplacement(SignInScreen.route());
   }
 
   Future<void> deleteUserData() async {

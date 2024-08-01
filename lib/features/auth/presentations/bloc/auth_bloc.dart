@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/widgets.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
@@ -28,27 +30,41 @@ class AuthBloc {
       )
     );
     if (result.isSuccess == false){
-      print(result.message);
       showSnackBar(context, result.message);
     }
     else {
       if (result.message == "admin") {
-        AdminHomeScreen.route();
+        Navigator.of(context).pushReplacement(AdminHomeScreen.route());
       }
       else if (result.message == "player") {
-        PlayerHomeScreen.route();
+        Navigator.of(context).pushReplacement(PlayerHomeScreen.route());
       }
       else if (result.message == "stadium_owner") {
-        StadiumOwnerHomeScreen.route();
+        Navigator.of(context).pushReplacement(StadiumOwnerHomeScreen.route());
       }
     }
   }
   
 
   void signInWithGoogle() async {
-    await UseCaseProvider.getUseCase<SignInWithGoogle>().call(
+    final result = await UseCaseProvider.getUseCase<SignInWithGoogle>().call(
       NoParams()
     );
+
+    if (result.isSuccess == false){
+      showSnackBar(context, result.message);
+    }
+    else {
+      if (result.message == "player") {
+        Navigator.of(context).pushReplacement(PlayerHomeScreen.route());
+      }
+      else if (result.message == "stadium_owner") {
+        Navigator.of(context).pushReplacement(StadiumOwnerHomeScreen.route());
+      }
+      else {
+        Navigator.of(context).pushReplacement(RoleScreen.route());
+      }
+    }
 
   }
 
@@ -64,7 +80,6 @@ class AuthBloc {
       )
     );
     if (result.isSuccess == false){
-      print(result.message);
       showSnackBar(context, result.message);
     } else {
       Navigator.of(context).pushReplacement(RoleScreen.route());
