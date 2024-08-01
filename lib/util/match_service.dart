@@ -58,7 +58,8 @@ class MatchService {
     userMatches.clear();
   }
 
-  Future<List<TeamInformation>> getTeamData(List<TeamInformation> team) async {
+  Future<List<TeamInformation>> getTeamData() async {
+    List<TeamInformation> team = [];
     final teamQuery =
         await FirebaseFirestore.instance.collection('teams').get();
     final teams = teamQuery.docs

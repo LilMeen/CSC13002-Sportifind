@@ -38,7 +38,7 @@ class _StadiumCardState extends State<StadiumCard> {
               ownerName: widget.ownerName,
               forMatchCreate: widget.forMatchCreate,
               addMatchCard: widget.addMatchCard,
-              selectedTeam: widget.selectedTeam!,
+              selectedTeam: widget.selectedTeam,
             ),
           ),
         );

@@ -29,10 +29,10 @@ class MatchCard {
         end = snapshot['end'],
         date =snapshot['date'],
         playTime = snapshot['playTime'],
-        avatarTeam1 = snapshot['team_avatar'],
-        team1 = snapshot['team'],
-        avatarTeam2 = snapshot['opponent_avatar'],
-        team2 = snapshot['opponent'],
+        avatarTeam1 = snapshot['team1_avatar'],
+        team1 = snapshot['team1'],
+        avatarTeam2 = snapshot['team2_avatar'],
+        team2 = snapshot['team2'],
         userId = snapshot['userId'],
         field = snapshot['field'];
 

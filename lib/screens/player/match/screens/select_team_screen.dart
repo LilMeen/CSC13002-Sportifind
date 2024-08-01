@@ -15,16 +15,15 @@ class SelectTeamScreen extends StatefulWidget {
 }
 
 class _SelectTeamScreenState extends State<SelectTeamScreen> {
-  final List<TeamInformation> team = [];
   MatchService matchService = MatchService();
-
-  Future<List<TeamInformation>>? _teamFuture;
+  
+  Future<List<TeamInformation>>? team;
 
   @override
   void initState() {
     super.initState();
     print("Fetching data");
-    _teamFuture = matchService.getTeamData(team);
+    team = matchService.getTeamData();
   }
 
   @override
@@ -55,7 +54,7 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: FutureBuilder<List<TeamInformation>>(
-                  future: _teamFuture,
+                  future: team,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());

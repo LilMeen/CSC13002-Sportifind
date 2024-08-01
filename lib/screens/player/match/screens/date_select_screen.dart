@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/field_data.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/match/util/booking_calendar.dart';
@@ -12,13 +13,13 @@ class DateSelectScreen extends StatefulWidget {
       required this.selectedStadiumId,
       required this.selectedStadiumName,
       required this.selectedTeam,
-      required this.numberOfField,
+      required this.fields,
       required this.addMatchCard});
 
   final String selectedTeam;
   final String selectedStadiumId;
   final String selectedStadiumName;
-  final int numberOfField;
+  final List<FieldData> fields;
   final void Function(MatchCard matchcard)? addMatchCard;
   @override
   State<StatefulWidget> createState() => _DateSelectScreenState();
@@ -267,10 +268,10 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                   ),
                   FieldPicker(
                       func: refreshByField,
-                      numberOfField: widget.numberOfField,
+                      fields: widget.fields,
                       selectedField: selectedField,
                       height: 40,
-                      width: 75),
+                      width: 125),
                   const SizedBox(height: 40),
                   DatePicker(
                     func: refreshByDate,

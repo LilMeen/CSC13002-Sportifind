@@ -236,7 +236,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                             ownerName: ownerName,
                             imageRatio: widget.imageRatio,
                             forMatchCreate: widget.forMatchCreate,
-                            selectedTeam: widget.selectedTeam!,
+                            selectedTeam: widget.selectedTeam,
                             addMatchCard: widget.addMatchCard,
                           );
                         },

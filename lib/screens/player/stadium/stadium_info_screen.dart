@@ -8,7 +8,7 @@ class StadiumInfoScreen extends StatefulWidget {
   final StadiumData stadium;
   final String ownerName;
   final bool forMatchCreate;
-  final String selectedTeam;
+  final String? selectedTeam;
   final void Function(MatchCard matchcard)? addMatchCard;
 
   const StadiumInfoScreen({
@@ -275,18 +275,18 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                       ),
                       child: TextButton(
                         onPressed: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => DateSelectScreen(
-                          //       selectedStadiumId: widget.stadium.id,
-                          //       selectedStadiumName: widget.stadium.name,
-                          //       selectedTeam: widget.selectedTeam,
-                          //       numberOfField: widget.stadium.fields,
-                          //       addMatchCard: widget.addMatchCard,
-                          //     ),
-                          //   ),
-                          // );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DateSelectScreen(
+                                selectedStadiumId: widget.stadium.id,
+                                selectedStadiumName: widget.stadium.name,
+                                selectedTeam: widget.selectedTeam!,
+                                fields: widget.stadium.fields,
+                                addMatchCard: widget.addMatchCard,
+                              ),
+                            ),
+                          );
                         },
                         child: const Text(
                           "Pick this stadium",
