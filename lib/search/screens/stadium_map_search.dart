@@ -14,7 +14,8 @@ class StadiumMapSearchScreen extends StatefulWidget {
   final List<StadiumData> stadiums;
   final List<OwnerData> owners;
   final bool forMatchCreate;
-  final String? selectedTeam;
+  final String? selectedTeamId;
+  final String? selectedTeamName;
   final void Function(MatchCard matchcard)? addMatchCard;
 
   const StadiumMapSearchScreen({
@@ -24,7 +25,8 @@ class StadiumMapSearchScreen extends StatefulWidget {
     required this.owners,
     required this.forMatchCreate,
     this.addMatchCard,
-    this.selectedTeam
+    this.selectedTeamId,
+    this.selectedTeamName,
   });
 
   @override
@@ -281,7 +283,8 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                           ownerName: ownerName,
                           imageRatio: 1,
                           forMatchCreate: widget.forMatchCreate,
-                          selectedTeam: widget.selectedTeam,
+                          selectedTeamId: widget.selectedTeamId,
+                          selectedTeamName: widget.selectedTeamName,
                           addMatchCard: widget.addMatchCard,
                         ),
                       ),

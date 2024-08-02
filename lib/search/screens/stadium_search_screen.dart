@@ -24,7 +24,8 @@ class StadiumSearchScreen extends StatefulWidget {
   final List<OwnerData> owners;
   final bool forMatchCreate;
   final bool forStadiumCreate;
-  final String? selectedTeam;
+  final String? selectedTeamId;
+  final String? selectedTeamName;
   final void Function(MatchCard matchcard)? addMatchCard;
 
 
@@ -39,7 +40,8 @@ class StadiumSearchScreen extends StatefulWidget {
     this.forMatchCreate = false,
     this.forStadiumCreate = false,
     this.addMatchCard,
-    this.selectedTeam,
+    this.selectedTeamId,
+    this.selectedTeamName,
   });
 
   @override
@@ -236,7 +238,8 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                             ownerName: ownerName,
                             imageRatio: widget.imageRatio,
                             forMatchCreate: widget.forMatchCreate,
-                            selectedTeam: widget.selectedTeam,
+                            selectedTeamId: widget.selectedTeamId,
+                            selectedTeamName: widget.selectedTeamName,
                             addMatchCard: widget.addMatchCard,
                           );
                         },
@@ -285,7 +288,8 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                         stadiums: searchedStadiums,
                         owners: widget.owners,
                         forMatchCreate: widget.forMatchCreate,
-                        selectedTeam: widget.selectedTeam,
+                        selectedTeamId: widget.selectedTeamId,
+                        selectedTeamName: widget.selectedTeamName,
                         addMatchCard: widget.addMatchCard,
                       ),
                     ),

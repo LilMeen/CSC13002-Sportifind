@@ -48,11 +48,6 @@ class MatchListItem extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              const Text(
-                "VS",
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
             ],
           ),
         ),
@@ -83,53 +78,73 @@ class MatchListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                    matchCard.team2,
+                    "VS" + matchCard.team2,
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 30,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  Row(
-                    children: <Widget>[
-                      const Icon(
-                        Icons.access_time,
-                        color: Colors.white,
+                  Column(
+                    children: [
+                      Row(
+                        children: <Widget>[
+                          const Icon(
+                            Icons.stadium,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            matchCard.stadium,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        matchCard.start,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      const SizedBox(
-                        width: 40,
-                      ),
-                      const Icon(
-                        Icons.hourglass_top_rounded,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        matchCard.playTime,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      const SizedBox(
-                        width: 40,
-                      ),
-                      const Icon(
-                        Icons.stadium,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        matchCard.field,
-                        style: const TextStyle(color: Colors.white),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: <Widget>[
+                          const Icon(
+                            Icons.access_time,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            matchCard.start,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          const SizedBox(
+                            width: 40,
+                          ),
+                          const Icon(
+                            Icons.hourglass_top_rounded,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            matchCard.playTime,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          const SizedBox(
+                            width: 40,
+                          ),
+                          const Icon(
+                            Icons.sports_soccer,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            matchCard.field,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ],
                       ),
                     ],
                   )
