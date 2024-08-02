@@ -1,13 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/util/object_handling.dart';
 
-class InviteJoinService {
-  DocumentReference<Map<String, dynamic>> getUserDoc(userId) {
-    return FirebaseFirestore.instance.collection('users').doc(userId);
-  }
-
-  DocumentReference<Map<String, dynamic>> getTeamDoc(teamId) {
-    return FirebaseFirestore.instance.collection('teams').doc(teamId);
-  }
+class Notification {
+  final ObjectHandling objectHandling = ObjectHandling();
 
   Future<List<CollectionReference<Map<String, dynamic>>>>
       getTeamNotificationCollectionList(String teamId) async {
@@ -51,11 +46,184 @@ class InviteJoinService {
     return FirebaseFirestore.instance.collection('teams').doc(teamId).get();
   }
 
+  // match notification
+  Future<void> inviteMatchRequest(senderId, receiverId) async {
+    try {
+      List<CollectionReference<Map<String, dynamic>>> senderTeamMembersNoti =
+          await getTeamNotificationCollectionList(senderId);
+
+      List<CollectionReference<Map<String, dynamic>>> receiverTeamMembersNoti =
+          await getTeamNotificationCollectionList(receiverId);
+
+      DocumentSnapshot<Map<String, dynamic>> senderInformation =
+          await getTeamDocInformation(senderId);
+      DocumentSnapshot<Map<String, dynamic>> receiverInformation =
+          await getTeamDocInformation(receiverId);
+      String senderName = senderInformation.data()?['name'] ?? 'Unknow';
+      String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
+
+      senderTeamMembersNoti.map((memberNoti) async {
+        await memberNoti.add({
+          'type': 'request', // request, evaluate, announce, message
+          'status': 'match sent',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': senderName, // username
+          'receiver': receiverName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+
+      receiverTeamMembersNoti.map((memberNoti) async {
+        await memberNoti.add({
+          'type': 'request', // request, evaluate, announce, message
+          'status': 'match invite',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': senderName, // username
+          'receiver': receiverName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> joinMatchRequest(senderId, receiverId) async {
+    try {
+      List<CollectionReference<Map<String, dynamic>>> senderTeamMembersNoti =
+          await getTeamNotificationCollectionList(senderId);
+
+      List<CollectionReference<Map<String, dynamic>>> receiverTeamMembersNoti =
+          await getTeamNotificationCollectionList(receiverId);
+
+      DocumentSnapshot<Map<String, dynamic>> senderInformation =
+          await getTeamDocInformation(senderId);
+      DocumentSnapshot<Map<String, dynamic>> receiverInformation =
+          await getTeamDocInformation(receiverId);
+
+      String senderName = senderInformation.data()?['name'] ?? 'Unknow';
+      String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
+
+      senderTeamMembersNoti.map((memberNoti) async {
+        await memberNoti.add({
+          'type': 'request', // request, evaluate, announce, message
+          'status': 'match sent',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': senderName, // username
+          'receiver': receiverName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+
+      receiverTeamMembersNoti.map((memberNoti) async {
+        await memberNoti.add({
+          'type': 'request', // request, evaluate, announce, message
+          'status': 'match join',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': senderName, // username
+          'receiver': receiverName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> matchRequestAccepted(senderId, receiverId) async {
+    try {
+      List<CollectionReference<Map<String, dynamic>>> senderTeamMembersNoti =
+          await getTeamNotificationCollectionList(senderId);
+
+      List<CollectionReference<Map<String, dynamic>>> receiverTeamMembersNoti =
+          await getTeamNotificationCollectionList(receiverId);
+
+      DocumentSnapshot<Map<String, dynamic>> senderInformation =
+          await getTeamDocInformation(senderId);
+      DocumentSnapshot<Map<String, dynamic>> receiverInformation =
+          await getTeamDocInformation(receiverId);
+
+      String senderName = senderInformation.data()?['name'] ?? 'Unknow';
+      String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
+
+      senderTeamMembersNoti.map((memberNoti) async {
+        await memberNoti.add({
+          'type': 'request', // request, evaluate, announce, message
+          'status': 'match accepted',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': senderName, // username
+          'receiver': receiverName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+
+      receiverTeamMembersNoti.map((memberNoti) async {
+        await memberNoti.add({
+          'type': 'request', // request, evaluate, announce, message
+          'status': 'match accepted',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': senderName, // username
+          'receiver': receiverName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> matchRequestDenied(senderId, receiverId) async {
+    try {
+      List<CollectionReference<Map<String, dynamic>>> senderTeamMembersNoti =
+          await getTeamNotificationCollectionList(senderId);
+
+      List<CollectionReference<Map<String, dynamic>>> receiverTeamMembersNoti =
+          await getTeamNotificationCollectionList(receiverId);
+      DocumentSnapshot<Map<String, dynamic>> senderInformation =
+          await getTeamDocInformation(senderId);
+      DocumentSnapshot<Map<String, dynamic>> receiverInformation =
+          await getTeamDocInformation(receiverId);
+
+      String senderName = senderInformation.data()?['name'] ?? 'Unknow';
+      String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
+
+      senderTeamMembersNoti.map((memberNoti) async {
+        await memberNoti.add({
+          'type': 'request', // request, evaluate, announce, message
+          'status': 'match denied',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': senderName, // username
+          'receiver': receiverName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+
+      receiverTeamMembersNoti.map((memberNoti) async {
+        await memberNoti.add({
+          'type': 'request', // request, evaluate, announce, message
+          'status': 'match ejected',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': senderName, // username
+          'receiver': receiverName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  // Team notification
   Future<void> sendUserRequest(userId, teamId) async {
     try {
-      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
-      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
-
       CollectionReference userNoti = getUserNotificationCollection(userId);
       List<CollectionReference<Map<String, dynamic>>> teamMembersNoti =
           await getTeamNotificationCollectionList(teamId);
@@ -63,22 +231,14 @@ class InviteJoinService {
       DocumentSnapshot<Map<String, dynamic>> userInformation =
           await getUserDocInformation(userId);
       DocumentSnapshot<Map<String, dynamic>> teamInformation =
-          await getUserDocInformation(userId);
+          await getTeamDocInformation(teamId);
 
       String userName = userInformation.data()?['name'] ?? 'Unknow';
       String teamName = teamInformation.data()?['name'] ?? 'Unknow';
 
-      await userDoc.update({
-        'sentRequest': FieldValue.arrayUnion(teamId),
-      });
-
-      await teamDoc.update({
-        'joinRequest': FieldValue.arrayUnion(userId),
-      });
-
       teamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
-          'type': 'request', // request, evaluate, announce, message, request
+          'type': 'request', // request, evaluate, announce, message.
           'status': 'join',
           'senderType': 'player', // player, admin, stadium owner, team
           'sender': userName, // username
@@ -99,14 +259,12 @@ class InviteJoinService {
         'isRead': false,
       });
     } catch (e) {
-      print('error: $e');
+      print('Error: $e');
     }
   }
 
   Future<void> sendTeamRequest(userId, teamId) async {
     try {
-      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
-      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
       CollectionReference userNoti = getUserNotificationCollection(userId);
 
       List<CollectionReference<Map<String, dynamic>>> teamMembersNoti =
@@ -115,19 +273,10 @@ class InviteJoinService {
       DocumentSnapshot<Map<String, dynamic>> userInformation =
           await getUserDocInformation(userId);
       DocumentSnapshot<Map<String, dynamic>> teamInformation =
-          await getUserDocInformation(userId);
+          await getTeamDocInformation(teamId);
 
       String userName = userInformation.data()?['name'] ?? 'Unknow';
       String teamName = teamInformation.data()?['name'] ?? 'Unknow';
-
-      await userDoc.update({
-        'inviteRequest': FieldValue.arrayUnion(teamId),
-      });
-
-      await teamDoc.update({
-        'sentRequest': FieldValue.arrayUnion(userId),
-      });
-
       teamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
@@ -150,15 +299,12 @@ class InviteJoinService {
         'isRead': false,
       });
     } catch (e) {
-      print('error: $e');
+      print('Error: $e');
     }
   }
 
-  Future<void> requestAccepted(teamId, userId) async {
+  Future<void> requestAccepted(userId, teamId) async {
     try {
-      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
-      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
-
       CollectionReference userNoti = getUserNotificationCollection(userId);
       List<CollectionReference<Map<String, dynamic>>> teamMembersNoti =
           await getTeamNotificationCollectionList(teamId);
@@ -166,29 +312,10 @@ class InviteJoinService {
       DocumentSnapshot<Map<String, dynamic>> userInformation =
           await getUserDocInformation(userId);
       DocumentSnapshot<Map<String, dynamic>> teamInformation =
-          await getUserDocInformation(userId);
+          await getTeamDocInformation(teamId);
 
       String userName = userInformation.data()?['name'] ?? 'Unknow';
       String teamName = teamInformation.data()?['name'] ?? 'Unknow';
-
-      await userDoc.update({
-        'joinedTeams': FieldValue.arrayUnion(teamId),
-      });
-
-      await teamDoc.update({
-        'members': FieldValue.arrayUnion(userId),
-      });
-
-      await userDoc.update({
-        'inviteRequest': FieldValue.arrayRemove(teamId),
-        'sentRequest': FieldValue.arrayRemove(teamId)
-      });
-
-      await teamDoc.update({
-        'joinRequest': FieldValue.arrayRemove(userId),
-        'sentRequest': FieldValue.arrayRemove(userId)
-      });
-
       teamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
           'type':
@@ -213,15 +340,12 @@ class InviteJoinService {
         'isRead': false,
       });
     } catch (e) {
-      print('error: $e');
+      print('Error: $e');
     }
   }
 
-  Future<void> requestDeniedFromTeam(teamId, userId) async {
+  Future<void> requestDeniedFromTeam(userId, teamId) async {
     try {
-      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
-      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
-
       CollectionReference userNoti = getUserNotificationCollection(userId);
       List<CollectionReference<Map<String, dynamic>>> teamMembersNoti =
           await getTeamNotificationCollectionList(teamId);
@@ -229,18 +353,10 @@ class InviteJoinService {
       DocumentSnapshot<Map<String, dynamic>> userInformation =
           await getUserDocInformation(userId);
       DocumentSnapshot<Map<String, dynamic>> teamInformation =
-          await getUserDocInformation(userId);
+          await getTeamDocInformation(teamId);
 
       String userName = userInformation.data()?['name'] ?? 'Unknow';
       String teamName = teamInformation.data()?['name'] ?? 'Unknow';
-
-      await userDoc.update({
-        'sentRequest': FieldValue.arrayRemove(teamId),
-      });
-
-      await teamDoc.update({
-        'joinRequest': FieldValue.arrayRemove(userId),
-      });
 
       teamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
@@ -266,15 +382,12 @@ class InviteJoinService {
         'isRead': false,
       });
     } catch (e) {
-      print('error: $e');
+      print('Error: $e');
     }
   }
 
-  Future<void> requestDeniedFromUser(teamId, userId) async {
+  Future<void> requestDeniedFromUser(userId, teamId) async {
     try {
-      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
-      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
-
       CollectionReference userNoti = getUserNotificationCollection(userId);
       List<CollectionReference<Map<String, dynamic>>> teamMembersNoti =
           await getTeamNotificationCollectionList(teamId);
@@ -282,18 +395,10 @@ class InviteJoinService {
       DocumentSnapshot<Map<String, dynamic>> userInformation =
           await getUserDocInformation(userId);
       DocumentSnapshot<Map<String, dynamic>> teamInformation =
-          await getUserDocInformation(userId);
+          await getTeamDocInformation(teamId);
 
       String userName = userInformation.data()?['name'] ?? 'Unknow';
       String teamName = teamInformation.data()?['name'] ?? 'Unknow';
-
-      await userDoc.update({
-        'inviteRequest': FieldValue.arrayRemove(teamId),
-      });
-
-      await teamDoc.update({
-        'sentRequest': FieldValue.arrayRemove(userId),
-      });
 
       teamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
@@ -319,7 +424,7 @@ class InviteJoinService {
         'isRead': false,
       });
     } catch (e) {
-      print('error: $e');
+      print('Error: $e');
     }
   }
 }
