@@ -596,3 +596,4 @@ class EditInformationState extends State<EditInformationScreen> {
     );
   }
 }
+
