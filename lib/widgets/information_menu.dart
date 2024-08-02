@@ -40,7 +40,7 @@ class InformationMenu extends StatelessWidget {
           Expanded(
             child: Text(
               textContent,
-              style: TextStyle(fontSize: 16, color: Colors.white),
+              style: const TextStyle(fontSize: 16, color: Colors.white),
             ),
           ),
         ],

@@ -88,7 +88,7 @@ class _MatchMainScreenState extends State<MatchMainScreen>
                     nearByMatch: _nearByMatch,
                   ),
                   if (errorMessage.isNotEmpty)
-                    Text(errorMessage, style: TextStyle(color: Colors.red)),
+                    Text(errorMessage, style: const TextStyle(color: Colors.red)),
                 ],
               ),
             ),

@@ -1,4 +1,4 @@
-class LocationInfo {
+class Location {
   final String name;
   final String address;
   final String district;
@@ -7,7 +7,7 @@ class LocationInfo {
   final double longitude;
   final String fullAddress;
 
-  LocationInfo({
+  Location({
     this.name = '',
     this.address = '',
     this.district = '',

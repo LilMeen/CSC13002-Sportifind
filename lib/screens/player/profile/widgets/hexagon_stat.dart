@@ -83,11 +83,11 @@ class HexagonClipper extends CustomClipper<Path> {
 
 class Labels extends StatelessWidget {
   const Labels({
-    Key? key,
+    super.key,
     required this.radius,
     required this.diameter,
     required this.ratings,
-  }) : super(key: key);
+  });
 
   final double radius, diameter;
   final List<Rating> ratings;

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/services/image_service.dart';
 import 'package:sportifind/services/location_service.dart';
@@ -44,7 +44,7 @@ class StadiumService {
   }
 
   List<StadiumData> sortNearbyStadiums(
-      List<StadiumData> stadiums, LocationInfo markedLocation) {
+      List<StadiumData> stadiums, Location markedLocation) {
     locService.sortByDistance<StadiumData>(
       stadiums,
       markedLocation,
@@ -67,7 +67,7 @@ class StadiumService {
 
   Future<void> submitStadium({
     required String stadiumName,
-    required LocationInfo location,
+    required Location location,
     required String phoneNumber,
     required String openTime,
     required String closeTime,

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/screens/stadium_owner/widget/stadium_form.dart';
 import 'package:sportifind/services/location_service.dart';
 import 'package:sportifind/services/stadium_service.dart';
@@ -36,7 +36,7 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
   int _num7PlayerFields = 0;
   int _num11PlayerFields = 0;
 
-  LocationInfo? _location;
+  Location? _location;
   Timer? _districtDelayTimer;
 
   late File _avatar;
@@ -196,13 +196,13 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
     });
 
     try {
-      LocationInfo? currentLoc = await locService.getCurrentLocation();
+      Location? currentLoc = await locService.getCurrentLocation();
       if (currentLoc != null) {
         setState(() {
           _location = currentLoc;
 
           //////////for develop
-          _location = LocationInfo(
+          _location = Location(
             address: '227 D. Nguyen Van Cu, Phuong 4',
             district: '5',
             city: 'Ho Chi Minh',

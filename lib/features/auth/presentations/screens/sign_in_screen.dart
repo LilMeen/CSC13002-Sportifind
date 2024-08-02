@@ -115,6 +115,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                         onChanged: (value) {
                                           setState(() {
                                             _rememberMe = value!;
+                                            
                                           });
                                         },
                                         activeColor: const Color.fromARGB(

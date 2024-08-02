@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/core/entities/location.dart';
 import 'package:string_similarity/string_similarity.dart';
 
 class SearchService {
@@ -86,7 +86,7 @@ class SearchService {
     required String selectedCity,
     required String selectedDistrict,
     required String Function(T) getNameOfItem,
-    required LocationInfo Function(T) getLocationOfItem,
+    required Location Function(T) getLocationOfItem,
   }) {
     List<T> searchedItems = searchTextMatch(
       searchText,

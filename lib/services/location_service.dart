@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart' as loc;
-import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/core/entities/location.dart';
 
 class LocationService {
   static const String apiKey = 'AIzaSyByB64x8WOemsLdnmypzU-sKNBTJeLS3Nw';
 
-  Future<LocationInfo?> findLocation(String searchText) async {
+  Future<Location?> findLocation(String searchText) async {
     final response = await http.get(
       Uri.parse(
           'https://maps.googleapis.com/maps/api/place/textsearch/json?query=$searchText&key=$apiKey'),
@@ -22,7 +22,7 @@ class LocationService {
 
       final searchLocation = searchRes['results'][0]['geometry']['location'];
 
-      return LocationInfo(
+      return Location(
         name: searchRes['results'][0]['name'],
         fullAddress: searchRes['results'][0]['formatted_address'],
         latitude: searchLocation['lat'],
@@ -33,12 +33,12 @@ class LocationService {
     }
   }
 
-  Future<LocationInfo?> findLatAndLng(String district, String city) async {
+  Future<Location?> findLatAndLng(String district, String city) async {
     String searchText = '$district, $city';
-    LocationInfo? searchLocation = await findLocation(searchText);
+    Location? searchLocation = await findLocation(searchText);
 
     if (searchLocation != null) {
-      return LocationInfo(
+      return Location(
         name: searchLocation.name,
         fullAddress: searchLocation.fullAddress,
         district: district,
@@ -51,13 +51,13 @@ class LocationService {
     return null;
   }
 
-  Future<LocationInfo?> findLatAndLngFull(
+  Future<Location?> findLatAndLngFull(
       String address, String district, String city) async {
     String searchText = '$address, $district, $city';
-    LocationInfo? searchLocation = await findLocation(searchText);
+    Location? searchLocation = await findLocation(searchText);
 
     if (searchLocation != null) {
-      return LocationInfo(
+      return Location(
         name: searchLocation.name,
         fullAddress: searchLocation.fullAddress,
         address: address,
@@ -71,7 +71,7 @@ class LocationService {
     return null;
   }
 
-  Future<LocationInfo?> getCurrentLocation() async {
+  Future<Location?> getCurrentLocation() async {
     loc.Location location = loc.Location();
 
     bool serviceEnabled = await location.serviceEnabled();
@@ -125,7 +125,7 @@ class LocationService {
           address = address.substring(0, address.length - 2);
         }
 
-        return LocationInfo(
+        return Location(
           fullAddress: geocodeRes['results'][0]['formatted_address'],
           address: address,
           district: district,
@@ -135,7 +135,7 @@ class LocationService {
         );
       }
     } else {
-      return LocationInfo(
+      return Location(
           latitude: currentLocation.latitude!,
           longitude: currentLocation.longitude!);
     }
@@ -143,7 +143,7 @@ class LocationService {
     return null;
   }
 
-  double calculateDistance(LocationInfo loc1, LocationInfo loc2) {
+  double calculateDistance(Location loc1, Location loc2) {
     const double R = 6371; // Radius of the Earth in kilometers
     double dLat = _degToRad(loc2.latitude - loc1.latitude);
     double dLon = _degToRad(loc2.longitude - loc1.longitude);
@@ -160,8 +160,8 @@ class LocationService {
     return deg * (pi / 180);
   }
 
-  void sortByDistance<T>(List<T> items, LocationInfo markedLocation,
-      LocationInfo Function(T) getItemLocation) {
+  void sortByDistance<T>(List<T> items, Location markedLocation,
+      Location Function(T) getItemLocation) {
     items.sort((a, b) {
       double distanceA = calculateDistance(markedLocation, getItemLocation(a));
       double distanceB = calculateDistance(markedLocation, getItemLocation(b));

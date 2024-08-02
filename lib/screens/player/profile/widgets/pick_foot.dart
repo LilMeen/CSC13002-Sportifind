@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FootPicker extends StatefulWidget {
-  FootPicker({required this.controller, super.key});
+  const FootPicker({required this.controller, super.key});
     final TextEditingController controller;
   @override
   _FootPickerState createState() => _FootPickerState();

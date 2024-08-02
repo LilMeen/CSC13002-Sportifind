@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/di/auth_injection_container.dart';
+import 'package:sportifind/core/di/injection_container.dart';
 import 'package:sportifind/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sportifind/firebase_options.dart';

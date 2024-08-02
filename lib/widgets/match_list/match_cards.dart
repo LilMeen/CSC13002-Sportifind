@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/services/location_service.dart';
@@ -29,7 +29,7 @@ class _MatchCardsState extends State<MatchCards> {
   bool isLoadingStadiums = true;
   bool isLoadingUser = true;
   List<StadiumData> searchedStadiums = [];
-  LocationInfo? currentLocation;
+  Location? currentLocation;
   String errorMessage = '';
 
   @override

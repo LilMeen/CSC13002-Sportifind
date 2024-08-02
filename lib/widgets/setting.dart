@@ -98,7 +98,7 @@ class SettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (user == null) {
-      return SignInScreen();
+      return const SignInScreen();
     }
 
     return Scaffold(
@@ -111,10 +111,10 @@ class SettingScreen extends StatelessWidget {
         ),
         title: const Text('Setting'),
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 33, 33, 33),
+        backgroundColor: const Color.fromARGB(255, 33, 33, 33),
         elevation: 0.0,
       ),
-      backgroundColor: Color.fromARGB(255, 33, 33, 33),
+      backgroundColor: const Color.fromARGB(255, 33, 33, 33),
       body: Column(
         children: [
           SettingMenu(

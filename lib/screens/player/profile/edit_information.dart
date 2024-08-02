@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/features/auth/presentations/screens/home/player_home_screen.dart';
+import 'package:sportifind/screens/home/player_home_screen.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 import 'package:sportifind/screens/player/profile/widgets/number_wheel.dart';
 import 'package:sportifind/screens/player/profile/widgets/pick_foot.dart';
@@ -186,7 +186,7 @@ class EditInformationState extends State<EditInformationScreen> {
   Widget _buildDobSection(String type, TextEditingController controller) {
     double width = 290; // Default width for Date Of Birth
 
-    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +203,7 @@ class EditInformationState extends State<EditInformationScreen> {
         SizedBox(
           width: width,
           child: FormField<String>(
-            key: _fieldKey,
+            key: fieldKey,
             validator: (value) {
               if (controller.text.isEmpty) {
                 return 'Please select a date';
@@ -295,7 +295,7 @@ class EditInformationState extends State<EditInformationScreen> {
       width = 137;
     }
 
-    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,7 +317,7 @@ class EditInformationState extends State<EditInformationScreen> {
               Stack(
                 children: [
                   TextFormField(
-                    key: _fieldKey,
+                    key: fieldKey,
                     controller: controller,
                     decoration: InputDecoration(
                       hintText: controller.text.isEmpty
@@ -389,7 +389,7 @@ class EditInformationState extends State<EditInformationScreen> {
                     left: 0,
                     child: Builder(
                       builder: (context) {
-                        final formFieldState = _fieldKey.currentState;
+                        final formFieldState = fieldKey.currentState;
                         return Text(
                           formFieldState?.errorText ?? '',
                           style:
@@ -409,7 +409,7 @@ class EditInformationState extends State<EditInformationScreen> {
 
   Widget _buildDropdownSection(String type, TextEditingController controller) {
     double width = 290; // Default width
-    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,7 +426,7 @@ class EditInformationState extends State<EditInformationScreen> {
         SizedBox(
           width: width,
           child: FormField<String>(
-            key: _fieldKey,
+            key: fieldKey,
             initialValue: controller.text.isNotEmpty ? controller.text : null,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -534,7 +534,7 @@ class EditInformationState extends State<EditInformationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 240, 197, 197),
+      backgroundColor: const Color.fromARGB(255, 240, 197, 197),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/features/auth/presentations/screens/home/player_home_screen.dart';
-import 'package:sportifind/features/auth/presentations/screens/home/stadium_owner_home_screen.dart';
+import 'package:sportifind/screens/home/player_home_screen.dart';
+import 'package:sportifind/screens/home/stadium_owner_home_screen.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -116,7 +116,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
   Widget _buildDobSection(String type, TextEditingController controller) {
     double width = 290; // Default width for Date Of Birth
 
-    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +133,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
         SizedBox(
           width: width,
           child: FormField<String>(
-            key: _fieldKey,
+            key: fieldKey,
             validator: (value) {
               if (controller.text.isEmpty) {
                 return 'Please select a date';
@@ -226,7 +226,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
       width = 137;
     }
 
-    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,7 +248,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
               Stack(
                 children: [
                   TextFormField(
-                    key: _fieldKey,
+                    key: fieldKey,
                     controller: controller,
                     decoration: InputDecoration(
                       hintText: controller.text.isEmpty
@@ -320,7 +320,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                     left: 0,
                     child: Builder(
                       builder: (context) {
-                        final formFieldState = _fieldKey.currentState;
+                        final formFieldState = fieldKey.currentState;
                         return Text(
                           formFieldState?.errorText ?? '',
                           style:
@@ -340,7 +340,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
 
   Widget _buildDropdownSection(String type, TextEditingController controller) {
     double width = 290; // Default width
-    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,7 +357,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
         SizedBox(
           width: width,
           child: FormField<String>(
-            key: _fieldKey,
+            key: fieldKey,
             initialValue: controller.text.isNotEmpty ? controller.text : null,
             validator: (value) {
               if (controller.text.isEmpty) {

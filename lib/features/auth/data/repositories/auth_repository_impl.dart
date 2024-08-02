@@ -1,15 +1,12 @@
 import 'package:sportifind/features/auth/domain/repositories/auth_repository.dart';
-import 'package:sportifind/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:sportifind/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:sportifind/core/models/result.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
-  final AuthLocalDataSource localDataSource;
 
   AuthRepositoryImpl({
     required this.remoteDataSource,
-    required this.localDataSource,
   });
 
   @override
@@ -39,7 +36,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Result<void>> setRole(String role) async {
-    return await localDataSource.setRole(role);
+    return await remoteDataSource.setRole(role);
   }
 
   @override
@@ -52,7 +49,7 @@ class AuthRepositoryImpl implements AuthRepository {
     String address,
     String phone,
   ) async {
-    return await localDataSource.setBasicInfo(
+    return await remoteDataSource.setBasicInfo(
       name,
       dob,
       gender,

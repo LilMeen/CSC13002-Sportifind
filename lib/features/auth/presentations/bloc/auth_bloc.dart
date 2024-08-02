@@ -12,10 +12,10 @@ import 'package:sportifind/features/auth/domain/usecases/sign_in_with_google.dar
 import 'package:sportifind/features/auth/domain/usecases/sign_out.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_up.dart';
 import 'package:sportifind/features/auth/presentations/screens/basic_info_screen.dart';
-import 'package:sportifind/features/auth/presentations/screens/home/admin_home_screen.dart';
+import 'package:sportifind/screens/home/admin_home_screen.dart';
 import 'package:sportifind/features/auth/presentations/screens/role_screen.dart';
-import 'package:sportifind/features/auth/presentations/screens/home/player_home_screen.dart';
-import 'package:sportifind/features/auth/presentations/screens/home/stadium_owner_home_screen.dart';
+import 'package:sportifind/screens/home/player_home_screen.dart';
+import 'package:sportifind/screens/home/stadium_owner_home_screen.dart';
 
 
 
@@ -69,6 +69,7 @@ class AuthBloc {
 
   }
 
+
   void signUp(String email, String password, String reenterPassword) async {
     if (password != reenterPassword){
       showSnackBar(context, "Re-entered password does not match.");
@@ -87,11 +88,13 @@ class AuthBloc {
     }
   }
 
+
   void signOut() async{
     await UseCaseProvider.getUseCase<SignOut>().call(
       NoParams()
     );
   }
+
 
   void forgotPassword(String email) async {
     await UseCaseProvider.getUseCase<ForgotPassword>().call(
@@ -101,6 +104,7 @@ class AuthBloc {
     );
   }
 
+
   void setRole(String role) async{
     await UseCaseProvider.getUseCase<SetRole>().call(
       SetRoleParams(
@@ -109,6 +113,7 @@ class AuthBloc {
     );
     Navigator.of(context).pushReplacement(BasicInfoScreen.route());
   }
+
 
   void setBasicInfo (
     String name,
@@ -131,5 +136,4 @@ class AuthBloc {
       )
     );
   }
-  
 }

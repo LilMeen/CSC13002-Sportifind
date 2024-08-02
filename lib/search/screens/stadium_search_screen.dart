@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/services/location_service.dart';
 import 'package:sportifind/models/owner_data.dart';
@@ -18,7 +18,7 @@ class StadiumSearchScreen extends StatefulWidget {
   final int gridCol;
   final double gridRatio;
   final double imageRatio;
-  final LocationInfo userLocation;
+  final Location userLocation;
   final List<StadiumData> stadiums;
   final List<OwnerData> owners;
   final bool forMatchCreate;
@@ -55,7 +55,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
   final Map<String, String> citiesNameAndId = {};
   String selectedCity = '';
   String selectedDistrict = '';
-  late LocationInfo currentLocation;
+  late Location currentLocation;
   bool isLoadingLocation = false;
   double floatingDistance = 0.0;
   StadiumService stadService = StadiumService();
@@ -118,7 +118,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
     });
 
     try {
-      LocationInfo? location = await locService.getCurrentLocation();
+      Location? location = await locService.getCurrentLocation();
       if (location != null) {
         setState(() {
           currentLocation = location;

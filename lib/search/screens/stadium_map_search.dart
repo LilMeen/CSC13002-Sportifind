@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/services/location_service.dart';
 import 'package:sportifind/models/owner_data.dart';
@@ -10,7 +10,7 @@ import 'package:sportifind/widgets/card/stadium_card.dart';
 import 'package:sportifind/widgets/location_button/current_location_icon_button.dart';
 
 class StadiumMapSearchScreen extends StatefulWidget {
-  final LocationInfo userLocation;
+  final Location userLocation;
   final List<StadiumData> stadiums;
   final List<OwnerData> owners;
   final bool forMatchCreate;
@@ -38,7 +38,7 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
   List<StadiumData> nearbyStadiums = [];
   late Map<String, String> ownerMap;
   bool isLoadingLocation = false;
-  LocationInfo? searchLocation;
+  Location? searchLocation;
   LocationService locService = LocationService();
   StadiumService stadService = StadiumService();
 
@@ -62,7 +62,7 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
     });
 
     try {
-      LocationInfo? location = await locService.getCurrentLocation();
+      Location? location = await locService.getCurrentLocation();
       if (location != null) {
         setState(() {
           searchLocation = location;

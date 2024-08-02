@@ -292,12 +292,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             );
                           },
-                          child: const Text('Edit Profile', style: TextStyle(color: Colors.black)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.tealAccent,
                             side: BorderSide.none,
                             shape: const StadiumBorder(),
                           ),
+                          child: const Text('Edit Profile', style: TextStyle(color: Colors.black)),
                         ),
                       ),
                       const SizedBox(height: 5),

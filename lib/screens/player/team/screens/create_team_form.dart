@@ -339,7 +339,7 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
                               Icons.add_a_photo,
                               color: SportifindTheme.bluePurple3,
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Text('Add Image',
                                 style: TextStyle(
                                     color: SportifindTheme.bluePurple3)),

@@ -156,12 +156,12 @@ class _TeamDetailsState extends State<TeamDetails>
                                       ],
                                     ),
                                     const SizedBox(height: 10),
-                                    Row(
+                                    const Row(
                                       children: [
                                         Text('Level: '),
                                         Text(
                                           'Fix this later',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontWeight: FontWeight.w200,
                                             fontSize: 18,
                                             letterSpacing: 0.27,
@@ -207,12 +207,12 @@ class _TeamDetailsState extends State<TeamDetails>
                               const SizedBox(
                                 height: 20,
                               ),
-                              Row(
+                              const Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                       'Level: '), // add team evaluation here
-                                  const Text('Medium Level'),
+                                  Text('Medium Level'),
                                 ],
                               ),
                               const SizedBox(height: 20),

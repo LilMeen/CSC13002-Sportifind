@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/models/field_data.dart';
-import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/features/stadium/data/models/field_model.dart';
+import 'package:sportifind/core/entities/location.dart';
 
 class StadiumData {
   final String id;
@@ -8,11 +8,11 @@ class StadiumData {
   final String owner;
   final String avatar;
   final List<String> images;
-  final LocationInfo location;
+  final Location location;
   final String openTime;
   final String closeTime;
   final String phone;
-  final List<FieldData> fields;
+  final List<FieldModel> fields;
 
   StadiumData({
     required this.id,
@@ -30,7 +30,7 @@ class StadiumData {
   factory StadiumData.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final data = snapshot.data()!;
-    final location = LocationInfo(
+    final location = Location(
       city: data['city'],
       district: data['district'],
       address: data['address'],
@@ -58,7 +58,7 @@ class StadiumData {
 
     final fieldsSnapshot = await snapshot.reference.collection('fields').get();
     final fields =
-        fieldsSnapshot.docs.map((doc) => FieldData.fromSnapshot(doc)).toList();
+        fieldsSnapshot.docs.map((doc) => FieldModel.fromSnapshot(doc)).toList();
 
     return StadiumData(
       id: stadiumData.id,

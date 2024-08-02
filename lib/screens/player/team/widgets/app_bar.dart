@@ -29,7 +29,7 @@ class SportifindAppBar extends StatelessWidget {
               ],
             ),
           ),
-          Container(
+          SizedBox(
             width: 30,
             height: 30,
             child: Image.asset('lib/assets/logo/logo.png'),

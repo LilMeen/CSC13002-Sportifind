@@ -87,7 +87,7 @@ class SportifindAppBar extends StatelessWidget {
                               ),
                             ),
                             const Padding(
-                              padding: const EdgeInsets.only(
+                              padding: EdgeInsets.only(
                                 left: 8,
                                 right: 8,
                               ),

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/core/entities/location.dart';
 
 class PlayerData {
   final String id;
@@ -7,7 +7,7 @@ class PlayerData {
   final String email;
   //final String avatarImageUrl;
   final String role;
-  final LocationInfo location;
+  final Location location;
   final String dob;
   final String gender;
   final String phoneNumber;
@@ -32,7 +32,7 @@ class PlayerData {
         //avatarImageUrl = snapshot['avatarImageUrl'],
         email = snapshot['email'],
         role = snapshot['role'],
-        location = LocationInfo(
+        location = Location(
           district: snapshot['district'],
           city: snapshot['city'],
           latitude: 10.762622,

@@ -51,7 +51,7 @@ class MatchListItem extends StatelessWidget {
               const Text(
                 "VS",
                 style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -68,7 +68,7 @@ class MatchListItem extends StatelessWidget {
               ),
             ),
             child: Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 gradient: LinearGradient(

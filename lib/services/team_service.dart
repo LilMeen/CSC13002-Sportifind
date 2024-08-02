@@ -1,18 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
-import 'package:sportifind/widgets/dropdown_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:sportifind/screens/player/team/widgets/app_bar.dart';
 import 'package:sportifind/screens/player/team/models/player_information.dart';
-import 'package:sportifind/adapter/hex_color.dart';
-import 'package:sportifind/screens/player/team/models/team_information.dart';
-import 'package:sportifind/screens/player/team/widgets/my_teams_listview.dart';
 
 class TeamService {
   TeamInformation? teamInformation;
