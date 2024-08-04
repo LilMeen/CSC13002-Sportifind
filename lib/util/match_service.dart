@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +8,15 @@ import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
+import 'package:sportifind/util/stadium_service.dart';
+import 'package:sportifind/util/team_service.dart';
 import 'package:sportifind/util/user_service.dart';
 
 class MatchService {
   final user = FirebaseAuth.instance.currentUser!;
   UserService userService = UserService();
+  StadiumService stadiumService = StadiumService();
+  TeamService teamService = TeamService();
 
   DateTime convertStringToDateTime(String timeString, String selectedDate) {
     final hourFormat = DateFormat('HH:mm');
@@ -78,31 +84,21 @@ class MatchService {
 
   Future<List<MatchCard>> getPersonalMatchData() async {
     final List<MatchCard> userMatches = [];
-    final List<String> matchesId = [];
+    List<String> matchesId = [];
     final PlayerData user = await userService.getUserPlayerData();
 
     // Retrieve matches for user's teams
     for (var teamId in user.teams) {
-      final matchesQuery = await FirebaseFirestore.instance
+      final teamQuery = await FirebaseFirestore.instance
           .collection('teams')
           .doc(teamId)
           .get();
 
-      final Map<String, dynamic> incoming =
-          matchesQuery.data()?['incoming'] ?? {};
+      final Map<String, dynamic> incoming = teamQuery.data()?['incoming'] ?? {};
       matchesId.addAll(incoming.keys.toList());
       print("-------------------------");
       print(matchesId);
     }
-
-    // Retrieve stadium data
-    final stadiumsQuery =
-        await FirebaseFirestore.instance.collection('stadiums').get();
-    final stadiums = stadiumsQuery.docs
-        .map((stadium) => StadiumData.fromSnapshot(stadium))
-        .toList();
-
-    final stadiumMap = {for (var stadium in stadiums) stadium.id: stadium.name};
 
     // Retrieve match data
     for (var matchId in matchesId) {
@@ -111,15 +107,21 @@ class MatchService {
           .doc(matchId)
           .get();
       if (matchDoc.exists) {
-        final match = MatchCard.fromSnapshot(matchDoc);
-        if (stadiumMap.containsKey(match.stadium)) {
-          match.stadium = stadiumMap[match.stadium]!;
-          userMatches.add(match);
-        }
+        MatchCard match = MatchCard.fromSnapshot(matchDoc);
+        match = await convertStadiumIdToName(match);
+        userMatches.add(match);
       }
     }
-
     return userMatches;
+  }
+
+  bool checkDifferentTeam(PlayerData userTeam, MatchCard userMatch) {
+    for (var i = 0; i < userTeam.teams.length; ++i) {
+      if (userTeam.teams[i] == userMatch.team1) {
+        return false;
+      }
+    }
+    return true;
   }
 
   Future<List<MatchCard>> getNearbyMatchData(List<StadiumData> stadiums) async {
@@ -133,24 +135,37 @@ class MatchService {
         .map((match) => MatchCard.fromSnapshot(match))
         .toList();
 
-    for (var stadium in stadiums) {
-      for (var match in matches) {
-        if (checkDifferentTeam(user, match) && match.stadium == stadium.id) {
-          userMatches.add(match);
-        }
+    for (var match in matches) {
+      if (checkDifferentTeam(user, match)) {
+        userMatches.add(match);
       }
     }
-
     return userMatches;
   }
 
-  bool checkDifferentTeam(PlayerData userTeam, MatchCard userMatch) {
-    for (var i = 0; i < userTeam.teams.length; ++i) {
-      if (userTeam.teams[i] == userMatch.team1) {
-        return false;
-      }
-    }
-    return true;
+  Future<Map<String, String>> generateStadiumMap() async {
+    final stadiumData = await stadiumService.getStadiumsData();
+    final stadiumMap = {
+      for (var stadium in stadiumData) stadium.id: stadium.name
+    };
+    return stadiumMap;
+  }
+
+  Future<MatchCard> convertStadiumIdToName(MatchCard match) async {
+    final stadiumMap = await generateStadiumMap();
+    match.stadium = stadiumMap[match.stadium] ?? 'Unknown Stadium';
+    return match;
+  }
+
+  Future<Map<String, String>> generateTeamMap() async {
+    final teamData = await teamService.getTeamData();
+    final teamMap = {for (var team in teamData) team.teamId: team.name};
+    return teamMap;
+  }
+
+  Future<String> convertTeamIdToName(String teamId) async {
+    final teamMap = await generateTeamMap();
+    return teamMap[teamId] ?? 'Unknown Team';
   }
 
   DateTime parseDate(String dateStr) {

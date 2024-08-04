@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
+import 'package:sportifind/util/user_service.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,6 +19,20 @@ class TeamService {
   TeamInformation? teamInformation;
   PlayerInformation? playerInformation;
   bool isLoading = true;
+
+  Future<List<TeamInformation>> getTeamData() async {
+    try {
+      final teamsQuery =
+          await FirebaseFirestore.instance.collection('teams').get();
+      final teamFutures = teamsQuery.docs
+          .map((team) => TeamInformation.fromSnapshot(team))
+          .toList();
+
+      return teamFutures;
+    } catch (error) {
+      throw Exception('Failed to load stadiums data: $error');
+    }
+  }
 
   Future<TeamInformation?> getTeamInformation(String teamId) async {
     try {

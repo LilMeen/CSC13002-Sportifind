@@ -38,6 +38,20 @@ class Notification {
         .collection('notifications');
   }
 
+  Future<void> getNotificationData(List<NotificationData> userNotification) async {
+    final notificationQuery = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('notifications')
+        .get();
+    final notifications = notificationQuery.docs
+        .map((notification) => NotificationData.fromSnapshot(notification))
+        .toList();
+    for (var i = 0; i < notifications.length; ++i) {
+      userNotification.add(notifications[i]);
+    }
+  }
+
   Future<DocumentSnapshot<Map<String, dynamic>>> getUserDocInformation(userId) {
     return FirebaseFirestore.instance.collection('users').doc(userId).get();
   }
@@ -428,3 +442,4 @@ class Notification {
     }
   }
 }
+

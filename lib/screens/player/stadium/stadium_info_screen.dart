@@ -10,6 +10,7 @@ class StadiumInfoScreen extends StatefulWidget {
   final bool forMatchCreate;
   final String? selectedTeamId;
   final String? selectedTeamName;
+  final String? selectedTeamAvatar;
   final void Function(MatchCard matchcard)? addMatchCard;
 
   const StadiumInfoScreen({
@@ -20,6 +21,7 @@ class StadiumInfoScreen extends StatefulWidget {
     this.addMatchCard,
     required this.selectedTeamId,
     required this.selectedTeamName,
+    required this.selectedTeamAvatar,
   });
 
   @override
@@ -286,6 +288,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                                 selectedStadiumOwner: widget.stadium.owner,
                                 selectedTeamId: widget.selectedTeamId!,
                                 selectedTeamName: widget.selectedTeamName!,
+                                selectedTeamAvatar: widget.selectedTeamAvatar!,
                                 fields: widget.stadium.fields,
                                 addMatchCard: widget.addMatchCard,
                               ),

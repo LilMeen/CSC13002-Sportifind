@@ -108,6 +108,7 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
               forMatchCreate: true,
               selectedTeamId: team.teamId,
               selectedTeamName: team.name,
+              selectedTeamAvatar: team.avatarImageUrl,
               addMatchCard: widget.addMatchCard,
             ),
           ),

@@ -26,6 +26,7 @@ class StadiumSearchScreen extends StatefulWidget {
   final bool forStadiumCreate;
   final String? selectedTeamId;
   final String? selectedTeamName;
+  final String? selectedTeamAvatar;
   final void Function(MatchCard matchcard)? addMatchCard;
 
 
@@ -42,6 +43,7 @@ class StadiumSearchScreen extends StatefulWidget {
     this.addMatchCard,
     this.selectedTeamId,
     this.selectedTeamName,
+    this.selectedTeamAvatar,
   });
 
   @override
@@ -240,6 +242,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                             forMatchCreate: widget.forMatchCreate,
                             selectedTeamId: widget.selectedTeamId,
                             selectedTeamName: widget.selectedTeamName,
+                            selectedTeamAvatar: widget.selectedTeamAvatar,
                             addMatchCard: widget.addMatchCard,
                           );
                         },
@@ -290,6 +293,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                         forMatchCreate: widget.forMatchCreate,
                         selectedTeamId: widget.selectedTeamId,
                         selectedTeamName: widget.selectedTeamName,
+                        selectedTeamAvatar: widget.selectedTeamAvatar,
                         addMatchCard: widget.addMatchCard,
                       ),
                     ),

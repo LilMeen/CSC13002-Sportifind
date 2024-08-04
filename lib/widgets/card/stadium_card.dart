@@ -10,6 +10,7 @@ class StadiumCard extends StatefulWidget {
   final bool forMatchCreate;
   final String? selectedTeamId;
   final String? selectedTeamName;
+  final String? selectedTeamAvatar;
   final void Function(MatchCard matchcard)? addMatchCard;
 
   const StadiumCard({
@@ -20,6 +21,7 @@ class StadiumCard extends StatefulWidget {
     this.addMatchCard,
     this.selectedTeamId,
     this.selectedTeamName,
+    this.selectedTeamAvatar,
     super.key,
   });
 
@@ -42,6 +44,7 @@ class _StadiumCardState extends State<StadiumCard> {
               addMatchCard: widget.addMatchCard,
               selectedTeamId: widget.selectedTeamId,
               selectedTeamName: widget.selectedTeamName,
+              selectedTeamAvatar: widget.selectedTeamAvatar,
             ),
           ),
         );

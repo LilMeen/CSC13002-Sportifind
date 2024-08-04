@@ -46,7 +46,6 @@ class _MatchCardsState extends State<MatchCards> {
   }
 
   Widget buildMatch(double height, double width, List<MatchCard> matches) {
-    print(matches);
     return SizedBox(
       height: height - 150,
       width: width,
@@ -63,8 +62,6 @@ class _MatchCardsState extends State<MatchCards> {
       await getUserData();
       if (user != null) {
         currentLocation = user!.location;
-        print("Current location");
-        print(currentLocation);
         sortNearbyStadiums();
         print("Stadiums");
         print(searchedStadiums);
@@ -137,7 +134,7 @@ class _MatchCardsState extends State<MatchCards> {
       future: _loadMatchData(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {

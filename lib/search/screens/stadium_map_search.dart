@@ -16,6 +16,7 @@ class StadiumMapSearchScreen extends StatefulWidget {
   final bool forMatchCreate;
   final String? selectedTeamId;
   final String? selectedTeamName;
+  final String? selectedTeamAvatar;
   final void Function(MatchCard matchcard)? addMatchCard;
 
   const StadiumMapSearchScreen({
@@ -27,6 +28,7 @@ class StadiumMapSearchScreen extends StatefulWidget {
     this.addMatchCard,
     this.selectedTeamId,
     this.selectedTeamName,
+    this.selectedTeamAvatar,
   });
 
   @override

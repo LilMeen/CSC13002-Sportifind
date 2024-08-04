@@ -38,6 +38,19 @@ class UserService {
     }
   }
 
+  Future<List<PlayerData>> getPlayerData() async {
+    try {
+      final playersQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('role', isEqualTo: 'player')
+          .get();
+      return playersQuery.docs
+          .map((player) => PlayerData.fromSnapshot(player))
+          .toList();
+    } catch (error) {
+      throw Exception('Failed to load player data: $error');
+    }
+  }
 
   Future<List<OwnerData>> getOwnersData() async {
     try {
@@ -51,5 +64,11 @@ class UserService {
     } catch (error) {
       throw Exception('Failed to load owners data: $error');
     }
+  }
+
+  Future<Map<String, String>> generateUserMap() async {
+    final userData = await getPlayerData();
+    final userMap = {for (var user in userData) user.id: user.name};
+    return userMap;
   }
 }

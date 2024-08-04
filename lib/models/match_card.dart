@@ -44,8 +44,8 @@ class MatchCard {
   final String date;
   final String playTime;
   final String avatarTeam1;
-  final String team1;
+  String team1;
   final String avatarTeam2;
-  final String team2;
+  String team2;
   final String field;
 }

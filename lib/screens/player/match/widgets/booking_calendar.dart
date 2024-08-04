@@ -13,6 +13,7 @@ class BookingCalendar extends StatelessWidget {
     required this.selectedStadium,
     required this.selectedStadiumOwner,
     required this.selectedTeam,
+    required this.selectedTeamAvatar,
     required this.selectedDate,
     required this.selectedField,
     required this.bookedSlot,
@@ -126,6 +127,7 @@ class BookingCalendar extends StatelessWidget {
 
   final int selectedPlayTime;
   final String selectedTeam;
+  final String selectedTeamAvatar;
   final String selectedStadium;
   final String selectedStadiumOwner;
   final DateTime selectedDate;
@@ -143,6 +145,7 @@ class BookingCalendar extends StatelessWidget {
         selectedStadium: selectedStadium,
         selectedStadiumOwner: selectedStadiumOwner,
         selectedTeamId: selectedTeam,
+        selectedTeamAvatar: selectedTeamAvatar,
         addMatchCard: addMatchCard,
         bookedTime: bookedSlot!,
         selectedDate: selectedDate,

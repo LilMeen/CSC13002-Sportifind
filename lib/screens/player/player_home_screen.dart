@@ -1,4 +1,5 @@
 import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
+import 'package:sportifind/screens/player/notify/screeens/notification_screen.dart';
 import 'package:sportifind/screens/player/team/screens/team_main_screen.dart';
 import 'package:sportifind/widgets/bottom_navigation.dart';
 import 'package:sportifind/models/tab_icon.dart';
@@ -45,24 +46,43 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: SportifindTheme.background,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: FutureBuilder<bool>(
-          future: getData(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (!snapshot.hasData) {
-              return const SizedBox();
-            } else {
-              return Stack(
-                children: <Widget>[
-                  tabBody,
-                  bottomBar(),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Stadium Information'),
+        backgroundColor: Colors.teal,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NotificationScreen(),
+                ),
               );
-            }
-          },
+            },
+            icon: const Icon(Icons.notifications),
+          ),
+        ],
+      ),
+      body: Container(
+        color: SportifindTheme.background,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: FutureBuilder<bool>(
+            future: getData(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              if (!snapshot.hasData) {
+                return const SizedBox();
+              } else {
+                return Stack(
+                  children: <Widget>[
+                    tabBody,
+                    bottomBar(),
+                  ],
+                );
+              }
+            },
+          ),
         ),
       ),
     );

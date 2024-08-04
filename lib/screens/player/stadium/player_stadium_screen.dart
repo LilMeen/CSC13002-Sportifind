@@ -13,12 +13,14 @@ class PlayerStadiumScreen extends StatefulWidget {
     this.forMatchCreate = false,
     this.selectedTeamId,
     this.selectedTeamName,
+    this.selectedTeamAvatar,
     this.addMatchCard,
   });
 
   final bool forMatchCreate;
   final String? selectedTeamId;
   final String? selectedTeamName;
+  final String? selectedTeamAvatar;
   final void Function(MatchCard matchcard)? addMatchCard;
 
 
@@ -100,6 +102,7 @@ class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
         addMatchCard: widget.addMatchCard,
         selectedTeamId: widget.selectedTeamId,
         selectedTeamName: widget.selectedTeamName,
+        selectedTeamAvatar: widget.selectedTeamAvatar,
       ),
     );
   }

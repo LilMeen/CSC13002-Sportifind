@@ -15,11 +15,13 @@ class DateSelectScreen extends StatefulWidget {
       required this.selectedStadiumOwner,
       required this.selectedTeamId,
       required this.selectedTeamName,
+      required this.selectedTeamAvatar,
       required this.fields,
       required this.addMatchCard});
 
   final String selectedTeamId;
   final String selectedTeamName;
+  final String selectedTeamAvatar;
   final String selectedStadiumId;
   final String selectedStadiumName;
   final String selectedStadiumOwner;
@@ -165,6 +167,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               selectedStadium: widget.selectedStadiumId,
               selectedStadiumOwner: widget.selectedStadiumOwner,
               selectedTeam: widget.selectedTeamId,
+              selectedTeamAvatar: widget.selectedTeamAvatar,
               selectedDate: selectedDate!,
               selectedField: selectedField,
               pauseSlots: generatePauseSlot(
