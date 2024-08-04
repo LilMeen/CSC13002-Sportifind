@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:sportifind/screens/player/player_home_screen.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
@@ -30,9 +32,10 @@ class EditInformationState extends State<EditInformationScreen> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _footController = TextEditingController();
 
-  String _selectedCity = '';
-  String _selectedDistrict = '';
-  static final Map<String, String> citiesNameAndId = {};
+  Timer? _delayCityTime;
+  Timer? _delayDistrictTime;
+
+  final Map<String, String> citiesNameAndId = {};
 
   var _enteredName = '';
   var _enteredPhone = '';
@@ -45,6 +48,8 @@ class EditInformationState extends State<EditInformationScreen> {
     _nameController.dispose();
     _dateController.dispose();
     _phoneController.dispose();
+    _delayCityTime?.cancel();
+    _delayDistrictTime?.cancel();
     super.dispose();
   }
 
@@ -52,6 +57,11 @@ class EditInformationState extends State<EditInformationScreen> {
   void initState() {
     super.initState();
     _fetchUserData();
+    setState(() {
+      _cityController.text = '';
+      _districtController.text = '';
+    });
+
     userDataFuture = getUserData();
   }
 
@@ -83,13 +93,27 @@ class EditInformationState extends State<EditInformationScreen> {
             _addressController.text = userData['address'] ?? '';
             _dateController.text = userData['dob'] ?? '';
             _genderController.text = userData['gender'] ?? '';
-            _cityController.text = userData['city'] ?? '';
-            _districtController.text = userData['district'] ?? '';
+
+            _delayCityTime?.cancel();
+            _delayCityTime = Timer(const Duration(seconds: 2), () {
+              setState(() {
+                _cityController.text = userData['city'] ?? '';
+              });
+            });
+            _delayDistrictTime?.cancel();
+            _delayDistrictTime =
+                Timer(const Duration(seconds: 5, milliseconds: 300), () {
+              setState(() {
+                _districtController.text = userData['district'] ?? '';
+              });
+            });
+
             _addressController.text = userData['address'] ?? '';
             _weightController.text = userData['weight'] ?? '';
             _heightController.text = userData['height'] ?? '';
             stats = Map<String, int>.from(userData['stats'] ?? stats);
-            _footController.text = userData['preferred_foot'] == true ? '1' : '0';
+            _footController.text =
+                userData['preferred_foot'] == true ? '1' : '0';
 
             print(_nameController.text);
             print(_phoneController.text);
@@ -556,30 +580,63 @@ class EditInformationState extends State<EditInformationScreen> {
                 _buildDobSection('Date Of Birth', _dateController),
                 const SizedBox(height: 16),
                 //_buildDropdownSection('City/Province', _cityController),
-                CityDropdown(
-                        selectedCity: _selectedCity,
+                SizedBox(
+                  width: 290,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: const TextSpan(
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                          children: <TextSpan>[
+                            TextSpan(text: 'City'),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      CityDropdown(
+                        selectedCity: _cityController.text,
                         onChanged: (value) {
                           setState(() {
-                            _selectedCity = value ?? '';
-                            _selectedDistrict = '';
                             _cityController.text = value ?? '';
-                          });                         
+                            _districtController.text = '';
+                          });
                         },
                         //controller: _cityController,
                         citiesNameAndId: citiesNameAndId,
+                        fillColor: Colors.transparent,
                       ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 16),
-                //_buildDropdownSection('District', _districtController),
-                DistrictDropdown(
-                        selectedCity: _selectedCity,
-                        selectedDistrict: _selectedDistrict,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: const TextSpan(
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                        children: <TextSpan>[
+                          TextSpan(text: 'District'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: 290,
+                      child: DistrictDropdown(
+                        selectedCity: _cityController.text,
+                        selectedDistrict: _districtController.text,
                         onChanged: (value) {
                           setState(() {
-                            _selectedDistrict = value ?? '';
                             _districtController.text = value ?? '';
                           });
-                        }, citiesNameAndId: citiesNameAndId,
-                        
+                        },
+                        citiesNameAndId: citiesNameAndId,
+                        fillColor: Colors.transparent,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 _buildSection('Address', _addressController),
@@ -621,18 +678,18 @@ class EditInformationState extends State<EditInformationScreen> {
                 ),
                 const SizedBox(height: 20),
                 Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
-                children: [
-                  const Text(
-                    'Preferred Foot',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
-                  ),
-                  //const SizedBox(width: 10),
-                  FootPicker(controller: _footController),
-                ]),
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Text(
+                        'Preferred Foot',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                      //const SizedBox(width: 10),
+                      FootPicker(controller: _footController),
+                    ]),
                 const SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.only(left: 210),

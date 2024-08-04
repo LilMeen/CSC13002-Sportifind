@@ -8,7 +8,8 @@ class StadiumCard extends StatefulWidget {
   final String ownerName;
   final double imageRatio;
   final bool forMatchCreate;
-  final String? selectedTeam;
+  final String? selectedTeamId;
+  final String? selectedTeamName;
   final void Function(MatchCard matchcard)? addMatchCard;
 
   const StadiumCard({
@@ -17,7 +18,8 @@ class StadiumCard extends StatefulWidget {
     required this.forMatchCreate,
     required this.imageRatio,
     this.addMatchCard,
-    this.selectedTeam,
+    this.selectedTeamId,
+    this.selectedTeamName,
     super.key,
   });
 
@@ -38,7 +40,8 @@ class _StadiumCardState extends State<StadiumCard> {
               ownerName: widget.ownerName,
               forMatchCreate: widget.forMatchCreate,
               addMatchCard: widget.addMatchCard,
-              selectedTeam: widget.selectedTeam,
+              selectedTeamId: widget.selectedTeamId,
+              selectedTeamName: widget.selectedTeamName,
             ),
           ),
         );

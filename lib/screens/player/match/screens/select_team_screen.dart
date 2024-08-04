@@ -106,7 +106,8 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
           MaterialPageRoute(
             builder: (context) => PlayerStadiumScreen(
               forMatchCreate: true,
-              selectedTeam: team.name,
+              selectedTeamId: team.teamId,
+              selectedTeamName: team.name,
               addMatchCard: widget.addMatchCard,
             ),
           ),

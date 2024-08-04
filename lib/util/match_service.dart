@@ -3,11 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sportifind/models/match_card.dart';
+import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
+import 'package:sportifind/util/user_service.dart';
 
 class MatchService {
   final user = FirebaseAuth.instance.currentUser!;
+  UserService userService = UserService();
 
   DateTime convertStringToDateTime(String timeString, String selectedDate) {
     final hourFormat = DateFormat('HH:mm');
@@ -75,52 +78,79 @@ class MatchService {
 
   Future<List<MatchCard>> getPersonalMatchData() async {
     final List<MatchCard> userMatches = [];
-    final matchesQuery =
-        await FirebaseFirestore.instance.collection('matches').get();
-    final matches = matchesQuery.docs
-        .map((match) => MatchCard.fromSnapshot(match))
-        .toList();
+    final List<String> matchesId = [];
+    final PlayerData user = await userService.getUserPlayerData();
 
+    // Retrieve matches for user's teams
+    for (var teamId in user.teams) {
+      final matchesQuery = await FirebaseFirestore.instance
+          .collection('teams')
+          .doc(teamId)
+          .get();
+
+      final Map<String, dynamic> incoming =
+          matchesQuery.data()?['incoming'] ?? {};
+      matchesId.addAll(incoming.keys.toList());
+      print("-------------------------");
+      print(matchesId);
+    }
+
+    // Retrieve stadium data
     final stadiumsQuery =
         await FirebaseFirestore.instance.collection('stadiums').get();
     final stadiums = stadiumsQuery.docs
         .map((stadium) => StadiumData.fromSnapshot(stadium))
         .toList();
 
-    for (var i = 0; i < matches.length; ++i) {
-      for (var j = 0; j < stadiums.length; ++j) {
-        if (matches[i].userId == user.uid &&
-            stadiums[j].id == matches[i].stadium) {
-          matches[i].stadium = stadiums[j].name;
-          userMatches.add(matches[i]);
+    final stadiumMap = {for (var stadium in stadiums) stadium.id: stadium.name};
+
+    // Retrieve match data
+    for (var matchId in matchesId) {
+      final matchDoc = await FirebaseFirestore.instance
+          .collection('matches')
+          .doc(matchId)
+          .get();
+      if (matchDoc.exists) {
+        final match = MatchCard.fromSnapshot(matchDoc);
+        if (stadiumMap.containsKey(match.stadium)) {
+          match.stadium = stadiumMap[match.stadium]!;
+          userMatches.add(match);
         }
       }
     }
+
     return userMatches;
   }
 
   Future<List<MatchCard>> getNearbyMatchData(List<StadiumData> stadiums) async {
     final List<MatchCard> userMatches = [];
+    final PlayerData user = await userService.getUserPlayerData();
 
-    final userData = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
-
+    // Retrieve all match documents
     final matchesQuery =
         await FirebaseFirestore.instance.collection('matches').get();
     final matches = matchesQuery.docs
         .map((match) => MatchCard.fromSnapshot(match))
         .toList();
 
-    for (var i = 0; i < stadiums.length; ++i) {
-      for (var j = 0; j < matches.length; ++j) {
-        if (matches[j].userId != user.uid && matches[j].stadium == stadiums[i].id) {
-          userMatches.add(matches[j]);
+    for (var stadium in stadiums) {
+      for (var match in matches) {
+        if (checkDifferentTeam(user, match) && match.stadium == stadium.id) {
+          userMatches.add(match);
         }
       }
     }
+
     return userMatches;
+  }
+
+  bool checkDifferentTeam(PlayerData userTeam, MatchCard userMatch) {
+    for (var i = 0; i < userTeam.teams.length; ++i) {
+      if (userTeam.teams[i] == userMatch.team1) {
+        return false;
+      }
+    }
+    return true;
   }
 
   DateTime parseDate(String dateStr) {

@@ -142,7 +142,7 @@ class BookingCalendar extends StatelessWidget {
         pauseSlots: pauseSlots,
         selectedStadium: selectedStadium,
         selectedStadiumOwner: selectedStadiumOwner,
-        selectedTeam: selectedTeam,
+        selectedTeamId: selectedTeam,
         addMatchCard: addMatchCard,
         bookedTime: bookedSlot!,
         selectedDate: selectedDate,

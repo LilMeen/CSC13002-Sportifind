@@ -13,7 +13,7 @@ class BookingController extends ChangeNotifier {
     this.pauseSlots,
     required this.selectedStadium,
     required this.selectedStadiumOwner,
-    required this.selectedTeam,
+    required this.selectedTeamId,
     required this.addMatchCard,
     required this.bookedTime,
     required this.selectedDate,
@@ -31,7 +31,7 @@ class BookingController extends ChangeNotifier {
 
   late DateTime base;
 
-  final String selectedTeam;
+  final String selectedTeamId;
   final String selectedStadium;
   final DateTime selectedDate;
   final String selectedStadiumOwner;
@@ -232,10 +232,9 @@ class BookingController extends ChangeNotifier {
       date: formatter.format(selectedDate),
       playTime: convertMinutesToDurationString(selectedPlayTime),
       avatarTeam1: 'lib/assets/logo/real_madrid.png',
-      team1: selectedTeam,
+      team1: selectedTeamId,
       avatarTeam2: 'lib/assets/logo/logo.png',
-      team2: "?",
-      userId: user.uid,
+      team2: "",
       field: selectedField,
     );
     addMatchCard(newMatchCard);
@@ -251,7 +250,6 @@ class BookingController extends ChangeNotifier {
       'team2': newMatchCard.team2,
       'team1_avatar': newMatchCard.avatarTeam1,
       'team2_avatar': newMatchCard.avatarTeam2,
-      'userId': user.uid,
       'field': selectedField,
     });
 
@@ -274,7 +272,6 @@ class BookingController extends ChangeNotifier {
     DocumentReference docRef = doc[0].reference;
     await docRef.update({
       'incoming.${newMatchCard.id}': false
-      // replace with the actual field(s) you want to update
     });
   }
 

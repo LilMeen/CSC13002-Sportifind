@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:sportifind/screens/player/player_home_screen.dart';
 import 'package:sportifind/screens/stadium_owner/stadium_owner_home_screen.dart';
@@ -6,6 +8,8 @@ import 'package:sportifind/widgets/date_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';
+import 'package:sportifind/widgets/dropdown_button/district_dropdown.dart';
 
 final _formKey = GlobalKey<FormState>();
 
@@ -28,6 +32,9 @@ class BasicInformationState extends State<BasicInformationScreen> {
   DateTime? selectedDate;
   DateTime? dob;
 
+  Timer? _delayCityTime;
+  Timer? _delayDistrictTime;
+  final Map<String, String> citiesNameAndId = {};
 
   var _enteredName = '';
   var _enteredPhone = '';
@@ -41,7 +48,24 @@ class BasicInformationState extends State<BasicInformationScreen> {
     super.dispose();
   }
 
-  void _done() async{
+  @override
+  void initState(){
+    _delayCityTime?.cancel();
+    _delayCityTime = Timer(const Duration(seconds: 2), () {
+      setState(() {
+        _cityController.text = '';
+      });
+    });
+    _delayDistrictTime?.cancel();
+    _delayDistrictTime =
+        Timer(const Duration(seconds: 5, milliseconds: 300), () {
+      setState(() {
+        _districtController.text = '';
+      });
+    });
+  }
+
+  void _done() async {
     final isValid = _formKey.currentState!.validate();
 
     if (isValid) {
@@ -62,17 +86,19 @@ class BasicInformationState extends State<BasicInformationScreen> {
         });
 
         DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get();
         if (snapshot['role'] == 'player') {
           Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const PlayerHomeScreen()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const PlayerHomeScreen()));
         } else if (snapshot['role'] == 'stadium_owner') {
           Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const StadiumOwnerHomeScreen()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const StadiumOwnerHomeScreen()));
         }
       } catch (error) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -217,7 +243,6 @@ class BasicInformationState extends State<BasicInformationScreen> {
       ],
     );
   }
-
 
   Widget _buildSection(String type, TextEditingController controller) {
     double width = 290; // Default width
@@ -398,8 +423,6 @@ class BasicInformationState extends State<BasicInformationScreen> {
     );
   }
 
-
-
   Widget _nextButton(BuildContext context) {
     return SizedBox(
       width: 80,
@@ -430,7 +453,6 @@ class BasicInformationState extends State<BasicInformationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       backgroundColor: const Color.fromARGB(255, 33, 33, 33),
       body: SingleChildScrollView(
         child: Center(
@@ -441,10 +463,8 @@ class BasicInformationState extends State<BasicInformationScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 10),
-                const Text(
-                  'Basic Information',
-                  style: TextStyle(color: Colors.white, fontSize: 27)
-                ),
+                const Text('Basic Information',
+                    style: TextStyle(color: Colors.white, fontSize: 27)),
                 const SizedBox(height: 27),
                 _buildSection('Name', _nameController),
                 const SizedBox(height: 16),
@@ -454,9 +474,64 @@ class BasicInformationState extends State<BasicInformationScreen> {
                 const SizedBox(height: 16),
                 _buildDobSection('Date Of Birth', _dateController),
                 const SizedBox(height: 16),
-                _buildDropdownSection('City/Province', _cityController),
+                SizedBox(
+                  width: 290,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: const TextSpan(
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                          children: <TextSpan>[
+                            TextSpan(text: 'City'),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      CityDropdown(
+                        selectedCity: _cityController.text,
+                        onChanged: (value) {
+                          setState(() {
+                            _cityController.text = value ?? '';
+                            _districtController.text = '';
+                          });
+                        },
+                        //controller: _cityController,
+                        citiesNameAndId: citiesNameAndId,
+                        fillColor: Colors.transparent,
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 16),
-                _buildDropdownSection('District', _districtController),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: const TextSpan(
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                        children: <TextSpan>[
+                          TextSpan(text: 'District'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: 290,
+                      child: DistrictDropdown(
+                        selectedCity: _cityController.text,
+                        selectedDistrict: _districtController.text,
+                        onChanged: (value) {
+                          setState(() {
+                            _districtController.text = value ?? '';
+                          });
+                        },
+                        citiesNameAndId: citiesNameAndId,
+                        fillColor: Colors.transparent,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 _buildSection('Address', _addressController),
                 const SizedBox(height: 24),

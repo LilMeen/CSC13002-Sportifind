@@ -13,11 +13,13 @@ class DateSelectScreen extends StatefulWidget {
       required this.selectedStadiumId,
       required this.selectedStadiumName,
       required this.selectedStadiumOwner,
-      required this.selectedTeam,
+      required this.selectedTeamId,
+      required this.selectedTeamName,
       required this.fields,
       required this.addMatchCard});
 
-  final String selectedTeam;
+  final String selectedTeamId;
+  final String selectedTeamName;
   final String selectedStadiumId;
   final String selectedStadiumName;
   final String selectedStadiumOwner;
@@ -162,7 +164,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               selectedPlayTime: convertDurationStringToInt(selectedPlayTime),
               selectedStadium: widget.selectedStadiumId,
               selectedStadiumOwner: widget.selectedStadiumOwner,
-              selectedTeam: widget.selectedTeam,
+              selectedTeam: widget.selectedTeamId,
               selectedDate: selectedDate!,
               selectedField: selectedField,
               pauseSlots: generatePauseSlot(
@@ -220,7 +222,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   @override
   Widget build(BuildContext context) {
     final String selectedStadium = widget.selectedStadiumName;
-    final String selectedTeam = widget.selectedTeam;
+    final String selectedTeam = widget.selectedTeamName;
     return MaterialApp(
       home: SafeArea(
         child: Scaffold(
@@ -251,7 +253,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                 children: [
                   displayBox(
                     "Tean",
-                    selectedTeam,
+                    widget.selectedTeamName,
                     "lib/assets/logo/logo.png",
                   ),
                   const SizedBox(
