@@ -14,6 +14,7 @@ class BookingController extends ChangeNotifier {
     required this.selectedStadium,
     required this.selectedStadiumOwner,
     required this.selectedTeamId,
+    required this.selectedTeamAvatar,
     required this.addMatchCard,
     required this.bookedTime,
     required this.selectedDate,
@@ -32,6 +33,7 @@ class BookingController extends ChangeNotifier {
   late DateTime base;
 
   final String selectedTeamId;
+  final String selectedTeamAvatar;
   final String selectedStadium;
   final DateTime selectedDate;
   final String selectedStadiumOwner;
@@ -231,9 +233,9 @@ class BookingController extends ChangeNotifier {
       end: formattedTime.format(bookingDate.bookingEnd),
       date: formatter.format(selectedDate),
       playTime: convertMinutesToDurationString(selectedPlayTime),
-      avatarTeam1: 'lib/assets/logo/real_madrid.png',
+      avatarTeam1: selectedTeamAvatar,
       team1: selectedTeamId,
-      avatarTeam2: 'lib/assets/logo/logo.png',
+      avatarTeam2: "",
       team2: "",
       field: selectedField,
     );
