@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/util/notification_sevice.dart';
+import 'package:sportifind/util/notification_service.dart';
 
 class ObjectHandling {
-  Notification notification = Notification();
+  NotificationService notification = NotificationService();
   DocumentReference<Map<String, dynamic>> getUserDoc(userId) {
     return FirebaseFirestore.instance.collection('users').doc(userId);
   }
@@ -132,7 +132,7 @@ class MatchHandling extends ObjectHandling {
         'receiverId': receiverId,
       };
 
-      Map<String, dynamic> incomingMatchMap = senderInformation.get('incoming');
+      Map<String, dynamic> incomingMatchMap = receiverInformation.get('incomingMatch');
       if (incomingMatchMap.containsKey(matchId)) {
         incomingMatchMap[matchId] = true;
       }
@@ -152,8 +152,8 @@ class MatchHandling extends ObjectHandling {
       });
 
       await matchDoc.update({
-        'team2': receiverId,
-        'team2_avatar': receiverInformation.data()?['avatarImage'] ?? '',
+        'team2': senderId,
+        'team2_avatar': senderInformation.data()?['avatarImage'] ?? '',
       });
 
       notification.matchRequestAccepted(senderId, receiverId);

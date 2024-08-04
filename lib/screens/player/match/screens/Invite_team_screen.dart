@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/widgets/team_list/team_cards.dart';
 
 class InviteTeamScreen extends StatefulWidget {
-  const InviteTeamScreen({super.key, required this.teamId});
+  const InviteTeamScreen({super.key, required this.matchInfo});
 
-  final String teamId;
+  final MatchCard matchInfo;
 
   @override
   State<StatefulWidget> createState() => _InviteTeamScreenState();
@@ -21,7 +22,8 @@ class _InviteTeamScreenState extends State<InviteTeamScreen> {
         children: [
           TeamCards(
             otherTeam: team,
-            hostId: widget.teamId,
+            hostId: widget.matchInfo.team1,
+            matchId: widget.matchInfo.id,
           ),
         ],
       ),

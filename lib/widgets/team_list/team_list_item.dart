@@ -1,14 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
-import 'package:sportifind/util/invite_join_message.dart';
+import 'package:sportifind/util/object_handling.dart';
 import 'package:sportifind/util/user_service.dart';
 
 class TeamListItem extends StatefulWidget {
-  const TeamListItem({super.key, required this.team, required this.hostId});
+  const TeamListItem(
+      {super.key,
+      required this.team,
+      required this.hostId,
+      required this.matchId});
 
   final TeamInformation team;
   final String hostId;
+  final String matchId;
 
   @override
   State<StatefulWidget> createState() => _TeamListItemState();
@@ -17,10 +22,9 @@ class TeamListItem extends StatefulWidget {
 class _TeamListItemState extends State<TeamListItem> {
   final user = FirebaseAuth.instance.currentUser!;
   late ImageProvider teamImageProvider;
-  InviteJoinService inviteJoinService = InviteJoinService();
   UserService userService = UserService();
+  MatchHandling matchHandling = MatchHandling();
 
-  String? teamCaptain;
   TeamInformation? teamWithCaptainName;
 
   Future<TeamInformation> convertTeamIdToName(TeamInformation team) async {
@@ -32,12 +36,12 @@ class _TeamListItemState extends State<TeamListItem> {
   Future<void> preloadImage() async {
     teamImageProvider = NetworkImage(widget.team.avatarImageUrl);
     await precacheImage(teamImageProvider, context);
-    teamCaptain = widget.team.captain;
     teamWithCaptainName = await convertTeamIdToName(widget.team);
   }
 
   @override
   Widget build(BuildContext context) {
+    print(teamWithCaptainName);
     return FutureBuilder(
       future: preloadImage(),
       builder: (context, snapshot) {
@@ -71,13 +75,12 @@ class _TeamListItemState extends State<TeamListItem> {
                   ],
                 ),
                 Container(
-                  width: double.infinity,
                   child: TextButton(
                       onPressed: () {
                         print("Push notification");
                         print(widget.team.teamId);
-                        inviteJoinService.sendTeamRequest(
-                            teamCaptain, widget.hostId);
+                        matchHandling.inviteMatchRequest(
+                            widget.hostId, widget.team.teamId, widget.matchId);
                       },
                       child: Text("Invite")),
                 )
