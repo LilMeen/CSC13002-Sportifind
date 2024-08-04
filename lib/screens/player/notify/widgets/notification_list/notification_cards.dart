@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/notification_data.dart';
-import 'package:sportifind/util/invite_join_message.dart';
+import 'package:sportifind/util/notification_service.dart';
 import 'package:sportifind/screens/player/notify/widgets/notification_list/notification_list.dart';
+import 'package:sportifind/util/user_service.dart';
 
 
 // ignore: must_be_immutable
@@ -17,12 +18,21 @@ class NotificationCards extends StatefulWidget {
 
 class _NotificationCardsState extends State<NotificationCards> {
   final user = FirebaseAuth.instance.currentUser!;
-  InviteJoinService inviteJoinService = InviteJoinService();
-  late ImageProvider team1ImageProvider;
+  NotificationService notification = NotificationService();
+  UserService userService = UserService();
   late Future<void> initializationFuture;
 
   Future<void> _initialize() async {
-    await inviteJoinService.getNotificationData(widget.userNotification);
+    final userNoti = await notification.getNotificationData();
+    final user = await userService.getUserPlayerData();
+    for (var i = 0; i < userNoti.length; ++i) {
+      for (var j = 0; j < user.teams.length; ++j) {
+        if (userNoti[i].sender == user.teams[j] && userNoti[i].status == 'match invite') {
+          continue;
+        }
+        widget.userNotification.add(userNoti[i]);
+      }
+    }
     print(widget.userNotification);
   }
 
@@ -43,7 +53,7 @@ class _NotificationCardsState extends State<NotificationCards> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: height,
+                  height: height - 150,
                   width: width,
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),

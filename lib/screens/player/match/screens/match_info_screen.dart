@@ -46,7 +46,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
       isScrollControlled: true,
       context: context,
       builder: (ctx) => InviteTeamScreen(
-        teamId: widget.matchInfo.team1,
+        matchInfo: widget.matchInfo,
       ),
     );
   }

@@ -1,8 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/util/object_handling.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sportifind/models/notification_data.dart';
 
-class Notification {
-  final ObjectHandling objectHandling = ObjectHandling();
+class NotificationService {
+  final user = FirebaseAuth.instance.currentUser!;
+
+  Future<List<NotificationData>> getNotificationData() async {
+    List<NotificationData> userNotification = [];
+    final notificationQuery = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('notifications')
+        .get();
+    final notifications = notificationQuery.docs
+        .map((notification) => NotificationData.fromSnapshot(notification))
+        .toList();
+    for (var i = 0; i < notifications.length; ++i) {
+      userNotification.add(notifications[i]);
+    }
+    return userNotification;
+  }
 
   Future<List<CollectionReference<Map<String, dynamic>>>>
       getTeamNotificationCollectionList(String teamId) async {
@@ -38,20 +55,6 @@ class Notification {
         .collection('notifications');
   }
 
-  Future<void> getNotificationData(List<NotificationData> userNotification) async {
-    final notificationQuery = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('notifications')
-        .get();
-    final notifications = notificationQuery.docs
-        .map((notification) => NotificationData.fromSnapshot(notification))
-        .toList();
-    for (var i = 0; i < notifications.length; ++i) {
-      userNotification.add(notifications[i]);
-    }
-  }
-
   Future<DocumentSnapshot<Map<String, dynamic>>> getUserDocInformation(userId) {
     return FirebaseFirestore.instance.collection('users').doc(userId).get();
   }
@@ -69,32 +72,33 @@ class Notification {
       List<CollectionReference<Map<String, dynamic>>> receiverTeamMembersNoti =
           await getTeamNotificationCollectionList(receiverId);
 
-      DocumentSnapshot<Map<String, dynamic>> senderInformation =
-          await getTeamDocInformation(senderId);
-      DocumentSnapshot<Map<String, dynamic>> receiverInformation =
-          await getTeamDocInformation(receiverId);
-      String senderName = senderInformation.data()?['name'] ?? 'Unknow';
-      String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
+      // DocumentSnapshot<Map<String, dynamic>> senderInformation =
+      //     await getTeamDocInformation(senderId);
+      // DocumentSnapshot<Map<String, dynamic>> receiverInformation =
+      //     await getTeamDocInformation(receiverId);
 
-      senderTeamMembersNoti.map((memberNoti) async {
+      // String senderName = senderInformation.data()?['name'] ?? 'Unknow';
+      // String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
+      
+      senderTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
           'status': 'match sent',
           'senderType': 'team', // player, admin, stadium owner, team
-          'sender': senderName, // username
-          'receiver': receiverName,
+          'sender': senderId, // username
+          'receiver': receiverId,
           'time': Timestamp.now(), // time to sort
           'isRead': false,
         });
       });
 
-      receiverTeamMembersNoti.map((memberNoti) async {
+      receiverTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
           'status': 'match invite',
           'senderType': 'team', // player, admin, stadium owner, team
-          'sender': senderName, // username
-          'receiver': receiverName,
+          'sender': senderId, // username
+          'receiver': receiverId,
           'time': Timestamp.now(), // time to sort
           'isRead': false,
         });
@@ -112,33 +116,33 @@ class Notification {
       List<CollectionReference<Map<String, dynamic>>> receiverTeamMembersNoti =
           await getTeamNotificationCollectionList(receiverId);
 
-      DocumentSnapshot<Map<String, dynamic>> senderInformation =
-          await getTeamDocInformation(senderId);
-      DocumentSnapshot<Map<String, dynamic>> receiverInformation =
-          await getTeamDocInformation(receiverId);
+      // DocumentSnapshot<Map<String, dynamic>> senderInformation =
+      //     await getTeamDocInformation(senderId);
+      // DocumentSnapshot<Map<String, dynamic>> receiverInformation =
+      //     await getTeamDocInformation(receiverId);
 
-      String senderName = senderInformation.data()?['name'] ?? 'Unknow';
-      String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
+      // String senderName = senderInformation.data()?['name'] ?? 'Unknow';
+      // String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
 
-      senderTeamMembersNoti.map((memberNoti) async {
+      senderTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
           'status': 'match sent',
           'senderType': 'team', // player, admin, stadium owner, team
-          'sender': senderName, // username
-          'receiver': receiverName,
+          'sender': senderId, // username
+          'receiver': receiverId,
           'time': Timestamp.now(), // time to sort
           'isRead': false,
         });
       });
 
-      receiverTeamMembersNoti.map((memberNoti) async {
+      receiverTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
           'status': 'match join',
           'senderType': 'team', // player, admin, stadium owner, team
-          'sender': senderName, // username
-          'receiver': receiverName,
+          'sender': senderId, // username
+          'receiver': receiverId,
           'time': Timestamp.now(), // time to sort
           'isRead': false,
         });
@@ -156,33 +160,33 @@ class Notification {
       List<CollectionReference<Map<String, dynamic>>> receiverTeamMembersNoti =
           await getTeamNotificationCollectionList(receiverId);
 
-      DocumentSnapshot<Map<String, dynamic>> senderInformation =
-          await getTeamDocInformation(senderId);
-      DocumentSnapshot<Map<String, dynamic>> receiverInformation =
-          await getTeamDocInformation(receiverId);
+      // DocumentSnapshot<Map<String, dynamic>> senderInformation =
+      //     await getTeamDocInformation(senderId);
+      // DocumentSnapshot<Map<String, dynamic>> receiverInformation =
+      //     await getTeamDocInformation(receiverId);
 
-      String senderName = senderInformation.data()?['name'] ?? 'Unknow';
-      String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
+      // String senderName = senderInformation.data()?['name'] ?? 'Unknow';
+      // String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
 
-      senderTeamMembersNoti.map((memberNoti) async {
+      senderTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
           'status': 'match accepted',
           'senderType': 'team', // player, admin, stadium owner, team
-          'sender': senderName, // username
-          'receiver': receiverName,
+          'sender': senderId, // username
+          'receiver': receiverId,
           'time': Timestamp.now(), // time to sort
           'isRead': false,
         });
       });
 
-      receiverTeamMembersNoti.map((memberNoti) async {
+      receiverTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
           'status': 'match accepted',
           'senderType': 'team', // player, admin, stadium owner, team
-          'sender': senderName, // username
-          'receiver': receiverName,
+          'sender': senderId, // username
+          'receiver': receiverId,
           'time': Timestamp.now(), // time to sort
           'isRead': false,
         });
@@ -442,4 +446,3 @@ class Notification {
     }
   }
 }
-

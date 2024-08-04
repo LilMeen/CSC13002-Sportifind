@@ -58,4 +58,10 @@ class TeamService {
       return null;
     }
   }
+
+  Future<Map<String, String>> generateTeamMap() async {
+    final teamData = await getTeamData();
+    final teamMap = {for (var team in teamData) team.teamId: team.name};
+    return teamMap;
+  }
 }

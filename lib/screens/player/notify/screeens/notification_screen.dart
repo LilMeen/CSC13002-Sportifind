@@ -13,15 +13,20 @@ class _NotificationScreenState extends State<NotificationScreen> {
   List<NotificationData> userNotification = [];
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.teal,
-      width: double.infinity,
-      child: Column(
-        children: [
-          NotificationCards(
-            userNotification: userNotification,
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Notifications"),
+      ),
+      body: Container(
+        color: Colors.blueGrey,
+        width: double.infinity,
+        child: Column(
+          children: [
+            NotificationCards(
+              userNotification: userNotification,
+            ),
+          ],
+        ),
       ),
     );
   }

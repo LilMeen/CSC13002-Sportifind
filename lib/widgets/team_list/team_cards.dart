@@ -6,10 +6,11 @@ import 'package:sportifind/widgets/team_list/team_list.dart';
 
 // ignore: must_be_immutable
 class TeamCards extends StatefulWidget {
-  TeamCards({super.key, required this.otherTeam, required this.hostId});
+  TeamCards({super.key, required this.otherTeam, required this.hostId, required this.matchId});
 
   List<TeamInformation> otherTeam;
   final String hostId;
+  String matchId;
 
   @override
   State<StatefulWidget> createState() => _TeamCardsState();
@@ -43,7 +44,7 @@ class _TeamCardsState extends State<TeamCards> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-          print(widget.otherTeam);
+          print(widget.matchId);
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,6 +57,7 @@ class _TeamCardsState extends State<TeamCards> {
                     child: TeamInformationList(
                       teams: widget.otherTeam,
                       hostId: widget.hostId,
+                      matchId: widget.matchId,
                     ),
                   ),
                 ),

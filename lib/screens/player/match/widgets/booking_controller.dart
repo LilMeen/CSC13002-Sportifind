@@ -273,7 +273,7 @@ class BookingController extends ChangeNotifier {
     List<QueryDocumentSnapshot> doc = querySnapshot.docs;
     DocumentReference docRef = doc[0].reference;
     await docRef.update({
-      'incoming.${newMatchCard.id}': false
+      'incomingMatch.${newMatchCard.id}': false
     });
   }
 

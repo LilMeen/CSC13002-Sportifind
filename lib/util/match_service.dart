@@ -94,7 +94,7 @@ class MatchService {
           .doc(teamId)
           .get();
 
-      final Map<String, dynamic> incoming = teamQuery.data()?['incoming'] ?? {};
+      final Map<String, dynamic> incoming = teamQuery.data()?['incomingMatch'] ?? {};
       matchesId.addAll(incoming.keys.toList());
       print("-------------------------");
       print(matchesId);
