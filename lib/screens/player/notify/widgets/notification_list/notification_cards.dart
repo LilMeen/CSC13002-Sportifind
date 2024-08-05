@@ -5,7 +5,6 @@ import 'package:sportifind/util/notification_service.dart';
 import 'package:sportifind/screens/player/notify/widgets/notification_list/notification_list.dart';
 import 'package:sportifind/util/user_service.dart';
 
-
 // ignore: must_be_immutable
 class NotificationCards extends StatefulWidget {
   NotificationCards({super.key, required this.userNotification});
@@ -23,14 +22,18 @@ class _NotificationCardsState extends State<NotificationCards> {
   late Future<void> initializationFuture;
 
   Future<void> _initialize() async {
+    widget.userNotification = [];
     final userNoti = await notification.getNotificationData();
     final user = await userService.getUserPlayerData();
     for (var i = 0; i < userNoti.length; ++i) {
       for (var j = 0; j < user.teams.length; ++j) {
-        if (userNoti[i].sender == user.teams[j] && userNoti[i].status == 'match invite') {
+        if (userNoti[i].sender == user.teams[j] &&
+            userNoti[i].status == 'match invite') {
           continue;
         }
-        widget.userNotification.add(userNoti[i]);
+        if (user.teams[j] == userNoti[i].receiver) {
+          widget.userNotification.add(userNoti[i]);
+        }
       }
     }
     print(widget.userNotification);
@@ -57,7 +60,7 @@ class _NotificationCardsState extends State<NotificationCards> {
                   width: width,
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: NotificationList(
+                    child: NotificationList (
                       notification: widget.userNotification,
                     ),
                   ),

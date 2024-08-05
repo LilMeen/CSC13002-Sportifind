@@ -168,7 +168,7 @@ class MatchHandling extends ObjectHandling {
       DocumentReference<Map<String, dynamic>> senderDoc = getTeamDoc(senderId);
       DocumentReference<Map<String, dynamic>> receiverDoc =
           getTeamDoc(receiverId);
-      DocumentReference<Map<String, dynamic>> matchDoc = getMatchDoc(matchId);
+      //DocumentReference<Map<String, dynamic>> matchDoc = getMatchDoc(matchId);
 
       Map<String, String> matchInfo = {
         'matchId': matchId,

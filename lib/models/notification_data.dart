@@ -31,7 +31,7 @@ class NotificationData {
       "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}";
 
   String? id;
-  final bool isRead;
+  bool isRead;
   final String receiver;
   final String sender;
   final String senderType;
