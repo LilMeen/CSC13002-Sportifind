@@ -1,79 +1,93 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/features/stadium/data/models/field_model.dart';
-import 'package:sportifind/features/stadium/domain/entities/location.dart';
+import 'package:sportifind/features/stadium/data/models/location_model.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
 
-class StadiumModel extends Stadium {
+class StadiumModel {
+  final String id;
+  final String name;
+  final String owner;
+  final String avatar;
+  final List<String> images;
+  final LocationModel location;
+  final String openTime;
+  final String closeTime;
+  final String phone;
+  final List<FieldModel> fields;
+
   StadiumModel({
-    required super.id,
-    required super.name,
-    required super.owner,
-    required super.avatar,
-    required super.images,
-    required super.location,
-    required super.openTime,
-    required super.closeTime,
-    required super.phone,
-    required super.fields,
+    required this.id,
+    required this.name,
+    required this.owner,
+    required this.avatar,
+    required this.images,
+    required this.location,
+    required this.openTime,
+    required this.closeTime,
+    required this.phone,
+    required this.fields,
   });
 
-  factory StadiumModel.fromSnapshot(
-      DocumentSnapshot<Map<String, dynamic>> snapshot) {
-    final data = snapshot.data()!;
-    final location = Location(
-      city: data['city'],
-      district: data['district'],
-      address: data['address'],
-      latitude: data['latitude'],
-      longitude: data['longitude'],
-    );
-
+  factory StadiumModel.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return StadiumModel(
-      id: snapshot.id,
-      name: data['name'],
-      owner: data['owner'],
-      avatar: data['avatar'],
-      images: List<String>.from(data['images']),
-      location: location,
-      openTime: data['open_time'],
-      closeTime: data['close_time'],
-      phone: data['phone_number'],
-      fields: [], // fields will be populated asynchronously
+      id: doc.id,
+      name: data['name'] ?? '',
+      owner: data['owner'] ?? '',
+      avatar: data['avatar'] ?? '',
+      images: List<String>.from(data['images'] ?? []),
+      location: LocationModel.fromMap(data['location'] ?? {}),
+      openTime: data['openTime'] ?? '',
+      closeTime: data['closeTime'] ?? '',
+      phone: data['phone'] ?? '',
+      fields: (data['fields'] as List? ?? [])
+          .map((e) => FieldModel.fromMap(e))
+          .toList(),
     );
   }
 
-  static Future<StadiumModel> fromSnapshotAsync(
-      DocumentSnapshot<Map<String, dynamic>> snapshot) async {
-    final stadiumModel = StadiumModel.fromSnapshot(snapshot);
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'owner': owner,
+      'avatar': avatar,
+      'images': images,
+      'location': location.toMap(),
+      'openTime': openTime,
+      'closeTime': closeTime,
+      'phone': phone,
+      'fields': fields.map((e) => e.toMap()).toList(),
+    };
+  }
 
-    final fieldsSnapshot = await snapshot.reference.collection('fields').get();
-    final fields =
-        fieldsSnapshot.docs.map((doc) => FieldModel.fromSnapshot(doc)).toList();
+  Stadium toEntity() {
+    return Stadium(
+      id: id,
+      name: name,
+      owner: owner,
+      avatar: avatar,
+      images: images,
+      location: location.toEntity(),
+      openTime: openTime,
+      closeTime: closeTime,
+      phone: phone,
+      fields: fields.map((e) => e.toEntity()).toList(),
+    );
+  }
 
+  factory StadiumModel.fromEntity(Stadium entity) {
     return StadiumModel(
-      id: stadiumModel.id,
-      name: stadiumModel.name,
-      owner: stadiumModel.owner,
-      avatar: stadiumModel.avatar,
-      images: stadiumModel.images,
-      location: stadiumModel.location,
-      openTime: stadiumModel.openTime,
-      closeTime: stadiumModel.closeTime,
-      phone: stadiumModel.phone,
-      fields: fields,
+      id: entity.id,
+      name: entity.name,
+      owner: entity.owner,
+      avatar: entity.avatar,
+      images: entity.images,
+      location: LocationModel.fromEntity(entity.location),
+      openTime: entity.openTime,
+      closeTime: entity.closeTime,
+      phone: entity.phone,
+      fields: entity.fields.map((e) => FieldModel.fromEntity(e)).toList(),
     );
-  }
-
-  int getNumberOfTypeField(String type) {
-    return fields.where((field) => field.type == type).length;
-  }
-
-  double getPriceOfTypeField(String type) {
-    for (var field in fields) {
-      if (field.type == type) {
-        return field.price;
-      }
-    }
-    return 0;
   }
 }
+

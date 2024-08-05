@@ -58,7 +58,7 @@ class StadiumData {
 
     final fieldsSnapshot = await snapshot.reference.collection('fields').get();
     final fields =
-        fieldsSnapshot.docs.map((doc) => FieldModel.fromSnapshot(doc)).toList();
+        fieldsSnapshot.docs.map((doc) => FieldModel(doc)).toList();
 
     return StadiumData(
       id: stadiumData.id,
