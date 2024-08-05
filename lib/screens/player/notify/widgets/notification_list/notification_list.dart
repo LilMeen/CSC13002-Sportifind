@@ -3,7 +3,10 @@ import 'package:sportifind/models/notification_data.dart';
 import 'package:sportifind/screens/player/notify/widgets/notification_list/notification_list_item.dart';
 
 class NotificationList extends StatelessWidget {
-  const NotificationList({super.key, required this.notification});
+  const NotificationList({
+    super.key,
+    required this.notification,
+  });
 
   final List<NotificationData> notification;
 

@@ -1,15 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/notification_data.dart';
+import 'package:sportifind/screens/player/notify/screeens/notification_screen.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/screens/player/team/screens/team_details.dart';
 import 'package:sportifind/util/match_service.dart';
+import 'package:sportifind/util/notification_service.dart';
 import 'package:sportifind/util/object_handling.dart';
 import 'package:sportifind/util/team_service.dart';
 import 'package:intl/intl.dart';
 
 class NotificationListItem extends StatefulWidget {
-  const NotificationListItem({super.key, required this.notificationData});
+  const NotificationListItem({
+    super.key,
+    required this.notificationData,
+  });
 
   final NotificationData notificationData;
 
@@ -22,12 +27,21 @@ class _NotificationListItemState extends State<NotificationListItem> {
   TeamService teamService = TeamService();
   MatchService matchService = MatchService();
   MatchHandling matchHandling = MatchHandling();
+  NotificationService notificationService = NotificationService();
+  late Future<void> futurebuild;
   String matchId = '';
   String sender = '';
   String receiver = '';
-  bool? actionTaken;
+  bool actionTaken = false;
 
-  Future<void> _initializer(String senderTeamId, receiverTeamId) async {
+  @override
+  void initState() {
+    super.initState();
+    futurebuild = _initializer(
+        widget.notificationData.sender, widget.notificationData.receiver);
+  }
+
+  Future<void> _initializer(String senderTeamId, String receiverTeamId) async {
     sender = await convertTeamIdToName(senderTeamId);
     receiver = await convertTeamIdToName(receiverTeamId);
     actionTaken = widget.notificationData.isRead;
@@ -43,6 +57,8 @@ class _NotificationListItemState extends State<NotificationListItem> {
         matchId = currentUserTeam.matchInviteRequest![i].matchId;
       }
     }
+
+    setState(() {}); // Update the state after initialization
   }
 
   Future<String> convertTeamIdToName(String teamId) async {
@@ -183,7 +199,7 @@ class _NotificationListItemState extends State<NotificationListItem> {
     return Container(
       height: 50,
       width: 50,
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.grey.shade300,
@@ -208,14 +224,17 @@ class _NotificationListItemState extends State<NotificationListItem> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextButton(
-              onPressed: () {
+              onPressed: () async {
                 matchHandling.matchRequestAccepted(
                   widget.notificationData.receiver,
                   widget.notificationData.sender,
                   matchId,
                 );
+                await notificationService
+                    .updateNotificationAsRead(widget.notificationData);
                 setState(() {
                   actionTaken = true;
+                  widget.notificationData.isRead = true;
                 });
               },
               child: const Text(
@@ -237,14 +256,17 @@ class _NotificationListItemState extends State<NotificationListItem> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextButton(
-              onPressed: () {
+              onPressed: () async {
                 // matchHandling.matchRequestDenied(
                 //   widget.notificationData.receiver,
                 //   widget.notificationData.sender,
                 //   matchId,
                 // );
+                await notificationService
+                    .updateNotificationAsRead(widget.notificationData);
                 setState(() {
                   actionTaken = true;
+                  widget.notificationData.isRead = true;
                 });
               },
               child: const Text(
@@ -271,7 +293,7 @@ class _NotificationListItemState extends State<NotificationListItem> {
         return buildInviteSentMessage(receiver, sender);
       // Add more cases here for different notification types
       default:
-        return Text("Unknown notification status");
+        return const Text("Unknown notification status");
     }
   }
 
@@ -279,42 +301,43 @@ class _NotificationListItemState extends State<NotificationListItem> {
     switch (widget.notificationData.type) {
       case "request":
         if (widget.notificationData.status == "match sent") {
-          return Text("");
+          return const Text("");
         } else {
           return buildAcceptAndDeniedButton();
         }
 
       case "accept":
-        return Text("");
+        return const Text("");
       // Add more cases here for different notification types
       default:
-        return Text("Unknown notification type");
+        return const Text("Unknown notification type");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
-      future: _initializer(
-          widget.notificationData.sender, widget.notificationData.receiver),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        } else {
-          return GestureDetector(
-            onTap: () {
-              if (widget.notificationData.status == "match invite") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          TeamDetails(teamId: widget.notificationData.sender)),
-                );
-              }
-            },
-            child: Container(
+    return GestureDetector(
+      onTap: () {
+        if (widget.notificationData.status == "match invite") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    TeamDetails(teamId: widget.notificationData.sender)),
+          );
+        }
+      },
+      child: FutureBuilder<void>(
+        future: futurebuild,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text("Error loading data"));
+          } else {
+            print(widget.notificationData.status);
+            print(widget.notificationData.type);
+            return Container(
               margin: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -322,27 +345,27 @@ class _NotificationListItemState extends State<NotificationListItem> {
                   prefixIcon(),
                   Expanded(
                     child: Container(
-                      margin: EdgeInsets.only(left: 10),
+                      margin: const EdgeInsets.only(left: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           buildNotificationContent(),
                           timeAndDate(widget.notificationData),
                           const SizedBox(height: 10),
-                          if (!actionTaken!) 
+                          if (!actionTaken)
                             buildNotificationButton()
-                          else 
-                            Text("Invitation accepted"),
+                          else
+                            const Text("Invitation accepted"),
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
-          );
-        }
-      },
+            );
+          }
+        },
+      ),
     );
   }
 }

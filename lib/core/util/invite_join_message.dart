@@ -5,6 +5,18 @@ import 'package:sportifind/models/notification_data.dart';
 class NotificationService {
   final user = FirebaseAuth.instance.currentUser!;
 
+  Future<void> updateNotificationAsRead(
+      NotificationData notificationData) async {
+    final firestoreInstance = FirebaseFirestore.instance;
+    await firestoreInstance
+        .collection('users')
+        .doc(user.uid)
+        .collection('notifications')
+        .doc(notificationData
+            .id) // Assuming your NotificationData has an 'id' field
+        .update({'isRead': true});
+  }
+
   Future<List<NotificationData>> getNotificationData() async {
     List<NotificationData> userNotification = [];
     final notificationQuery = await FirebaseFirestore.instance
@@ -79,7 +91,7 @@ class NotificationService {
 
       // String senderName = senderInformation.data()?['name'] ?? 'Unknow';
       // String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
-      
+
       senderTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
@@ -126,7 +138,7 @@ class NotificationService {
 
       senderTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
-          'type': 'request', // request, evaluate, announce, message
+          'type': 'accept', // request, evaluate, announce, message
           'status': 'match sent',
           'senderType': 'team', // player, admin, stadium owner, team
           'sender': senderId, // username
@@ -138,7 +150,7 @@ class NotificationService {
 
       receiverTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
-          'type': 'request', // request, evaluate, announce, message
+          'type': 'accept', // request, evaluate, announce, message
           'status': 'match join',
           'senderType': 'team', // player, admin, stadium owner, team
           'sender': senderId, // username
@@ -203,21 +215,21 @@ class NotificationService {
 
       List<CollectionReference<Map<String, dynamic>>> receiverTeamMembersNoti =
           await getTeamNotificationCollectionList(receiverId);
-      DocumentSnapshot<Map<String, dynamic>> senderInformation =
-          await getTeamDocInformation(senderId);
-      DocumentSnapshot<Map<String, dynamic>> receiverInformation =
-          await getTeamDocInformation(receiverId);
+      // DocumentSnapshot<Map<String, dynamic>> senderInformation =
+      //     await getTeamDocInformation(senderId);
+      // DocumentSnapshot<Map<String, dynamic>> receiverInformation =
+      //     await getTeamDocInformation(receiverId);
 
-      String senderName = senderInformation.data()?['name'] ?? 'Unknow';
-      String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
+      // String senderName = senderInformation.data()?['name'] ?? 'Unknow';
+      // String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
 
       senderTeamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
           'status': 'match denied',
           'senderType': 'team', // player, admin, stadium owner, team
-          'sender': senderName, // username
-          'receiver': receiverName,
+          'sender': senderId, // username
+          'receiver': receiverId,
           'time': Timestamp.now(), // time to sort
           'isRead': false,
         });
@@ -226,10 +238,10 @@ class NotificationService {
       receiverTeamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
-          'status': 'match ejected',
+          'status': 'match rejected',
           'senderType': 'team', // player, admin, stadium owner, team
-          'sender': senderName, // username
-          'receiver': receiverName,
+          'sender': senderId, // username
+          'receiver': receiverId,
           'time': Timestamp.now(), // time to sort
           'isRead': false,
         });
