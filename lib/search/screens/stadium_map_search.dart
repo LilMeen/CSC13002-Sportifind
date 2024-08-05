@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/features/stadium/domain/entities/location.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/services/location_service.dart';
 import 'package:sportifind/models/owner_data.dart';

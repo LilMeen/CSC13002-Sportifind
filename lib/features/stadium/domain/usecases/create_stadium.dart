@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
+import 'package:sportifind/features/stadium/domain/entities/location.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 
 class CreateStadium implements UseCase<void, CreateStadiumParams> {
@@ -32,7 +32,7 @@ class CreateStadium implements UseCase<void, CreateStadiumParams> {
 class CreateStadiumParams {
   final String name;
   final Location location;
-  final String phoneNumber;
+  final String phoneNumber; 
   final String openTime;
   final String closeTime;
   final double pricePerHour5;

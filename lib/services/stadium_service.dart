@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/features/stadium/domain/entities/location.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/services/image_service.dart';
 import 'package:sportifind/services/location_service.dart';

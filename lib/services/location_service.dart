@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart' as loc;
-import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/features/stadium/domain/entities/location.dart';
+
 
 class LocationService {
   static const String apiKey = 'AIzaSyByB64x8WOemsLdnmypzU-sKNBTJeLS3Nw';

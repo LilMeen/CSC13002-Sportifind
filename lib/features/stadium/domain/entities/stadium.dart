@@ -1,5 +1,5 @@
-import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/features/stadium/domain/entities/field.dart';
+import 'package:sportifind/features/stadium/domain/entities/location.dart';
 
 class Stadium {
   final String id;

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/features/stadium/domain/entities/location.dart';
 import 'package:sportifind/screens/stadium_owner/widget/stadium_form.dart';
 import 'package:sportifind/services/location_service.dart';
 import 'package:sportifind/services/stadium_service.dart';
