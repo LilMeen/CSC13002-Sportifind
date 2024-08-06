@@ -1,34 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
+import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/screens/player/team/screens/create_team_form.dart';
-import 'package:sportifind/util/match_service.dart';
+import 'package:sportifind/util/object_handling.dart';
+import 'package:sportifind/util/team_service.dart';
+import 'package:sportifind/util/user_service.dart';
 
 class SelectTeamScreen extends StatefulWidget {
-  const SelectTeamScreen({super.key, required this.addMatchCard});
+  const SelectTeamScreen({
+    super.key,
+    this.addMatchCard,
+    this.forMatchCreate = true,
+    this.forJoinRequest = false,
+    this.hostId,
+    this.matchId,
+  });
 
-  final void Function(MatchCard matchcard) addMatchCard;
+  final void Function(MatchCard matchcard)? addMatchCard;
+  final bool forMatchCreate;
+  final bool forJoinRequest;
+  final String? hostId;
+  final String? matchId;
 
   @override
   State<StatefulWidget> createState() => _SelectTeamScreenState();
 }
 
 class _SelectTeamScreenState extends State<SelectTeamScreen> {
-  MatchService matchService = MatchService();
-  
-  Future<List<TeamInformation>>? team;
+  UserService userService = UserService();
+  TeamService teamService = TeamService();
+  MatchHandling matchHandling = MatchHandling();
 
-  @override
-  void initState() {
-    super.initState();
-    print("Fetching data");
-    team = matchService.getTeamData();
+  PlayerData? user;
+  List<TeamInformation> userTeams = [];
+
+  Future<void> fetchingData() async {
+    if (widget.forMatchCreate == true || widget.forJoinRequest == true) {
+      user = await userService.getUserPlayerData();
+      for (var i = 0; i < user!.teams.length; ++i) {
+        final team = await teamService.getTeamInformation(user!.teams[i]);
+        userTeams.add(team!);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Select Team"),
+      ),
       body: Stack(
         children: <Widget>[
           Container(
@@ -53,15 +76,14 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
-                child: FutureBuilder<List<TeamInformation>>(
-                  future: team,
+                child: FutureBuilder<void>(
+                  future: fetchingData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return const Center(child: Text('Error loading teams'));
-                    } else if (snapshot.hasData) {
-                      final teams = snapshot.data!;
+                    } else if (userTeams.isNotEmpty) {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
@@ -69,16 +91,16 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
                             height: 250,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
-                              itemCount: teams.length + 1,
+                              itemCount: userTeams.length + 1,
                               separatorBuilder:
                                   (BuildContext context, int index) {
                                 return const SizedBox(height: 20);
                               },
                               itemBuilder: (ctx, index) {
-                                if (index < teams.length) {
-                                  return makeTeamItem(teams[index]);
-                                } else {
-                                  return createTeamCard();
+                                if (index < userTeams.length) {
+                                  print(userTeams[index].teamId);
+                                  print(widget.hostId);
+                                  return makeTeamItem(userTeams[index]);
                                 }
                               },
                             ),
@@ -101,18 +123,23 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
   Widget makeTeamItem(TeamInformation team) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PlayerStadiumScreen(
-              forMatchCreate: true,
-              selectedTeamId: team.teamId,
-              selectedTeamName: team.name,
-              selectedTeamAvatar: team.avatarImageUrl,
-              addMatchCard: widget.addMatchCard,
+        if (widget.forMatchCreate == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PlayerStadiumScreen(
+                forMatchCreate: true,
+                selectedTeamId: team.teamId,
+                selectedTeamName: team.name,
+                selectedTeamAvatar: team.avatarImageUrl,
+                addMatchCard: widget.addMatchCard,
+              ),
             ),
-          ),
-        );
+          );
+        } else if (widget.forJoinRequest == true) {
+          matchHandling.joinMatchRequest(
+              team.teamId, widget.hostId, widget.matchId);
+        }
       },
       child: AspectRatio(
         aspectRatio: 1.9 / 2,

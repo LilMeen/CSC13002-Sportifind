@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
+import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/match/screens/Invite_team_screen.dart';
+import 'package:sportifind/screens/player/match/screens/select_team_screen.dart';
 import 'package:sportifind/screens/player/team/screens/team_details.dart';
 import 'package:sportifind/util/match_service.dart';
+import 'package:sportifind/util/user_service.dart';
 
 class MatchInfoScreen extends StatefulWidget {
   const MatchInfoScreen({super.key, required this.matchInfo});
@@ -19,7 +22,9 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
   late ImageProvider team1ImageProvider;
   late ImageProvider team2ImageProvider;
   MatchService matchService = MatchService();
+  UserService userService = UserService();
   late Map<String, String> teamNames;
+  PlayerData? userData;
 
   @override
   void initState() {
@@ -29,6 +34,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
 
   Future<void> _initialize() async {
     teamNames = await matchService.generateTeamMap();
+    userData = await userService.getUserPlayerData();
 
     team1ImageProvider = NetworkImage(widget.matchInfo.avatarTeam1);
     team2ImageProvider = NetworkImage(
@@ -54,6 +60,9 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Match information"),
+      ),
       body: FutureBuilder<void>(
         future: initializationFuture,
         builder: (context, snapshot) {
@@ -125,8 +134,24 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                 Center(
                                   child: GestureDetector(
                                     onTap: () {
-                                      if (widget.matchInfo.team2 == "") {
+                                      if (widget.matchInfo.team2 == "" &&
+                                          userData!.teams.any((element) =>
+                                              element ==
+                                              widget.matchInfo.team1)) {
                                         _openInviteTeam();
+                                      } else {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                SelectTeamScreen(
+                                              forMatchCreate: false,
+                                              forJoinRequest: true,
+                                              hostId: widget.matchInfo.team1,
+                                              matchId: widget.matchInfo.id,
+                                            ),
+                                          ),
+                                        );
                                       }
                                     },
                                     child: CircleAvatar(

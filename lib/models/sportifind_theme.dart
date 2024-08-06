@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/adapter/hex_color.dart';
+import 'package:google_fonts/google_fonts.dart';  
 
 class SportifindTheme {
   SportifindTheme._();
-  static const Color nearlyWhite = Color(0xFFFAFAFA);
+
+  static const Color smokeScreen = Color.fromARGB(255, 174, 174, 174);
+  static const Color lead = Color.fromARGB(255, 33, 33, 33);
+  static const Color whiteSmoke = Color.fromARGB(255, 245, 245, 245);
+
+  // Color Hunt Palette
+  static const Color shovelKnight = Color.fromARGB(255, 62, 194, 236);
+  static const Color blueOyster = Color.fromARGB(255, 75, 112, 245);
+  static const Color bluePurple = Color.fromARGB(255, 76, 59, 207);
+  static const Color clearPurple = Color.fromARGB(255, 64, 46, 122);
+
+  static const Color black = Color.fromARGB(255, 0, 0, 0);
+
   static const Color white = Color(0xFFFFFFFF);
   static const Color background = Color.fromARGB(255, 242, 242, 242);
   static Color bluePurple2 = HexColor("4B70F5");
@@ -33,6 +46,18 @@ class SportifindTheme {
     bodyLarge: body2,
     bodyMedium: body1,
     labelLarge: caption,
+  );
+
+  static TextStyle AppBarTittle1 = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 50,
+    color: bluePurple,
+  );
+
+  static TextStyle AppBarTittle2 = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 36,
+    color: bluePurple,
   );
 
   static const TextStyle display1 = TextStyle(

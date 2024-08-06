@@ -1,3 +1,4 @@
+import 'package:sportifind/screens/message/widgets/group_tile.dart';
 import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
 import 'package:sportifind/screens/player/notify/screeens/notification_screen.dart';
 import 'package:sportifind/screens/player/team/screens/team_main_screen.dart';
@@ -46,42 +47,110 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Stadium Information'),
-        backgroundColor: Colors.teal,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const NotificationScreen(),
+    double width = MediaQuery.of(context).size.width;
+    print(width);
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          toolbarHeight: 100,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Sportifind',
+                style: width < 420
+                    ? SportifindTheme.AppBarTittle2
+                    : SportifindTheme.AppBarTittle1,
+              ),
+              Stack(children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.notifications_none,
+                    size: 40,
+                    color: SportifindTheme.bluePurple,
+                  ),
                 ),
-              );
-            },
-            icon: const Icon(Icons.notifications),
+                const Positioned(
+                  // draw a red marble
+                  top: 13.0,
+                  right: 10.0,
+                  child: Icon(Icons.brightness_1_rounded,
+                      size: 16.0, color: Color.fromARGB(255, 255, 0, 0)),
+                ),
+                const Positioned(
+                  // draw a red marble
+                  top: 13.0,
+                  right: 10.0,
+                  child: Icon(Icons.brightness_1_outlined,
+                      size: 16.0, color: Colors.white),
+                )
+              ]),
+              Stack(
+                children: <Widget>[
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Text("hehe"),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.chat_bubble_outline_outlined,
+                      size: 35,
+                      color: SportifindTheme.bluePurple,
+                    ),
+                  ),
+                  const Positioned(
+                    // draw a red marble
+                    top: 8.0,
+                    right: 6.0,
+                    child: Icon(Icons.brightness_1_rounded,
+                        size: 16.0, color: Color.fromARGB(255, 255, 0, 0)),
+                  ),
+                  const Positioned(
+                    // draw a red marble
+                    top: 8.0,
+                    right: 6.0,
+                    child: Icon(Icons.brightness_1_outlined,
+                        size: 16.0, color: Colors.white),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
-      body: Container(
-        color: SportifindTheme.background,
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: FutureBuilder<bool>(
-            future: getData(),
-            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              if (!snapshot.hasData) {
-                return const SizedBox();
-              } else {
-                return Stack(
-                  children: <Widget>[
-                    tabBody,
-                    bottomBar(),
-                  ],
-                );
-              }
-            },
+          backgroundColor: Colors.white,
+        ),
+        body: Container(
+          color: SportifindTheme.background,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: FutureBuilder<bool>(
+              future: getData(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (!snapshot.hasData) {
+                  return const SizedBox();
+                } else {
+                  return Stack(
+                    children: <Widget>[
+                      tabBody,
+                      bottomBar(),
+                    ],
+                  );
+                }
+              },
+            ),
           ),
         ),
       ),

@@ -43,7 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(30),
                     child: Container(
-                      color: SportifindTheme.nearlyWhite,
+                      color: SportifindTheme.white,
                       child: const  Padding(
                         padding: EdgeInsets.all(15.0),
                         child: SignUp(),

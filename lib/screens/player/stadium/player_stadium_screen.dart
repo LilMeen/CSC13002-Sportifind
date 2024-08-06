@@ -23,7 +23,6 @@ class PlayerStadiumScreen extends StatefulWidget {
   final String? selectedTeamAvatar;
   final void Function(MatchCard matchcard)? addMatchCard;
 
-
   @override
   State<PlayerStadiumScreen> createState() => _PlayerStadiumScreenState();
 }
@@ -39,7 +38,7 @@ class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
   bool isLoadingStadiums = true;
   bool isLoadingUser = true;
   String errorMessage = '';
-  
+
   final StadiumService stadService = StadiumService();
   final UserService userService = UserService();
 
@@ -56,11 +55,7 @@ class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
         isLoadingUser = false;
       });
     } catch (error) {
-      setState(() {
-        errorMessage = 'Failed to load data: $error';
-        isLoadingStadiums = false;
-        isLoadingUser = false;
-      });
+      errorMessage = 'Failed to load data: $error';
     }
   }
 

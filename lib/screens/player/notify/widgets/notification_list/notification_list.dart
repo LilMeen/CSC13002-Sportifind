@@ -6,22 +6,25 @@ class NotificationList extends StatelessWidget {
   const NotificationList({
     super.key,
     required this.notification,
+    required this.onNotificationUpdated,
   });
 
   final List<NotificationData> notification;
+  final VoidCallback onNotificationUpdated;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
+    return ListView.builder(
       scrollDirection: Axis.vertical,
       itemCount: notification.length,
-      separatorBuilder: (BuildContext context, int index) {
-        return const Divider(
-          height: 0,
-        );
-      },
+      // separatorBuilder: (BuildContext context, int index) {
+      //   return const Divider(
+      //     height: 0,
+      //   );
+      // },
       itemBuilder: (ctx, index) => NotificationListItem(
         notificationData: notification[index],
+        onNotificationUpdated: onNotificationUpdated,
       ),
     );
   }

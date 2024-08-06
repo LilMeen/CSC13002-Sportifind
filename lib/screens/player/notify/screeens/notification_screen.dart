@@ -18,7 +18,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         title: const Text("Notifications"),
       ),
       body: Container(
-        color: Colors.blueGrey,
+        color: Colors.white,
         width: double.infinity,
         child: Column(
           children: [

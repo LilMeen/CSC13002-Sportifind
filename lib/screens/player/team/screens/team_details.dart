@@ -112,7 +112,7 @@ class _TeamDetailsState extends State<TeamDetails>
             end: Alignment.bottomCenter,
             colors: [
               SportifindTheme.white,
-              SportifindTheme.nearlyWhite,
+              SportifindTheme.whiteSmoke,
             ],
           ),
         ),

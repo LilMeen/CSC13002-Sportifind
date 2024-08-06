@@ -158,7 +158,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
             end: Alignment.bottomCenter,
             colors: [
               SportifindTheme.white,
-              SportifindTheme.nearlyWhite,
+              SportifindTheme.whiteSmoke,
             ],
           ),
         ),

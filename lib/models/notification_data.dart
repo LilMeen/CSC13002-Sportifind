@@ -8,6 +8,7 @@ class NotificationData {
     required this.senderType,
     required this.status,
     required this.time,
+    required this.matchId,
     required this.type,
     this.id,
   });
@@ -17,6 +18,7 @@ class NotificationData {
         isRead = snapshot['isRead'],
         receiver = snapshot['receiver'],
         sender = snapshot['sender'],
+        matchId = snapshot['match'],
         senderType = snapshot['senderType'],
         status = snapshot['status'],
         time = snapshot['time'],
@@ -32,6 +34,7 @@ class NotificationData {
 
   String? id;
   bool isRead;
+  final String matchId;
   final String receiver;
   final String sender;
   final String senderType;

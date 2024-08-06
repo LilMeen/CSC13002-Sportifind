@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
-import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/util/team_service.dart';
 import 'package:sportifind/util/user_service.dart';
@@ -17,13 +16,38 @@ class MatchService {
   UserService userService = UserService();
   StadiumService stadiumService = StadiumService();
   TeamService teamService = TeamService();
+  final hourFormat = DateFormat('HH:mm');
+  final dateFormat = DateFormat('MM/dd/yyyy');
 
   DateTime convertStringToDateTime(String timeString, String selectedDate) {
-    final hourFormat = DateFormat('HH:mm');
-    final dateFormat = DateFormat('M/D/yyyy');
     final time = hourFormat.parse(timeString);
     final date = dateFormat.parse(selectedDate);
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
+  Future<MatchCard?> getMatchInformation(String matchId) async {
+    try {
+      // Reference to the specific team document
+      DocumentReference<Map<String, dynamic>> matchRef =
+          FirebaseFirestore.instance.collection('matches').doc(matchId);
+
+      // Get the document
+      DocumentSnapshot<Map<String, dynamic>> matchSnapshot =
+          await matchRef.get();
+
+      // Check if the document exists
+      if (matchSnapshot.exists) {
+        // Use the fromSnapshot constructor to create a TeamInformation object
+        MatchCard matchInfo = MatchCard.fromSnapshot(matchSnapshot);
+        return matchInfo;
+      } else {
+        print('No such team document exists!');
+        return null;
+      }
+    } catch (e) {
+      print('Error getting match information: $e');
+      return null;
+    }
   }
 
   // Function for fetching data from firestore
@@ -67,21 +91,6 @@ class MatchService {
     userMatches.clear();
   }
 
-  Future<List<TeamInformation>> getTeamData() async {
-    List<TeamInformation> team = [];
-    final teamQuery =
-        await FirebaseFirestore.instance.collection('teams').get();
-    final teams = teamQuery.docs
-        .map((match) => TeamInformation.fromSnapshot(match))
-        .toList();
-    for (var i = 0; i < teams.length; ++i) {
-      if (teams[i].captain == user.uid) {
-        team.add(teams[i]);
-      }
-    }
-    return team;
-  }
-
   Future<List<MatchCard>> getPersonalMatchData() async {
     final List<MatchCard> userMatches = [];
     List<String> matchesId = [];
@@ -94,7 +103,8 @@ class MatchService {
           .doc(teamId)
           .get();
 
-      final Map<String, dynamic> incoming = teamQuery.data()?['incomingMatch'] ?? {};
+      final Map<String, dynamic> incoming =
+          teamQuery.data()?['incomingMatch'] ?? {};
       matchesId.addAll(incoming.keys.toList());
       print("-------------------------");
       print(matchesId);
@@ -108,8 +118,19 @@ class MatchService {
           .get();
       if (matchDoc.exists) {
         MatchCard match = MatchCard.fromSnapshot(matchDoc);
-        match = await convertStadiumIdToName(match);
-        userMatches.add(match);
+        try {
+          // Parse the match date
+          final DateTime matchDate = dateFormat.parse(match.date);
+          // Compare with the current date
+          if (matchDate.day == DateTime.now().day &&
+              matchDate.month == DateTime.now().month &&
+              matchDate.year == DateTime.now().year) {
+            match = await convertStadiumIdToName(match);
+            userMatches.add(match);
+          }
+        } catch (e) {
+          print('Error parsing date for match $matchId: $e');
+        }
       }
     }
     return userMatches;
@@ -137,7 +158,19 @@ class MatchService {
 
     for (var match in matches) {
       if (checkDifferentTeam(user, match)) {
-        userMatches.add(match);
+        try {
+          // Parse the match date
+          final DateTime matchDate = dateFormat.parse(match.date);
+
+          if (matchDate.day == DateTime.now().day &&
+              matchDate.month == DateTime.now().month &&
+              matchDate.year == DateTime.now().year) {
+            match = await convertStadiumIdToName(match);
+            userMatches.add(match);
+          }
+        } catch (e) {
+          print('Error parsing date for match $match: $e');
+        }
       }
     }
     return userMatches;
@@ -174,7 +207,6 @@ class MatchService {
     int month = int.parse(parts[0]);
     int day = int.parse(parts[1]);
     int year = int.parse(parts[2]);
-
     return DateTime(year, month, day);
   }
 }

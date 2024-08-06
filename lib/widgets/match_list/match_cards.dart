@@ -7,15 +7,19 @@ import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/util/match_service.dart';
 import 'package:sportifind/widgets/match_list/match_list.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 import '../../models/match_card.dart';
 
-// ignore: must_be_immutable
 class MatchCards extends StatefulWidget {
-  MatchCards({super.key, required this.yourMatch, required this.nearByMatch});
+  const MatchCards({
+    super.key,
+    required this.yourMatch,
+    required this.nearByMatch,
+    required this.status,
+  });
 
-  List<MatchCard> yourMatch;
-  List<MatchCard> nearByMatch;
+  final List<MatchCard> yourMatch;
+  final List<MatchCard> nearByMatch;
+  final int status;
 
   @override
   State<StatefulWidget> createState() => _MatchCardsState();
@@ -26,7 +30,6 @@ class _MatchCardsState extends State<MatchCards> {
   LocationService locService = LocationService();
   List<StadiumData> stadiums = [];
   PlayerData? user;
-  bool isLoadingStadiums = true;
   bool isLoadingUser = true;
   List<StadiumData> searchedStadiums = [];
   LocationInfo? currentLocation;
@@ -38,14 +41,27 @@ class _MatchCardsState extends State<MatchCards> {
     fetchData();
   }
 
-  Future<List<List<MatchCard>>> _loadMatchData() async {
-    final personalMatches = await matchService.getPersonalMatchData();
-    final nearbyMatches = await matchService.getNearbyMatchData(searchedStadiums);
-    print(nearbyMatches);
-    return [personalMatches, nearbyMatches];
+  @override
+  void didUpdateWidget(covariant MatchCards oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.status != widget.status) {
+      _refreshData();
+    }
   }
 
-  Widget buildMatch(double height, double width, List<MatchCard> matches) {
+  Future<void> _loadMatchData() async {
+    final personalMatches = await matchService.getPersonalMatchData();
+    final nearbyMatches =
+        await matchService.getNearbyMatchData(searchedStadiums);
+    setState(() {
+      widget.yourMatch = personalMatches;
+      widget.nearByMatch = nearbyMatches;
+    });
+  }
+
+  Widget buildMatch(List<MatchCard> matches) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return SizedBox(
       height: height - 150,
       width: width,
@@ -63,13 +79,10 @@ class _MatchCardsState extends State<MatchCards> {
       if (user != null) {
         currentLocation = user!.location;
         sortNearbyStadiums();
-        print("Stadiums");
-        print(searchedStadiums);
       }
+      _loadMatchData();
     } catch (error) {
-      setState(() {
-        errorMessage = 'Failed to load data: $error';
-      });
+      print('Failed to load data: $error');
     }
   }
 
@@ -77,17 +90,13 @@ class _MatchCardsState extends State<MatchCards> {
     try {
       final stadiumsQuery =
           await FirebaseFirestore.instance.collection('stadiums').get();
-      setState(() {
-        stadiums = stadiumsQuery.docs
-            .map((stadium) => StadiumData.fromSnapshot(stadium))
-            .toList();
-        isLoadingStadiums = false;
-        searchedStadiums = stadiums;
-      });
+      stadiums = stadiumsQuery.docs
+          .map((stadium) => StadiumData.fromSnapshot(stadium))
+          .toList();
+      searchedStadiums = stadiums;
     } catch (error) {
       setState(() {
         errorMessage = 'Failed to load stadiums data: $error';
-        isLoadingStadiums = false;
       });
     }
   }
@@ -100,15 +109,11 @@ class _MatchCardsState extends State<MatchCards> {
         DocumentSnapshot<Map<String, dynamic>> snapshot =
             await FirebaseFirestore.instance.collection('users').doc(uid).get();
         if (snapshot.exists) {
-          setState(() {
-            user = PlayerData.fromSnapshot(snapshot);
-            isLoadingUser = false;
-          });
+          user = PlayerData.fromSnapshot(snapshot);
         }
       }
     } catch (error) {
       setState(() {
-        isLoadingUser = false;
         errorMessage = 'Failed to load user data: $error';
       });
     }
@@ -124,61 +129,16 @@ class _MatchCardsState extends State<MatchCards> {
     }
   }
 
-  int status = 0;
+  Future<void> _refreshData() async {
+    await _loadMatchData();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-    return FutureBuilder(
-      future: _loadMatchData(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          widget.yourMatch = snapshot.data[0];
-          widget.nearByMatch = snapshot.data[1];
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: ToggleSwitch(
-                    minWidth: 120.0,
-                    minHeight: 50.0,
-                    initialLabelIndex: status,
-                    cornerRadius: 20.0,
-                    activeFgColor: Colors.white,
-                    inactiveBgColor: Colors.grey,
-                    inactiveFgColor: Colors.white,
-                    totalSwitches: 2,
-                    labels: const ['Your match', 'Nearby match'],
-                    fontSize: 15.0,
-                    activeBgColors: [
-                      [Colors.green[800]!],
-                      [Colors.red[800]!],
-                    ],
-                    animate:
-                        true, // with just animate set to true, default curve = Curves.easeIn
-                    curve: Curves
-                        .bounceInOut, // animate must be set to true when using custom curve
-                    onToggle: (index) {
-                      setState(() {
-                        status = index!;
-                      });
-                    },
-                  ),
-                ),
-                status == 0
-                    ? buildMatch(height, width, widget.yourMatch)
-                    : buildMatch(height, width, widget.nearByMatch),
-              ],
-            ),
-          );
-        }
-      },
+    return SingleChildScrollView(
+      child: widget.status == 0
+          ? buildMatch(widget.yourMatch)
+          : buildMatch(widget.nearByMatch),
     );
   }
 }

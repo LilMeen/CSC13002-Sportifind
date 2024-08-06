@@ -103,8 +103,11 @@ flutter:
      - 'lib/assets/right_picked.png'
      - 'lib/assets/right_unpicked.png'
      - 'lib/assets/avatar/default_stadium_avatar.jpg'
-     - 'lib/assets/images/match.png'
-     - 'lib/assets/images/bg.jpg'
+     - 'lib/assets/images/match.jpg'
+     - 'lib/assets/images/bg.png'
+     - 'lib/assets/images/loginBackground.jpg'
+     - 'lib/assets/images/matchDetailBackground.png'
+     - 'lib/assets/images/matchNearby.jfif'
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

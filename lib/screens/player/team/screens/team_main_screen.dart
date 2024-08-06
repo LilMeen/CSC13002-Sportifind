@@ -21,7 +21,7 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: SportifindTheme.nearlyWhite,
+      color: SportifindTheme.white,
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Column(
