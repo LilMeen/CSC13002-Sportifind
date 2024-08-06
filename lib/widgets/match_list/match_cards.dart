@@ -54,8 +54,8 @@ class _MatchCardsState extends State<MatchCards> {
     final nearbyMatches =
         await matchService.getNearbyMatchData(searchedStadiums);
     setState(() {
-      widget.yourMatch = personalMatches;
-      widget.nearByMatch = nearbyMatches;
+      // widget.yourMatch = personalMatches;
+      // widget.nearByMatch = nearbyMatches;
     });
   }
 

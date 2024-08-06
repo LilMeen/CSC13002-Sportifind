@@ -28,7 +28,7 @@ class _StadiumOwnerHomeScreenState extends State<StadiumOwnerHomeScreen> {
       'Index 2: Home',
       style: optionStyle,
     ),
-    StadiumScreen(),
+    OwnerStadiumScreen(),
     Text(
       'Index 4: Personal',
       style: optionStyle,

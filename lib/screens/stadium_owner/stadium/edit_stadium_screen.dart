@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
 import 'package:sportifind/screens/stadium_owner/widget/stadium_form.dart';
 import 'package:sportifind/util/location_service.dart';
@@ -9,14 +10,16 @@ import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/util/image_service.dart';
 import 'package:sportifind/widgets/location_button/current_location_button.dart';
 
-class CreateStadiumScreen extends StatefulWidget {
-  const CreateStadiumScreen({super.key});
+class EditStadiumScreen extends StatefulWidget {
+  final StadiumData stadium;
+
+  const EditStadiumScreen({super.key, required this.stadium});
 
   @override
-  State<CreateStadiumScreen> createState() => _CreateStadiumScreenState();
+  State<EditStadiumScreen> createState() => _EditStadiumScreenState();
 }
 
-class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
+class _EditStadiumScreenState extends State<EditStadiumScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {
     'stadiumName': TextEditingController(),
@@ -38,51 +41,83 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
   int _num11PlayerFields = 0;
 
   LocationInfo? _location;
+  Timer? _cityDelayTimer;
   Timer? _districtDelayTimer;
 
   late File _avatar;
-  final List<File> _images = [];
+  List<File> _images = [];
 
   bool _isLoading = true;
   bool _isSubmitting = false;
   bool _isLoadingLocation = false;
-  String _errorMessage = '';
 
   final StadiumForm stadiumForm = StadiumForm();
   final StadiumService stadService = StadiumService();
   final LocationService locService = LocationService();
   final ImageService imgService = ImageService();
 
-  Future<void> _prepareDefaultAvatar() async {
-    try {
-      final avatar = await imgService.getImageFileFromAssets(
-          'lib/assets/avatar/default_stadium_avatar.jpg');
+  void prepareData() async {
+    _controllers['stadiumName']!.text = widget.stadium.name;
+    _controllers['stadiumAddress']!.text = widget.stadium.location.address;
+    _controllers['phoneNumber']!.text = widget.stadium.phone;
+    _controllers['openTime']!.text = widget.stadium.openTime;
+    _controllers['closeTime']!.text = widget.stadium.closeTime;
+
+    double price5 = widget.stadium.getPriceOfTypeField('5-Player');
+    double price7 = widget.stadium.getPriceOfTypeField('7-Player');
+    double price11 = widget.stadium.getPriceOfTypeField('11-Player');
+    _controllers['pricePerHour5']!.text =
+        price5.toStringAsFixed(price5 == price5.toInt() ? 0 : 2);
+    _controllers['pricePerHour7']!.text =
+        price7.toStringAsFixed(price7 == price7.toInt() ? 0 : 2);
+    _controllers['pricePerHour11']!.text =
+        price11.toStringAsFixed(price11 == price11.toInt() ? 0 : 2);
+
+    _num5PlayerFields = widget.stadium.getNumberOfTypeField('5-Player');
+    _num7PlayerFields = widget.stadium.getNumberOfTypeField('7-Player');
+    _num11PlayerFields = widget.stadium.getNumberOfTypeField('11-Player');
+
+    _location = widget.stadium.location;
+
+    _avatar = await stadService.downloadAvatarFile(widget.stadium.id);
+    _images = await stadService.downloadImageFiles(
+        widget.stadium.id, widget.stadium.images.length);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    _cityDelayTimer?.cancel();
+    _cityDelayTimer = Timer(const Duration(milliseconds: 200), () {
       setState(() {
-        _avatar = avatar;
-        _isLoading = false;
+        _selectedCity = widget.stadium.location.city;
       });
-    } catch (error) {
+    });
+
+    _districtDelayTimer?.cancel();
+    _districtDelayTimer =
+        Timer(const Duration(seconds: 1, milliseconds: 500), () {
       setState(() {
-        _errorMessage = 'Failed to load data: $error';
-        _isLoading = false;
+        _selectedDistrict = widget.stadium.location.district;
       });
-    }
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _prepareDefaultAvatar();
+    prepareData();
   }
 
   @override
   void dispose() {
     _controllers.forEach((key, controller) => controller.dispose());
+    _cityDelayTimer?.cancel();
     _districtDelayTimer?.cancel();
     super.dispose();
   }
 
-  Future<void> _creatingStadium() async {
+  Future<void> _editStadium() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -90,7 +125,8 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
     });
     try {
       await stadService.stadiumProcessing(
-        action: 'create',
+        action: 'edit',
+        stadium: widget.stadium,
         controllers: _controllers,
         location: _location,
         selectedCity: _selectedCity,
@@ -113,11 +149,9 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
       }
     } finally {
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const OwnerStadiumScreen(),
-        )
-      );
+        ));
       }
     }
   }
@@ -225,12 +259,8 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_errorMessage.isNotEmpty) {
-      return Center(child: Text(_errorMessage));
-    }
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Upload Stadium')),
+      appBar: AppBar(title: const Text('Edit Stadium')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(30),
         child: Form(
@@ -334,7 +364,7 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
               Align(
                 alignment: Alignment.bottomRight,
                 child: ElevatedButton(
-                  onPressed: _isSubmitting ? null : _creatingStadium,
+                  onPressed: _isSubmitting ? null : _editStadium,
                   child: _isSubmitting
                       ? const SizedBox(
                           width: 40,

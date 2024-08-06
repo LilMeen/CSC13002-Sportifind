@@ -5,14 +5,14 @@ import 'package:sportifind/search/screens/stadium_search_screen.dart';
 import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/util/user_service.dart';
 
-class StadiumScreen extends StatefulWidget {
-  const StadiumScreen({super.key});
+class OwnerStadiumScreen extends StatefulWidget {
+  const OwnerStadiumScreen({super.key});
 
   @override
-  State<StadiumScreen> createState() => _StadiumScreenState();
+  State<OwnerStadiumScreen> createState() => _OwnerStadiumScreenState();
 }
 
-class _StadiumScreenState extends State<StadiumScreen> {
+class _OwnerStadiumScreenState extends State<OwnerStadiumScreen> {
   List<StadiumData> stadiums = [];
   List<OwnerData> owners = [];
   late OwnerData user;
@@ -81,7 +81,7 @@ class _StadiumScreenState extends State<StadiumScreen> {
         imageRatio: imageRatio,
         stadiums: stadiums,
         owners: owners,
-        forStadiumCreate: true,
+        isStadiumOwnerUser: true,
       ),
     );
   }

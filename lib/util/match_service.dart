@@ -62,6 +62,35 @@ class MatchService {
     }
   }
 
+  Future<List<MatchCard>> getMatchDataByStadiumId(String stadiumId) async {
+    try {
+      final matchesQuery = await FirebaseFirestore.instance
+          .collection('matches')
+          .where('stadium', isEqualTo: stadiumId)
+          .get();
+      return matchesQuery.docs
+          .map((match) => MatchCard.fromSnapshot(match))
+          .toList();
+    } catch (error) {
+      throw Exception('Failed to load matches data by stadium id: $error');
+    }
+  }
+
+  Future<void> deleteMatch(String matchId) async {
+    final TeamService teamService = TeamService();
+    try {
+      await FirebaseFirestore.instance
+          .collection('matches')
+          .doc(matchId)
+          .delete();
+
+      await teamService.updateTeamsForMatchDelete(matchId);
+
+    } catch (error) {
+      throw Exception('Failed to delete match: $error');
+    }
+  }
+
   // Function for parsing data
   Future<void> getMatchDate(
       DateTime selectedDate,

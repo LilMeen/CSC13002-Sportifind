@@ -7,6 +7,7 @@ class StadiumCard extends StatefulWidget {
   final StadiumData stadium;
   final String ownerName;
   final double imageRatio;
+  final bool isStadiumOwnerUser;
   final bool forMatchCreate;
   final String? selectedTeamId;
   final String? selectedTeamName;
@@ -16,6 +17,7 @@ class StadiumCard extends StatefulWidget {
   const StadiumCard({
     required this.stadium,
     required this.ownerName,
+    required this.isStadiumOwnerUser,
     required this.forMatchCreate,
     required this.imageRatio,
     this.addMatchCard,
@@ -40,6 +42,7 @@ class _StadiumCardState extends State<StadiumCard> {
             builder: (context) => StadiumInfoScreen(
               stadium: widget.stadium,
               ownerName: widget.ownerName,
+              isStadiumOwnerUser: widget.isStadiumOwnerUser,
               forMatchCreate: widget.forMatchCreate,
               addMatchCard: widget.addMatchCard,
               selectedTeamId: widget.selectedTeamId,

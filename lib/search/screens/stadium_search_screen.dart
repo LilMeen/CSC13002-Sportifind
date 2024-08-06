@@ -8,7 +8,6 @@ import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/create_stadium_screen.dart';
 import 'package:sportifind/search/widgets/custom_search_bar.dart';
 import 'package:sportifind/search/screens/stadium_map_search.dart';
-import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/widgets/card/stadium_card.dart';
 import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';
@@ -22,8 +21,8 @@ class StadiumSearchScreen extends StatefulWidget {
   final LocationInfo userLocation;
   final List<StadiumData> stadiums;
   final List<OwnerData> owners;
+  final bool isStadiumOwnerUser;
   final bool forMatchCreate;
-  final bool forStadiumCreate;
   final String? selectedTeamId;
   final String? selectedTeamName;
   final String? selectedTeamAvatar;
@@ -38,8 +37,8 @@ class StadiumSearchScreen extends StatefulWidget {
     required this.userLocation,
     required this.stadiums,
     required this.owners,
+    this.isStadiumOwnerUser = false,
     this.forMatchCreate = false,
-    this.forStadiumCreate = false,
     this.addMatchCard,
     this.selectedTeamId,
     this.selectedTeamName,
@@ -77,7 +76,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
     searchedStadiums = stadService.sortNearbyStadiums(searchedStadiums, currentLocation);
 
     ownerMap = {for (var owner in widget.owners) owner.id: owner.name};
-    if (widget.forStadiumCreate) {
+    if (widget.isStadiumOwnerUser) {
       floatingDistance = 65.0;
     }
   }
@@ -239,6 +238,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                             stadium: stadium,
                             ownerName: ownerName,
                             imageRatio: widget.imageRatio,
+                            isStadiumOwnerUser: widget.isStadiumOwnerUser,
                             forMatchCreate: widget.forMatchCreate,
                             selectedTeamId: widget.selectedTeamId,
                             selectedTeamName: widget.selectedTeamName,
@@ -254,7 +254,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
       ),
       floatingActionButton: Stack(
         children: <Widget>[
-          widget.forStadiumCreate
+          widget.isStadiumOwnerUser
               ? Align(
                   alignment: Alignment.bottomRight,
                   child: Padding(
@@ -290,6 +290,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                         userLocation: currentLocation,
                         stadiums: searchedStadiums,
                         owners: widget.owners,
+                        isStadiumOwnerUser: widget.isStadiumOwnerUser,
                         forMatchCreate: widget.forMatchCreate,
                         selectedTeamId: widget.selectedTeamId,
                         selectedTeamName: widget.selectedTeamName,

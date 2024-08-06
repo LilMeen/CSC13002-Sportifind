@@ -13,6 +13,7 @@ class StadiumMapSearchScreen extends StatefulWidget {
   final LocationInfo userLocation;
   final List<StadiumData> stadiums;
   final List<OwnerData> owners;
+  final bool isStadiumOwnerUser;
   final bool forMatchCreate;
   final String? selectedTeamId;
   final String? selectedTeamName;
@@ -24,6 +25,7 @@ class StadiumMapSearchScreen extends StatefulWidget {
     required this.userLocation,
     required this.stadiums,
     required this.owners,
+    required this.isStadiumOwnerUser,
     required this.forMatchCreate,
     this.addMatchCard,
     this.selectedTeamId,
@@ -284,6 +286,7 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                           stadium: stadium,
                           ownerName: ownerName,
                           imageRatio: 1,
+                          isStadiumOwnerUser: widget.isStadiumOwnerUser,
                           forMatchCreate: widget.forMatchCreate,
                           selectedTeamId: widget.selectedTeamId,
                           selectedTeamName: widget.selectedTeamName,
