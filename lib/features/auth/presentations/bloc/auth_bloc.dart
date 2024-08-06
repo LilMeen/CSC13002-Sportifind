@@ -12,10 +12,10 @@ import 'package:sportifind/features/auth/domain/usecases/sign_in_with_google.dar
 import 'package:sportifind/features/auth/domain/usecases/sign_out.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_up.dart';
 import 'package:sportifind/features/auth/presentations/screens/basic_info_screen.dart';
-import 'package:sportifind/screens/home/admin_home_screen.dart';
+import 'package:sportifind/home/admin_home_screen.dart';
 import 'package:sportifind/features/auth/presentations/screens/role_screen.dart';
-import 'package:sportifind/screens/home/player_home_screen.dart';
-import 'package:sportifind/screens/home/stadium_owner_home_screen.dart';
+import 'package:sportifind/home/player_home_screen.dart';
+import 'package:sportifind/home/stadium_owner_home_screen.dart';
 
 
 

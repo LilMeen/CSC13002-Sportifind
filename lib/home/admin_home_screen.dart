@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:async';
-import 'package:sportifind/search/widgets/custom_search_bar.dart';
-import 'package:sportifind/services/search_service.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   static route() =>
@@ -14,33 +11,6 @@ class AdminHomeScreen extends StatefulWidget {
 }
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
-  Timer? _debounce;
-  final TextEditingController _searchController = TextEditingController();
-  String _searchText = '';
-  final List<String> _searchFields = ['email', 'role'];
-  SearchService srchService = SearchService();
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController.addListener(_onSearchChanged);
-  }
-
-  @override
-  void dispose() {
-    _searchController.removeListener(_onSearchChanged);
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  void _onSearchChanged() {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      setState(() {
-        _searchText = _searchController.text;
-      });
-    });
-  }
 
   void _showDeleteDialog(BuildContext context, DocumentSnapshot user) {
     showDialog(
@@ -72,16 +42,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('User list'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CustomSearchBar(
-              searchController: _searchController,
-              hintText: 'Search by email or role',
-            ),
-          ),
-        ),
       ),
       body: SafeArea(
         child: GestureDetector(
@@ -110,14 +70,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 //return Center(child: Text('Error: ${userSnapshot.error}'));
               } 
               final users = userSnapshot.data!.docs;
-              final filteredUsers = srchService.searchAndSortDocuments(users, _searchText, _searchFields);
-
-              if (filteredUsers.isEmpty) {
-                return const Center(child: Text('No users found.'));
-              }
 
               return ListView.builder(
-                itemCount: filteredUsers.length,
+                itemCount: users.length,
                 itemBuilder: (ctx, index) => Card(
                   elevation: 4,
                   margin:
@@ -127,9 +82,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                       backgroundColor: Colors.transparent,
                       child: Icon(Icons.person),
                     ),
-                    title: Text(filteredUsers[index]['email']),
-                    subtitle: Text(filteredUsers[index]['role']),
-                    onTap: () => _showDeleteDialog(ctx, filteredUsers[index]),
+                    title: Text(users[index]['email']),
+                    subtitle: Text(users[index]['role']),
+                    onTap: () => _showDeleteDialog(ctx, users[index]),
                   ),
                 ),
               );

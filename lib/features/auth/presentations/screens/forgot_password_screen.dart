@@ -29,6 +29,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build (BuildContext context){
     return MaterialApp(
       home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: SportifindTheme.background,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
         backgroundColor: SportifindTheme.background,
         body: Center(
           child: SingleChildScrollView(

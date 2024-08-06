@@ -1,11 +1,8 @@
-import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
-import 'package:sportifind/screens/player/team/screens/team_main_screen.dart';
-import 'package:sportifind/widgets/bottom_navigation.dart';
-import 'package:sportifind/models/tab_icon.dart';
+import 'package:sportifind/home/widgets/bottom_navigation.dart';
+import 'package:sportifind/home/widgets/tab_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
-import 'package:sportifind/screens/player/profile/profile_screen.dart';
+
 
 class PlayerHomeScreen extends StatefulWidget {
   static route() =>
@@ -98,7 +95,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   }
                   setState(
                     () {
-                      tabBody = const MatchMainScreen();
+                      //tabBody = const MatchMainScreen();
                     },
                   );
                 },
@@ -111,7 +108,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   }
                   setState(
                     () {
-                      tabBody = const PlayerStadiumScreen();
+                      //tabBody = const PlayerStadiumScreen();
                     },
                   );
                 },
@@ -124,7 +121,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   }
                   setState(
                     () {
-                      tabBody = const TeamMainScreen();
+                      //tabBody = const TeamMainScreen();
                     },
                   );
                 },
@@ -137,7 +134,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   }
                   setState(
                     () {
-                      tabBody = const ProfileScreen();
+                      //tabBody = const ProfileScreen();
                     },
                   );
                 },

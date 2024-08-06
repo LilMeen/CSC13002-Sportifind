@@ -130,7 +130,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.of(context).pushReplacement(ForgotPasswordScreen.route());
+                                    Navigator.of(context).push(ForgotPasswordScreen.route());
                                   },
                                   child: const Text(
                                     'Forgot Password',

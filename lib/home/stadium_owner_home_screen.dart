@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
 
 class StadiumOwnerHomeScreen extends StatefulWidget {
   static route () =>
@@ -30,7 +29,11 @@ class _StadiumOwnerHomeScreenState extends State<StadiumOwnerHomeScreen> {
       'Index 2: Home',
       style: optionStyle,
     ),
-    StadiumScreen(),
+    //StadiumScreen(),
+    Text(
+      'Index 3: Stadium',
+      style: optionStyle,
+    ),
     Text(
       'Index 4: Personal',
       style: optionStyle,

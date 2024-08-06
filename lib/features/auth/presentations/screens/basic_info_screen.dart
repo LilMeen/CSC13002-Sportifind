@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/screens/home/player_home_screen.dart';
-import 'package:sportifind/screens/home/stadium_owner_home_screen.dart';
-import 'package:sportifind/widgets/dropdown_button.dart';
+import 'package:sportifind/home/player_home_screen.dart';
+import 'package:sportifind/home/stadium_owner_home_screen.dart';
+import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
