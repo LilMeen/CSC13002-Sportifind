@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/notification_data.dart';
-import 'package:sportifind/screens/player/notify/screeens/notification_screen.dart';
-import 'package:sportifind/screens/player/team/models/team_information.dart';
+import 'package:sportifind/screens/player/match/screens/match_info_screen.dart';
 import 'package:sportifind/screens/player/team/screens/team_details.dart';
 import 'package:sportifind/util/match_service.dart';
 import 'package:sportifind/util/notification_service.dart';
@@ -14,9 +14,11 @@ class NotificationListItem extends StatefulWidget {
   const NotificationListItem({
     super.key,
     required this.notificationData,
+    required this.onNotificationUpdated,
   });
 
   final NotificationData notificationData;
+  final VoidCallback onNotificationUpdated;
 
   @override
   State<StatefulWidget> createState() => _NotificationListItemState();
@@ -29,10 +31,12 @@ class _NotificationListItemState extends State<NotificationListItem> {
   MatchHandling matchHandling = MatchHandling();
   NotificationService notificationService = NotificationService();
   late Future<void> futurebuild;
+  MatchCard? matchInfo;
   String matchId = '';
-  String sender = '';
-  String receiver = '';
+  String senderId = '';
+  String receiverId = '';
   bool actionTaken = false;
+  bool? result;
 
   @override
   void initState() {
@@ -41,30 +45,20 @@ class _NotificationListItemState extends State<NotificationListItem> {
         widget.notificationData.sender, widget.notificationData.receiver);
   }
 
-  Future<void> _initializer(String senderTeamId, String receiverTeamId) async {
-    sender = await convertTeamIdToName(senderTeamId);
-    receiver = await convertTeamIdToName(receiverTeamId);
+  Future<void> _initializer(
+      String senderTeamName, String receiverTeamName) async {
     actionTaken = widget.notificationData.isRead;
-
-    TeamInformation? currentUserTeam =
-        await teamService.getTeamInformation(widget.notificationData.receiver);
-
-    for (var i = 0; i < currentUserTeam!.matchInviteRequest!.length; ++i) {
-      if (currentUserTeam.matchInviteRequest![i].receiverId ==
-              widget.notificationData.receiver &&
-          currentUserTeam.matchInviteRequest![i].senderId ==
-              widget.notificationData.sender) {
-        matchId = currentUserTeam.matchInviteRequest![i].matchId;
-      }
-    }
-
+    senderId = await convertNameToTeamId(senderTeamName);
+    receiverId = await convertNameToTeamId(receiverTeamName);
+    matchInfo =
+        await matchService.getMatchInformation(widget.notificationData.matchId);
     setState(() {}); // Update the state after initialization
   }
 
-  Future<String> convertTeamIdToName(String teamId) async {
-    final teamMap = await teamService.generateTeamMap();
-    final teamName = teamMap[teamId] ?? 'Unknown Team';
-    return teamName;
+  Future<String> convertNameToTeamId(String teamName) async {
+    final teamMap = await teamService.generateTeamIdMap();
+    final teamId = teamMap[teamName] ?? 'Unknown Team';
+    return teamId;
   }
 
   String timeAgo(String dateString, String timeString) {
@@ -118,6 +112,34 @@ class _NotificationListItemState extends State<NotificationListItem> {
     );
   }
 
+  Widget buildAskToJoinMessage(String senderName) {
+    double textSize = 18;
+    return RichText(
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        text: "$senderName ",
+        style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: textSize),
+        children: const [
+          TextSpan(
+            text: "has asked to join your team's ",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          TextSpan(
+            text: "match",
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget buildInviteAcceptMessage(String receiverName, String senderName) {
     double textSize = 18;
     return RichText(
@@ -132,6 +154,40 @@ class _NotificationListItemState extends State<NotificationListItem> {
         children: [
           const TextSpan(
             text: "has accepted ",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          TextSpan(
+            text: "$receiverName's ",
+            style: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+          const TextSpan(
+            text: "invitation",
+            style:
+                TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildInviteDeclineMessage(String receiverName, String senderName) {
+    double textSize = 18;
+    return RichText(
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        text: "$senderName ",
+        style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: textSize),
+        children: [
+          const TextSpan(
+            text: "has declined ",
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.normal,
@@ -181,14 +237,44 @@ class _NotificationListItemState extends State<NotificationListItem> {
     );
   }
 
+  Widget buildInviteRejectMessage(String receiverName, String senderName) {
+    double textSize = 18;
+    return RichText(
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        text: "$receiverName ",
+        style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: textSize),
+        children: [
+          const TextSpan(
+            text: "'s invitation has been rejected by ",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          TextSpan(
+            text: senderName,
+            style: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget timeAndDate(NotificationData notificationData) {
     return Container(
       margin: const EdgeInsets.only(top: 5),
       child: Text(
         timeAgo(notificationData.formattedDate, notificationData.formattedTime),
-        style: TextStyle(
-          fontSize: 10,
-          color: Colors.grey.shade300,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey,
           decoration: TextDecoration.none,
         ),
       ),
@@ -226,9 +312,10 @@ class _NotificationListItemState extends State<NotificationListItem> {
             child: TextButton(
               onPressed: () async {
                 matchHandling.matchRequestAccepted(
-                  widget.notificationData.receiver,
-                  widget.notificationData.sender,
-                  matchId,
+                  await convertNameToTeamId(widget.notificationData.receiver),
+                  await convertNameToTeamId(widget.notificationData.sender),
+                  widget.notificationData.matchId,
+                  widget.notificationData.status,
                 );
                 await notificationService
                     .updateNotificationAsRead(widget.notificationData);
@@ -236,9 +323,10 @@ class _NotificationListItemState extends State<NotificationListItem> {
                   actionTaken = true;
                   widget.notificationData.isRead = true;
                 });
+                widget.onNotificationUpdated();
               },
               child: const Text(
-                "Join",
+                "Accept",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -257,20 +345,22 @@ class _NotificationListItemState extends State<NotificationListItem> {
             ),
             child: TextButton(
               onPressed: () async {
-                // matchHandling.matchRequestDenied(
-                //   widget.notificationData.receiver,
-                //   widget.notificationData.sender,
-                //   matchId,
-                // );
+                matchHandling.matchRequestDenied(
+                  await convertNameToTeamId(widget.notificationData.receiver),
+                  await convertNameToTeamId(widget.notificationData.sender),
+                  widget.notificationData.matchId,
+                );
                 await notificationService
                     .updateNotificationAsRead(widget.notificationData);
                 setState(() {
                   actionTaken = true;
                   widget.notificationData.isRead = true;
                 });
+
+                widget.onNotificationUpdated();
               },
               child: const Text(
-                "Delete",
+                "Decline",
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 16,
@@ -286,11 +376,21 @@ class _NotificationListItemState extends State<NotificationListItem> {
   Widget buildNotificationContent() {
     switch (widget.notificationData.status) {
       case "match invite":
-        return buildInviteMessage(sender);
+        return buildInviteMessage(widget.notificationData.sender);
+      case "match join":
+        return buildAskToJoinMessage(widget.notificationData.sender);
       case "match accepted":
-        return buildInviteAcceptMessage(receiver, sender);
+        return buildInviteAcceptMessage(
+            widget.notificationData.receiver, widget.notificationData.sender);
       case "match sent":
-        return buildInviteSentMessage(receiver, sender);
+        return buildInviteSentMessage(
+            widget.notificationData.receiver, widget.notificationData.sender);
+      case "match denied":
+        return buildInviteDeclineMessage(
+            widget.notificationData.receiver, widget.notificationData.sender);
+      case "match rejected":
+        return buildInviteRejectMessage(
+            widget.notificationData.receiver, widget.notificationData.sender);
       // Add more cases here for different notification types
       default:
         return const Text("Unknown notification status");
@@ -298,73 +398,71 @@ class _NotificationListItemState extends State<NotificationListItem> {
   }
 
   Widget buildNotificationButton() {
-    switch (widget.notificationData.type) {
-      case "request":
-        if (widget.notificationData.status == "match sent") {
-          return const Text("");
-        } else {
-          return buildAcceptAndDeniedButton();
-        }
-
-      case "accept":
-        return const Text("");
-      // Add more cases here for different notification types
-      default:
-        return const Text("Unknown notification type");
+    if ((widget.notificationData.status == "match invite" && !actionTaken) ||
+        (widget.notificationData.status == "match join" && !actionTaken)) {
+      return buildAcceptAndDeniedButton();
+    } else {
+      return const SizedBox();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        if (widget.notificationData.status == "match invite") {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
+      onTap: () async {
+        switch (widget.notificationData.status) {
+          case "match invite":
+            Navigator.push(
+              context,
+              MaterialPageRoute(
                 builder: (context) =>
-                    TeamDetails(teamId: widget.notificationData.sender)),
-          );
-        }
-      },
-      child: FutureBuilder<void>(
-        future: futurebuild,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text("Error loading data"));
-          } else {
-            print(widget.notificationData.status);
-            print(widget.notificationData.type);
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  prefixIcon(),
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.only(left: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          buildNotificationContent(),
-                          timeAndDate(widget.notificationData),
-                          const SizedBox(height: 10),
-                          if (!actionTaken)
-                            buildNotificationButton()
-                          else
-                            const Text("Invitation accepted"),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                    TeamDetails(teamId: widget.notificationData.sender),
               ),
             );
-          }
-        },
+          case "match accepted":
+            await notificationService
+                .updateNotificationAsRead(widget.notificationData);
+            setState(() {
+              actionTaken = true;
+              widget.notificationData.isRead = true;
+            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MatchInfoScreen(matchInfo: matchInfo!),
+              ),
+            );
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+            color: widget.notificationData.isRead == false
+                ? const Color.fromARGB(195, 143, 202, 250)
+                : Colors.white),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              prefixIcon(),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildNotificationContent(),
+                      timeAndDate(widget.notificationData),
+                      const SizedBox(height: 10),
+                      buildNotificationButton(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

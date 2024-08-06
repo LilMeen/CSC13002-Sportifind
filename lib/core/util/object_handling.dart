@@ -80,7 +80,7 @@ class MatchHandling extends ObjectHandling {
         'matchInviteRequest': FieldValue.arrayUnion([matchInfo]),
       });
 
-      await notification.inviteMatchRequest(senderId, receiverId);
+      await notification.inviteMatchRequest(senderId, receiverId, matchId);
     } catch (e) {
       print('error: $e');
     }
@@ -107,14 +107,15 @@ class MatchHandling extends ObjectHandling {
         'joinMatchRequest': FieldValue.arrayUnion([matchInfo]),
       });
 
-      await notification.joinMatchRequest(senderId, receiverId);
+      await notification.joinMatchRequest(senderId, receiverId, matchId);
     } catch (e) {
       print('error: $e');
     }
   }
 
   // match accepted (mai sua lai)
-  Future<void> matchRequestAccepted(senderId, receiverId, matchId) async {
+  Future<void> matchRequestAccepted(
+      senderId, receiverId, matchId, status) async {
     try {
       DocumentReference<Map<String, dynamic>> senderDoc = getTeamDoc(senderId);
       DocumentReference<Map<String, dynamic>> receiverDoc =
@@ -128,35 +129,68 @@ class MatchHandling extends ObjectHandling {
 
       Map<String, String> matchInfo = {
         'matchId': matchId,
-        'senderId': senderId,
-        'receiverId': receiverId,
+        'senderId': receiverId,
+        'receiverId': senderId,
       };
 
-      Map<String, dynamic> incomingMatchMap = receiverInformation.get('incomingMatch');
-      if (incomingMatchMap.containsKey(matchId)) {
-        incomingMatchMap[matchId] = true;
+      if (status == 'match invite') {
+        Map<String, dynamic> incomingMatchMap =
+            receiverInformation.get('incomingMatch');
+        if (incomingMatchMap.containsKey(matchId)) {
+          incomingMatchMap[matchId] = true;
+        }
+        await receiverDoc.update({
+          'matchSentRequest': FieldValue.arrayRemove([matchInfo]),
+          'matchJoinRequest': FieldValue.arrayRemove([matchInfo]),
+          'incomingMatch': incomingMatchMap,
+        });
+
+        final Map<String, bool> newMatch = {matchId: true};
+
+        await senderDoc.update({
+          'matchInviteRequest': FieldValue.arrayRemove([matchInfo]),
+          'joinMatchRequest': FieldValue.arrayRemove([matchInfo]),
+          'incomingMatch': newMatch,
+        });
+
+        DocumentSnapshot<Map<String, dynamic>> matchSnapshot =
+            await matchDoc.get();
+        Map<String, dynamic>? matchData = matchSnapshot.data();
+        if (matchData!['team2'].isEmpty && matchData['team2_avatar'].isEmpty) {
+          await matchDoc.update({
+            'team2': senderId,
+            'team2_avatar': senderInformation.data()?['avatarImage'] ?? '',
+          });
+        }
+        else {
+          print("This match has already contains second team");
+        }
+      } else if (status == "match join") {
+        Map<String, dynamic> incomingMatchMap =
+            senderInformation.get('incomingMatch');
+        if (incomingMatchMap.containsKey(matchId)) {
+          incomingMatchMap[matchId] = true;
+        }
+        final Map<String, bool> newMatch = {matchId: true};
+        await receiverDoc.update({
+          'matchSentRequest': FieldValue.arrayRemove([matchInfo]),
+          'matchJoinRequest': FieldValue.arrayRemove([matchInfo]),
+          'incomingMatch': newMatch,
+        });
+
+        await senderDoc.update({
+          'matchInviteRequest': FieldValue.arrayRemove([matchInfo]),
+          'joinMatchRequest': FieldValue.arrayRemove([matchInfo]),
+          'incomingMatch': incomingMatchMap,
+        });
+
+        await matchDoc.update({
+          'team2': receiverId,
+          'team2_avatar': receiverInformation.data()?['avatarImage'] ?? '',
+        });
       }
 
-      await senderDoc.update({
-        'matchSentRequest': FieldValue.arrayRemove([matchInfo]),
-        'matchJoinRequest': FieldValue.arrayRemove([matchInfo]),
-        'incomingMatch': incomingMatchMap,
-      });
-
-      final Map<String, bool> newMatch = {matchId: true};
-
-      await receiverDoc.update({
-        'matchInviteRequest': FieldValue.arrayRemove([matchInfo]),
-        'joinMatchRequest': FieldValue.arrayRemove([matchInfo]),
-        'incomingMatch': newMatch,
-      });
-
-      await matchDoc.update({
-        'team2': senderId,
-        'team2_avatar': senderInformation.data()?['avatarImage'] ?? '',
-      });
-
-      notification.matchRequestAccepted(senderId, receiverId);
+      notification.matchRequestAccepted(senderId, receiverId, matchId);
     } catch (e) {
       print('error: $e');
     }
@@ -172,21 +206,23 @@ class MatchHandling extends ObjectHandling {
 
       Map<String, String> matchInfo = {
         'matchId': matchId,
-        'senderId': senderId,
-        'receiverId': receiverId,
+        'senderId': receiverId,
+        'receiverId': senderId,
       };
 
-      await senderDoc.update({
+      print(matchInfo);
+
+      await receiverDoc.update({
         'matchSentRequest': FieldValue.arrayRemove([matchInfo]),
         'matchJoinRequest': FieldValue.arrayRemove([matchInfo]),
       });
 
-      await receiverDoc.update({
+      await senderDoc.update({
         'matchInviteRequest': FieldValue.arrayRemove([matchInfo]),
         'joinMatchRequest': FieldValue.arrayRemove([matchInfo]),
       });
 
-      notification.matchRequestDenied(senderId, receiverId);
+      notification.matchRequestDenied(senderId, receiverId, matchId);
     } catch (e) {
       print('error: $e');
     }
