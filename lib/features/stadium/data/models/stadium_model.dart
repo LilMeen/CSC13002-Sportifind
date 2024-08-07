@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/core/util/get_location.dart';
 import 'package:sportifind/features/stadium/data/models/field_model.dart';
-import 'package:sportifind/features/stadium/domain/entities/field.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
 import 'package:sportifind/core/entities/location.dart';
 
