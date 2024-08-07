@@ -52,6 +52,21 @@ class UserService {
     }
   }
 
+  Future<List<PlayerData>> getPlayersDataWithNotifications() async {
+    try {
+      final playersQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('role', isEqualTo: 'player')
+          .get();
+      final playersFutures = playersQuery.docs
+          .map((player) => PlayerData.fromSnapshotAsync(player))
+          .toList();
+      return await Future.wait(playersFutures);
+    } catch (error) {
+      throw Exception('Failed to load players data with notification: $error');
+    }
+  }
+
   Future<List<OwnerData>> getOwnersData() async {
     try {
       final ownersQuery = await FirebaseFirestore.instance
@@ -70,5 +85,39 @@ class UserService {
     final userData = await getPlayerData();
     final userMap = {for (var user in userData) user.id: user.name};
     return userMap;
+  }
+
+  Future<void> updatePlayerUsersForMatchDelete(String matchId) async {
+    final List<PlayerData> players = await getPlayersDataWithNotifications();
+    final playerUserQuery = FirebaseFirestore.instance
+        .collection('users')
+        .where('role', isEqualTo: 'player');
+
+    Map<String, List<String>> delPlayerNotifications = {};
+
+    for (var player in players) {
+      final delNotificationIds = player.notifications
+          .where((noti) => noti.matchId == matchId)
+          .map((noti) => noti.id!)
+          .toList();
+
+      if (delNotificationIds.isNotEmpty) {
+        delPlayerNotifications[player.id] = delNotificationIds;
+      }
+    }
+
+    final playerDocs = await playerUserQuery.get();
+
+    for (var playerDoc in playerDocs.docs) {
+      final playerId = playerDoc.id;
+      if (delPlayerNotifications.containsKey(playerId)) {
+        for (var notiId in delPlayerNotifications[playerId]!) {
+          await playerDoc.reference
+              .collection('notifications')
+              .doc(notiId)
+              .delete();
+        }
+      }
+    }
   }
 }

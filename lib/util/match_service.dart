@@ -78,6 +78,7 @@ class MatchService {
 
   Future<void> deleteMatch(String matchId) async {
     final TeamService teamService = TeamService();
+    final UserService userService = UserService();
     try {
       await FirebaseFirestore.instance
           .collection('matches')
@@ -85,6 +86,7 @@ class MatchService {
           .delete();
 
       await teamService.updateTeamsForMatchDelete(matchId);
+      await userService.updatePlayerUsersForMatchDelete(matchId);
 
     } catch (error) {
       throw Exception('Failed to delete match: $error');

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/models/notification_data.dart';
 
 class PlayerData {
   final String id;
@@ -12,6 +13,7 @@ class PlayerData {
   final String gender;
   final String phoneNumber;
   final List<String> teams;
+  final List<NotificationData> notifications;
 
   PlayerData({
     required this.id,
@@ -24,6 +26,7 @@ class PlayerData {
     required this.gender,
     required this.phoneNumber,
     required this.teams,
+    required this.notifications,
   });
 
   PlayerData.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
@@ -44,7 +47,33 @@ class PlayerData {
         teams = (snapshot.data()?['joinedTeams'] as List<dynamic>?)
                 ?.map((item) => item as String)
                 .toList() ??
-            [];
+            [],
+        notifications = [];
+
+  static Future<PlayerData> fromSnapshotAsync(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) async {
+    final playerData = PlayerData.fromSnapshot(snapshot);
+
+    final notificationsSnapshot =
+        await snapshot.reference.collection('notifications').get();
+    final notifications = notificationsSnapshot.docs
+        .map((doc) => NotificationData.fromSnapshot(doc))
+        .toList();
+
+    return PlayerData(
+      id: playerData.id,
+      name: playerData.name,
+      email: playerData.email,
+      //avatarImageUrl: playerData.avatarImageUrl,
+      role: playerData.role,
+      location: playerData.location,
+      dob: playerData.dob,
+      gender: playerData.gender,
+      phoneNumber: playerData.phoneNumber,
+      teams: playerData.teams,
+      notifications: notifications,
+    );
+  }
 
   get avatarImageUrl =>
       'https://console.firebase.google.com/u/0/project/sportifind-d0b25/storage/sportifind-d0b25.appspot.com/files/~2Fusers~2FfybmAxhicRdgBeqas8gkKfxM0v93~2Favatar';
