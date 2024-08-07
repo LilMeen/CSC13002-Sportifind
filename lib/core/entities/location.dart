@@ -16,4 +16,24 @@ class Location {
     this.longitude = 0,
     this.fullAddress = '',
   });
+
+  Location copyWith({
+    String? name,
+    String? address,
+    String? district,
+    String? city,
+    double? latitude,
+    double? longitude,
+    String? fullAddress,
+  }) {
+    return Location(
+      name: name ?? this.name,
+      address: address ?? this.address,
+      district: district ?? this.district,
+      city: city ?? this.city,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      fullAddress: fullAddress ?? this.fullAddress,
+    );
+  }
 }

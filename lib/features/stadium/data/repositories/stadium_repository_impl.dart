@@ -106,7 +106,7 @@ class StadiumRepositoryImpl implements StadiumRepository {
     final stadiumList = await stadiumRemoteDataSource.getStadiumList();
     var stadiumEntityList = <Stadium>[];
     for (var stadium in stadiumList){
-      stadiumEntityList.add(stadium.toEntity());
+      stadiumEntityList.add(await stadium.toEntity());
     }
     return Result.success(stadiumEntityList);
   }
@@ -115,7 +115,7 @@ class StadiumRepositoryImpl implements StadiumRepository {
   @override
   Future<Result<Stadium>> getStadiumById({required String id}) async { 
     final stadium = await stadiumRemoteDataSource.getStadiumById(id: id);
-    return Result.success(stadium.toEntity());
+    return Result.success(await stadium.toEntity());
   }
 
 
@@ -124,7 +124,7 @@ class StadiumRepositoryImpl implements StadiumRepository {
     final stadiums = await stadiumRemoteDataSource.getStadiumsByOwner(owner: owner);
     final stadiumEntityList = <Stadium>[];
     for (var stadium in stadiums){
-      stadiumEntityList.add(stadium.toEntity());
+      stadiumEntityList.add(await stadium.toEntity());
     }
     return Result.success(stadiumEntityList );
   }

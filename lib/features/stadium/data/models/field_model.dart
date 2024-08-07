@@ -1,8 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/features/stadium/domain/entities/field.dart';
 
 class FieldModel {
   final String id;
-  final String numberId;
+  final int numberId;
   final String type;
   final double price;
   final bool status;
@@ -15,22 +16,23 @@ class FieldModel {
     required this.status,
   });
 
-  factory FieldModel.fromMap(Map<String, dynamic> map) {
+  factory FieldModel.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return FieldModel(
-      id: map['id'] ?? '',
-      numberId: map['numberId'] ?? '',
-      type: map['type'] ?? '',
-      price: (map['price'] ?? 0).toDouble(),
-      status: map['status'] ?? false,
+      id: doc.id,
+      numberId: data['numberId'] ?? 0,
+      type: data['type'] ?? '',
+      price: data['price_per_hour'] ?? 0,
+      status: data['status'] ?? false,
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toFirestore() {
     return {
       'id': id,
       'numberId': numberId,
       'type': type,
-      'price': price,
+      'price_per_hour': price,
       'status': status,
     };
   }

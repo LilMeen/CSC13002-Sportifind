@@ -185,7 +185,7 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
       final stadiumsQuery =
           await FirebaseFirestore.instance.collection('stadiums').get();
       final stadiums = stadiumsQuery.docs
-          .map((stadium) => StadiumModel.fromFirestore(stadium))
+          .map((stadium) => StadiumModel.fromFirestore(stadium, []))
           .toList();
       return stadiums;
     } catch (error) {
@@ -201,9 +201,19 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
   Future<StadiumModel> getStadiumById({required String id}) async {
     try {
       final stadiumSnapshot =
-          await FirebaseFirestore.instance.collection('stadiums').doc(id).get();
-      return  StadiumModel.fromFirestore(stadiumSnapshot);
-    } catch (error) {
+        await FirebaseFirestore.instance
+          .collection('stadiums')
+          .doc(id)
+          .get();
+
+      List<DocumentSnapshot> fieldSnapshot = await FirebaseFirestore.instance
+          .collection('stadiums')
+          .doc(id)
+          .collection('fields')
+          .get()
+          .then((value) => value.docs);
+      return  StadiumModel.fromFirestore(stadiumSnapshot, fieldSnapshot);
+    } catch (error) {;
       throw Exception('Failed to load stadium data: $error');
     }
   }
@@ -220,7 +230,7 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
           .where('owner', isEqualTo: owner)
           .get();
       final stadiums = stadiumsQuery.docs
-          .map((stadium) => StadiumModel.fromFirestore(stadium))
+          .map((stadium) => StadiumModel.fromFirestore(stadium, []))
           .toList();
       return stadiums;
     } catch (error) {

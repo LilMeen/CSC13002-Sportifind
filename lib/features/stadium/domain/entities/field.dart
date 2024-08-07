@@ -1,6 +1,6 @@
 class Field {
   final String id;
-  final String numberId;
+  final int numberId;
   final String type;
   final double price;
   final bool status;

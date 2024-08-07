@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/core/util/get_location.dart';
 import 'package:sportifind/features/stadium/data/models/field_model.dart';
+import 'package:sportifind/features/stadium/domain/entities/field.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
 import 'package:sportifind/core/entities/location.dart';
 
@@ -38,10 +39,12 @@ class StadiumModel {
     required this.fields,
   });
 
-  factory StadiumModel.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+  factory StadiumModel.fromFirestore(DocumentSnapshot stadiumDoc, List<DocumentSnapshot> fieldDocs) {
+    Map<String, dynamic> data = stadiumDoc.data() as Map<String, dynamic>;
+    List<FieldModel> fields = fieldDocs.map((e) => FieldModel.fromFirestore(e)).toList();
+    
     return StadiumModel(
-      id: doc.id,
+      id: stadiumDoc.id,
       name: data['name'] ?? '',
       phone: data['phone_number'] ?? '',
       owner: data['owner'] ?? '',
@@ -54,9 +57,7 @@ class StadiumModel {
       address: data['address'] ?? '',
       latitude: data['latitude'] ?? 0.0,
       longitude: data['longitude'] ?? 0.0,
-      fields: (data['fields'] as List? ?? [])
-          .map((e) => FieldModel.fromMap(e))
-          .toList(),
+      fields: fields,
     );
   }
 
@@ -77,8 +78,17 @@ class StadiumModel {
     };
   }
 
-  Stadium toEntity() {
-    Location location = getLocation(latitude, longitude, city, district, address);
+  Future <Stadium> toEntity() async {
+    Location googleLocation = await getLocation('$latitude, $longitude');
+    Location location = googleLocation.copyWith(
+      name: googleLocation.name,
+      fullAddress: googleLocation.fullAddress,
+      address: address,
+      district: district,
+      city: city,
+      latitude: latitude,
+      longitude: longitude,
+    );
     return Stadium(
       id: id,
       name: name,

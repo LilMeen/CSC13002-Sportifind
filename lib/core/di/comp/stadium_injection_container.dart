@@ -6,6 +6,7 @@ import 'package:sportifind/features/stadium/domain/usecases/create_stadium.dart'
 import 'package:sportifind/features/stadium/domain/usecases/delete_stadium.dart';
 import 'package:sportifind/features/stadium/domain/usecases/edit_stadium.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_nearby_stadium.dart';
+import 'package:sportifind/features/stadium/domain/usecases/get_stadium_by_id.dart';
 import 'package:sportifind/features/stadium/domain/usecases/update_field_status.dart';
 
 final GetIt sl = GetIt.instance;
@@ -25,11 +26,7 @@ void initializeStadiumDependencies (){
   );
 
   // Use cases
-  sl.registerLazySingleton<CreateStadium>(() => CreateStadium(sl()));
-  sl.registerLazySingleton<EditStadium>(() => EditStadium(sl()));
-  sl.registerLazySingleton<DeleteStadium>(() => DeleteStadium(sl()));
-  sl.registerLazySingleton<GetNearbyStadium>(() => GetNearbyStadium(sl()));
-  sl.registerLazySingleton<UpdateFieldStatus>(() => UpdateFieldStatus(sl()));
+
 }
 
 
