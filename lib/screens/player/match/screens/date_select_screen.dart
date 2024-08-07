@@ -31,9 +31,10 @@ class DateSelectScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _DateSelectScreenState();
 }
 
+String selectedField = "1";
+
 class _DateSelectScreenState extends State<DateSelectScreen> {
   DateTime? selectedDate;
-  String selectedField = "1";
   List<MatchCard> userMatches = [];
   List<DateTimeRange> bookedSlot = [];
   String selectedPlayTime = '1h00';
@@ -89,11 +90,11 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   }
 
   void refreshByDate(DateTime pickedDate) async {
-    await matchService.getMatchDate(pickedDate, selectedField,
-        widget.selectedStadiumId, userMatches, bookedSlot);
     setState(() {
       selectedDate = pickedDate;
     });
+    await matchService.getMatchDate(pickedDate, selectedField!,
+        widget.selectedStadiumId, userMatches, bookedSlot);
   }
 
   void refreshByField(String pickedField) async {
@@ -101,6 +102,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
         widget.selectedStadiumId, userMatches, bookedSlot);
     setState(() {
       selectedField = pickedField;
+      print(selectedField);
     });
   }
 
@@ -169,7 +171,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               selectedTeam: widget.selectedTeamId,
               selectedTeamAvatar: widget.selectedTeamAvatar,
               selectedDate: selectedDate!,
-              selectedField: selectedField,
+              selectedField: selectedField!,
               pauseSlots: generatePauseSlot(
                   convertDurationStringToInt(selectedPlayTime)),
               addMatchCard: widget.addMatchCard!,

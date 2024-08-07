@@ -10,16 +10,16 @@ import 'package:sportifind/widgets/match_list/match_list.dart';
 import '../../models/match_card.dart';
 
 class MatchCards extends StatefulWidget {
-  const MatchCards({
+  MatchCards({
     super.key,
     required this.yourMatch,
     required this.nearByMatch,
     required this.status,
   });
 
-  final List<MatchCard> yourMatch;
-  final List<MatchCard> nearByMatch;
-  final int status;
+  List<MatchCard> yourMatch;
+  List<MatchCard> nearByMatch;
+  int status;
 
   @override
   State<StatefulWidget> createState() => _MatchCardsState();
@@ -44,7 +44,7 @@ class _MatchCardsState extends State<MatchCards> {
   @override
   void didUpdateWidget(covariant MatchCards oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.status != widget.status) {
+    if (oldWidget.status != widget.status || oldWidget.status == widget.status) {
       _refreshData();
     }
   }
@@ -54,8 +54,8 @@ class _MatchCardsState extends State<MatchCards> {
     final nearbyMatches =
         await matchService.getNearbyMatchData(searchedStadiums);
     setState(() {
-      // widget.yourMatch = personalMatches;
-      // widget.nearByMatch = nearbyMatches;
+      widget.yourMatch = personalMatches;
+      widget.nearByMatch = nearbyMatches;
     });
   }
 

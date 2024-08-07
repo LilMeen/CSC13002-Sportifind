@@ -91,17 +91,13 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
                             height: 250,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
-                              itemCount: userTeams.length + 1,
+                              itemCount: userTeams.length,
                               separatorBuilder:
                                   (BuildContext context, int index) {
                                 return const SizedBox(height: 20);
                               },
                               itemBuilder: (ctx, index) {
-                                if (index < userTeams.length) {
-                                  print(userTeams[index].teamId);
-                                  print(widget.hostId);
-                                  return makeTeamItem(userTeams[index]);
-                                }
+                                return makeTeamItem(userTeams[index]);
                               },
                             ),
                           ),

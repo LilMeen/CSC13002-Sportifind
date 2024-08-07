@@ -48,14 +48,13 @@ class _FieldPickerState extends State<FieldPicker> {
             items: widget.fields.map((FieldData item) {
               return DropdownMenuItem<String>(
                 value: item.numberId.toString(),
-                child: Text('${item.numberId} ${item.type}'),
+                child: widget.selectedField == null ? Text("Choose a field") : Text('${item.numberId} ${item.type}'),
               );
             }).toList(),
             onChanged: (value) {
               if (value != null) {
                 setState(() {
                   widget.selectedField = value;
-                  print(widget.selectedField);
                   widget.func(value);
                 });
               }
