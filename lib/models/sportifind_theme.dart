@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/adapter/hex_color.dart';
-import 'package:google_fonts/google_fonts.dart';  
+import 'package:google_fonts/google_fonts.dart';
 
 class SportifindTheme {
   SportifindTheme._();
@@ -8,6 +8,7 @@ class SportifindTheme {
   static const Color smokeScreen = Color.fromARGB(255, 174, 174, 174);
   static const Color lead = Color.fromARGB(255, 33, 33, 33);
   static const Color whiteSmoke = Color.fromARGB(255, 245, 245, 245);
+  static const Color whiteEdgar = Color.fromARGB(255, 237, 237, 237);
 
   // Color Hunt Palette
   static const Color shovelKnight = Color.fromARGB(255, 62, 194, 236);

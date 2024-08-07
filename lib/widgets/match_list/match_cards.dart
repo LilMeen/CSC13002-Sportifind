@@ -56,6 +56,7 @@ class _MatchCardsState extends State<MatchCards> {
     setState(() {
       widget.yourMatch = personalMatches;
       widget.nearByMatch = nearbyMatches;
+      isLoadingUser = false;
     });
   }
 
@@ -130,11 +131,19 @@ class _MatchCardsState extends State<MatchCards> {
   }
 
   Future<void> _refreshData() async {
+    setState(() {
+      isLoadingUser = true;
+      errorMessage = '';
+    });
     await _loadMatchData();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoadingUser) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return SingleChildScrollView(
       child: widget.status == 0
           ? buildMatch(widget.yourMatch)

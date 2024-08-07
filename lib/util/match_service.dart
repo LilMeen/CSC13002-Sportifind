@@ -87,7 +87,6 @@ class MatchService {
 
       await teamService.updateTeamsForMatchDelete(matchId);
       await userService.updatePlayerUsersForMatchDelete(matchId);
-
     } catch (error) {
       throw Exception('Failed to delete match: $error');
     }
@@ -137,8 +136,6 @@ class MatchService {
       final Map<String, dynamic> incoming =
           teamQuery.data()?['incomingMatch'] ?? {};
       matchesId.addAll(incoming.keys.toList());
-      print("-------------------------");
-      print(matchesId);
     }
 
     // Retrieve match data
@@ -164,6 +161,8 @@ class MatchService {
         }
       }
     }
+    print("UserMatches");
+    print(userMatches);
     return userMatches;
   }
 

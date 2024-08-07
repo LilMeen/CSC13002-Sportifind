@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/player_data.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/screens/player/team/screens/create_team_form.dart';
@@ -58,56 +59,44 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                  'lib/assets/images/bg.jpg',
+                  'lib/assets/images/bg.png',
                 ),
                 fit: BoxFit.cover,
               ),
             ),
-            child: Container(
+            child: Padding(
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.black.withOpacity(.9),
-                    Colors.black.withOpacity(.3),
-                  ],
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: FutureBuilder<void>(
-                  future: fetchingData(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return const Center(child: Text('Error loading teams'));
-                    } else if (userTeams.isNotEmpty) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          SizedBox(
-                            height: 250,
-                            child: ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: userTeams.length,
-                              separatorBuilder:
-                                  (BuildContext context, int index) {
-                                return const SizedBox(height: 20);
-                              },
-                              itemBuilder: (ctx, index) {
-                                return makeTeamItem(userTeams[index]);
-                              },
-                            ),
+              child: FutureBuilder<void>(
+                future: fetchingData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(child: Text('Error loading teams'));
+                  } else if (userTeams.isNotEmpty) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 250,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: userTeams.length,
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return const SizedBox(height: 20);
+                            },
+                            itemBuilder: (ctx, index) {
+                              return makeTeamItem(userTeams[index]);
+                            },
                           ),
-                        ],
-                      );
-                    } else {
-                      return const Center(child: Text('No teams available'));
-                    }
-                  },
-                ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return const Center(child: Text('No teams available'));
+                  }
+                },
               ),
             ),
           ),
@@ -143,43 +132,64 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
           margin: const EdgeInsets.only(right: 20),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
+            border: Border.all(color: SportifindTheme.bluePurple),
             borderRadius: BorderRadius.circular(20),
-            image: DecorationImage(
-              image: NetworkImage(team.avatarImageUrl),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                  Colors.black.withOpacity(0.2), BlendMode.dstATop),
-            ),
-            color: Colors.grey.shade900,
+            color: SportifindTheme.white,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Text(
+                team.name,
+                style: TextStyle(color: SportifindTheme.bluePurple),
+              ),
+              const SizedBox(height: 30),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15.0, vertical: 8.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: Colors.black26,
-                    ),
-                    child: Text(
-                      team.address,
-                      style: TextStyle(color: Colors.grey[500]),
+                children: [
+                  const Icon(
+                    Icons.location_on_outlined,
+                    color: SportifindTheme.bluePurple,
+                    size: 20,
+                  ),
+                  Text(
+                    "${team.district}, ${team.city}",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
-              Text(
-                team.name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+              Row(
+                children: [
+                  const Icon(
+                    Icons.group,
+                    color: SportifindTheme.bluePurple,
+                    size: 20,
+                  ),
+                  Text(
+                    "${team.members.length} members",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: SportifindTheme.bluePurple,
+                ),
+                child: TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    "Pick this team",
+                    style:
+                        TextStyle(color: SportifindTheme.white, fontSize: 24),
+                  ),
                 ),
               ),
             ],
