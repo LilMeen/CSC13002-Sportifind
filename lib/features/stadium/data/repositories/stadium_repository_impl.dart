@@ -2,7 +2,7 @@
 import 'dart:io';
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
-import 'package:sportifind/features/stadium/domain/entities/location.dart';
+import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 import 'package:sportifind/services/location_service.dart';

@@ -1,30 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/core/util/get_location.dart';
 import 'package:sportifind/features/stadium/data/models/field_model.dart';
-import 'package:sportifind/features/stadium/data/models/location_model.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/core/entities/location.dart';
 
 class StadiumModel {
   final String id;
   final String name;
+  final String phone;
   final String owner;
   final String avatar;
   final List<String> images;
-  final LocationModel location;
   final String openTime;
   final String closeTime;
-  final String phone;
+  final String city;
+  final String district;
+  final String address;
+  final double latitude;
+  final double longitude;
   final List<FieldModel> fields;
+
 
   StadiumModel({
     required this.id,
     required this.name,
+    required this.phone,
     required this.owner,
     required this.avatar,
     required this.images,
-    required this.location,
     required this.openTime,
     required this.closeTime,
-    required this.phone,
+    required this.city,
+    required this.district,
+    required this.address,
+    required this.latitude,
+    required this.longitude,
     required this.fields,
   });
 
@@ -33,13 +43,17 @@ class StadiumModel {
     return StadiumModel(
       id: doc.id,
       name: data['name'] ?? '',
+      phone: data['phone_number'] ?? '',
       owner: data['owner'] ?? '',
       avatar: data['avatar'] ?? '',
       images: List<String>.from(data['images'] ?? []),
-      location: LocationModel.fromMap(data['location'] ?? {}),
       openTime: data['openTime'] ?? '',
       closeTime: data['closeTime'] ?? '',
-      phone: data['phone'] ?? '',
+      city: data['city'] ?? '',
+      district: data['district'] ?? '',
+      address: data['address'] ?? '',
+      latitude: data['latitude'] ?? 0.0,
+      longitude: data['longitude'] ?? 0.0,
       fields: (data['fields'] as List? ?? [])
           .map((e) => FieldModel.fromMap(e))
           .toList(),
@@ -49,25 +63,29 @@ class StadiumModel {
   Map<String, dynamic> toFirestore() {
     return {
       'name': name,
+      'phone_number': phone,
       'owner': owner,
       'avatar': avatar,
       'images': images,
-      'location': location.toMap(),
       'openTime': openTime,
       'closeTime': closeTime,
-      'phone': phone,
-      'fields': fields.map((e) => e.toMap()).toList(),
+      'city': city,
+      'district': district,
+      'address': address,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 
   Stadium toEntity() {
+    Location location = getLocation(latitude, longitude, city, district, address);
     return Stadium(
       id: id,
       name: name,
       owner: owner,
       avatar: avatar,
       images: images,
-      location: location.toEntity(),
+      location: location,
       openTime: openTime,
       closeTime: closeTime,
       phone: phone,
@@ -79,13 +97,17 @@ class StadiumModel {
     return StadiumModel(
       id: entity.id,
       name: entity.name,
+      phone: entity.phone,
       owner: entity.owner,
       avatar: entity.avatar,
       images: entity.images,
-      location: LocationModel.fromEntity(entity.location),
       openTime: entity.openTime,
       closeTime: entity.closeTime,
-      phone: entity.phone,
+      city: entity.location.city,
+      district: entity.location.district,
+      address: entity.location.address,
+      latitude: entity.location.latitude,
+      longitude: entity.location.longitude,
       fields: entity.fields.map((e) => FieldModel.fromEntity(e)).toList(),
     );
   }

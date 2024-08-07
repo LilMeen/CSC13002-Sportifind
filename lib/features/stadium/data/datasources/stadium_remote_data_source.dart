@@ -1,10 +1,9 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
-import 'package:sportifind/features/stadium/domain/entities/location.dart';
+import 'package:sportifind/core/entities/location.dart';
 
 abstract interface class StadiumRemoteDataSource {
   Future<void> createStadium({
