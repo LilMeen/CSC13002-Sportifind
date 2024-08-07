@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -54,10 +55,9 @@ abstract interface class StadiumRemoteDataSource {
 
 class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
 
-  ////////////////////////////////
+
   /// CREATE STADIUM
   /// Create a new stadium
-  /// 
   @override
   Future<void> createStadium({
     required String name,
@@ -92,7 +92,7 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
     await _uploadImages(images, stadiumId);
 
     int numberId = 1;
-    void addFields(int count, String type, double price) async {
+    Future<void> addFields(int count, String type, double price) async {
       for (int i = 0; i < count; i++) {
         await stadiumRef.collection('fields').add({
           'numberId': numberId++,
@@ -101,19 +101,16 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
           'price_per_hour': price,
         });
       }
-      return null;
     }
 
-    addFields(num5PlayerFields, '5-Player', pricePerHour5);
-    addFields(num7PlayerFields, '7-Player', pricePerHour7);
-    addFields(num11PlayerFields, '11-Player', pricePerHour11);
+    await addFields(num5PlayerFields, '5-Player', pricePerHour5);
+    await addFields(num7PlayerFields, '7-Player', pricePerHour7);
+    await addFields(num11PlayerFields, '11-Player', pricePerHour11);
   }
   
 
-  ////////////////////////////////
   /// UPDATE STADIUM
   /// Update an existing stadium
-  /// 
   @override
   Future<void> updateStadium({
     required String id,
@@ -153,10 +150,8 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
   }
 
   
-  ////////////////////////////////
   /// UPDATE FIELD STATUS
   /// Update the status of a field
-  /// 
   @override
   Future<void> updateFieldStatus({
     required String stadiumId,
@@ -176,7 +171,6 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
   }
 
 
-  ////////////////////////////////
   /// GET STADIUM LIST
   /// Get a list of all stadiums
   @override
@@ -194,7 +188,6 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
   }
 
 
-  ////////////////////////////////
   /// GET STADIUM BY ID
   /// Get a stadium by its id
   @override
@@ -219,7 +212,6 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
   }
 
 
-  ////////////////////////////////
   /// GET STADIUMS BY OWNER
   /// Get a list of stadiums by their owner
   @override
@@ -239,7 +231,6 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
   }
 
 
-  ////////////////////////////////
   /// DELETE STADIUM
   /// Delete a stadium by its id
   @override  

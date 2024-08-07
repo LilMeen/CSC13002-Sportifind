@@ -26,7 +26,7 @@ void initializeStadiumDependencies (){
   );
 
   // Use cases
-
+  sl.registerLazySingleton<CreateStadium>(() => CreateStadium(sl()));
 }
 
 

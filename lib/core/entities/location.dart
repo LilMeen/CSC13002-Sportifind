@@ -7,7 +7,7 @@ class Location {
   final double longitude;
   final String fullAddress;
 
-  Location({
+  const Location({
     this.name = '',
     this.address = '',
     this.district = '',

@@ -10,10 +10,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_stadium_by_id.dart';
+import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/create_stadium_screen.dart';
 import 'package:sportifind/firebase_options.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-/* Future <void> main() async{
+Future <void> main() async{
   initializeDateFormatting();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -32,9 +33,11 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),
     );
   }
-}  */
+}  
 
-void main() async {
+
+
+/* void main() async {
   initializeDateFormatting();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -63,3 +66,4 @@ void main() async {
     print(field.status);
   }
 } 
+ */
