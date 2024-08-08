@@ -96,7 +96,7 @@ class _MatchListItemState extends State<MatchListItem> {
                     text: "${date.day}\n",
                     style: const TextStyle(
                       color: SportifindTheme.bluePurple,
-                      fontSize: 60,
+                      fontSize: 40,
                       fontWeight: FontWeight.bold,
                     ),
                     children: [

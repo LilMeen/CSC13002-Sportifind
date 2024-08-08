@@ -135,6 +135,7 @@ class MatchService {
 
       final Map<String, dynamic> incoming =
           teamQuery.data()?['incomingMatch'] ?? {};
+      print(incoming.keys.toList());
       matchesId.addAll(incoming.keys.toList());
     }
 
@@ -150,9 +151,9 @@ class MatchService {
           // Parse the match date
           final DateTime matchDate = dateFormat.parse(match.date);
           // Compare with the current date
-          if (matchDate.day == DateTime.now().day &&
-              matchDate.month == DateTime.now().month &&
-              matchDate.year == DateTime.now().year) {
+          if (matchDate.day >= DateTime.now().day &&
+              matchDate.month >= DateTime.now().month &&
+              matchDate.year >= DateTime.now().year) {
             userMatches.add(match);
           }
         } catch (e) {
