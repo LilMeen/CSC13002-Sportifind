@@ -76,7 +76,7 @@ class _MatchListItemState extends State<MatchListItem> {
           context,
           MaterialPageRoute(
             builder: (context) => MatchInfoScreen(
-              matchInfo: widget.matchCard,
+              matchInfo: widget.matchCard, matchStatus: 0,
             ),
           ),
         );

@@ -429,7 +429,7 @@ class _NotificationListItemState extends State<NotificationListItem> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MatchInfoScreen(matchInfo: matchInfo!),
+                builder: (context) => MatchInfoScreen(matchInfo: matchInfo!, matchStatus: 2,),
               ),
             );
         }
