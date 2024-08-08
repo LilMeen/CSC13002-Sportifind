@@ -65,9 +65,9 @@ class _TeamListItemState extends State<TeamListItem> {
                         Text(teamWithCaptainName!.captain),
                         Row(
                           children: [
-                            Text("${teamWithCaptainName!.address}, "),
-                            Text("${teamWithCaptainName!.district}, "),
-                            Text(teamWithCaptainName!.city),
+                            Text("${teamWithCaptainName!.location.address}, "),
+                            Text("${teamWithCaptainName!.location.district}, "),
+                            Text(teamWithCaptainName!.location.city),
                           ],
                         ),
                       ],

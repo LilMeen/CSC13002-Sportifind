@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/adapter/hex_color.dart';
+import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -52,11 +53,15 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
           final DocumentSnapshot teamSnapshot = await teamRef.get();
 
           if (teamSnapshot.exists) {
-            final teamInformation = TeamInformation(
-              name: teamSnapshot['name'],
+            final location = LocationInfo(
               address: teamSnapshot['address'],
               district: teamSnapshot['district'],
               city: teamSnapshot['city'],
+            );
+
+            final teamInformation = TeamInformation(
+              name: teamSnapshot['name'],
+              location: location,
               avatarImageUrl: teamSnapshot['avatarImage'],
               incoming: Map<String, bool>.from(teamSnapshot['incoming']),
               members: List<String>.from(teamSnapshot['members']),
@@ -258,7 +263,7 @@ class TeamBox extends StatelessWidget {
                                                     color: SportifindTheme.grey,
                                                   ),
                                                 ),
-                                               SizedBox(
+                                                SizedBox(
                                                   child: Row(
                                                     children: <Widget>[
                                                       const Text(
@@ -296,7 +301,7 @@ class TeamBox extends StatelessWidget {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
-                                                 Text(
+                                                Text(
                                                   'Medium Level',
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
@@ -308,8 +313,7 @@ class TeamBox extends StatelessWidget {
                                                   ),
                                                 ),
                                                 Container(
-                                                  decoration:
-                                                       BoxDecoration(
+                                                  decoration: BoxDecoration(
                                                     color: SportifindTheme
                                                         .bluePurple3,
                                                     borderRadius:

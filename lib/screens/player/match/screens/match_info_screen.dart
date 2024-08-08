@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/player_data.dart';
@@ -5,6 +6,7 @@ import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/player/match/screens/Invite_team_screen.dart';
 import 'package:sportifind/screens/player/match/screens/select_team_screen.dart';
+import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/screens/player/team/screens/team_details.dart';
 import 'package:sportifind/util/match_service.dart';
 import 'package:sportifind/util/stadium_service.dart';
@@ -28,6 +30,7 @@ class MatchInfoScreen extends StatefulWidget {
 }
 
 class _MatchInfoScreenState extends State<MatchInfoScreen> {
+  final user = FirebaseAuth.instance.currentUser!;
   late Future<void> initializationFuture;
   late ImageProvider team1ImageProvider;
   late ImageProvider team2ImageProvider;
@@ -37,6 +40,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
   StadiumService stadiumService = StadiumService();
   StadiumData? matchStadium;
   Map<String, String> teamNames = {};
+  List<TeamInformation> team = [];
   PlayerData? userData;
   int status = 0;
 
@@ -48,8 +52,15 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
 
   Future<void> _initialize() async {
     teamNames = await teamService.generateTeamMap();
+    final teamInfo = await teamService.getTeamData();
+    for (var i = 0; i < teamInfo.length; ++i) {
+      if (teamInfo[i].captain == user.uid) {
+        continue;
+      }
+      team.add(teamInfo[i]);
+    }
     userData = await userService.getUserPlayerData();
-    print(widget.matchInfo.stadium);
+    print(team);
     matchStadium =
         await stadiumService.getSpecificStadiumsData(widget.matchInfo.stadium);
 
@@ -62,16 +73,6 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
 
     await precacheImage(team1ImageProvider, context);
     await precacheImage(team2ImageProvider, context);
-  }
-
-  void _openInviteTeam() {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (ctx) => InviteTeamScreen(
-        matchInfo: widget.matchInfo,
-      ),
-    );
   }
 
   @override
@@ -178,35 +179,10 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                   Column(
                                     children: [
                                       Center(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            if (widget.matchInfo.team2 == "" &&
-                                                userData!.teams.any((element) =>
-                                                    element ==
-                                                    widget.matchInfo.team1)) {
-                                              _openInviteTeam();
-                                            } else {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SelectTeamScreen(
-                                                    forMatchCreate: false,
-                                                    forJoinRequest: true,
-                                                    hostId:
-                                                        widget.matchInfo.team1,
-                                                    matchId:
-                                                        widget.matchInfo.id,
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.black,
-                                            radius: 50,
-                                            backgroundImage: team2ImageProvider,
-                                          ),
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.black,
+                                          radius: 50,
+                                          backgroundImage: team2ImageProvider,
                                         ),
                                       ),
                                       const SizedBox(
@@ -382,17 +358,52 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                     const SizedBox(height: 18),
                     MemberCards(status: status, matchInfo: widget.matchInfo),
                     if (widget.matchStatus == 0)
-                      Container(
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Text(""),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: Container(
+                          height: 50,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: SportifindTheme.bluePurple),
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => InviteTeamScreen(
+                                    matchInfo: widget.matchInfo,
+                                    teams: team,
+                                    userLocation: userData!.location,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text("Invite a team"),
+                          ),
                         ),
                       )
                     else if (widget.matchStatus == 1)
-                      Container(
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Text(""),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: Container(
+                          height: 50,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(18),
+                              color: SportifindTheme.bluePurple),
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SelectTeamScreen(),
+                                ),
+                              );
+                            },
+                            child: Text("Join this match"),
+                          ),
                         ),
                       )
                     else

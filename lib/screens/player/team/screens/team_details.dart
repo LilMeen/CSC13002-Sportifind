@@ -214,7 +214,7 @@ class _TeamDetailsState extends State<TeamDetails>
                                 children: [
                                   const Text('Address: '),
                                   Text(
-                                      '${teamInformation!.address} ${teamInformation!.district} ${teamInformation!.city}'),
+                                      '${teamInformation!.location.address} ${teamInformation!.location.district} ${teamInformation!.location.city}'),
                                 ],
                               ),
                               const SizedBox(

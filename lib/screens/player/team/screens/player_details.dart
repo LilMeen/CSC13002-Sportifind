@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
@@ -78,12 +79,16 @@ class _PlayerDetailsState extends State<PlayerDetails>
           final DocumentSnapshot teamSnapshot = await teamRef.get();
 
           if (teamSnapshot.exists) {
-            final teamInformation = TeamInformation(
-              teamId: teamSnapshot.id,
-              name: teamSnapshot['name'],
+            final location = LocationInfo(
               address: teamSnapshot['address'],
               district: teamSnapshot['district'],
               city: teamSnapshot['city'],
+            );
+
+            final teamInformation = TeamInformation(
+              teamId: teamSnapshot.id,
+              name: teamSnapshot['name'],
+              location: location,
               avatarImageUrl: teamSnapshot['avatarImage'],
               incoming: Map<String, bool>.from(teamSnapshot['incoming']),
               members: List<String>.from(teamSnapshot['members']),

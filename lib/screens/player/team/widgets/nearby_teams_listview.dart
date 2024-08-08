@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/adapter/hex_color.dart';
+import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -51,12 +52,15 @@ class _NearbyTeamListViewState extends State<NearbyTeamListView>
         // Iterate through the documents
         for (DocumentSnapshot doc in querySnapshot.docs) {
           if (isNotJoined(doc.id, joinedTeams)) {
+            final location = LocationInfo(
+              address: doc['address'],
+              district: doc['district'],
+              city: doc['city'],
+            );
             fetchedTeam.add(
               TeamInformation(
                 name: doc['name'],
-                address: doc['address'],
-                district: doc['district'],
-                city: doc['city'],
+                location: location,
                 avatarImageUrl: doc['avatarImage'],
                 incoming: Map<String, bool>.from(doc['incoming']),
                 members: List<String>.from(doc['members']),
@@ -220,7 +224,7 @@ class NearbyTeamBox extends StatelessWidget {
                                                     color: SportifindTheme.grey,
                                                   ),
                                                 ),
-                                                 SizedBox(
+                                                SizedBox(
                                                   child: Row(
                                                     children: <Widget>[
                                                       const Text(

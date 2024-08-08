@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:location/location.dart';
+import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/models/match_card.dart';
 
 class TeamInformation {
   TeamInformation({
     required this.teamId,
     required this.name,
-    required this.address,
-    required this.district,
-    required this.city,
+    required this.location,
     required this.avatarImageUrl,
     required this.members,
     required this.incoming,
@@ -19,9 +19,7 @@ class TeamInformation {
   TeamInformation.empty()
       : teamId = '',
         name = '',
-        address = '',
-        district = '',
-        city = '',
+        location = LocationInfo(),
         avatarImageUrl = '',
         incoming = {},
         matchSentRequest = [],
@@ -29,34 +27,41 @@ class TeamInformation {
         members = [],
         captain = '';
 
-  TeamInformation.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : name = snapshot['name'],
-        address = snapshot['address'],
-        district = snapshot['district'],
-        city = snapshot['city'],
-        avatarImageUrl = snapshot['avatarImage'],
-        incoming = Map<String, bool>.from(snapshot['incomingMatch']),
-        members = (snapshot['members'] as List)
-            .map((item) => item.trim() as String)
-            .toList(),
-        matchSentRequest = (snapshot.data()?['matchSentRequest'] as List?)
-                ?.map((item) =>
-                    MatchRequest.fromMap(item as Map<String, dynamic>))
-                .toList() ??
-            [],
-        matchInviteRequest = (snapshot.data()?['matchInviteRequest'] as List?)
-                ?.map((item) =>
-                    MatchRequest.fromMap(item as Map<String, dynamic>))
-                .toList() ??
-            [],
-        captain = snapshot['captain'],
-        teamId = snapshot.id;
+  factory TeamInformation.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data()!;
+    final location = LocationInfo(
+      city: data['city'],
+      district: data['district'],
+      address: data['address'],
+    );
+
+    return TeamInformation(
+      name: data['name'],
+      location: location,
+      avatarImageUrl: data['avatarImage'],
+      incoming: Map<String, bool>.from(data['incomingMatch']),
+      members: (data['members'] as List)
+          .map((item) => item.trim() as String)
+          .toList(),
+      matchSentRequest: (data['matchSentRequest'] as List?)
+              ?.map(
+                  (item) => MatchRequest.fromMap(item as Map<String, dynamic>))
+              .toList() ??
+          [],
+      matchInviteRequest: (data['matchInviteRequest'] as List?)
+              ?.map(
+                  (item) => MatchRequest.fromMap(item as Map<String, dynamic>))
+              .toList() ??
+          [],
+      captain: data['captain'],
+      teamId: snapshot.id,
+    );
+  }
 
   String teamId;
   String name;
-  String address;
-  String district;
-  String city;
+  LocationInfo location;
   String avatarImageUrl;
   String captain;
   Map<String, bool> incoming;

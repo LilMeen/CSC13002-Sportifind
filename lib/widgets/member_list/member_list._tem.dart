@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/util/stadium_service.dart';
-import 'package:sportifind/util/team_service.dart';
 import 'package:sportifind/util/user_service.dart';
 
 class MemberListItem extends StatefulWidget {
@@ -55,7 +54,7 @@ class _MemberListItemState extends State<MemberListItem> {
         children: [
           Row(
             children: [
-              CircleAvatar(),
+              //CircleAvatar(),
               Column(
                 children: [
                   Text(playerData!.name),

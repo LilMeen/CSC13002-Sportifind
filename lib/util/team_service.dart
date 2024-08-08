@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
+import 'package:sportifind/util/location_service.dart';
+import 'package:sportifind/util/search_service.dart';
 import 'package:sportifind/util/user_service.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,6 +21,8 @@ import 'package:sportifind/screens/player/team/widgets/my_teams_listview.dart';
 class TeamService {
   TeamInformation? teamInformation;
   PlayerInformation? playerInformation;
+  SearchService searchService = SearchService();
+  LocationService locationService = LocationService();
   bool isLoading = true;
 
   Future<Map<String, String>> generateTeamMap() async {
@@ -80,6 +85,28 @@ class TeamService {
     final teamData = await getTeamData();
     final teamMap = {for (var team in teamData) team.teamId: team.name};
     return teamMap;
+  }
+
+  List<TeamInformation> sortNearbyTeams(
+      List<TeamInformation> teams, LocationInfo markedLocation) {
+    locationService.sortByDistance<TeamInformation>(
+      teams,
+      markedLocation,
+      (teams) => teams.location,
+    );
+    return teams;
+  }
+
+  List<TeamInformation> performTeamSearch(List<TeamInformation> teams,
+      String searchText, String selectedCity, String selectedDistrict) {
+    return searchService.searchingNameAndLocation(
+      listItems: teams,
+      searchText: searchText,
+      selectedCity: selectedCity,
+      selectedDistrict: selectedDistrict,
+      getNameOfItem: (teams) => teams.name,
+      getLocationOfItem: (teams) => teams.location,
+    );
   }
 
   Future<void> updateTeamsForMatchDelete(String matchId) async {

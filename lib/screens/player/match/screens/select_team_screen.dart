@@ -159,7 +159,7 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
                   const SizedBox(width: 5),
                   Expanded(
                     child: Text(
-                      "${team.district}, ${team.city}",
+                      "${team.location.district}, ${team.location.city}",
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,
