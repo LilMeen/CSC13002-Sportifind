@@ -5,6 +5,7 @@ import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/player/match/screens/date_select_screen.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/edit_stadium_screen.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
+import 'package:sportifind/screens/stadium_owner/stadium/update_status_screen.dart';
 import 'package:sportifind/util/stadium_service.dart';
 
 class StadiumInfoScreen extends StatefulWidget {
@@ -322,6 +323,13 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                                       vertical: 4, horizontal: 8),
                                   child: Icon(Icons.delete, size: 25),
                                 ),
+                                const PopupMenuItem(
+                                  value: 'update',
+                                  height: 30,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8),
+                                  child: Icon(Icons.rule, size: 25),
+                                ),
                               ];
                             },
                             onSelected: (value) {
@@ -335,6 +343,14 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                                 );
                               } else if (value == 'delete') {
                                 _showDeleteDialog();
+                              } else if (value == 'update') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        UpdateStatusScreen(stadium: widget.stadium),
+                                  ),
+                                );
                               }
                             },
                             child: const Icon(

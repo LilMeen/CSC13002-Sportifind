@@ -5,7 +5,7 @@ class FieldData {
   final int numberId;
   final String type;
   final double price;
-  final bool status;
+  final bool status; //true is active, false is maintained
 
   FieldData({
     required this.id,

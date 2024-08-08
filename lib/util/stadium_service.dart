@@ -274,6 +274,9 @@ class StadiumService {
     List<MatchCard> matches =
         await matService.getMatchDataByStadiumId(stadium.id);
 
+    final sortedFields = stadium.fields
+      ..sort((a, b) => a.numberId.compareTo(b.numberId));
+
     int numberId = 1;
     int oldfFieldIndex = 0;
     Future<void> editFields(
@@ -281,7 +284,7 @@ class StadiumService {
       for (int i = 0; i < oldCount; i++) {
         await stadiumRef
             .collection('fields')
-            .doc(stadium.fields[oldfFieldIndex++].id)
+            .doc(sortedFields[oldfFieldIndex++].id)
             .update({
           'numberId': numberId++,
           'price_per_hour': price,
@@ -302,7 +305,7 @@ class StadiumService {
 
       for (int i = newCount; i < oldCount; i++) {
         final fieldMatches = matches
-            .where((match) => match.field == stadium.fields[oldfFieldIndex].id)
+            .where((match) => match.field == sortedFields[oldfFieldIndex].id)
             .toList();
         for (var match in fieldMatches) {
           matService.deleteMatch(match.id);
@@ -310,7 +313,7 @@ class StadiumService {
 
         await stadiumRef
             .collection('fields')
-            .doc(stadium.fields[oldfFieldIndex++].id)
+            .doc(sortedFields[oldfFieldIndex++].id)
             .delete();
       }
     }
@@ -458,5 +461,22 @@ class StadiumService {
     }
 
     return files;
+  }
+
+  Future<void> updateFieldStatus(StadiumData stadium, Map<String, String> fieldsStatus) async {
+    try {
+      for (var field in stadium.fields) {
+        await FirebaseFirestore.instance
+            .collection('stadiums')
+            .doc(stadium.id)
+            .collection('fields')
+            .doc(field.id)
+            .update({
+          'status': fieldsStatus[field.id] == 'active',
+        });
+      }
+    } catch (e) {
+      throw Exception('Failed to update status: $e');
+    }
   }
 }

@@ -67,6 +67,12 @@ class SportifindTheme {
     color: bluePurple,
   );
 
+  static TextStyle AppBarTittle3 = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 25,
+    color: bluePurple,
+  );
+
   static const TextStyle display1 = TextStyle(
     fontFamily: fontName,
     fontWeight: FontWeight.bold,
@@ -147,5 +153,47 @@ class SportifindTheme {
     fontSize: 12,
     letterSpacing: 0.2,
     color: lightText, // was lightText
+  );
+
+  ////////////new
+  static TextStyle bodyTitle = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: bluePurple,
+  );
+
+  static TextStyle body = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: Colors.black,
+  );
+
+  static TextStyle dropdown = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+    color: Colors.black87,
+  );
+
+  static TextStyle dropdownGreen = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+    color: Colors.green,
+  );
+  static TextStyle dropdownGreenBold = GoogleFonts.lexend(
+    fontWeight: FontWeight.w900,
+    fontSize: 14,
+    color: Colors.green,
+  );
+
+  static TextStyle dropdownRed = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+    color: Colors.red,
+  );
+
+  static TextStyle dropdownRedBold = GoogleFonts.lexend(
+    fontWeight: FontWeight.w900,
+    fontSize: 14,
+    color: Colors.red,
   );
 }

@@ -103,6 +103,7 @@ flutter:
      - 'lib/assets/right_picked.png'
      - 'lib/assets/right_unpicked.png'
      - 'lib/assets/avatar/default_stadium_avatar.jpg'
+     - 'lib/assets/no_data/no_data.png'
      - 'lib/assets/images/match.jpg'
      - 'lib/assets/images/matchNearby.jpg'
      - 'lib/assets/images/bg.png'
