@@ -53,7 +53,7 @@ class _MemberCardsState extends State<MemberCards> {
     if (widget.status == 0) {
       homeTeam = await teamService.getTeamInformation(widget.matchInfo.team1);
     } else {
-      //awayTeam = await teamService.getTeamInformation(widget.matchInfo.team2);
+      awayTeam = await teamService.getTeamInformation(widget.matchInfo.team2);
     }
 
     setState(() {
@@ -74,7 +74,7 @@ class _MemberCardsState extends State<MemberCards> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return SizedBox(
-      height: height - 150,
+      height: 300,
       width: width,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -92,10 +92,25 @@ class _MemberCardsState extends State<MemberCards> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return SingleChildScrollView(
-      child: widget.status == 0
-          ? buildMatch(homeTeam!.members)
-          : buildMatch(awayTeam!.members),
-    );
+    if (widget.status == 0 && homeTeam != null) {
+      return SingleChildScrollView(
+        child: buildMatch(homeTeam!.members),
+      );
+    } else if (widget.status == 1 && awayTeam != null) {
+      return SingleChildScrollView(
+        child: buildMatch(awayTeam!.members),
+      );
+    } else if (widget.status == 1 && awayTeam == null) {
+      return Center(
+        child: Text("Please Invite other team first ^_^"),
+      );
+    } else if (widget.status == 0 && homeTeam == null) {
+      return Center(
+        child: Text("Please join this match first ^_^"),
+      );
+    }
+    else {
+      return const SizedBox();
+    }
   }
 }
