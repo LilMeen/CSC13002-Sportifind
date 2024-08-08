@@ -206,7 +206,7 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
           .get()
           .then((value) => value.docs);
       return  StadiumModel.fromFirestore(stadiumSnapshot, fieldSnapshot);
-    } catch (error) {;
+    } catch (error) {
       throw Exception('Failed to load stadium data: $error');
     }
   }

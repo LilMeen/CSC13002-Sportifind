@@ -15,10 +15,10 @@ class Dropdown extends StatefulWidget {
   });
 
   @override
-  _DropdownState createState() => _DropdownState();
+  DropdownState createState() => DropdownState();
 }
 
-class _DropdownState extends State<Dropdown> {
+class DropdownState extends State<Dropdown> {
   String? value;
 
   final List<String> genders = ['Male', 'Female', 'Other'];

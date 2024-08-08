@@ -198,10 +198,10 @@ class TabIcons extends StatefulWidget {
   final TabIconData? tabIconData;
   final Function()? removeAllSelect;
   @override
-  _TabIconsState createState() => _TabIconsState();
+  TabIconsState createState() => TabIconsState();
 }
 
-class _TabIconsState extends State<TabIcons> with TickerProviderStateMixin {
+class TabIconsState extends State<TabIcons> with TickerProviderStateMixin {
   @override
   void initState() {
     widget.tabIconData?.animationController = AnimationController(

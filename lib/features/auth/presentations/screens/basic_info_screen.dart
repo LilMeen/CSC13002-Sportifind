@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:sportifind/home/player_home_screen.dart';
 import 'package:sportifind/home/stadium_owner_home_screen.dart';

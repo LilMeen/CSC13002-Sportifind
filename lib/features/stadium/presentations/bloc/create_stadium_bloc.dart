@@ -1,10 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
-import 'package:sportifind/core/util/get_current_location.dart';
-import 'package:sportifind/core/util/get_location.dart';
+import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/core/util/image_service.dart';
 import 'package:sportifind/features/stadium/domain/usecases/create_stadium.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/stadium_form.dart';
