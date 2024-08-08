@@ -1,4 +1,3 @@
-import 'package:sportifind/screens/message/widgets/group_tile.dart';
 import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
 import 'package:sportifind/screens/player/notify/screeens/notification_screen.dart';
 import 'package:sportifind/screens/player/team/screens/team_main_screen.dart';
@@ -47,8 +46,6 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    print(width);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -60,9 +57,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
             children: [
               Text(
                 'Sportifind',
-                style: width < 420
-                    ? SportifindTheme.AppBarTittle2
-                    : SportifindTheme.AppBarTittle1,
+                style: SportifindTheme.AppBarTittle1,
               ),
               Stack(children: <Widget>[
                 IconButton(
@@ -76,20 +71,20 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   },
                   icon: const Icon(
                     Icons.notifications_none,
-                    size: 40,
+                    size: 35,
                     color: SportifindTheme.bluePurple,
                   ),
                 ),
                 const Positioned(
                   // draw a red marble
-                  top: 13.0,
+                  top: 10.0,
                   right: 10.0,
                   child: Icon(Icons.brightness_1_rounded,
                       size: 16.0, color: Color.fromARGB(255, 255, 0, 0)),
                 ),
                 const Positioned(
                   // draw a red marble
-                  top: 13.0,
+                  top: 10.0,
                   right: 10.0,
                   child: Icon(Icons.brightness_1_outlined,
                       size: 16.0, color: Colors.white),
@@ -108,20 +103,20 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                     },
                     icon: const Icon(
                       Icons.chat_bubble_outline_outlined,
-                      size: 35,
+                      size: 30,
                       color: SportifindTheme.bluePurple,
                     ),
                   ),
                   const Positioned(
                     // draw a red marble
-                    top: 8.0,
+                    top: 6.0,
                     right: 6.0,
                     child: Icon(Icons.brightness_1_rounded,
                         size: 16.0, color: Color.fromARGB(255, 255, 0, 0)),
                   ),
                   const Positioned(
                     // draw a red marble
-                    top: 8.0,
+                    top: 6.0,
                     right: 6.0,
                     child: Icon(Icons.brightness_1_outlined,
                         size: 16.0, color: Colors.white),

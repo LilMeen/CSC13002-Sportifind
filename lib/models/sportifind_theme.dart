@@ -51,13 +51,19 @@ class SportifindTheme {
 
   static TextStyle AppBarTittle1 = GoogleFonts.rowdies(
     fontWeight: FontWeight.normal,
-    fontSize: 50,
+    fontSize: 55,
     color: bluePurple,
   );
 
-  static TextStyle AppBarTittle2 = GoogleFonts.rowdies(
+  static TextStyle white16 = GoogleFonts.lexend(
     fontWeight: FontWeight.normal,
-    fontSize: 36,
+    fontSize: 14,
+    color: Colors.white,
+  );
+
+  static TextStyle bluePurple16 = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 14,
     color: bluePurple,
   );
 

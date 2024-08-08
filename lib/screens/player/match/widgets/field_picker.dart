@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/models/field_data.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 
+// ignore: must_be_immutable
 class FieldPicker extends StatefulWidget {
   FieldPicker({
     super.key,
@@ -48,7 +49,7 @@ class _FieldPickerState extends State<FieldPicker> {
             items: widget.fields.map((FieldData item) {
               return DropdownMenuItem<String>(
                 value: item.numberId.toString(),
-                child: widget.selectedField == null ? Text("Choose a field") : Text('${item.numberId} ${item.type}'),
+                child: Text('${item.numberId} ${item.type}'),
               );
             }).toList(),
             onChanged: (value) {

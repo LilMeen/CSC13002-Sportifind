@@ -20,6 +20,17 @@ class TeamService {
   PlayerInformation? playerInformation;
   bool isLoading = true;
 
+  Future<Map<String, String>> generateTeamMap() async {
+    final teamData = await getTeamData();
+    final teamMap = {for (var team in teamData) team.teamId: team.name};
+    return teamMap;
+  }
+
+  Future<String> convertTeamIdToName(String teamId) async {
+    final teamMap = await generateTeamMap();
+    return teamMap[teamId] ?? 'Unknown Team';
+  }
+
   Future<List<TeamInformation>> getTeamData() async {
     try {
       final teamsQuery =

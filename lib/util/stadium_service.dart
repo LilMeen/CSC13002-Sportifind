@@ -19,6 +19,45 @@ class StadiumService {
   final SearchService srchService = SearchService();
   final ImageService imgService = ImageService();
 
+  Future<Map<String, String>> generateStadiumMap() async {
+    final stadiumData = await getStadiumsData();
+    final stadiumMap = {
+      for (var stadium in stadiumData) stadium.id: stadium.name
+    };
+    return stadiumMap;
+  }
+
+  Future<MatchCard> convertStadiumIdToName(MatchCard match) async {
+    final stadiumMap = await generateStadiumMap();
+    match.stadium = stadiumMap[match.stadium] ?? 'Unknown Stadium';
+    return match;
+  }
+
+  Future<StadiumData?> getSpecificStadiumsData(String stadiumId) async {
+    try {
+      // Reference to the specific team document
+      DocumentReference<Map<String, dynamic>> stadiumRef =
+          FirebaseFirestore.instance.collection('stadiums').doc(stadiumId);
+
+      // Get the document
+      DocumentSnapshot<Map<String, dynamic>> stadiumSnapshot =
+          await stadiumRef.get();
+
+      // Check if the document exists
+      if (stadiumSnapshot.exists) {
+        // Use the fromSnapshot constructor to create a TeamInformation object
+        StadiumData stadiumInfo = StadiumData.fromSnapshot(stadiumSnapshot);
+        return stadiumInfo;
+      } else {
+        print('No such stadium document exists!');
+        return null;
+      }
+    } catch (e) {
+      print('Error getting stadium information: $e');
+      return null;
+    }
+  }
+
   Future<List<StadiumData>> getStadiumsData() async {
     try {
       final stadiumsQuery =

@@ -4,7 +4,6 @@ import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/models/tab_icon.dart';
 import 'package:sportifind/screens/player/match/screens/select_team_screen.dart';
-import 'package:sportifind/screens/player/match/util/booking_util.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/util/team_service.dart';
 import 'package:sportifind/util/user_service.dart';

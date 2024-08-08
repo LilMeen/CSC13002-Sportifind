@@ -4,7 +4,6 @@ import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
-import 'package:sportifind/screens/player/team/screens/create_team_form.dart';
 import 'package:sportifind/util/object_handling.dart';
 import 'package:sportifind/util/team_service.dart';
 import 'package:sportifind/util/user_service.dart';
@@ -78,7 +77,7 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         SizedBox(
-                          height: 250,
+                          height: 230,
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
                             itemCount: userTeams.length,
@@ -126,100 +125,104 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
               team.teamId, widget.hostId, widget.matchId);
         }
       },
-      child: AspectRatio(
-        aspectRatio: 1.9 / 2,
-        child: Container(
-          margin: const EdgeInsets.only(right: 20),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            border: Border.all(color: SportifindTheme.bluePurple),
-            borderRadius: BorderRadius.circular(20),
-            color: SportifindTheme.white,
-          ),
+      child: Container(
+        height: 100,
+        width: 200,
+        margin: const EdgeInsets.only(right: 20),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border.all(color: SportifindTheme.bluePurple, width: 2),
+          borderRadius: BorderRadius.circular(8),
+          color: SportifindTheme.white,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 4.0, top: 4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
                 team.name,
-                style: TextStyle(color: SportifindTheme.bluePurple),
+                style: const TextStyle(
+                  color: SportifindTheme.bluePurple,
+                  fontSize: 24,
+                ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.location_on_outlined,
                     color: SportifindTheme.bluePurple,
                     size: 20,
                   ),
-                  Text(
-                    "${team.district}, ${team.city}",
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      "${team.district}, ${team.city}",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2, // Maximum number of lines for the text
+                      overflow: TextOverflow
+                          .clip, // Add ellipsis (...) if text overflows
                     ),
                   ),
                 ],
               ),
+              const SizedBox(
+                height: 10,
+              ),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
-                    Icons.group,
+                    Icons.group_outlined,
                     color: SportifindTheme.bluePurple,
                     size: 20,
                   ),
-                  Text(
-                    "${team.members.length} members",
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      "${team.members.length} members",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
               ),
+              const SizedBox(
+                height: 20,
+              ),
               Container(
+                height: 25,
+                width: 120,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(18),
                   color: SportifindTheme.bluePurple,
                 ),
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    "Pick this team",
-                    style:
-                        TextStyle(color: SportifindTheme.white, fontSize: 24),
+                child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      "Pick this team",
+                      style: TextStyle(
+                        color: SportifindTheme.white,
+                        fontSize: 14,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget createTeamCard() {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const CreateTeamForm()),
-        );
-      },
-      child: AspectRatio(
-        aspectRatio: 1 / 2,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.grey.shade900,
-          ),
-          child: Center(
-              child: Icon(
-            Icons.add,
-            color: Colors.yellow[700],
-            size: 50,
-          )),
         ),
       ),
     );

@@ -90,7 +90,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   }
 
   void refreshByDate(DateTime pickedDate) async {
-    await matchService.getMatchDate(pickedDate, selectedField!,
+    await matchService.getMatchDate(pickedDate, selectedField,
         widget.selectedStadiumId, userMatches, bookedSlot);
     setState(() {
       selectedDate = pickedDate;
@@ -226,7 +226,6 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   @override
   Widget build(BuildContext context) {
     final String selectedStadium = widget.selectedStadiumName;
-    final String selectedTeam = widget.selectedTeamName;
     return MaterialApp(
       home: SafeArea(
         child: Scaffold(

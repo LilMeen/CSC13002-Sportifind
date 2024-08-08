@@ -153,7 +153,6 @@ class MatchService {
           if (matchDate.day == DateTime.now().day &&
               matchDate.month == DateTime.now().month &&
               matchDate.year == DateTime.now().year) {
-            match = await convertStadiumIdToName(match);
             userMatches.add(match);
           }
         } catch (e) {
@@ -195,7 +194,6 @@ class MatchService {
           if (matchDate.day == DateTime.now().day &&
               matchDate.month == DateTime.now().month &&
               matchDate.year == DateTime.now().year) {
-            match = await convertStadiumIdToName(match);
             userMatches.add(match);
           }
         } catch (e) {
@@ -204,31 +202,6 @@ class MatchService {
       }
     }
     return userMatches;
-  }
-
-  Future<Map<String, String>> generateStadiumMap() async {
-    final stadiumData = await stadiumService.getStadiumsData();
-    final stadiumMap = {
-      for (var stadium in stadiumData) stadium.id: stadium.name
-    };
-    return stadiumMap;
-  }
-
-  Future<MatchCard> convertStadiumIdToName(MatchCard match) async {
-    final stadiumMap = await generateStadiumMap();
-    match.stadium = stadiumMap[match.stadium] ?? 'Unknown Stadium';
-    return match;
-  }
-
-  Future<Map<String, String>> generateTeamMap() async {
-    final teamData = await teamService.getTeamData();
-    final teamMap = {for (var team in teamData) team.teamId: team.name};
-    return teamMap;
-  }
-
-  Future<String> convertTeamIdToName(String teamId) async {
-    final teamMap = await generateTeamMap();
-    return teamMap[teamId] ?? 'Unknown Team';
   }
 
   DateTime parseDate(String dateStr) {

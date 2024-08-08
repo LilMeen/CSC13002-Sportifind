@@ -9,6 +9,7 @@ import 'package:sportifind/util/match_service.dart';
 import 'package:sportifind/widgets/match_list/match_list.dart';
 import '../../models/match_card.dart';
 
+// ignore: must_be_immutable
 class MatchCards extends StatefulWidget {
   MatchCards({
     super.key,
@@ -19,7 +20,7 @@ class MatchCards extends StatefulWidget {
 
   List<MatchCard> yourMatch;
   List<MatchCard> nearByMatch;
-  int status;
+  final int status;
 
   @override
   State<StatefulWidget> createState() => _MatchCardsState();
@@ -68,7 +69,7 @@ class _MatchCardsState extends State<MatchCards> {
       width: width,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: MatchCardList(matches: matches),
+        child: MatchCardList(matches: matches, status: widget.status,),
       ),
     );
   }
