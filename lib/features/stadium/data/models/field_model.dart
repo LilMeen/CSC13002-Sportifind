@@ -29,7 +29,6 @@ class FieldModel {
 
   Map<String, dynamic> toFirestore() {
     return {
-      'id': id,
       'numberId': numberId,
       'type': type,
       'price_per_hour': price,

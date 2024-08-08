@@ -1,27 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:sportifind/features/stadium/data/models/field_model.dart';
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
 import 'package:sportifind/core/entities/location.dart';
 
 abstract interface class StadiumRemoteDataSource {
-  Future<void> createStadium({
-    required String name,
-    required Location location,
-    required String phoneNumber,
-    required String openTime,
-    required String closeTime,
-    required double pricePerHour5,
-    required double pricePerHour7,
-    required double pricePerHour11,
-    required int num5PlayerFields,
-    required int num7PlayerFields,
-    required int num11PlayerFields,
-    required File avatar,
-    required List<File> images,
-  });
+  Future<void> createStadium(StadiumModel stadium);
 
   Future<void> updateStadium({
     required String id,
@@ -59,53 +45,45 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
   /// CREATE STADIUM
   /// Create a new stadium
   @override
-  Future<void> createStadium({
-    required String name,
-    required Location location,
-    required String phoneNumber,
-    required String openTime,
-    required String closeTime,
-    required double pricePerHour5,
-    required double pricePerHour7,
-    required double pricePerHour11,
-    required int num5PlayerFields,
-    required int num7PlayerFields,
-    required int num11PlayerFields,
-    required File avatar,
-    required List<File> images,
-  }) async {
-    final stadiumRef = await FirebaseFirestore.instance.collection('stadiums').add({
-      'name': name,
-      'owner': FirebaseAuth.instance.currentUser!.uid,
-      'city': location.city,
-      'district': location.district,
-      'address': location.address,
-      'latitude': location.latitude,
-      'longitude': location.longitude,
-      'phone_number': phoneNumber,
-      'open_time': openTime,
-      'close_time': closeTime,
-    });
-
-    final stadiumId = stadiumRef.id;
-    await _uploadAvatar(avatar, stadiumId);
-    await _uploadImages(images, stadiumId);
-
-    int numberId = 1;
-    Future<void> addFields(int count, String type, double price) async {
-      for (int i = 0; i < count; i++) {
-        await stadiumRef.collection('fields').add({
-          'numberId': numberId++,
-          'status': true,
-          'type': type,
-          'price_per_hour': price,
-        });
-      }
+  Future<void> createStadium(StadiumModel stadium) async {
+    final stadiumRef = await FirebaseFirestore.instance.collection('stadiums').add(
+      stadium.toFirestore(),
+    );
+    for (FieldModel field in stadium.fields) {
+      await stadiumRef.collection('fields').add(field.toFirestore());
+    }
+    
+    final storageRef = FirebaseStorage.instance
+      .ref()
+      .child('stadiums')
+      .child(stadiumRef.id);
+    await storageRef
+      .child('avatar')
+      .child('avatar.jpg')
+      .putFile(File(stadium.avatar));
+    for (int i = 0; i < stadium.images.length; i++) {
+      await storageRef
+        .child('images')
+        .child('image_$i.jpg')
+        .putFile(File(stadium.images[i]));
     }
 
-    await addFields(num5PlayerFields, '5-Player', pricePerHour5);
-    await addFields(num7PlayerFields, '7-Player', pricePerHour7);
-    await addFields(num11PlayerFields, '11-Player', pricePerHour11);
+    final avatarUrl = await storageRef
+      .child('avatar')
+      .child('avatar.jpg')
+      .getDownloadURL();
+    final imageUrls = <String>[];
+    for(int i = 0; i < stadium.images.length; i++) {
+      final imageUrl = await storageRef
+        .child('images')
+        .child('image_$i.jpg')
+        .getDownloadURL();
+      imageUrls.add(imageUrl);
+    }
+    await stadiumRef.update({
+      'avatar': avatarUrl,
+      'images': imageUrls,
+    });
   }
   
 
@@ -247,46 +225,3 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
   ////////////////////////////////
   //////// PRIVATE METHODS
   ///
-  Future<void> _uploadAvatar(File avatar, String stadiumId) async {
-    try {
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('stadiums')
-          .child(stadiumId)
-          .child('avatar')
-          .child('avatar.jpg');
-
-      await storageRef.putFile(avatar);
-      final imageUrl = await storageRef.getDownloadURL();
-      await FirebaseFirestore.instance
-          .collection('stadiums')
-          .doc(stadiumId)
-          .update({'avatar': imageUrl});
-    } catch (e) {
-      throw Exception('Failed to upload avatar: $e');
-    }
-  }
-
-  Future<void> _uploadImages(List<File> images, String stadiumId) async {
-    try {
-      List<String> imageUrls = [];
-      for (int i = 0; i < images.length; i++) {
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child('stadiums')
-            .child(stadiumId)
-            .child('images')
-            .child('image_$i.jpg');
-
-        await storageRef.putFile(images[i]);
-        final imageUrl = await storageRef.getDownloadURL();
-        imageUrls.add(imageUrl);
-      }
-      await FirebaseFirestore.instance
-          .collection('stadiums')
-          .doc(stadiumId)
-          .update({'images': imageUrls});
-    } catch (e) {
-      throw Exception('Failed to upload images: $e');
-    }
-  } 

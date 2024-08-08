@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
 import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 import 'package:sportifind/services/location_service.dart';
@@ -16,36 +17,8 @@ class StadiumRepositoryImpl implements StadiumRepository {
   });
 
   @override
-  Future<Result<void>> createStadium({
-    required String name,
-    required Location location,
-    required String phoneNumber,
-    required String openTime,
-    required String closeTime,
-    required double pricePerHour5,
-    required double pricePerHour7,
-    required double pricePerHour11,
-    required int num5PlayerFields,
-    required int num7PlayerFields,
-    required int num11PlayerFields,
-    required File avatar,
-    required List<File> images,
-  }) async { 
-    await stadiumRemoteDataSource.createStadium(
-      name: name,
-      location: location,
-      phoneNumber: phoneNumber,
-      openTime: openTime,
-      closeTime: closeTime,
-      pricePerHour5: pricePerHour5,
-      pricePerHour7: pricePerHour7,
-      pricePerHour11: pricePerHour11,
-      num5PlayerFields: num5PlayerFields,
-      num7PlayerFields: num7PlayerFields,
-      num11PlayerFields: num11PlayerFields,
-      avatar: avatar,
-      images: images,
-    );
+  Future<Result<void>> createStadium(Stadium stadium) async { 
+    await stadiumRemoteDataSource.createStadium(StadiumModel.fromEntity(stadium));
     return Result.success(null);
   }
   

@@ -6,21 +6,7 @@ import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
 
 abstract interface class StadiumRepository {
 
-  Future<Result<void>> createStadium({
-    required String name,
-    required Location location,
-    required String phoneNumber,
-    required String openTime,
-    required String closeTime,
-    required double pricePerHour5,
-    required double pricePerHour7,
-    required double pricePerHour11,
-    required int num5PlayerFields,
-    required int num7PlayerFields,
-    required int num11PlayerFields,
-    required File avatar,
-    required List<File> images,
-  }); 
+  Future<Result<void>> createStadium(Stadium stadium); 
 
   Future<Result<void>> updateStadium({
     required String id,

@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/features/stadium/domain/entities/field.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 
 class CreateStadium implements UseCase<void, CreateStadiumParams> {
@@ -11,21 +14,36 @@ class CreateStadium implements UseCase<void, CreateStadiumParams> {
 
   @override
   Future<Result<void>> call(CreateStadiumParams params) async {
-    return await repository.createStadium(
+    List<Field> fields = [];
+    int numberId = 1;
+    void addFields(int numFields, double price, String type) {
+      for (int i = 0; i < numFields; i++) {
+        fields.add(Field(
+          id: '',
+          numberId: numberId++,
+          type: type,
+          price: price,
+          status: true,
+        ));
+      }
+    }
+    addFields(params.num5PlayerFields, params.pricePerHour5, '5-player');
+    addFields(params.num7PlayerFields, params.pricePerHour7, '7-player');
+    addFields(params.num11PlayerFields, params.pricePerHour11, '11-player');
+
+    Stadium stadium = Stadium(
+      id: '',
       name: params.name,
-      location: params.location,
-      phoneNumber: params.phoneNumber,
-      openTime: params.openTime,
-      closeTime: params.closeTime,
-      pricePerHour5: params.pricePerHour5,
-      pricePerHour7: params.pricePerHour7,
-      pricePerHour11: params.pricePerHour11,
-      num5PlayerFields: params.num5PlayerFields,
-      num7PlayerFields: params.num7PlayerFields,
-      num11PlayerFields: params.num11PlayerFields,
+      owner: FirebaseAuth.instance.currentUser!.uid,
       avatar: params.avatar,
       images: params.images,
+      location: params.location,
+      openTime: params.openTime,
+      closeTime: params.closeTime,
+      phone: params.phoneNumber,
+      fields: fields,
     );
+    return await repository.createStadium(stadium);
   }
 }
 

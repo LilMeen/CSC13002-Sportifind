@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/features/stadium/data/models/field_model.dart';
@@ -92,8 +93,8 @@ class StadiumModel {
       id: id,
       name: name,
       owner: owner,
-      avatar: avatar,
-      images: images,
+      avatar: File(avatar),
+      images: List<File>.from(images.map((e) => File(e))),
       location: location,
       openTime: openTime,
       closeTime: closeTime,
@@ -108,8 +109,8 @@ class StadiumModel {
       name: entity.name,
       phone: entity.phone,
       owner: entity.owner,
-      avatar: entity.avatar,
-      images: entity.images,
+      avatar: entity.avatar.path,
+      images: entity.images.map((e) => e.path).toList(),
       openTime: entity.openTime,
       closeTime: entity.closeTime,
       city: entity.location.city,

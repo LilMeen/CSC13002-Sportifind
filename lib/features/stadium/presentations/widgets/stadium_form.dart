@@ -157,13 +157,12 @@ class StadiumForm {
             ),
             keyboardType: TextInputType.number,
             validator: (value) {
-              if (fieldCount > 0 && (value == null || value.isEmpty)) {
+              if ((value == null || value.isEmpty)) {
                 return 'Please enter a price';
               }
 
               final numberRegExp = RegExp(r'^\d+(\.\d+)?$');
               if (fieldCount > 0 &&
-                  value != null &&
                   !numberRegExp.hasMatch(value)) {
                 return 'Please enter a valid number';
               }

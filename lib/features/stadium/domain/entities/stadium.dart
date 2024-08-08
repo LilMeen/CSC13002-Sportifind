@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:sportifind/features/stadium/domain/entities/field.dart';
 import 'package:sportifind/core/entities/location.dart';
 
@@ -5,8 +7,8 @@ class Stadium {
   final String id;
   final String name;
   final String owner;
-  final String avatar;
-  final List<String> images;
+  final File avatar;
+  final List<File> images;
   final Location location;
   final String openTime;
   final String closeTime;
