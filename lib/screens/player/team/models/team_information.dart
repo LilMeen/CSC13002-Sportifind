@@ -37,14 +37,16 @@ class TeamInformation {
         avatarImageUrl = snapshot['avatarImage'],
         incoming = Map<String, bool>.from(snapshot['incomingMatch']),
         members = (snapshot['members'] as List)
-            .map((item) => item as String)
+            .map((item) => item.trim() as String)
             .toList(),
         matchSentRequest = (snapshot.data()?['matchSentRequest'] as List?)
-                ?.map((item) => MatchRequest.fromMap(item as Map<String, dynamic>))
+                ?.map((item) =>
+                    MatchRequest.fromMap(item as Map<String, dynamic>))
                 .toList() ??
             [],
         matchInviteRequest = (snapshot.data()?['matchInviteRequest'] as List?)
-                ?.map((item) => MatchRequest.fromMap(item as Map<String, dynamic>))
+                ?.map((item) =>
+                    MatchRequest.fromMap(item as Map<String, dynamic>))
                 .toList() ??
             [],
         captain = snapshot['captain'],

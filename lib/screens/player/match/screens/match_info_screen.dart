@@ -10,12 +10,18 @@ import 'package:sportifind/util/match_service.dart';
 import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/util/team_service.dart';
 import 'package:sportifind/util/user_service.dart';
+import 'package:sportifind/widgets/member_list/member_card.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class MatchInfoScreen extends StatefulWidget {
-  const MatchInfoScreen({super.key, required this.matchInfo});
+  const MatchInfoScreen({
+    super.key,
+    required this.matchInfo,
+    required this.matchStatus,
+  });
 
   final MatchCard matchInfo;
+  final int matchStatus;
 
   @override
   State<StatefulWidget> createState() => _MatchInfoScreenState();
@@ -373,6 +379,24 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 18),
+                    MemberCards(status: status, matchInfo: widget.matchInfo),
+                    if (widget.matchStatus == 0)
+                      Container(
+                        child: TextButton(
+                          onPressed: () {},
+                          child: Text(""),
+                        ),
+                      )
+                    else if (widget.matchStatus == 1)
+                      Container(
+                        child: TextButton(
+                          onPressed: () {},
+                          child: Text(""),
+                        ),
+                      )
+                    else
+                      const SizedBox(),
                   ],
                 ),
               );

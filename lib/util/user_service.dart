@@ -38,17 +38,27 @@ class UserService {
     }
   }
 
-  Future<List<PlayerData>> getPlayerData() async {
+  Future<PlayerData?> getPlayerData(String memberId) async {
     try {
-      final playersQuery = await FirebaseFirestore.instance
-          .collection('users')
-          .where('role', isEqualTo: 'player')
-          .get();
-      return playersQuery.docs
-          .map((player) => PlayerData.fromSnapshot(player))
-          .toList();
-    } catch (error) {
-      throw Exception('Failed to load player data: $error');
+      final playerRef =
+          FirebaseFirestore.instance.collection('users').doc(memberId);
+
+      // Get the document
+      DocumentSnapshot<Map<String, dynamic>> playerSnapshot =
+          await playerRef.get();
+
+      // Check if the document exists
+      if (playerSnapshot.exists) {
+        // Use the fromSnapshot constructor to create a TeamInformation object
+        PlayerData matchInfo = PlayerData.fromSnapshot(playerSnapshot);
+        return matchInfo;
+      } else {
+        print('No such player document exists!');
+        return null;
+      }
+    } catch (e) {
+      print('Error getting match information: $e');
+      return null;
     }
   }
 
@@ -82,7 +92,7 @@ class UserService {
   }
 
   Future<Map<String, String>> generateUserMap() async {
-    final userData = await getPlayerData();
+    final userData = await getPlayersDataWithNotifications();
     final userMap = {for (var user in userData) user.id: user.name};
     return userMap;
   }
