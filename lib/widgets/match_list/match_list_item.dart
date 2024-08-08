@@ -3,12 +3,15 @@ import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/match/screens/match_info_screen.dart';
 import 'package:sportifind/util/match_service.dart';
+import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/util/team_service.dart';
 
 class MatchListItem extends StatefulWidget {
-  const MatchListItem({super.key, required this.matchCard});
+  const MatchListItem(
+      {super.key, required this.matchCard, required this.status});
 
   final MatchCard matchCard;
+  final int status;
 
   @override
   State<StatefulWidget> createState() => _MatchListItemState();
@@ -18,13 +21,17 @@ class _MatchListItemState extends State<MatchListItem> {
   String? teamName;
   MatchService matchService = MatchService();
   TeamService teamService = TeamService();
+  StadiumService stadiumService = StadiumService();
   ImageProvider? team1ImageProvider;
   ImageProvider? team2ImageProvider;
   bool isLoadingUser = true;
   Map<String, String> teamNames = {};
+  Map<String, String> stadiumNames = {};
 
   Future<void> _initialize() async {
     teamNames = await teamService.generateTeamNameMap();
+    stadiumNames = await stadiumService.generateStadiumMap();
+
     team1ImageProvider = NetworkImage(widget.matchCard.avatarTeam1);
     team2ImageProvider = NetworkImage(
       widget.matchCard.avatarTeam2.isEmpty
@@ -75,7 +82,7 @@ class _MatchListItemState extends State<MatchListItem> {
         );
       },
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Container(
             width: 50,
@@ -106,18 +113,20 @@ class _MatchListItemState extends State<MatchListItem> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 15,
           ),
           Expanded(
             child: Container(
-              padding: EdgeInsets.only(left: 30, right: 30, bottom: 20),
+              padding: const EdgeInsets.only(left: 30, right: 30, bottom: 20),
               height: 210,
               decoration: BoxDecoration(
                 color: Colors.grey,
                 borderRadius: BorderRadius.circular(20),
-                image: const DecorationImage(
-                  image: AssetImage('lib/assets/images/match.jpg'),
+                image: DecorationImage(
+                  image: widget.status == 0
+                      ? const AssetImage('lib/assets/images/match.jpg')
+                      : const AssetImage('lib/assets/images/matchNearby.jpg'),
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
                 ),
@@ -129,27 +138,27 @@ class _MatchListItemState extends State<MatchListItem> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        width: 90,
-                        child: Column(
-                          children: [
-                            Text(
-                              teamNames[widget.matchCard.team1] ?? "Unknown",
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  color: SportifindTheme.white, fontSize: 16),
+                      Column(
+                        children: [
+                          Text(
+                            teamNames[widget.matchCard.team1] ?? "Unknown",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                color: SportifindTheme.white, fontSize: 16),
+                            maxLines: 1, // Maximum number of lines for the text
+                            overflow: TextOverflow
+                                .ellipsis, // Add ellipsis (...) if text overflows
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          Center(
+                            child: CircleAvatar(
+                              radius: 35,
+                              backgroundImage: team1ImageProvider,
                             ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Center(
-                              child: CircleAvatar(
-                                radius: 35,
-                                backgroundImage: team1ImageProvider,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                       const Padding(
                         padding: EdgeInsets.only(top: 30.0),
@@ -167,6 +176,9 @@ class _MatchListItemState extends State<MatchListItem> {
                             teamNames[widget.matchCard.team2] ?? "Unknown",
                             style: const TextStyle(
                                 color: SportifindTheme.white, fontSize: 16),
+                            maxLines: 1, // Maximum number of lines for the text
+                            overflow: TextOverflow
+                                .ellipsis, // Add ellipsis (...) if text overflows
                           ),
                           const SizedBox(
                             height: 8,
@@ -219,9 +231,14 @@ class _MatchListItemState extends State<MatchListItem> {
                       const SizedBox(
                         width: 10,
                       ),
-                      Text(
-                        widget.matchCard.stadium,
-                        style: const TextStyle(color: Colors.white),
+                      Expanded(
+                        child: Text(
+                          stadiumNames[widget.matchCard.stadium] ?? "Unknow",
+                          style: const TextStyle(color: Colors.white),
+                          maxLines: 1, // Maximum number of lines for the text
+                          overflow: TextOverflow
+                              .ellipsis, // Add ellipsis (...) if text overflows
+                        ),
                       ),
                     ],
                   ),

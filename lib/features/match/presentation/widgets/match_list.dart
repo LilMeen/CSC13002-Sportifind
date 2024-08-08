@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/features/match/domain/entities/match_entity.dart';
-import 'package:sportifind/features/match/presentation/widgets/match_list_item.dart';
-
+import 'package:sportifind/models/match_card.dart';
+import 'package:sportifind/widgets/match_list/match_list_item.dart';
 
 class MatchCardList extends StatelessWidget {
   const MatchCardList({super.key, required this.matches, required this.status});
 
-  final List<MatchEntity> matches;
+  final List<MatchCard> matches;
   final int status;
 
   @override

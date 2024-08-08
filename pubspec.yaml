@@ -59,15 +59,7 @@ dependencies:
   google_sign_in: ^6.2.1
   flutter_svg: ^1.0.0
   toggle_switch: ^2.3.0
-  get_it: ^7.7.0
-  darq: ^2.0.0
-  shared_preferences: ^2.3.2
-  cached_network_image: ^3.3.1
-  fl_chart: ^0.69.0
-  navigation_view: ^1.0.6
-  flutter_animate: ^4.5.0
-  flutter_dotenv: ^5.1.0
-  flutter_config: ^2.0.2
+
   
 dev_dependencies:
   flutter_test:
@@ -111,21 +103,11 @@ flutter:
      - 'lib/assets/right_picked.png'
      - 'lib/assets/right_unpicked.png'
      - 'lib/assets/avatar/default_stadium_avatar.jpg'
-     - 'lib/assets/no_data/no_data.png'
      - 'lib/assets/images/match.jpg'
      - 'lib/assets/images/matchNearby.jpg'
      - 'lib/assets/images/bg.png'
      - 'lib/assets/images/loginBackground.jpg'
      - 'lib/assets/images/matchDetailBackground.png'
-     - 'lib/assets/no_avatar.png'
-     - 'lib/assets/left.png'
-     - 'lib/assets/right.png'
-     - 'lib/assets/sole.png'
-     - 'lib/assets/weight.png'
-     - 'lib/assets/height.png'
-     - 'lib/assets/crown.png'
-     - 'lib/assets/player_unpicked.png'
-     - 'lib/assets/player_picked.png'
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
