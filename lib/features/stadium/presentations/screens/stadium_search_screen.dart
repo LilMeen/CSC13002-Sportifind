@@ -1,20 +1,18 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/entities/stadium_owner.dart';
-import 'package:sportifind/core/usecases/usecase_provider.dart';
-import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/core/widgets/city_dropdown.dart';
 import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';
 import 'package:sportifind/features/auth/presentations/widgets/cards/stadium_card.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
-import 'package:sportifind/features/stadium/domain/usecases/search_stadium.dart';
-import 'package:sportifind/features/stadium/domain/usecases/get_nearby_stadium.dart';
+import 'package:sportifind/features/stadium/presentations/bloc/stadium_search_bloc.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_map_search_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/create_stadium_screen.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/current_location_button.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/custom_search_bar.dart';
+
+const double floatingDistance = 65.0;
 
 class StadiumSearchScreen extends StatefulWidget {
   final int gridCol;
@@ -52,269 +50,197 @@ class StadiumSearchScreen extends StatefulWidget {
 }
 
 class StadiumSearchScreenState extends State<StadiumSearchScreen> {
-  Timer? debounce;
-  final TextEditingController searchController = TextEditingController();
-  List<Stadium> searchedStadiums = [];
-  String searchText = '';
-  String textResult = '-Nearby stadiums-';
-  late Map<String, String> ownerMap;
-  final Map<String, String> citiesNameAndId = {};
-  String selectedCity = '';
-  String selectedDistrict = '';
-  late Location currentLocation;
-  bool isLoadingLocation = false;
-  double floatingDistance = 0.0;
+  late StadiumSearchBloc _bloc;
 
-  @override 
-  void initState() async {
+  @override
+  void initState() {
     super.initState();
-    searchController.addListener(onSearchChanged);
-    searchText = searchController.text;
-
-    searchedStadiums = widget.stadiums;
-    currentLocation = widget.userLocation;
-    searchedStadiums = await UseCaseProvider.getUseCase<GetNearbyStadium>().call(
-      GetNearbyStadiumParams(
-        searchedStadiums,
-        currentLocation,
-      ),
-    ).then((value) => value.data!);
-
-    ownerMap = {for (var owner in widget.owners) owner.id: owner.name};
-    if (widget.isStadiumOwnerUser) {
-      floatingDistance = 65.0;
-    }
+    _bloc = StadiumSearchBloc(context, widget.userLocation, widget.stadiums, widget.owners);
+    _bloc.init();
   }
 
   @override
   void dispose() {
-    searchController.removeListener(onSearchChanged);
-    searchController.dispose();
-    debounce?.cancel();
+    _bloc.dispose();
     super.dispose();
   }
 
-  void onSearchChanged() {
-    if (debounce?.isActive ?? false) debounce?.cancel();
-    debounce = Timer(const Duration(milliseconds: 500), () {
-      setState(() {
-        searchText = searchController.text;
-        performSearch();
-      });
-    });
-  }
-
-  void performSearch() {
-    setState(() async {
-      searchedStadiums = await UseCaseProvider.getUseCase<SearchStadium>().call(
-        SearchStadiumParams(
-          widget.stadiums,
-          searchText,
-          selectedCity,
-          selectedDistrict,
-        ),
-      ).then((value) => value.data!);
-      textResult = '-Searching results-';
-      if (searchText.isEmpty &&
-          selectedCity.isEmpty &&
-          selectedDistrict.isEmpty) {
-        textResult = '-Nearby stadiums-';
-      }
-    });
-  }
-
-  Future<void> getCurrentLocationAndSort() async {
-    setState(() {
-      isLoadingLocation = true;
-    });
-
-    try {
-      Location? location = await getCurrentLocation();
-      setState(() async {
-        currentLocation = location!;
-        searchedStadiums = await UseCaseProvider.getUseCase<GetNearbyStadium>().call(
-          GetNearbyStadiumParams(
-            searchedStadiums,
-            currentLocation,
-          ),
-        ).then((value) => value.data!);
-        textResult = '-Nearby stadiums-';
-      });
-        } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.toString())),
-      );
-    } finally {
-      setState(() {
-        isLoadingLocation = false;
-      });
-    }
-  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build (BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CustomSearchBar(
-                  searchController: searchController,
-                  hintText: 'Stadium name',
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
+      body: StreamBuilder<StadiumSearchState>(
+        stream: _bloc.stateStream,
+        initialData: _bloc.currentState,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final state = snapshot.data!;
+
+          if (state.errorMessage.isNotEmpty) {
+            return Center(child: Text(state.errorMessage));
+          }
+
+          return Scaffold(
+            body: SafeArea(
+              child: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+                child: Column(
                   children: [
-                    Expanded(
-                      child: CityDropdown(
-                        selectedCity: selectedCity,
-                        citiesNameAndId: citiesNameAndId,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedCity = value ?? '';
-                            selectedDistrict = '';
-                            performSearch();
-                          });
-                        },
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CustomSearchBar(
+                        searchController: _bloc.searchController,
+                        hintText: 'Stadium name',
                       ),
                     ),
-                    const SizedBox(width: 8.0),
-                    Expanded(
-                      child: DistrictDropdown(
-                        selectedCity: selectedCity,
-                        citiesNameAndId: citiesNameAndId,
-                        selectedDistrict: selectedDistrict,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedDistrict = value ?? '';
-                            performSearch();
-                          });
-                        },
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: CityDropdown(
+                              selectedCity: state.selectedCity,
+                              citiesNameAndId: _bloc.citiesNameAndId,
+                              onChanged: _bloc.onCityChanged,
+                            ),
+                          ),
+                          const SizedBox(width: 8.0),
+                          Expanded(
+                            child: DistrictDropdown(
+                              selectedCity: state.selectedCity,
+                              selectedDistrict: state.selectedDistrict,
+                              citiesNameAndId: _bloc.citiesNameAndId,
+                              onChanged: _bloc.onDistrictChanged,
+                            ),
+                          ),
+                          const SizedBox(width: 8.0),
+                          CurrentLocationButton(
+                            width: 56,
+                            height: 56,
+                            isLoading: state.isLoadingLocation,
+                            onPressed: _bloc.getCurrentLocationAndSort,
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 8.0),
-                    CurrentLocationButton(
-                      width: 56,
-                      height: 56,
-                      isLoading: isLoadingLocation,
-                      onPressed: getCurrentLocationAndSort,
+                    const SizedBox(height: 4.0),
+                    Padding(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 14.0, vertical: 4.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          state.textResult,
+                          style: const TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: state.searchedStadiums.isEmpty
+                          ? const Center(child: Text('No stadiums found.'))
+                          : GridView.builder(
+                              padding: const EdgeInsets.all(8.0),
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: widget.gridCol,
+                                childAspectRatio: widget.gridRatio,
+                                crossAxisSpacing: 8,
+                                mainAxisSpacing: 8,
+                              ),
+                              itemCount: state.searchedStadiums.length,
+                              itemBuilder: (ctx, index) {
+                                final stadium = state.searchedStadiums[index];
+                                final ownerName =
+                                    state.ownerMap[stadium.owner] ?? 'Unknown';
+
+                                return StadiumCard(
+                                  stadium: stadium,
+                                  ownerName: ownerName,
+                                  imageRatio: widget.imageRatio,
+                                  isStadiumOwnerUser: widget.isStadiumOwnerUser,
+                                  forMatchCreate: widget.forMatchCreate,
+                                  selectedTeamId: widget.selectedTeamId,
+                                  selectedTeamName: widget.selectedTeamName,
+                                  selectedTeamAvatar: widget.selectedTeamAvatar,
+                                  addMatchCard: widget.addMatchCard,
+                                );
+                              },
+                            ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 4.0),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14.0, vertical: 4.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    textResult,
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: searchedStadiums.isEmpty
-                    ? const Center(child: Text('No stadiums found.'))
-                    : GridView.builder(
-                        padding: const EdgeInsets.all(8.0),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: widget.gridCol,
-                          childAspectRatio: widget.gridRatio,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
+            ),
+            floatingActionButton: Stack(
+              children: <Widget>[
+                widget.isStadiumOwnerUser
+                    ? Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 70),
+                          child: FloatingActionButton(
+                            heroTag: "createStadium",
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const CreateStadiumScreen()),
+                              );
+                            },
+                            backgroundColor: Colors.teal,
+                            shape: const CircleBorder(),
+                            child:
+                                const Icon(Icons.add, color: Colors.white, size: 30),
+                          ),
                         ),
-                        itemCount: searchedStadiums.length,
-                        itemBuilder: (ctx, index) {
-                          final stadium = searchedStadiums[index];
-                          final ownerName =
-                              ownerMap[stadium.owner] ?? 'Unknown';
-
-                          return StadiumCard(
-                            stadium: stadium,
-                            ownerName: ownerName,
-                            imageRatio: widget.imageRatio,
-                            isStadiumOwnerUser: widget.isStadiumOwnerUser,
-                            forMatchCreate: widget.forMatchCreate,
-                            selectedTeamId: widget.selectedTeamId,
-                            selectedTeamName: widget.selectedTeamName,
-                            selectedTeamAvatar: widget.selectedTeamAvatar,
-                            addMatchCard: widget.addMatchCard,
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: Stack(
-        children: <Widget>[
-          widget.isStadiumOwnerUser
-              ? Align(
+                      )
+                    : const SizedBox(),
+                Align(
                   alignment: Alignment.bottomRight,
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 70),
+                    padding: EdgeInsets.only(bottom: 70 + floatingDistance * (widget.isStadiumOwnerUser ? 1 : 0)),
                     child: FloatingActionButton(
-                      heroTag: "createStadium",
+                      heroTag: "stadiumMapSearch",
                       onPressed: () {
-                        Navigator.of(context).push(CreateStadiumScreen.route());
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StadiumMapSearchScreen(
+                              userLocation: state.currentLocation,
+                              stadiums: state.searchedStadiums,
+                              owners: widget.owners,
+                              isStadiumOwnerUser: widget.isStadiumOwnerUser,
+                              forMatchCreate: widget.forMatchCreate,
+                              selectedTeamId: widget.selectedTeamId,
+                              selectedTeamName: widget.selectedTeamName,
+                              selectedTeamAvatar: widget.selectedTeamAvatar,
+                              addMatchCard: widget.addMatchCard,
+                            ),
+                          ),
+                        );
                       },
                       backgroundColor: Colors.teal,
                       shape: const CircleBorder(),
-                      child:
-                          const Icon(Icons.add, color: Colors.white, size: 30),
-                    ),
-                  ),
-                )
-              : const SizedBox(),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 70 + floatingDistance),
-              child: FloatingActionButton(
-                heroTag: "stadiumMapSearch",
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => StadiumMapSearchScreen(
-                        userLocation: currentLocation,
-                        stadiums: searchedStadiums,
-                        owners: widget.owners,
-                        isStadiumOwnerUser: widget.isStadiumOwnerUser,
-                        forMatchCreate: widget.forMatchCreate,
-                        selectedTeamId: widget.selectedTeamId,
-                        selectedTeamName: widget.selectedTeamName,
-                        selectedTeamAvatar: widget.selectedTeamAvatar,
-                        addMatchCard: widget.addMatchCard,
+                      child: const Icon(
+                        Icons.map,
+                        color: Colors.white,
                       ),
                     ),
-                  );
-                },
-                backgroundColor: Colors.teal,
-                shape: const CircleBorder(),
-                child: const Icon(
-                  Icons.map,
-                  color: Colors.white,
+                  ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
+          );
+            
+        },  
+      )
     );
   }
 }

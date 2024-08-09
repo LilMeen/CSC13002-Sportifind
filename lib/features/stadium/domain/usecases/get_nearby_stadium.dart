@@ -4,13 +4,13 @@ import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 
-class GetNearbyStadium implements UseCase<List<Stadium>, GetNearbyStadiumParams> {
+class GetNearbyStadium implements NonFutureUseCase<List<Stadium>, GetNearbyStadiumParams> {
   final StadiumRepository repository;
 
   GetNearbyStadium(this.repository);
 
   @override
-  Future<Result<List<Stadium>>> call(GetNearbyStadiumParams params) async {
+  Result<List<Stadium>> call(GetNearbyStadiumParams params) {
     return repository.sortNearbyStadiums(params.stadiums, params.markedLocation);
   }
 }

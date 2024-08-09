@@ -16,8 +16,12 @@ class CreateStadiumState {
   final bool isSubmitting;
   final bool isLoadingLocation;
   final String errorMessage;
+
   final String selectedCity;
   final String selectedDistrict;
+  int num5PlayerFields;
+  int num7PlayerFields;
+  int num11PlayerFields;
   late File avatar;
   final List<File> images;
   Location location;
@@ -27,8 +31,12 @@ class CreateStadiumState {
     this.isSubmitting = false,
     this.isLoadingLocation = false,
     this.errorMessage = '',
+
     this.selectedCity = '',
     this.selectedDistrict = '',
+    this.num5PlayerFields = 0,
+    this.num7PlayerFields = 0,
+    this.num11PlayerFields = 0,
     required this.avatar,
     this.images = const [],
     this.location = const Location(),
@@ -39,9 +47,9 @@ class CreateStadiumState {
     bool? isSubmitting,
     bool? isLoadingLocation,
     String? errorMessage,
+
     String? selectedCity,
     String? selectedDistrict,
-    Map<String, String>? citiesNameAndId,
     int? num5PlayerFields,
     int? num7PlayerFields,
     int? num11PlayerFields,
@@ -54,14 +62,21 @@ class CreateStadiumState {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       isLoadingLocation: isLoadingLocation ?? this.isLoadingLocation,
       errorMessage: errorMessage ?? this.errorMessage,
+
       selectedCity: selectedCity ?? this.selectedCity,
       selectedDistrict: selectedDistrict ?? this.selectedDistrict,
+      num5PlayerFields: num5PlayerFields ?? this.num5PlayerFields,
+      num7PlayerFields: num7PlayerFields ?? this.num7PlayerFields,
+      num11PlayerFields: num11PlayerFields ?? this.num11PlayerFields,
       avatar: avatar ?? this.avatar,
       images: images ?? this.images,
       location: location ?? this.location,
     );
   }
 }
+
+
+
 
 class CreateStadiumBloc {
   final BuildContext context;
@@ -82,12 +97,7 @@ class CreateStadiumBloc {
     'pricePerHour7': TextEditingController(),
     'pricePerHour11': TextEditingController(),
   };
-  int num5PlayerFields = 0;
-  int num7PlayerFields = 0;
-  int num11PlayerFields = 0;
-
   final Map<String, String> citiesNameAndId = {};
-
   Timer? _districtDelayTimer;
   final StadiumForm stadiumForm = StadiumForm();
   final ImageService imgService = ImageService();
@@ -149,9 +159,9 @@ class CreateStadiumBloc {
           pricePerHour5: double.parse(controllers['pricePerHour5']!.text),
           pricePerHour7: double.parse(controllers['pricePerHour7']!.text),
           pricePerHour11: double.parse(controllers['pricePerHour11']!.text),
-          num5PlayerFields: num5PlayerFields,
-          num7PlayerFields: num7PlayerFields,
-          num11PlayerFields: num11PlayerFields,
+          num5PlayerFields: _state.num5PlayerFields,
+          num7PlayerFields: _state.num7PlayerFields,
+          num11PlayerFields: _state.num11PlayerFields,
           avatar: _state.avatar,
           images: _state.images,
         )

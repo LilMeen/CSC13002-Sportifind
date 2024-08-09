@@ -3,6 +3,10 @@ import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data
 import 'package:sportifind/features/stadium/data/repositories/stadium_repository_impl.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 import 'package:sportifind/features/stadium/domain/usecases/create_stadium.dart';
+import 'package:sportifind/features/stadium/domain/usecases/get_all_stadiums.dart';
+import 'package:sportifind/features/stadium/domain/usecases/get_nearby_stadium.dart';
+import 'package:sportifind/features/stadium/domain/usecases/get_stadiums_by_owner.dart';
+import 'package:sportifind/features/stadium/domain/usecases/search_stadium.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -22,6 +26,10 @@ void initializeStadiumDependencies (){
 
   // Use cases
   sl.registerLazySingleton<CreateStadium>(() => CreateStadium(sl()));
+  sl.registerLazySingleton<GetAllStadiums>(() => GetAllStadiums(sl()));
+  sl.registerLazySingleton<GetNearbyStadium>(() => GetNearbyStadium(sl()));
+  sl.registerLazySingleton<GetStadiumsByOwner>(() => GetStadiumsByOwner(sl()));
+  sl.registerLazySingleton<SearchStadium>(() => SearchStadium(sl()));
 }
 
 

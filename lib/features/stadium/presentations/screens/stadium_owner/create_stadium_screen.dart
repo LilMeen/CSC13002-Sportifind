@@ -111,29 +111,29 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
                   const SizedBox(height: 25),
                   StadiumForm().buildFieldRow(
                     '5-Player',
-                    _bloc.num5PlayerFields,
+                    state.num5PlayerFields,
                     _bloc.controllers['pricePerHour5']!,
-                    () => setState(() => _bloc.num5PlayerFields++),
+                    () => setState(() => state.num5PlayerFields++),
                     () => setState(() {
-                      if (_bloc.num5PlayerFields > 0) _bloc.num5PlayerFields--;
+                      if (state.num5PlayerFields > 0) state.num5PlayerFields--;
                     }),
                   ),
                   StadiumForm().buildFieldRow(
                     '7-Player',
-                    _bloc.num7PlayerFields,
+                    state.num7PlayerFields,
                     _bloc.controllers['pricePerHour7']!,
-                    () => setState(() => _bloc.num7PlayerFields++),
+                    () => setState(() => state.num7PlayerFields++),
                     () => setState(() {
-                      if (_bloc.num7PlayerFields > 0) _bloc.num7PlayerFields--;
+                      if (state.num7PlayerFields > 0) state.num7PlayerFields--;
                     }),
                   ),
                   StadiumForm().buildFieldRow(
                     '11-Player',
-                    _bloc.num11PlayerFields,
+                    state.num11PlayerFields,
                     _bloc.controllers['pricePerHour11']!,
-                    () => setState(() => _bloc.num11PlayerFields++),
+                    () => setState(() => state.num11PlayerFields++),
                     () => setState(() {
-                      if (_bloc.num11PlayerFields > 0) _bloc.num11PlayerFields--;
+                      if (state.num11PlayerFields > 0) state.num11PlayerFields--;
                     }),
                   ),
                   const SizedBox(height: 30),

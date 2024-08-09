@@ -3,13 +3,13 @@ import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 
-class SearchStadium implements UseCase<List<Stadium>, SearchStadiumParams> {
+class SearchStadium implements NonFutureUseCase<List<Stadium>, SearchStadiumParams> {
   final StadiumRepository repository;
 
   SearchStadium(this.repository);
 
   @override
-  Future<Result<List<Stadium>>> call(SearchStadiumParams params) async {
+  Result<List<Stadium>> call(SearchStadiumParams params) {
     return repository.performStadiumSearch(
       params.stadiums,
       params.searchText,

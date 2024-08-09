@@ -6,3 +6,9 @@ class UseCaseProvider {
     return GetIt.I<T>();
   }
 }
+
+class NonFutureUseCaseProvider {
+  static T getUseCase<T extends NonFutureUseCase>() {
+    return GetIt.I<T>();
+  }
+}
