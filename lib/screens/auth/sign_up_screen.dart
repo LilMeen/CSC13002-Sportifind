@@ -19,7 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: SportifindTheme.background,
+        backgroundColor: SportifindTheme.whiteSmoke,
         body: Center(
           child: SingleChildScrollView(
             reverse: true,
@@ -33,9 +33,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     width: 100,
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Sign up',
-                    style: SportifindTheme.display1,
+                    style: SportifindTheme.featureTitleWhite,
                   ),
                   const SizedBox(
                     height: 30,
@@ -43,7 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(30),
                     child: Container(
-                      color: SportifindTheme.white,
+                      color: Colors.white,
                       child: const  Padding(
                         padding: EdgeInsets.all(15.0),
                         child: SignUp(),

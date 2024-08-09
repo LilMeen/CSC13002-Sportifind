@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/field_data.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
@@ -15,9 +17,9 @@ class FieldPicker extends StatefulWidget {
 
   final double height;
   final double width;
-  String? selectedField;
+  int? selectedField;
   List<FieldData> fields;
-  final void Function(String) func;
+  final void Function(int) func;
 
   @override
   State<FieldPicker> createState() => _FieldPickerState();
@@ -26,12 +28,13 @@ class FieldPicker extends StatefulWidget {
 class _FieldPickerState extends State<FieldPicker> {
   @override
   Widget build(BuildContext context) {
-    widget.fields = List.from(widget.fields)..sort((a, b) => a.numberId.compareTo(b.numberId));
+    widget.fields = List.from(widget.fields)
+      ..sort((a, b) => a.numberId.compareTo(b.numberId));
     return Row(
       children: [
-        const Text(
+        Text(
           "Field",
-          style: SportifindTheme.display2,
+          style: SportifindTheme.normalTextBlack,
         ),
         const Spacer(),
         Container(
@@ -44,7 +47,7 @@ class _FieldPickerState extends State<FieldPicker> {
           ),
           child: DropdownButton<String>(
             borderRadius: BorderRadius.circular(5.0),
-            value: widget.selectedField,
+            value: widget.selectedField.toString(),
             isExpanded: true,
             items: widget.fields.map((FieldData item) {
               return DropdownMenuItem<String>(
@@ -55,8 +58,8 @@ class _FieldPickerState extends State<FieldPicker> {
             onChanged: (value) {
               if (value != null) {
                 setState(() {
-                  widget.selectedField = value;
-                  widget.func(value);
+                  widget.selectedField = value as int?;
+                  widget.func(value as int);
                 });
               }
             },

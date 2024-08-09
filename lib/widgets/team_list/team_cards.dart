@@ -40,23 +40,16 @@ class _TeamCardsState extends State<TeamCards> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: height - 150,
-            width: width,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: TeamInformationList(
-                teams: widget.otherTeam,
-                hostId: widget.hostId,
-                matchId: widget.matchId,
-              ),
-            ),
-          ),
-        ],
+    return SizedBox(
+      height: height,
+      width: width,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: TeamInformationList(
+          teams: widget.otherTeam,
+          hostId: widget.hostId,
+          matchId: widget.matchId,
+        ),
       ),
     );
   }

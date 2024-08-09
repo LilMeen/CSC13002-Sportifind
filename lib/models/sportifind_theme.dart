@@ -9,6 +9,7 @@ class SportifindTheme {
   static const Color lead = Color.fromARGB(255, 33, 33, 33);
   static const Color whiteSmoke = Color.fromARGB(255, 245, 245, 245);
   static const Color whiteEdgar = Color.fromARGB(255, 237, 237, 237);
+  static const Color tinge = Color.fromARGB(255, 230, 230, 230);
 
   // Color Hunt Palette
   static Color shovelKnight = HexColor("3DC2EC");
@@ -20,11 +21,84 @@ class SportifindTheme {
   static const Color darkGrey = Color(0xFF313A44);
   static const Color matchCard = Color.fromARGB(255, 217, 217, 217);
 
+  // Match Management text styles
+  static TextStyle matchMonthDisplay = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 40,
+    color: bluePurple,
+  );
+
+  static TextStyle matchVS = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 40,
+    color: Colors.white,
+  );
+
+  static TextStyle matchDateDisplay = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: bluePurple,
+  );
+
+  static TextStyle matchCardItem = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: Colors.white,
+  );
+
+  static TextStyle teamItem= GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: Colors.white,
+  );
+
+  static TextStyle memberItem = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: Colors.black,
+  );
+
+  static TextStyle yearOld = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+    color: Colors.black,
+  );
+
+  static TextStyle matchTeamInfo = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 30,
+    color: lead,
+  );
+
+  static TextStyle viewTeamDetails = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: bluePurple,
+  );
+
+  static TextStyle viewProfileDetails = GoogleFonts.lexend(
+    fontWeight: FontWeight.w300,
+    fontSize: 16,
+    color: bluePurple,
+  );
+
+  static TextStyle teamDisplay = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 30,
+    color: bluePurple,
+  );
+
   // app bar text style
   static TextStyle sportifindAppBar = GoogleFonts.rowdies(
     fontWeight: FontWeight.normal,
     fontSize: 48,
     color: bluePurple,
+  );
+
+  static TextStyle sportifindAppBarForFeature = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 36,
+    color: lead,
   );
 
   // ex: create team, Profile
@@ -41,9 +115,33 @@ class SportifindTheme {
     color: Colors.black,
   );
 
+  static TextStyle featureTitleWhite = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 30,
+    color: Colors.white,
+  );
+
+  static TextStyle normalTextWhite = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: Colors.white,
+  );
+
   // just adjust yourself to fit
   static TextStyle normalText = GoogleFonts.lexend(
     fontWeight: FontWeight.normal,
+  );
+
+  static TextStyle normalTextBlack = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: Colors.black,
+  );
+
+  static TextStyle normalTextSmokeScreen = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: smokeScreen,
   );
 
   static TextStyle roleInformationPicked = GoogleFonts.racingSansOne(
@@ -69,6 +167,12 @@ class SportifindTheme {
     fontWeight: FontWeight.w400,
     fontSize: 16,
     color: Colors.black,
+  );
+
+  static TextStyle appBar = GoogleFonts.lexend(
+    fontWeight: FontWeight.w700,
+    letterSpacing: 1.2,
+    color: SportifindTheme.darkGrey,
   );
 
   static TextStyle dropdown = GoogleFonts.lexend(

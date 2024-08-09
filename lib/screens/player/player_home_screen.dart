@@ -22,7 +22,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
 
   Widget tabBody = Container(
-    color: SportifindTheme.background,
+    color: Colors.white,
   );
 
   @override
@@ -57,7 +57,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
             children: [
               Text(
                 'Sportifind',
-                style: SportifindTheme.AppBarTittle1,
+                style: SportifindTheme.sportifindAppBar,
               ),
               Stack(children: <Widget>[
                 IconButton(
@@ -69,7 +69,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                       ),
                     );
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.notifications_none,
                     size: 35,
                     color: SportifindTheme.bluePurple,
@@ -101,7 +101,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                         ),
                       );
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.chat_bubble_outline_outlined,
                       size: 30,
                       color: SportifindTheme.bluePurple,
@@ -128,7 +128,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
           backgroundColor: Colors.white,
         ),
         body: Container(
-          color: SportifindTheme.background,
+          color: Colors.white,
           child: Scaffold(
             backgroundColor: Colors.transparent,
             body: FutureBuilder<bool>(

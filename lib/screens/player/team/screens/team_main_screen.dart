@@ -21,7 +21,7 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: SportifindTheme.white,
+      color: Colors.white,
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Column(
@@ -70,7 +70,7 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
                   fontWeight: FontWeight.w600,
                   fontSize: 22,
                   letterSpacing: 0.27,
-                  color: SportifindTheme.darkerText,
+                  color: SportifindTheme.darkGrey,
                 ),
               ),
               TextButton(
@@ -78,7 +78,7 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
                   children: [
                     Icon(
                       Icons.add_circle_outline,
-                      color: SportifindTheme.bluePurple1,
+                      color: SportifindTheme.bluePurple,
                     ),
                     const SizedBox(
                       width: 4,
@@ -89,7 +89,7 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
                         letterSpacing: 0.27,
-                        color: SportifindTheme.bluePurple1,
+                        color: SportifindTheme.bluePurple,
                       ),
                     ),
                   ],
@@ -131,7 +131,7 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
               fontWeight: FontWeight.w600,
               fontSize: 22,
               letterSpacing: 0.27,
-              color: SportifindTheme.darkerText,
+              color: SportifindTheme.darkGrey,
             ),
           ),
           Flexible(

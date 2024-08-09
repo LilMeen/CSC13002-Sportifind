@@ -131,7 +131,7 @@ class BookingCalendar extends StatelessWidget {
   final String selectedStadium;
   final String selectedStadiumOwner;
   final DateTime selectedDate;
-  final String selectedField;
+  final int selectedField;
   final List<DateTimeRange>? bookedSlot;
   final void Function(MatchCard matchcard) addMatchCard;
 

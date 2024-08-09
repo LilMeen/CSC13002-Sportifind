@@ -1,9 +1,11 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sportifind/models/field_data.dart';
 import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/stadium_data.dart';
@@ -463,7 +465,8 @@ class StadiumService {
     return files;
   }
 
-  Future<void> updateFieldStatus(StadiumData stadium, Map<String, String> fieldsStatus) async {
+  Future<void> updateFieldStatus(
+      StadiumData stadium, Map<String, String> fieldsStatus) async {
     try {
       for (var field in stadium.fields) {
         await FirebaseFirestore.instance
@@ -478,5 +481,27 @@ class StadiumService {
     } catch (e) {
       throw Exception('Failed to update status: $e');
     }
+  }
+
+  Future<List<FieldData>> getFieldData(String stadiumId) async {
+    List<FieldData> stadiumField = [];
+    final fieldQuery = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(stadiumId)
+        .collection('notifications')
+        .get();
+    final fields = fieldQuery.docs
+        .map((notification) => FieldData.fromSnapshot(notification))
+        .toList();
+    for (var i = 0; i < fields.length; ++i) {
+      stadiumField.add(stadiumField[i]);
+    }
+    return stadiumField;
+  }
+
+  Future<Map<int, String>> generateFieldIdMap(String stadiumId) async {
+    final fieldData = await getFieldData(stadiumId);
+    final fieldMap = {for (var field in fieldData) field.numberId: field.id};
+    return fieldMap;
   }
 }

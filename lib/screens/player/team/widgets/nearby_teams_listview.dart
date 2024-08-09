@@ -197,7 +197,7 @@ class NearbyTeamBox extends StatelessWidget {
                                                 fontSize: 16,
                                                 letterSpacing: 0.27,
                                                 color:
-                                                    SportifindTheme.darkerText,
+                                                    SportifindTheme.darkGrey,
                                               ),
                                             ),
                                           ),
@@ -243,7 +243,7 @@ class NearbyTeamBox extends StatelessWidget {
                                                       Icon(
                                                         Icons.star,
                                                         color: SportifindTheme
-                                                            .bluePurple1,
+                                                            .bluePurple,
                                                         size: 20,
                                                       ),
                                                     ],

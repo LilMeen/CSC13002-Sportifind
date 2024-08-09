@@ -50,7 +50,7 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Select Team"),
+        title: const Text("Select Team"),
       ),
       body: Stack(
         children: <Widget>[
@@ -133,7 +133,7 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
         decoration: BoxDecoration(
           border: Border.all(color: SportifindTheme.bluePurple, width: 2),
           borderRadius: BorderRadius.circular(8),
-          color: SportifindTheme.white,
+          color: Colors.white,
         ),
         child: Padding(
           padding: const EdgeInsets.only(left: 4.0, top: 4),
@@ -142,7 +142,7 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
             children: <Widget>[
               Text(
                 team.name,
-                style: const TextStyle(
+                style: TextStyle(
                   color: SportifindTheme.bluePurple,
                   fontSize: 24,
                 ),
@@ -151,7 +151,7 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.location_on_outlined,
                     color: SportifindTheme.bluePurple,
                     size: 20,
@@ -178,7 +178,7 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.group_outlined,
                     color: SportifindTheme.bluePurple,
                     size: 20,
@@ -213,7 +213,7 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
                     child: const Text(
                       "Pick this team",
                       style: TextStyle(
-                        color: SportifindTheme.white,
+                        color: Colors.white,
                         fontSize: 14,
                       ),
                       textAlign: TextAlign.center,

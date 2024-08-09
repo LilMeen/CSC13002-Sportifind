@@ -111,7 +111,7 @@ class _TeamDetailsState extends State<TeamDetails>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              SportifindTheme.white,
+              Colors.white,
               SportifindTheme.whiteSmoke,
             ],
           ),
@@ -163,7 +163,7 @@ class _TeamDetailsState extends State<TeamDetails>
                                             fontWeight: FontWeight.w600,
                                             fontSize: 24,
                                             letterSpacing: 0.27,
-                                            color: SportifindTheme.darkerText,
+                                            color: SportifindTheme.darkGrey,
                                           ),
                                         ),
                                       ],
@@ -437,7 +437,7 @@ class _PlayerBoxState extends State<PlayerBox> {
                                                 fontSize: 16,
                                                 letterSpacing: 0.27,
                                                 color:
-                                                    SportifindTheme.darkerText,
+                                                    SportifindTheme.darkGrey,
                                               ),
                                             ),
                                           ),
@@ -483,7 +483,7 @@ class _PlayerBoxState extends State<PlayerBox> {
                                                       Icon(
                                                         Icons.star,
                                                         color: SportifindTheme
-                                                            .bluePurple1,
+                                                            .bluePurple,
                                                         size: 20,
                                                       ),
                                                     ],

@@ -76,7 +76,8 @@ class _MatchListItemState extends State<MatchListItem> {
           context,
           MaterialPageRoute(
             builder: (context) => MatchInfoScreen(
-              matchInfo: widget.matchCard, matchStatus: widget.status,
+              matchInfo: widget.matchCard,
+              matchStatus: widget.status,
             ),
           ),
         );
@@ -94,18 +95,11 @@ class _MatchListItemState extends State<MatchListItem> {
                   textAlign: TextAlign.center,
                   text: TextSpan(
                     text: "${date.day}\n",
-                    style: const TextStyle(
-                      color: SportifindTheme.bluePurple,
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: SportifindTheme.matchMonthDisplay,
                     children: [
                       TextSpan(
                         text: month[date.month]!,
-                        style: const TextStyle(
-                            color: SportifindTheme.bluePurple,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
+                        style: SportifindTheme.matchDateDisplay,
                       ),
                     ],
                   ),
@@ -143,8 +137,7 @@ class _MatchListItemState extends State<MatchListItem> {
                           Text(
                             teamNames[widget.matchCard.team1] ?? "Unknown",
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                color: SportifindTheme.white, fontSize: 16),
+                            style: SportifindTheme.matchCardItem,
                             maxLines: 1, // Maximum number of lines for the text
                             overflow: TextOverflow
                                 .ellipsis, // Add ellipsis (...) if text overflows
@@ -160,22 +153,18 @@ class _MatchListItemState extends State<MatchListItem> {
                           ),
                         ],
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 30.0),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30.0),
                         child: Text(
                           "VS",
-                          style: TextStyle(
-                            color: SportifindTheme.white,
-                            fontSize: 48,
-                          ),
+                          style: SportifindTheme.matchVS,
                         ),
                       ),
                       Column(
                         children: [
                           Text(
                             teamNames[widget.matchCard.team2] ?? "Unknown",
-                            style: const TextStyle(
-                                color: SportifindTheme.white, fontSize: 16),
+                            style: SportifindTheme.matchCardItem,
                             maxLines: 1, // Maximum number of lines for the text
                             overflow: TextOverflow
                                 .ellipsis, // Add ellipsis (...) if text overflows
@@ -195,17 +184,18 @@ class _MatchListItemState extends State<MatchListItem> {
                   ),
                   const SizedBox(height: 30),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       const Icon(
                         Icons.access_time,
                         color: Colors.white,
                       ),
                       const SizedBox(
-                        width: 10,
+                        width: 5,
                       ),
                       Text(
                         widget.matchCard.start,
-                        style: const TextStyle(color: Colors.white),
+                        style: SportifindTheme.matchCardItem,
                       ),
                       const SizedBox(
                         width: 40,
@@ -215,11 +205,11 @@ class _MatchListItemState extends State<MatchListItem> {
                         color: Colors.white,
                       ),
                       const SizedBox(
-                        width: 10,
+                        width: 5,
                       ),
                       Text(
                         widget.matchCard.playTime,
-                        style: const TextStyle(color: Colors.white),
+                        style: SportifindTheme.matchCardItem,
                       ),
                       const SizedBox(
                         width: 40,
@@ -229,12 +219,12 @@ class _MatchListItemState extends State<MatchListItem> {
                         color: Colors.white,
                       ),
                       const SizedBox(
-                        width: 10,
+                        width: 5,
                       ),
                       Expanded(
                         child: Text(
                           stadiumNames[widget.matchCard.stadium] ?? "Unknow",
-                          style: const TextStyle(color: Colors.white),
+                          style: SportifindTheme.matchCardItem,
                           maxLines: 1, // Maximum number of lines for the text
                           overflow: TextOverflow
                               .ellipsis, // Add ellipsis (...) if text overflows

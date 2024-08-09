@@ -336,16 +336,16 @@ class StadiumForm {
           width: 150,
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: SportifindTheme.bluePurple3),
+            border: Border.all(color: SportifindTheme.blueOyster),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.add_photo_alternate,
-                  color: SportifindTheme.bluePurple3),
+                  color: SportifindTheme.blueOyster),
               Text('Add Image',
-                  style: TextStyle(color: SportifindTheme.bluePurple3)),
+                  style: TextStyle(color: SportifindTheme.blueOyster)),
             ],
           ),
         ),

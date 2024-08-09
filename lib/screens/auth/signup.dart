@@ -24,7 +24,7 @@ class _SignUpState extends State<SignUp> {
   var _enteredEmail = '';
   var _enteredPassword = '';
   var _reenterPassword = '';
-  
+
   void _submit() async {
     final isValid = _form.currentState!.validate();
 
@@ -32,7 +32,7 @@ class _SignUpState extends State<SignUp> {
       return;
     }
 
-    _form.currentState!.save(); 
+    _form.currentState!.save();
 
     if (_reenterPassword != _enteredPassword) {
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -45,32 +45,32 @@ class _SignUpState extends State<SignUp> {
       return;
     }
 
-    try{
+    try {
       final userCredential = await _firebase.createUserWithEmailAndPassword(
         email: _enteredEmail,
         password: _enteredPassword,
       );
 
       FirebaseFirestore.instance
-        .collection('users')
-        .doc(userCredential.user!.uid)
-        .set({
-          'email': _enteredEmail,
-        });
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'email': _enteredEmail,
+      });
 
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const RoleScreen()));
-
-    }  catch (error){
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const RoleScreen()));
+    } catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Existing account with this email'),
           backgroundColor: Colors.red,
         ),
-      ); 
+      );
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -80,17 +80,17 @@ class _SignUpState extends State<SignUp> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // EMAIL
-          const SizedBox(
+          SizedBox(
             child: Padding(
-              padding: EdgeInsets.only(left: 15),
+              padding: const EdgeInsets.only(left: 15),
               child: Text(
                 "Email",
-                style: SportifindTheme.headline,
+                style: SportifindTheme.normalTextBlack,
               ),
             ),
           ),
           const SizedBox(height: 5),
-          TextFormField(      
+          TextFormField(
             textAlign: TextAlign.left,
             textAlignVertical: TextAlignVertical.bottom,
             decoration: InputDecoration(
@@ -98,15 +98,17 @@ class _SignUpState extends State<SignUp> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               hintText: "example@gmail.com",
-              hintStyle: SportifindTheme.greyTitle,
+              hintStyle: SportifindTheme.roleInformationUnpicked,
               filled: true,
               fillColor: Colors.white70,
               prefixIcon: const Icon(Icons.email),
             ),
             autocorrect: false,
-            textCapitalization: TextCapitalization.none,   
+            textCapitalization: TextCapitalization.none,
             validator: (value) {
-              if (value == null || value.trim().isEmpty || !value.contains('@')) {
+              if (value == null ||
+                  value.trim().isEmpty ||
+                  !value.contains('@')) {
                 return 'Invalid email!';
               }
               return null;
@@ -119,17 +121,17 @@ class _SignUpState extends State<SignUp> {
           const SizedBox(height: 15),
 
           // PASSWORD
-          const SizedBox(
+          SizedBox(
             child: Padding(
-              padding: EdgeInsets.only(left: 15),
+              padding: const EdgeInsets.only(left: 15),
               child: Text(
                 "Password",
-                style: SportifindTheme.headline,
+                style: SportifindTheme.normalTextBlack,
               ),
             ),
           ),
           const SizedBox(height: 5),
-          TextFormField(      
+          TextFormField(
             textAlign: TextAlign.left,
             textAlignVertical: TextAlignVertical.bottom,
             decoration: InputDecoration(
@@ -137,12 +139,12 @@ class _SignUpState extends State<SignUp> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               hintText: "At least 8 words",
-              hintStyle: SportifindTheme.greyTitle,
+              hintStyle: SportifindTheme.roleInformationUnpicked,
               filled: true,
               fillColor: Colors.white70,
-              prefixIcon: const Icon(Icons.lock), 
+              prefixIcon: const Icon(Icons.lock),
             ),
-            obscureText: true, 
+            obscureText: true,
             validator: (value) {
               if (value == null || value.length < 8) {
                 return 'Password must be at least 8 characters!';
@@ -157,17 +159,17 @@ class _SignUpState extends State<SignUp> {
           const SizedBox(height: 15),
 
           // RE-ENTER PASSWORD
-          const SizedBox(
+          SizedBox(
             child: Padding(
-              padding: EdgeInsets.only(left: 15),
+              padding: const EdgeInsets.only(left: 15),
               child: Text(
                 "Re-enter password",
-                style: SportifindTheme.headline,
+                style: SportifindTheme.normalTextBlack,
               ),
             ),
           ),
           const SizedBox(height: 5),
-          TextFormField(      
+          TextFormField(
             textAlign: TextAlign.left,
             textAlignVertical: TextAlignVertical.bottom,
             decoration: InputDecoration(
@@ -175,12 +177,12 @@ class _SignUpState extends State<SignUp> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               hintText: "At least 8 words",
-              hintStyle: SportifindTheme.greyTitle,
+              hintStyle: SportifindTheme.roleInformationUnpicked,
               filled: true,
               fillColor: Colors.white70,
-              prefixIcon: const Icon(Icons.lock), 
+              prefixIcon: const Icon(Icons.lock),
             ),
-            obscureText: true, 
+            obscureText: true,
             onSaved: (value) {
               _reenterPassword = value!;
             },

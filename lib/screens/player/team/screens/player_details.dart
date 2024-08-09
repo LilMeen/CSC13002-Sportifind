@@ -162,7 +162,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              SportifindTheme.white,
+              Colors.white,
               SportifindTheme.whiteSmoke,
             ],
           ),
@@ -214,7 +214,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
                                             fontWeight: FontWeight.w600,
                                             fontSize: 24,
                                             letterSpacing: 0.27,
-                                            color: SportifindTheme.darkerText,
+                                            color: SportifindTheme.darkGrey,
                                           ),
                                         ),
                                       ],

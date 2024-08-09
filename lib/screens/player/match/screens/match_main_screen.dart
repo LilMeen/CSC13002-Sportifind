@@ -36,7 +36,7 @@ class _MatchMainScreenState extends State<MatchMainScreen>
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
 
   Widget tabBody = Container(
-    color: SportifindTheme.background,
+    color: Colors.white,
   );
 
   Future<void> checkCaptain() async {
@@ -86,7 +86,7 @@ class _MatchMainScreenState extends State<MatchMainScreen>
     print(isCaptain);
     return SafeArea(
       child: Scaffold(
-        backgroundColor: SportifindTheme.white,
+        backgroundColor: Colors.white,
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 70, right: 10),
           child: isCaptain == true
@@ -104,7 +104,7 @@ class _MatchMainScreenState extends State<MatchMainScreen>
                   shape: const CircleBorder(),
                   child: const Icon(
                     Icons.add,
-                    color: SportifindTheme.white,
+                    color: Colors.white,
                   ),
                 )
               : const SizedBox(),
@@ -120,7 +120,7 @@ class _MatchMainScreenState extends State<MatchMainScreen>
                     border: Border.all(
                         color: SportifindTheme.bluePurple, width: 1.0),
                     borderRadius: BorderRadius.circular(8),
-                    color: SportifindTheme.whiteEdgar,
+                    color: Colors.white,
                   ),
                   child: ToggleSwitch(
                     minWidth: width - 30,
@@ -133,7 +133,7 @@ class _MatchMainScreenState extends State<MatchMainScreen>
                     totalSwitches: 2,
                     radiusStyle: true,
                     labels: const ['Your match', 'Nearby match'],
-                    fontSize: 15.0,
+                    fontSize: 18.0,
                     activeBgColors: const [
                       [Color.fromARGB(255, 76, 59, 207)],
                       [Color.fromARGB(255, 76, 59, 207)],

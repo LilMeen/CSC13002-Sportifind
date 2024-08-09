@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:diacritic/diacritic.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/widgets/dropdown_button/general_dropdown.dart';
 import 'package:sportifind/widgets/dropdown_button/stadium_form_dropdown.dart';
 
@@ -19,7 +20,7 @@ class DistrictDropdown extends StatefulWidget {
     required this.citiesNameAndId,
     required this.selectedDistrict,
     required this.onChanged,
-    this.fillColor = Colors.white,
+    this.fillColor = SportifindTheme.whiteSmoke,
     this.type = 'general',
   });
 

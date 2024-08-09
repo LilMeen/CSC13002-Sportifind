@@ -31,7 +31,7 @@ class DateSelectScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _DateSelectScreenState();
 }
 
-String selectedField = "1";
+int selectedField = 1;
 
 class _DateSelectScreenState extends State<DateSelectScreen> {
   DateTime? selectedDate;
@@ -97,7 +97,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     });
   }
 
-  void refreshByField(String pickedField) async {
+  void refreshByField(int pickedField) async {
     await matchService.getMatchDate(selectedDate!, pickedField,
         widget.selectedStadiumId, userMatches, bookedSlot);
     setState(() {
@@ -109,9 +109,9 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   Widget durationPicker(double height, double width) {
     return Row(
       children: [
-        const Text(
+        Text(
           "Duration",
-          style: SportifindTheme.display2,
+          style: SportifindTheme.dropdown,
         ),
         const Spacer(),
         Container(
@@ -178,9 +178,9 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               wholeDayIsBookedWidget:
                   const Text('Sorry, for this day everything is booked'),
             )
-          : const Text(
+          : Text(
               "Please choose a date to continue",
-              style: SportifindTheme.display2,
+              style: SportifindTheme.dropdown,
               textAlign: TextAlign.center,
             ),
     );
@@ -192,7 +192,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
       children: [
         Text(
           title,
-          style: SportifindTheme.display2,
+          style: SportifindTheme.dropdown,
         ),
         const SizedBox(
           height: 20,
@@ -213,7 +213,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                 margin: const EdgeInsets.only(left: 10),
                 child: Text(
                   displayItem,
-                  style: SportifindTheme.title,
+                  style: SportifindTheme.dropdown,
                 ),
               ),
             ],
@@ -230,7 +230,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
       home: SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: SportifindTheme.background,
+            backgroundColor: SportifindTheme.whiteSmoke,
             leading: BackButton(
               color: SportifindTheme.grey,
               onPressed: () {
@@ -240,12 +240,12 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               },
             ),
             centerTitle: true,
-            title: const Text(
+            title: Text(
               "Create match",
-              style: SportifindTheme.display1,
+              style: SportifindTheme.dropdown,
             ),
           ),
-          backgroundColor: SportifindTheme.background,
+          backgroundColor: SportifindTheme.whiteSmoke,
           body: SingleChildScrollView(
             child: Padding(
               padding:

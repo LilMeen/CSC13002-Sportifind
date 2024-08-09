@@ -390,9 +390,9 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                             ),
                           );
                         },
-                        child: const Text(
+                        child: Text(
                           "Pick this stadium",
-                          style: SportifindTheme.status,
+                          style: SportifindTheme.normalText,
                         ),
                       ),
                     )

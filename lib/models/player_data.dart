@@ -6,7 +6,7 @@ class PlayerData {
   final String id;
   final String name;
   final String email;
-  //final String avatarImageUrl;
+  final String avatarImage;
   final String role;
   final LocationInfo location;
   final String dob;
@@ -18,7 +18,7 @@ class PlayerData {
   PlayerData({
     required this.id,
     required this.name,
-    //required this.avatarImageUrl,
+    required this.avatarImage,
     required this.email,
     required this.role,
     required this.location,
@@ -32,7 +32,7 @@ class PlayerData {
   PlayerData.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         name = snapshot['name'],
-        //avatarImageUrl = snapshot['avatarImageUrl'],
+        avatarImage = snapshot['avatarImage'],
         email = snapshot['email'],
         role = snapshot['role'],
         location = LocationInfo(
@@ -64,7 +64,7 @@ class PlayerData {
       id: playerData.id,
       name: playerData.name,
       email: playerData.email,
-      //avatarImageUrl: playerData.avatarImageUrl,
+      avatarImage: playerData.avatarImage,
       role: playerData.role,
       location: playerData.location,
       dob: playerData.dob,
@@ -74,7 +74,4 @@ class PlayerData {
       notifications: notifications,
     );
   }
-
-  get avatarImageUrl =>
-      'https://console.firebase.google.com/u/0/project/sportifind-d0b25/storage/sportifind-d0b25.appspot.com/files/~2Fusers~2FfybmAxhicRdgBeqas8gkKfxM0v93~2Favatar';
 }

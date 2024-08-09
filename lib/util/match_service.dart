@@ -95,7 +95,7 @@ class MatchService {
   // Function for parsing data
   Future<void> getMatchDate(
       DateTime selectedDate,
-      String selectedField,
+      int selectedField,
       String selectedStadiumId,
       List<MatchCard> userMatches,
       List<DateTimeRange> bookedSlot) async {

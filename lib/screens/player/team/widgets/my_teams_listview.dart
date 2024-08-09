@@ -234,7 +234,7 @@ class TeamBox extends StatelessWidget {
                                                     fontSize: 19,
                                                     letterSpacing: 0.27,
                                                     color: SportifindTheme
-                                                        .darkerText,
+                                                        .darkGrey,
                                                   ),
                                                 ),
                                               ],
@@ -282,7 +282,7 @@ class TeamBox extends StatelessWidget {
                                                       Icon(
                                                         Icons.star,
                                                         color: SportifindTheme
-                                                            .bluePurple1,
+                                                            .bluePurple,
                                                         size: 20,
                                                       ),
                                                     ],
@@ -309,13 +309,13 @@ class TeamBox extends StatelessWidget {
                                                     fontSize: 14,
                                                     letterSpacing: 0.27,
                                                     color: SportifindTheme
-                                                        .bluePurple3,
+                                                        .blueOyster,
                                                   ),
                                                 ),
                                                 Container(
                                                   decoration: BoxDecoration(
                                                     color: SportifindTheme
-                                                        .bluePurple3,
+                                                        .blueOyster,
                                                     borderRadius:
                                                         const BorderRadius.all(
                                                             Radius.circular(
@@ -327,7 +327,7 @@ class TeamBox extends StatelessWidget {
                                                     child: Icon(
                                                       Icons.notifications,
                                                       color:
-                                                          SportifindTheme.white,
+                                                          Colors.white,
                                                     ),
                                                   ),
                                                 )

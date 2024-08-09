@@ -5,6 +5,7 @@ import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
 import 'package:sportifind/screens/player/match/util/booking_util.dart';
 import 'package:flutter/material.dart';
+import 'package:sportifind/util/stadium_service.dart';
 
 class BookingController extends ChangeNotifier {
   BookingService bookingService;
@@ -37,7 +38,7 @@ class BookingController extends ChangeNotifier {
   final String selectedStadium;
   final DateTime selectedDate;
   final String selectedStadiumOwner;
-  final String selectedField;
+  final int selectedField;
   final void Function(MatchCard matchcard) addMatchCard;
   final user = FirebaseAuth.instance.currentUser!;
 
@@ -59,6 +60,8 @@ class BookingController extends ChangeNotifier {
 
   bool _successfullUploaded = false;
   bool get isSuccessfullUploaded => _successfullUploaded;
+
+  StadiumService stadiumService = StadiumService();
 
   void initBack() {
     _isUploading = false;
@@ -225,7 +228,9 @@ class BookingController extends ChangeNotifier {
     return bookingService;
   }
 
-  void addData(BookingService bookingDate, int selectedPlayTime) {
+  Future<void> addData(BookingService bookingDate, int selectedPlayTime) async {
+    final fieldMap = await stadiumService.generateFieldIdMap(selectedStadium);
+
     MatchCard newMatchCard = MatchCard(
       stadium: selectedStadium,
       stadiumOwner: selectedStadiumOwner,
@@ -237,8 +242,9 @@ class BookingController extends ChangeNotifier {
       team1: selectedTeamId,
       avatarTeam2: "",
       team2: "",
-      field: selectedField,
+      field: fieldMap[selectedField]!,
     );
+
     addMatchCard(newMatchCard);
 
     FirebaseFirestore.instance.collection('matches').doc(newMatchCard.id).set({
@@ -252,7 +258,7 @@ class BookingController extends ChangeNotifier {
       'team2': newMatchCard.team2,
       'team1_avatar': newMatchCard.avatarTeam1,
       'team2_avatar': newMatchCard.avatarTeam2,
-      'field': selectedField,
+      'field': fieldMap[selectedField],
     });
 
     updateTeamsWhereCaptainIsUser(newMatchCard);
@@ -272,9 +278,7 @@ class BookingController extends ChangeNotifier {
     QuerySnapshot querySnapshot = await query.get();
     List<QueryDocumentSnapshot> doc = querySnapshot.docs;
     DocumentReference docRef = doc[0].reference;
-    await docRef.update({
-      'incomingMatch.${newMatchCard.id}': false
-    });
+    await docRef.update({'incomingMatch.${newMatchCard.id}': false});
   }
 
   void returnToMainScreen(BuildContext context) {

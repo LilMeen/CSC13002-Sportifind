@@ -24,7 +24,7 @@ class BookingExplanation extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(text,
-            style: SportifindTheme.status),
+            style: SportifindTheme.normalText),
       ],
     );
   }
