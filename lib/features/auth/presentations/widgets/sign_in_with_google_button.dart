@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class SignInWithGoogleButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -12,22 +12,22 @@ class SignInWithGoogleButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
           side: const BorderSide(color: Colors.grey),
         ),
-        minimumSize: const Size(double.infinity, 55),
+        minimumSize: const Size(double.infinity, 50),
       ),
       child: Row(
         children: [
           Image.asset(
             'lib/assets/google_logo.png',
-            height: 30,
-            width: 30,
+            height: 24,
+            width: 24,
           ),
           const Spacer(),
           Text(
             'Sign in with Google',
-            style: SportifindTheme.normalTextBlackW500,
+            style: SportifindTheme.normalText,
           ),          
           const Spacer(),
         ],

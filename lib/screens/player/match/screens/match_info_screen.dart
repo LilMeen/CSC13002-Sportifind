@@ -60,6 +60,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
       team.add(teamInfo[i]);
     }
     userData = await userService.getUserPlayerData();
+    print("Team data");
     print(team);
     matchStadium =
         await stadiumService.getSpecificStadiumsData(widget.matchInfo.stadium);
@@ -93,7 +94,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      height: 370,
+                      height: 420,
                       width: double.infinity,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
@@ -108,21 +109,32 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TextButton.icon(
-                              onPressed: () {
-                                Navigator.pop(
-                                  context,
-                                );
-                              },
-                              icon: const Icon(
-                                Icons.arrow_back_ios,
-                                size: 12,
-                                color: SportifindTheme.white,
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 16.0, top: 16.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(
+                                    context,
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.arrow_back_ios,
+                                      size: 14,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      "Back",
+                                      style: SportifindTheme.normalTextWhite,
+                                    ),
+                                  ],
+                                ),
                               ),
-                              label: Text(
-                                "Back",
-                                style: SportifindTheme.white16,
-                              ),
+                            ),
+                            const SizedBox(
+                              height: 16,
                             ),
                             Padding(
                               padding:
@@ -161,20 +173,15 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                       Text(
                                         teamNames[widget.matchInfo.team1] ??
                                             "Unknown",
-                                        style: SportifindTheme.white16,
+                                        style: SportifindTheme.matchCardItem,
                                       ),
                                     ],
                                   ),
-                                  const Padding(
-                                    padding: EdgeInsets.only(bottom: 26.0),
-                                    child: Text(
-                                      "VS",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 36,
-                                      ),
-                                    ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 26.0),
+                                    child: Text("VS",
+                                        style: SportifindTheme.matchVS),
                                   ),
                                   Column(
                                     children: [
@@ -191,7 +198,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                       Text(
                                         teamNames[widget.matchInfo.team2] ??
                                             "Unknown",
-                                        style: SportifindTheme.white16,
+                                        style: SportifindTheme.matchCardItem,
                                       ),
                                     ],
                                   ),
@@ -203,18 +210,18 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                             ),
                             Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 48.0),
+                                  const EdgeInsets.symmetric(horizontal: 28.0),
                               child: Row(
                                 children: [
                                   const Icon(
                                     Icons.access_time_outlined,
-                                    color: SportifindTheme.white,
-                                    size: 16,
+                                    color: Colors.white,
+                                    size: 18,
                                   ),
-                                  const SizedBox(width: 5),
+                                  const SizedBox(width: 10),
                                   Text(
                                     "${widget.matchInfo.start}, ${widget.matchInfo.date}",
-                                    style: SportifindTheme.white16,
+                                    style: SportifindTheme.normalTextWhite,
                                     maxLines:
                                         2, // Maximum number of lines for the text
                                     overflow: TextOverflow
@@ -228,18 +235,18 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                             ),
                             Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 48.0),
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
                               child: Row(
                                 children: [
                                   const Icon(
                                     Icons.hourglass_top_rounded,
-                                    color: SportifindTheme.white,
-                                    size: 16,
+                                    color: Colors.white,
+                                    size: 18,
                                   ),
-                                  const SizedBox(width: 5),
+                                  const SizedBox(width: 10),
                                   Text(
                                     widget.matchInfo.playTime,
-                                    style: SportifindTheme.white16,
+                                    style: SportifindTheme.normalTextWhite,
                                     maxLines:
                                         2, // Maximum number of lines for the text
                                     overflow: TextOverflow
@@ -253,20 +260,23 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                             ),
                             Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 48.0),
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(
-                                    Icons.stadium_rounded,
-                                    color: SportifindTheme.white,
-                                    size: 16,
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 4.0),
+                                    child: Icon(
+                                      Icons.stadium_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
                                   ),
-                                  const SizedBox(width: 5),
+                                  const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
                                       "${matchStadium!.name} stadium, ${matchStadium!.location.address}, ${matchStadium!.location.district}, ${matchStadium!.location.city}",
-                                      style: SportifindTheme.white16,
+                                      style: SportifindTheme.normalTextWhite,
                                       maxLines:
                                           2, // Maximum number of lines for the text
                                       overflow: TextOverflow
@@ -284,7 +294,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                     Center(
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        width: 330,
+                        width: 370,
                         decoration: BoxDecoration(
                           border: Border.all(
                               color: SportifindTheme.bluePurple, width: 1.0),
@@ -314,7 +324,6 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                           onToggle: (index) {
                             setState(() {
                               status = index!;
-                              print(status);
                             });
                           },
                         ),
@@ -322,7 +331,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                     ),
                     const SizedBox(height: 18),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 64.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 38.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -330,32 +339,38 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                             status == 0
                                 ? teamNames[widget.matchInfo.team1] ?? "Unknow"
                                 : teamNames[widget.matchInfo.team2] ?? "Unknow",
-                            style: const TextStyle(
-                                color: SportifindTheme.lead,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold),
+                            style: SportifindTheme.matchTeamInfo,
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 11.5),
-                            child: TextButton.icon(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.arrow_forward_outlined,
-                                color:
-                                    SportifindTheme.bluePurple.withAlpha(212),
-                                size: 12,
-                              ),
-                              iconAlignment: IconAlignment.end,
-                              label: Text(
-                                "view details",
-                                style: SportifindTheme.bluePurple16,
+                            padding: const EdgeInsets.only(
+                              top: 8.5,
+                              left: 15,
+                            ),
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "view details",
+                                    style: SportifindTheme.viewTeamDetails,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4.0, left: 4.0),
+                                    child: Icon(
+                                      Icons.arrow_forward_outlined,
+                                      color: SportifindTheme.bluePurple
+                                          .withAlpha(212),
+                                      size: 16,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 5),
                     MemberCards(status: status, matchInfo: widget.matchInfo),
                     if (widget.matchStatus == 0)
                       Padding(

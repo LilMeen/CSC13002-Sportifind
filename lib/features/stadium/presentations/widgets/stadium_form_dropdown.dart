@@ -17,7 +17,7 @@ class StadiumFormDropdown extends StatefulWidget {
     required this.items,
     required this.onChanged,
     required this.validatorText,
-    this.fillColor = Colors.white,
+    this.fillColor = SportifindTheme.whiteSmoke,
     this.isLoading = false,
   });
 
@@ -33,15 +33,14 @@ class _StadiumFormDropdownState extends State<StadiumFormDropdown> {
         return DropdownButtonFormField<String>(
           value: widget.selectedValue.isEmpty ? null : widget.selectedValue,
           hint: Text(widget.hint),
+          style: SportifindTheme.normalTextSmokeScreen,
           isExpanded: true,
           items: [
                 DropdownMenuItem(
                   value: '',
                   child: Text(
                     widget.hint,
-                    style: const TextStyle(
-                      color: Colors.black45,
-                    ),
+                    style: SportifindTheme.normalTextSmokeScreen,
                   ),
                 )
               ] +
@@ -53,6 +52,7 @@ class _StadiumFormDropdownState extends State<StadiumFormDropdown> {
                         48, // Adjust this value as needed
                     child: Text(
                       item,
+                      style: SportifindTheme.normalTextSmokeScreen,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
                     ),
@@ -60,13 +60,13 @@ class _StadiumFormDropdownState extends State<StadiumFormDropdown> {
                 );
               }).toList(),
           onChanged: widget.isLoading ? null : widget.onChanged,
-          dropdownColor: Colors.white,
+          dropdownColor: widget.fillColor,
           icon: widget.isLoading
               ? SizedBox(
                 width: 15,
                 height: 15,
                 child: CircularProgressIndicator(
-                    backgroundColor: SportifindTheme.bluePurple3,
+                    backgroundColor: SportifindTheme.blueOyster,
                     color: Colors.white,
                   ),
               )

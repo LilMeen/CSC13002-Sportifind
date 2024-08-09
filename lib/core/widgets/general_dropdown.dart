@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class GeneralDropdown extends StatefulWidget {
   final String selectedValue;
@@ -30,10 +30,7 @@ class _GeneralDropdownState extends State<GeneralDropdown> {
       builder: (context, constraints) {
         return DropdownButtonFormField<String>(
           value: widget.selectedValue.isEmpty ? null : widget.selectedValue,
-          hint: Text(
-            widget.hint,
-            style: SportifindTheme.normalTextSmokeScreen,
-          ),
+          hint: Text(widget.hint),
           style: SportifindTheme.normalTextSmokeScreen,
           items: [
                 DropdownMenuItem(
@@ -52,7 +49,7 @@ class _GeneralDropdownState extends State<GeneralDropdown> {
                         48, // Adjust this value as needed
                     child: Text(
                       item,
-                      style: SportifindTheme.normalTextBlack,
+                      style: SportifindTheme.normalTextSmokeScreen,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
                     ),
@@ -65,42 +62,23 @@ class _GeneralDropdownState extends State<GeneralDropdown> {
             fillColor: widget.fillColor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide(
-                color: SportifindTheme.bluePurple,
-                width: 1.0,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide(
-                color: SportifindTheme.bluePurple,
-                width: 1.0,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide(
-                color: SportifindTheme.bluePurple,
-                width: 1.0,
-              ),
+              borderSide:
+                  BorderSide(width: 3, color: SportifindTheme.bluePurple),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
           ),
           dropdownColor: widget.fillColor,
           icon: widget.isLoading
-              ? SizedBox(
+              ? const SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                    backgroundColor: SportifindTheme.bluePurple,
+                    backgroundColor: Colors.teal,
                     color: Colors.white,
                   ),
                 )
-              : const Icon(
-                  Icons.expand_more,
-                  color: SportifindTheme.smokeScreen,
-                ),
+              : const Icon(Icons.arrow_drop_down),
           iconSize: 24,
           elevation: 4,
         );

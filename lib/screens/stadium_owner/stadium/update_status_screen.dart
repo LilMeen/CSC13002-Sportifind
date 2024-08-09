@@ -166,13 +166,13 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
       appBar: AppBar(
         title: Text(
           'Update Status',
-          style: SportifindTheme.AppBarTittle3,
+          style: SportifindTheme.sportifindAppBar,
         ),
         centerTitle: true,
-        backgroundColor: SportifindTheme.background,
-        iconTheme: const IconThemeData(color: SportifindTheme.bluePurple),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: SportifindTheme.bluePurple),
         elevation: 0,
-        surfaceTintColor: SportifindTheme.background,
+        surfaceTintColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -180,7 +180,7 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
           },
         ),
       ),
-      backgroundColor: SportifindTheme.background,
+      backgroundColor: Colors.white,
       body: noFields
           ? Center(
               child: Padding(
@@ -206,7 +206,7 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
                       child: ElevatedButton(
                         onPressed: _isUpdating ? null : _updateStatus,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:Colors.white,
+                          backgroundColor: Colors.white,
                           foregroundColor: SportifindTheme.bluePurple,
                         ),
                         child: _isUpdating

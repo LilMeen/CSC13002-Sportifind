@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class BookingExplanation extends StatelessWidget {
   const BookingExplanation(
@@ -24,7 +24,7 @@ class BookingExplanation extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(text,
-            style: SportifindTheme.yearOld),
+            style: SportifindTheme.normalText),
       ],
     );
   }

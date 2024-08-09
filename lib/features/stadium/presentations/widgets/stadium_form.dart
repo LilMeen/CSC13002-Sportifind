@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/core/util/image_service.dart';
-import 'package:sportifind/core/widgets/city_dropdown.dart';
-import 'package:sportifind/core/widgets/district_dropdown.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/util/image_service.dart';
+import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';
+import 'package:sportifind/widgets/dropdown_button/district_dropdown.dart';
 
 class StadiumForm {
   ImageService imgService = ImageService();
@@ -157,12 +157,13 @@ class StadiumForm {
             ),
             keyboardType: TextInputType.number,
             validator: (value) {
-              if ((value == null || value.isEmpty)) {
+              if (fieldCount > 0 && (value == null || value.isEmpty)) {
                 return 'Please enter a price';
               }
 
               final numberRegExp = RegExp(r'^\d+(\.\d+)?$');
               if (fieldCount > 0 &&
+                  value != null &&
                   !numberRegExp.hasMatch(value)) {
                 return 'Please enter a valid number';
               }
@@ -179,18 +180,7 @@ class StadiumForm {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(15),
-          child: avatar.path.contains('http')
-          ?
-          Image.network(
-            avatar.path,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 200.0,
-            errorBuilder: (context, error, stackTrace) =>
-                const Icon(Icons.broken_image, size: 250, color: Colors.grey),
-          )
-          :
-          Image.file(
+          child: Image.file(
             avatar,
             fit: BoxFit.cover,
             width: double.infinity,
@@ -267,14 +257,7 @@ class StadiumForm {
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     height: 250,
-                    child: image.path.contains('http')
-                    ?
-                    Image.network(
-                      image.path,
-                      fit: BoxFit.cover,
-                    )
-                    :
-                    Image.file(
+                    child: Image.file(
                       image,
                       fit: BoxFit.cover,
                     ),
@@ -287,20 +270,7 @@ class StadiumForm {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: image.path.contains('http')
-              ?
-              Image.network(
-                image.path,
-                fit: BoxFit.cover,
-                width: 150,
-                height: 100,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.broken_image,
-                      size: 100, color: Colors.grey);
-                },
-              )
-              :
-              Image.file(
+              child: Image.file(
                 image,
                 fit: BoxFit.cover,
                 width: 150,
@@ -366,16 +336,16 @@ class StadiumForm {
           width: 150,
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: SportifindTheme.bluePurple),
+            border: Border.all(color: SportifindTheme.blueOyster),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.add_photo_alternate,
-                  color: SportifindTheme.bluePurple),
+                  color: SportifindTheme.blueOyster),
               Text('Add Image',
-                  style: TextStyle(color: SportifindTheme.bluePurple)),
+                  style: TextStyle(color: SportifindTheme.blueOyster)),
             ],
           ),
         ),

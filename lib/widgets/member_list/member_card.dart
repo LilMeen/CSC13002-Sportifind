@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/util/team_service.dart';
@@ -20,6 +21,7 @@ class MemberCards extends StatefulWidget {
 }
 
 class _MemberCardsState extends State<MemberCards> {
+  final user = FirebaseAuth.instance.currentUser!;
   TeamService teamService = TeamService();
   TeamInformation? homeTeam;
   TeamInformation? awayTeam;
@@ -69,12 +71,12 @@ class _MemberCardsState extends State<MemberCards> {
     await _loadMatchData();
   }
 
-  Widget buildMatch(List<String> memberId) {
+  Widget buildMatch(TeamInformation memberId) {
     print(memberId);
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return SizedBox(
-      height: 300,
+      height: 280,
       width: width,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -94,22 +96,21 @@ class _MemberCardsState extends State<MemberCards> {
 
     if (widget.status == 0 && homeTeam != null) {
       return SingleChildScrollView(
-        child: buildMatch(homeTeam!.members),
+        child: buildMatch(homeTeam!),
       );
     } else if (widget.status == 1 && awayTeam != null) {
       return SingleChildScrollView(
-        child: buildMatch(awayTeam!.members),
+        child: buildMatch(awayTeam!),
       );
     } else if (widget.status == 1 && awayTeam == null) {
-      return Center(
+      return const Center(
         child: Text("Please Invite other team first ^_^"),
       );
     } else if (widget.status == 0 && homeTeam == null) {
-      return Center(
+      return const Center(
         child: Text("Please join this match first ^_^"),
       );
-    }
-    else {
+    } else {
       return const SizedBox();
     }
   }
