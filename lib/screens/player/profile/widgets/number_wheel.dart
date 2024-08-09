@@ -11,14 +11,14 @@ class NumberWheel extends StatefulWidget {
 }
 
 class _NumberWheelState extends State<NumberWheel> {
-  int _selectedValue = 80;
+  int _selectedValue = 0;
   int _tempValue = 80;
   late FixedExtentScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = FixedExtentScrollController(initialItem: _selectedValue);
+    _scrollController = FixedExtentScrollController(initialItem: 80);
   }
 
   @override

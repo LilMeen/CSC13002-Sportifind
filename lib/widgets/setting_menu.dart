@@ -40,7 +40,8 @@ class SettingMenu extends StatelessWidget {
         ),
         child: Icon(
           getIcon(title),
-          color: Colors.tealAccent,
+          color: Color.fromARGB(255, 24, 24, 207),
+          size: title == 'Help & Feedback' ? 22 : 24,
         ),
       ),
       title: Text(
@@ -51,8 +52,8 @@ class SettingMenu extends StatelessWidget {
       ),
       trailing: endIcon
           ? Container(
-              width: 30,
-              height: 30,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
                 color: Colors.grey.withOpacity(0.1),

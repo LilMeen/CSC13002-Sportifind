@@ -7,7 +7,7 @@ class Hexagon extends StatelessWidget {
 
   final double screenWidth;
   final List<Rating> ratings;
-  double get diameter => screenWidth - 200; // Increase size
+  double get diameter => screenWidth - 150; // Increase size
   double get radius => diameter / 2;
 
   @override
@@ -94,11 +94,11 @@ class Labels extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final center = Offset(diameter / 2 + 50, diameter / 2 + 50);
+    final center = Offset(diameter / 2 + 50, diameter / 2 + 53);
     const style = TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: Colors.black,
                       );
 
     return Center(

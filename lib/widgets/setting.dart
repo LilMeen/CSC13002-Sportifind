@@ -16,56 +16,135 @@ class SettingScreen extends StatelessWidget {
     );
   }
 
-  Future<void> deleteUserData() async {
-    if (user != null) {
-      final userDoc = FirebaseFirestore.instance.collection('users').doc(user!.uid);
+Future<void> deleteUserData() async {
+  if (user != null) {
+    final userId = user!.uid;
+
+    try {
+      // Updating matches collection
+      final matchesDocs = await FirebaseFirestore.instance
+          .collection('matches')
+          .where('stadiumOwner', isEqualTo: userId)
+          .get();
+      for (final doc in matchesDocs.docs) {
+        await doc.reference.update({'stadiumOwner': FieldValue.delete()});
+      }
+
+      // Updating stadiums collection
+      final stadiumsDocs = await FirebaseFirestore.instance
+          .collection('stadiums')
+          .where('owner', isEqualTo: userId)
+          .get();
+      for (final doc in stadiumsDocs.docs) {
+        await doc.reference.update({'owner': FieldValue.delete()});
+      }
+
+      // Updating teams collection
+      final teamsAsCaptain = await FirebaseFirestore.instance
+          .collection('teams')
+          .where('captain', isEqualTo: userId)
+          .get();
+      for (final doc in teamsAsCaptain.docs) {
+        await doc.reference.update({'captain': FieldValue.delete()});
+      }
+
+      final teamsAsMember = await FirebaseFirestore.instance
+          .collection('teams')
+          .where('members', arrayContains: userId)
+          .get();
+      for (final doc in teamsAsMember.docs) {
+        await doc.reference.update({
+          'members': FieldValue.arrayRemove([userId])
+        });
+      }
+
+      // Updating reports subcollection within users with admin role
+      final adminUsers = await FirebaseFirestore.instance
+          .collection('users')
+          .where('role', isEqualTo: 'admin')
+          .get();
+
+      for (final admin in adminUsers.docs) {
+        final adminReports = await admin.reference
+            .collection('reports')
+            .where('reportedUserId', isEqualTo: userId)
+            .get();
+        for (final doc in adminReports.docs) {
+          await doc.reference.update({'reportedUserId': FieldValue.delete()});
+        }
+
+        final reporterReports = await admin.reference
+            .collection('reports')
+            .where('reporterId', isEqualTo: userId)
+            .get();
+        for (final doc in reporterReports.docs) {
+          await doc.reference.update({'reporterId': FieldValue.delete()});
+        }
+      }
+
+      // Delete user document
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
       await userDoc.delete();
-    }
-  }
 
-  void deleteAccount(BuildContext context) async {
-    bool confirmed = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Delete Account'),
-          content: const Text(
-              'Are you sure you want to delete your account? This action cannot be undone.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false); 
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(true); 
-              },
-              child: const Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
+    } catch (e) {
+      print("Error updating Firestore: $e");
 
-    if (confirmed ?? false) {
-      try {
-        await deleteUserData();
-
-        await user!.delete();
-
-        signOut(context);
-      } catch (e) {
-        print("Error deleting user: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Failed to delete account: $e"),
-          ),
-        );
+      if (e is FirebaseException && e.code == 'failed-precondition') {
+        print("Index required for query is missing. Please create the required index in Firestore.");
+        throw Exception("Firestore index is missing. Please create the required index.");
+      } else {
+        throw Exception("Failed to update Firestore: $e");
       }
     }
   }
+}
+
+void deleteAccount(BuildContext context) async {
+  bool confirmed = await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Confirm Delete Account'),
+        content: const Text(
+            'Are you sure you want to delete your account? This action cannot be undone.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            child: const Text('Delete'),
+          ),
+        ],
+      );
+    },
+  );
+
+  if (confirmed == true) {
+    try {
+      await deleteUserData();
+
+      // Deleting the user from Firebase Authentication
+      await user!.delete();
+
+      // Sign out the user
+      signOut(context);
+    } catch (e) {
+      print("Error deleting user: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to delete account: $e"),
+        ),
+      );
+    }
+  }
+}
+
 
   void confirmSignOut(BuildContext context) async {
     bool confirmed = await showDialog(
@@ -113,31 +192,31 @@ class SettingScreen extends StatelessWidget {
         ),
         title: const Text('Setting'),
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 33, 33, 33),
+        backgroundColor: Colors.white,
         elevation: 0.0,
       ),
-      backgroundColor: Color.fromARGB(255, 33, 33, 33),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           SettingMenu(
             title: "Help & Feedback",
             onPress: () {},
             endIcon: true,
-            textColor: Colors.white,
+            textColor: Colors.black,
           ),
           const SizedBox(height: 10),
           SettingMenu(
             title: "Policy",
             onPress: () {},
             endIcon: true,
-            textColor: Colors.white,
+            textColor: Colors.black,
           ),
           const SizedBox(height: 10),
           SettingMenu(
             title: "About us",
             onPress: () {},
             endIcon: true,
-            textColor: Colors.white,
+            textColor: Colors.black,
           ),
           Expanded(child: Container()), // Spacer to push buttons to the bottom
           Padding(
@@ -149,11 +228,11 @@ class SettingScreen extends StatelessWidget {
                     confirmSignOut(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.tealAccent, 
+                    backgroundColor: Color.fromARGB(255, 24, 24, 207), 
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     side: const BorderSide(
                         width: 6,
-                        color: Colors.tealAccent),
+                        color: Color.fromARGB(255, 24, 24, 207)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -163,7 +242,7 @@ class SettingScreen extends StatelessWidget {
                     height: 30, 
                     child: Center(
                       child: Text('Sign out',
-                          style: TextStyle(color: Colors.black, fontSize: 18)),
+                          style: TextStyle(color: Colors.white, fontSize: 18)),
                     ),
                   ),
                 ),

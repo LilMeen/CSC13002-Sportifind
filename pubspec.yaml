@@ -36,6 +36,7 @@ dependencies:
   location: ^7.0.0
   http: ^0.13.1
   diacritic: ^0.1.5
+  fl_chart: ^0.68.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -101,6 +102,7 @@ flutter:
      - 'lib/assets/left_unpicked.png'
      - 'lib/assets/right_picked.png'
      - 'lib/assets/right_unpicked.png'
+     - 'lib/assets/no_avatar.png'
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -9,13 +9,13 @@ class NumberWheel extends StatefulWidget {
 }
 
 class _NumberWheelState extends State<NumberWheel> {
-  int _selectedValue = 80;
+  int _selectedValue = 0;
   late FixedExtentScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = FixedExtentScrollController(initialItem: _selectedValue);
+    _scrollController = FixedExtentScrollController(initialItem: 0);
     print("ScrollController initialized with initialItem: ${_scrollController.initialItem}");
   }
 
@@ -34,7 +34,7 @@ class _NumberWheelState extends State<NumberWheel> {
       child: Text(
         '$_selectedValue',
         style: const TextStyle(
-          color: Colors.black,
+          color: Color.fromARGB(255, 113, 3, 3),
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),
@@ -84,12 +84,4 @@ class _NumberWheelState extends State<NumberWheel> {
   }
 }
 
-void main() {
-  runApp(const MaterialApp(
-    home: Scaffold(
-      body: Center(
-        child: NumberWheel(),
-      ),
-    ),
-  ));
-}
+

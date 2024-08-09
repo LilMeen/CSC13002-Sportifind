@@ -64,9 +64,9 @@ class _DropdownState extends State<Dropdown> {
 
     return Container(
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 33, 33, 33),
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(6.0),
-        border: Border.all(color: Colors.white),
+        border: Border.all(color: Colors.black),
       ),
       padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),
       child: DropdownButtonHideUnderline(
@@ -81,14 +81,14 @@ class _DropdownState extends State<Dropdown> {
                     vertical: 0.0, horizontal: widget.horizontalPadding),
                 child: Text(
                   item,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.black),
                   overflow: TextOverflow.ellipsis,
                 ),
               );
             }).toList();
           },
           style: const TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 16,
           ),
           onChanged: (newValue) {
@@ -103,7 +103,7 @@ class _DropdownState extends State<Dropdown> {
             child: Text(
               hint,
               style: const TextStyle(
-                color: Colors.white54,
+                color: Colors.grey,
                 fontSize: 16,
               ),
               overflow: TextOverflow.ellipsis,
@@ -111,9 +111,9 @@ class _DropdownState extends State<Dropdown> {
           ),
           icon: Padding(
             padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),
-            child: const Icon(Icons.arrow_drop_down, color: Colors.white),
+            child: const Icon(Icons.arrow_drop_down, color: Colors.black),
           ),
-          dropdownColor: const Color.fromARGB(255, 33, 33, 33),
+          dropdownColor: Colors.white,
           decoration: const InputDecoration(
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.transparent),
@@ -135,7 +135,7 @@ class _DropdownState extends State<Dropdown> {
       value: item,
       child: Text(
         item,
-        style: const TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.black),
         overflow: TextOverflow.ellipsis,
       ),
     );

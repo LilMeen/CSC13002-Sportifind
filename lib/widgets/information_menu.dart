@@ -14,6 +14,12 @@ class InformationMenu extends StatelessWidget {
         return Icons.location_on_rounded;
       case "dob":
         return Icons.calendar_month_rounded;
+      case "height":
+        return Icons.create_outlined;
+      case "weight":
+        return Icons.create_outlined;
+      case "foot":
+        return Icons.create_outlined;
       default:
         return Icons.home; // Default icon if no match is found
     }
@@ -33,14 +39,14 @@ class InformationMenu extends StatelessWidget {
             ),
             child: Icon(
               getIcon(icon),
-              color: Colors.tealAccent,
+              color: Color.fromARGB(255, 24, 24, 207),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Text(
               textContent,
-              style: TextStyle(fontSize: 16, color: Colors.white),
+              style: TextStyle(fontSize: 16, color: Colors.black),
             ),
           ),
         ],

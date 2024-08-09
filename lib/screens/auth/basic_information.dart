@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sportifind/screens/player/player_home_screen.dart';
 import 'package:sportifind/screens/stadium_owner/stadium_owner_home_screen.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
@@ -64,53 +68,71 @@ class BasicInformationState extends State<BasicInformationScreen> {
       });
     });
   }
+  UploadTask? uploadTask;
 
   void _done() async {
-    final isValid = _formKey.currentState!.validate();
+  final isValid = _formKey.currentState!.validate();
 
-    if (isValid) {
-      _formKey.currentState!.save();
+  if (isValid) {
+    _formKey.currentState!.save();
 
-      try {
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .update({
-          'name': _enteredName,
-          'phone': _enteredPhone,
-          'dob': _dateController.text,
-          'address': _enteredAddress,
-          'gender': _genderController.text,
-          'city': _cityController.text,
-          'district': _districtController.text,
-        });
+    try {
+      final ByteData byteData = await rootBundle.load('lib/assets/no_avatar.png');
+      final Uint8List bytes = byteData.buffer.asUint8List();
 
-        DocumentSnapshot snapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .get();
-        if (snapshot['role'] == 'player') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const PlayerHomeScreen()));
-        } else if (snapshot['role'] == 'stadium_owner') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const StadiumOwnerHomeScreen()));
-        }
-      } catch (error) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to store data: $error'),
-            backgroundColor: Colors.red,
-          ),
-        );
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('users')
+          .child(userId)
+          .child('avatar')
+          .child('avatar.jpg');
+
+      final uploadTask = storageRef.putData(bytes);
+      await uploadTask;
+
+      final imageUrl = await storageRef.getDownloadURL();
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update({
+        'name': _enteredName,
+        'phone': _enteredPhone,
+        'dob': _dateController.text,
+        'address': _enteredAddress,
+        'gender': _genderController.text,
+        'city': _cityController.text,
+        'district': _districtController.text,
+        'avatarImage': imageUrl, 
+      });
+
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      if (snapshot['role'] == 'player') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const PlayerHomeScreen()));
+      } else if (snapshot['role'] == 'stadium_owner') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const StadiumOwnerHomeScreen()));
       }
+    } catch (error) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to store data: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
+}
 
   String getHint(String type) {
     switch (type) {
@@ -149,7 +171,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
       children: [
         RichText(
           text: TextSpan(
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: const TextStyle(color: Colors.black, fontSize: 14),
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -194,10 +216,10 @@ class BasicInformationState extends State<BasicInformationScreen> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                Colors.transparent, // Remove background color
-                            shadowColor: Colors.transparent, // Remove shadow
+                                Colors.transparent,
+                            shadowColor: Colors.transparent, 
                             side: const BorderSide(
-                              color: Colors.white, // Match the border color
+                              color: Colors.black, 
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             shape: RoundedRectangleBorder(
@@ -213,7 +235,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
                               style: TextStyle(
                                 color: controller.text.isEmpty
                                     ? Colors.grey
-                                    : Colors.white,
+                                    : Colors.black,
                                 fontSize: 16,
                               ),
                             ),
@@ -258,7 +280,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
       children: [
         RichText(
           text: TextSpan(
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: const TextStyle(color: Colors.black, fontSize: 14),
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -281,39 +303,39 @@ class BasicInformationState extends State<BasicInformationScreen> {
                           : controller.text,
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 12),
-                      hintStyle: const TextStyle(color: Colors.white54),
+                      hintStyle: const TextStyle(color: Colors.grey),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.0),
                         borderSide: const BorderSide(
                           width: 1,
-                          color: Color.fromARGB(255, 255, 255, 255),
+                          color: Colors.black,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.0),
                         borderSide: const BorderSide(
                           width: 1,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.0),
                         borderSide: const BorderSide(
                           width: 1,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.0),
                         borderSide: const BorderSide(
                           width: 1,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                       errorStyle: const TextStyle(
                           height: 0), // Hide the default error message
                     ),
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.black),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a value';
@@ -372,7 +394,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
       children: [
         RichText(
           text: TextSpan(
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: const TextStyle(color: Colors.black, fontSize: 14),
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -435,7 +457,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
-          backgroundColor: WidgetStateProperty.all<Color>(Colors.tealAccent),
+          backgroundColor: WidgetStateProperty.all<Color>(Color.fromARGB(255, 24, 24, 207)),
           shadowColor: WidgetStateProperty.all<Color>(
             const Color.fromARGB(255, 213, 211, 211),
           ),
@@ -443,7 +465,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
         child: const Text(
           'Next',
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ),
@@ -453,7 +475,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 33, 33, 33),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Center(
           //padding: const EdgeInsets.symmetric(horizontal: 120.0),
@@ -464,7 +486,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
               children: [
                 const SizedBox(height: 10),
                 const Text('Basic Information',
-                    style: TextStyle(color: Colors.white, fontSize: 27)),
+                    style: TextStyle(color: Colors.black, fontSize: 27)),
                 const SizedBox(height: 27),
                 _buildSection('Name', _nameController),
                 const SizedBox(height: 16),
@@ -481,7 +503,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
                     children: [
                       RichText(
                         text: const TextSpan(
-                          style: TextStyle(color: Colors.white, fontSize: 14),
+                          style: TextStyle(color: Colors.black, fontSize: 14),
                           children: <TextSpan>[
                             TextSpan(text: 'City'),
                           ],
@@ -509,7 +531,7 @@ class BasicInformationState extends State<BasicInformationScreen> {
                   children: [
                     RichText(
                       text: const TextSpan(
-                        style: TextStyle(color: Colors.white, fontSize: 14),
+                        style: TextStyle(color: Colors.black, fontSize: 14),
                         children: <TextSpan>[
                           TextSpan(text: 'District'),
                         ],

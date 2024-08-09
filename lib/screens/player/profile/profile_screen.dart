@@ -6,7 +6,6 @@ import 'package:sportifind/widgets/setting.dart';
 import 'package:sportifind/widgets/information_menu.dart';
 import 'package:sportifind/screens/player/profile/widgets/hexagon_stat.dart';
 import 'package:sportifind/screens/player/profile/edit_information.dart';
-import 'package:sportifind/widgets/image_picker.dart';
 import 'package:sportifind/screens/player/profile/widgets/rating.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -104,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Container(
         width: 10,
         decoration: BoxDecoration(
-          color: Colors.tealAccent,
+          color: Color.fromARGB(255, 24, 24, 207),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
@@ -116,16 +115,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
-  }
-
-  Future<File> get getImageFileFromAssets async {
-    final byteData = await rootBundle.load('lib/assets/logo/google_logo.png');
-    final tempDir = await getTemporaryDirectory();
-
-    final tempFile = File('${tempDir.path}/your_image.jpg');
-    await tempFile.writeAsBytes(byteData.buffer.asUint8List(), flush: true);
-
-    return tempFile;
   }
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -228,12 +217,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       const Rating('DEF', 0),
       const Rating('PHY', 0),
     ];
+    print('hehe');
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 33, 33, 33),
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
         elevation: 0.0,
         actions: [
           IconButton(
@@ -245,11 +235,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               );
             },
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings, color: Color.fromARGB(255, 24, 24, 207)),
           ),
         ],
       ),
-      backgroundColor: const Color.fromARGB(255, 33, 33, 33),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: FutureBuilder<DocumentSnapshot>(
         future: userDataFuture,
         builder: (context, snapshot) {
@@ -302,13 +292,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               height: 35,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(100),
-                                color: Colors.tealAccent,
+                                color: Color.fromARGB(255, 24, 24, 207),
                               ),
                               child: IconButton(
                                 onPressed: () => _showImagePickerOptions(context),
                                 icon: const Icon(
-                                  Icons.create_rounded,
-                                  color: Colors.black,
+                                  Icons.camera_alt_outlined,
+                                  color: Color.fromARGB(255, 255, 255, 255),
                                   size: 20,
                                 ),
                               ),
@@ -317,8 +307,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                       const SizedBox(height: 15),
-                      Text(userData['name'] ?? 'Name', style: const TextStyle(color: Colors.white)),
-                      Text(userData['email'] ?? 'Email', style: const TextStyle(color: Colors.white)),
+                      Text(userData['name'] ?? 'Name', style: const TextStyle(color: Colors.black)),
+                      Text(userData['email'] ?? 'Email', style: const TextStyle(color: Colors.black)),
                       const SizedBox(height: 15),
                       SizedBox(
                         width: 120,
@@ -332,9 +322,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             );
                           },
-                          child: const Text('Edit Profile', style: TextStyle(color: Colors.black)),
+                          child: const Text('Edit', style: TextStyle(color: Colors.white)),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.tealAccent,
+                            backgroundColor: Color.fromARGB(255, 24, 24, 207),
                             side: BorderSide.none,
                             shape: const StadiumBorder(),
                           ),
@@ -344,6 +334,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       InformationMenu(textContent: userData['phone'] ?? "Phone", icon: "phone"),
                       InformationMenu(textContent: userData['address'] ?? "address", icon: "location"),
                       InformationMenu(textContent: userData['dob'] ?? "Date of Birth", icon: "dob"),
+                      Divider(),
+                      InformationMenu(textContent: userData['height'] ?? "height", icon: "height"),
+                      InformationMenu(textContent: userData['weight'] ?? "weight", icon: "weight"),
+                      InformationMenu(textContent: userData['foot'] ?? "foot", icon: "foot"),
                       const SizedBox(height: 15),
                       Row(
                         children: [
@@ -361,6 +355,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),  
                     ],
                   ),
+                  
                 ),
               ),
             );    
