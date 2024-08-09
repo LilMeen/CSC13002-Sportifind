@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:sportifind/core/entities/location.dart';
@@ -158,3 +160,30 @@ Future<Location?> getCurrentLocation() async {
 
     return null;
   }
+
+double calculateDistance(Location loc1, Location loc2) {
+  const double R = 6371; // Radius of the Earth in kilometers
+  double dLat = _degToRad(loc2.latitude - loc1.latitude);
+  double dLon = _degToRad(loc2.longitude - loc1.longitude);
+  double a = sin(dLat / 2) * sin(dLat / 2) +
+      cos(_degToRad(loc1.latitude)) *
+          cos(_degToRad(loc2.latitude)) *
+          sin(dLon / 2) *
+          sin(dLon / 2);
+  double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+  return R * c;
+}
+
+double _degToRad(double deg) {
+  return deg * (pi / 180);
+}
+
+void sortByDistance<T>(List<T> items, Location markedLocation,
+    Location Function(T) getItemLocation) {
+  items.sort((a, b) {
+    double distanceA = calculateDistance(markedLocation, getItemLocation(a));
+    double distanceB = calculateDistance(markedLocation, getItemLocation(b));
+    return distanceA.compareTo(distanceB);
+  });
+}
+

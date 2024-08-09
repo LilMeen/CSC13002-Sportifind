@@ -5,15 +5,16 @@ import 'package:sportifind/features/stadium/domain/repositories/stadium_reposito
 
 class SearchStadium implements UseCase<List<Stadium>, SearchStadiumParams> {
   final StadiumRepository repository;
+
   SearchStadium(this.repository);
 
   @override
   Future<Result<List<Stadium>>> call(SearchStadiumParams params) async {
     return repository.performStadiumSearch(
-      stadiums: params.stadiums,
-      searchText: params.searchText,
-      selectedCity: params.selectedCity,
-      selectedDistrict: params.selectedDistrict,
+      params.stadiums,
+      params.searchText,
+      params.selectedCity,
+      params.selectedDistrict
     );
   }
 }
@@ -24,10 +25,10 @@ class SearchStadiumParams {
   final String selectedCity;
   final String selectedDistrict;
 
-  SearchStadiumParams({
-    required this.stadiums,
-    required this.searchText,
-    required this.selectedCity,
-    required this.selectedDistrict,
-  });
+  SearchStadiumParams(
+    this.stadiums,
+    this.searchText,
+    this.selectedCity,
+    this.selectedDistrict
+  );
 }

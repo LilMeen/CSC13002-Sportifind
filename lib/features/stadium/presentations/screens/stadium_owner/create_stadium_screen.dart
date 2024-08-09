@@ -4,6 +4,9 @@ import 'package:sportifind/features/stadium/presentations/widgets/current_locati
 import 'package:sportifind/features/stadium/presentations/widgets/stadium_form.dart';
 
 class CreateStadiumScreen extends StatefulWidget {
+  static route() =>
+    MaterialPageRoute(builder: (context) => const CreateStadiumScreen());
+
   const CreateStadiumScreen({super.key});
 
   @override
