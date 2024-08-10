@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class CustomSearchBar extends StatelessWidget {
   final TextEditingController searchController;
@@ -33,13 +33,15 @@ class CustomSearchBar extends StatelessWidget {
         ),
         filled: true,
         fillColor: SportifindTheme.whiteSmoke,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 18.0),
+        prefixIcon:
+            const Icon(Icons.search, color: SportifindTheme.smokeScreen),
         suffixIcon: searchController.text.isNotEmpty
             ? IconButton(
-                icon: const Icon(Icons.clear, color: SportifindTheme.smokeScreen),
+                icon:
+                    const Icon(Icons.clear, color: SportifindTheme.smokeScreen),
                 onPressed: searchController.clear,
               )
-            : const Icon(Icons.search, color: SportifindTheme.smokeScreen),
+            : null,
       ),
     );
   }
