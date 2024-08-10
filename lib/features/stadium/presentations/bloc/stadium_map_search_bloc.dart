@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sportifind/core/entities/location.dart';
-import 'package:sportifind/core/entities/stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';

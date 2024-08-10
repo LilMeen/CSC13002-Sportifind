@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/entities/location.dart';
-import 'package:sportifind/core/entities/stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
 import 'package:sportifind/core/widgets/city_dropdown.dart';
 import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';

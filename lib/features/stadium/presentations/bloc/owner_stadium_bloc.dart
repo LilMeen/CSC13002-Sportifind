@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/entities/stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/features/profile/domain/usecases/get_stadium_owner.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_stadiums_by_owner.dart';
 
@@ -62,7 +64,10 @@ class OwnerStadiumBloc {
     _updateState((state) => state.copyWith(isLoading: true, errorMessage: ''));
 
     try {
-      final userData = await getStadiumOwner();
+      final userData = await UseCaseProvider.getUseCase<GetStadiumOwner>().call(
+        GetStadiumOwnerParams(id: FirebaseAuth.instance.currentUser!.uid),
+      ).then((value) => value.data!);
+      
       final stadiumsData = await UseCaseProvider.getUseCase<GetStadiumsByOwner>().call(
         GetStadiumsByOwnerParams(ownerId: userData.id),
       ).then((value) => value.data!);
