@@ -378,13 +378,10 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => DateSelectScreen(
-                                selectedStadiumId: widget.stadium.id,
-                                selectedStadiumName: widget.stadium.name,
-                                selectedStadiumOwner: widget.stadium.owner,
                                 selectedTeamId: widget.selectedTeamId!,
                                 selectedTeamName: widget.selectedTeamName!,
                                 selectedTeamAvatar: widget.selectedTeamAvatar!,
-                                fields: widget.stadium.fields,
+                                stadiumData: widget.stadium,
                                 addMatchCard: widget.addMatchCard,
                               ),
                             ),

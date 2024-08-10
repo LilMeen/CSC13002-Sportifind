@@ -46,7 +46,7 @@ class SportifindTheme {
     color: Colors.white,
   );
 
-  static TextStyle teamItem= GoogleFonts.lexend(
+  static TextStyle teamItem = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
     fontSize: 16,
     color: Colors.white,
@@ -88,6 +88,18 @@ class SportifindTheme {
     color: bluePurple,
   );
 
+  static TextStyle dropDownDisplay = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 30,
+    color: Colors.white,
+  );
+
+  static TextStyle bookingIndex = GoogleFonts.lexend(
+    fontWeight: FontWeight.w500,
+    fontSize: 18,
+    color: Colors.black,
+  );
+
   // app bar text style
   static TextStyle sportifindAppBar = GoogleFonts.rowdies(
     fontWeight: FontWeight.normal,
@@ -118,6 +130,18 @@ class SportifindTheme {
   static TextStyle featureTitleWhite = GoogleFonts.rowdies(
     fontWeight: FontWeight.normal,
     fontSize: 30,
+    color: Colors.white,
+  );
+
+  static TextStyle textBluePurple = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 25,
+    color: bluePurple,
+  );
+
+  static TextStyle textWhite = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 25,
     color: Colors.white,
   );
 

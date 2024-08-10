@@ -484,24 +484,22 @@ class StadiumService {
   }
 
   Future<List<FieldData>> getFieldData(String stadiumId) async {
-    List<FieldData> stadiumField = [];
     final fieldQuery = await FirebaseFirestore.instance
-        .collection('users')
+        .collection('stadiums')
         .doc(stadiumId)
-        .collection('notifications')
+        .collection('fields')
         .get();
     final fields = fieldQuery.docs
-        .map((notification) => FieldData.fromSnapshot(notification))
+        .map((field) => FieldData.fromSnapshot(field))
         .toList();
-    for (var i = 0; i < fields.length; ++i) {
-      stadiumField.add(stadiumField[i]);
-    }
-    return stadiumField;
+    return fields;
   }
 
   Future<Map<int, String>> generateFieldIdMap(String stadiumId) async {
     final fieldData = await getFieldData(stadiumId);
+    print(fieldData);
     final fieldMap = {for (var field in fieldData) field.numberId: field.id};
+    print(fieldMap);
     return fieldMap;
   }
 }

@@ -15,10 +15,10 @@ class CommonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         margin: margin,
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        padding: padding,
         decoration: BoxDecoration(
           color: color ?? Colors.white,
-          borderRadius: borderRadius ?? const BorderRadius.all(Radius.circular(16)),
+          borderRadius: borderRadius ?? const BorderRadius.all(Radius.circular(8)),
           boxShadow: [
             boxShadow ??
                 BoxShadow(blurRadius: 10.0, offset: const Offset(0, 5), color: const Color(0xff666666).withOpacity(0.1))

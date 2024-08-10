@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sportifind/models/match_card.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 import '../widgets/booking_controller.dart';
 import '../util/booking_util.dart';
@@ -111,104 +112,90 @@ class _BookingCalendarMainState extends State<BookingCalendarMain> {
     controller.generateBookedSlots(widget.bookedSlot);
 
     return Consumer<BookingController>(
-      builder: (_, controller, __) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: (controller.isUploading)
-            ? widget.uploadingWidget ?? const BookingDialog()
-            : Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 8),
-                  Expanded(
-                    // child: (widget.wholeDayIsBookedWidget != null &&
-                    //         controller.isWholeDayBooked())
-                    //     ? widget.wholeDayIsBookedWidget! :
-                    child: GridView.builder(
-                      physics: widget.gridScrollPhysics ??
-                          const BouncingScrollPhysics(),
-                      itemCount: controller.allBookingSlots.length,
-                      itemBuilder: (context, index) {
-                        TextStyle? getTextStyle() {
-                          if (controller.isSlotBooked(index)) {
-                            return widget.bookedSlotTextStyle;
-                          } else if (index == controller.selectedSlot) {
-                            return widget.selectedSlotTextStyle;
-                          } else {
-                            return widget.availableSlotTextStyle;
-                          }
-                        }
-
-                        final slot =
-                            controller.allBookingSlots.elementAt(index);
-                        return BookingSlot(
-                          hideBreakSlot: widget.hideBreakTime,
-                          pauseSlotColor: widget.pauseSlotColor,
-                          availableSlotColor: widget.availableSlotColor,
-                          bookedSlotColor: widget.bookedSlotColor,
-                          selectedSlotColor: widget.selectedSlotColor,
-                          isPauseTime: controller.isSlotInPauseTime(index, widget.selectedPlayTime),
-                          isBooked: controller.isSlotBooked(index),
-                          isSelected: index == controller.selectedSlot,
-                          onTap: () => controller.selectSlot(index),
-                          child: Center(
-                            child: Text(
-                              widget.formatDateTime?.call(slot) ??
-                                  BookingUtil.formatDateTime(slot),
-                              style: getTextStyle(),
-                            ),
+      builder: (_, controller, __) => (controller.isUploading)
+          ? widget.uploadingWidget ?? const BookingDialog()
+          : Column(
+              children: [
+                Expanded(
+                  // child: (widget.wholeDayIsBookedWidget != null &&
+                  //         controller.isWholeDayBooked())
+                  //     ? widget.wholeDayIsBookedWidget! :
+                  child: GridView.builder(
+                    physics: widget.gridScrollPhysics ??
+                        const BouncingScrollPhysics(),
+                    itemCount: controller.allBookingSlots.length - 1,
+                    itemBuilder: (context, index) {
+                      final slot = controller.allBookingSlots.elementAt(index);
+                      return BookingSlot(
+                        hideBreakSlot: widget.hideBreakTime,
+                        pauseSlotColor: widget.pauseSlotColor,
+                        availableSlotColor: widget.availableSlotColor,
+                        bookedSlotColor: widget.bookedSlotColor,
+                        selectedSlotColor: widget.selectedSlotColor,
+                        isPauseTime: controller.isSlotInPauseTime(
+                            index, widget.selectedPlayTime),
+                        isBooked: controller.isSlotBooked(index),
+                        isSelected: index == controller.selectedSlot,
+                        onTap: () => controller.selectSlot(index),
+                        child: Center(
+                          child: Text(
+                            widget.formatDateTime?.call(slot) ??
+                                BookingUtil.formatDateTime(slot),
+                            style: SportifindTheme.bookingIndex,
                           ),
-                        );
-                      },
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 120,
-                        childAspectRatio:
-                            widget.bookingGridChildAspectRatio ?? 1.5,
-                      ),
+                        ),
+                      );
+                    },
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 10,
+                      childAspectRatio:
+                          widget.bookingGridChildAspectRatio ?? 1.5,
                     ),
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  widget.bookingExplanation ??
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          BookingExplanation(
-                              color: widget.availableSlotColor ??
-                                  Colors.greenAccent,
-                              text: widget.availableSlotText ?? "Available"),
-                          BookingExplanation(
-                              color: widget.selectedSlotColor ??
-                                  Colors.orangeAccent,
-                              text: widget.selectedSlotText ?? "Selected"),
-                          BookingExplanation(
-                              color: widget.bookedSlotColor ?? Colors.redAccent,
-                              text: widget.bookedSlotText ?? "Booked"),
-                          BookingExplanation(
-                              color: widget.pauseSlotColor ??
-                                  const Color.fromARGB(255, 71, 71, 71),
-                              text: widget.pauseSlotText ?? "Pause"),
-                        ],
-                      ),
-                  const SizedBox(height: 16),
-                  CommonButton(
-                    text: widget.bookingButtonText ?? 'Create Match',
-                    onTap: () async {
-                      //controller.toggleUploading();
-                      final newBooking =
-                          controller.generateNewBookingForUploading(
-                              widget.selectedPlayTime);
-                      //controller.toggleUploading();
-                      controller.resetSelectedSlot();
-                      controller.addData(newBooking, widget.selectedPlayTime);
-                      controller.returnToMainScreen(context);
-                    },
-                    isDisabled: controller.selectedSlot == -1,
-                    buttonActiveColor: widget.bookingButtonColor,
-                  ),
-                ],
-              ),
-      ),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                widget.bookingExplanation ??
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        BookingExplanation(
+                            color:
+                                widget.availableSlotColor ?? Colors.greenAccent,
+                            text: widget.availableSlotText ?? "Available"),
+                        BookingExplanation(
+                            color:
+                                widget.selectedSlotColor ?? Colors.orangeAccent,
+                            text: widget.selectedSlotText ?? "Selected"),
+                        BookingExplanation(
+                            color: widget.bookedSlotColor ?? Colors.redAccent,
+                            text: widget.bookedSlotText ?? "Booked"),
+                        BookingExplanation(
+                            color: widget.pauseSlotColor ??
+                                const Color.fromARGB(255, 71, 71, 71),
+                            text: widget.pauseSlotText ?? "Unavailable"),
+                      ],
+                    ),
+                const SizedBox(height: 8),
+                CommonButton(
+                  text: widget.bookingButtonText ?? 'Create Match',
+                  onTap: () async {
+                    //controller.toggleUploading();
+                    final newBooking =
+                        controller.generateNewBookingForUploading(
+                            widget.selectedPlayTime);
+                    //controller.toggleUploading();
+                    controller.resetSelectedSlot();
+                    controller.addData(newBooking, widget.selectedPlayTime);
+                    controller.returnToMainScreen(context);
+                  },
+                  isDisabled: controller.selectedSlot == -1,
+                  buttonActiveColor: widget.bookingButtonColor,
+                ),
+              ],
+            ),
     );
   }
 }

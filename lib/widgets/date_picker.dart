@@ -4,13 +4,13 @@ import 'package:sportifind/models/sportifind_theme.dart';
 
 // ignore: must_be_immutable
 class DatePicker extends StatefulWidget {
-  DatePicker(
-      {super.key,
-      this.func,
-      required this.height,
-      required this.width,
-      required this.selectedDate,
-      });
+  DatePicker({
+    super.key,
+    this.func,
+    required this.height,
+    required this.width,
+    required this.selectedDate,
+  });
   final double height;
   final double width;
   DateTime? selectedDate;
@@ -44,36 +44,48 @@ class _DatePickerState extends State<DatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Date",
-          style: SportifindTheme.bodyTitle,
+          style: SportifindTheme.body,
         ),
-        const Spacer(),
+        const SizedBox(
+          height: 5,
+        ),
         Container(
           padding: const EdgeInsets.only(left: 10.0),
-          height: widget.height,
-          width: widget.width,
+          height: 50,
+          width: double.infinity,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: SportifindTheme.grey,
+            borderRadius: BorderRadius.circular(8),
+            color: SportifindTheme.bluePurple,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                widget.selectedDate == null
-                    ? 'Selected Date'
-                    : formatter.format(widget.selectedDate!),
-                style: SportifindTheme.normalText,
-              ),
-              IconButton(
-                onPressed: () {
+              GestureDetector(
+                onTap: () {
                   _showDatePicker();
                 },
-                icon: const Icon(Icons.calendar_month),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_month_outlined,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                    const SizedBox(width: 5,),
+                    Text(
+                      widget.selectedDate == null
+                          ? 'Selecte Date'
+                          : formatter.format(widget.selectedDate!),
+                      style: SportifindTheme.textWhite,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

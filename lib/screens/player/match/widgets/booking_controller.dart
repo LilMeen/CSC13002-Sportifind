@@ -100,11 +100,11 @@ class BookingController extends ChangeNotifier {
     if (serviceOpening != null && serviceClosing != null) {
       openingHours = DateTimeRange(start: serviceOpening!, end: serviceClosing!)
           .duration
-          .inHours;
+          .inMinutes;
     }
 
     ///round down if not the whole service would fit in the last hours
-    return ((openingHours * 60) / bookingService.serviceDuration).floor();
+    return ((openingHours + 30) / bookingService.serviceDuration).round();
   }
 
   bool isSlotBooked(int index) {
@@ -159,7 +159,9 @@ class BookingController extends ChangeNotifier {
           isSlotBooked(index) == false) {
         result = true;
         return result;
-      } else if (index != 0 && isSlotBooked(index) == false && index < 28) {
+      } else if (index != 0 &&
+          isSlotBooked(index) == false &&
+          index < allBookingSlots.length - 2) {
         for (var i = 1; i <= 2; i++) {
           if (isSlotBooked(index + i) == true) {
             result = true;
@@ -175,7 +177,9 @@ class BookingController extends ChangeNotifier {
           isSlotBooked(index) == false) {
         result = true;
         return result;
-      } else if (index != 0 && isSlotBooked(index) == false && index < 27) {
+      } else if (index != 0 &&
+          isSlotBooked(index) == false &&
+          index < allBookingSlots.length - 3) {
         for (var i = 1; i <= 3; i++) {
           if (isSlotBooked(index + i) == true) {
             result = true;
@@ -230,7 +234,6 @@ class BookingController extends ChangeNotifier {
 
   Future<void> addData(BookingService bookingDate, int selectedPlayTime) async {
     final fieldMap = await stadiumService.generateFieldIdMap(selectedStadium);
-
     MatchCard newMatchCard = MatchCard(
       stadium: selectedStadium,
       stadiumOwner: selectedStadiumOwner,
@@ -244,7 +247,6 @@ class BookingController extends ChangeNotifier {
       team2: "",
       field: fieldMap[selectedField]!,
     );
-
     addMatchCard(newMatchCard);
 
     FirebaseFirestore.instance.collection('matches').doc(newMatchCard.id).set({

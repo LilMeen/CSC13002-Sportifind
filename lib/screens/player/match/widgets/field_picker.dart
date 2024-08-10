@@ -1,10 +1,7 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/field_data.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 
-// ignore: must_be_immutable
 class FieldPicker extends StatefulWidget {
   FieldPicker({
     super.key,
@@ -12,13 +9,16 @@ class FieldPicker extends StatefulWidget {
     required this.width,
     required this.selectedField,
     required this.fields,
+    required this.selectedFieldType,
     required this.func,
   });
 
   final double height;
   final double width;
   int? selectedField;
+  String selectedFieldType;
   List<FieldData> fields;
+  List<FieldData> fieldsWithType = [];
   final void Function(int) func;
 
   @override
@@ -27,42 +27,80 @@ class FieldPicker extends StatefulWidget {
 
 class _FieldPickerState extends State<FieldPicker> {
   @override
+  void initState() {
+    super.initState();
+    _populateFieldsWithType();
+  }
+
+  @override
+  void didUpdateWidget(covariant FieldPicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedFieldType != widget.selectedFieldType) {
+      setState(() {
+        widget.func(widget.selectedField!);
+      });
+    }
+    _populateFieldsWithType();
+  }
+
+  void _populateFieldsWithType() {
+    // Clear the list to avoid duplicates
+    widget.fieldsWithType.clear();
+
+    for (var i = 0; i < widget.fields.length; ++i) {
+      if (widget.fields[i].type == widget.selectedFieldType) {
+        widget.fieldsWithType.add(widget.fields[i]);
+      }
+    }
+
+    // Sort the list after populating it
+    widget.fieldsWithType.sort((a, b) => a.numberId.compareTo(b.numberId));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    widget.fields = List.from(widget.fields)
-      ..sort((a, b) => a.numberId.compareTo(b.numberId));
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Field",
-          style: SportifindTheme.normalTextBlack,
+          style: SportifindTheme.body,
         ),
-        const Spacer(),
+        const SizedBox(height: 5,),
         Container(
           padding: const EdgeInsets.only(left: 10.0),
-          height: widget.height,
-          width: widget.width,
+          height: 50,
+          width: 180,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: SportifindTheme.grey,
+            borderRadius: BorderRadius.circular(8),
+            color: SportifindTheme.bluePurple,
           ),
-          child: DropdownButton<String>(
-            borderRadius: BorderRadius.circular(5.0),
-            value: widget.selectedField.toString(),
-            isExpanded: true,
-            items: widget.fields.map((FieldData item) {
-              return DropdownMenuItem<String>(
-                value: item.numberId.toString(),
-                child: Text('${item.numberId} ${item.type}'),
-              );
-            }).toList(),
-            onChanged: (value) {
-              if (value != null) {
-                setState(() {
-                  widget.selectedField = value as int?;
-                  widget.func(value as int);
-                });
-              }
-            },
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              borderRadius: BorderRadius.circular(5.0),
+              value: widget.selectedField?.toString(),
+              style: SportifindTheme.textWhite,
+              dropdownColor: SportifindTheme.bluePurple,
+              isExpanded: true,
+              items: widget.fieldsWithType.map((FieldData item) {
+                return DropdownMenuItem<String>(
+                  value: item.numberId.toString(),
+                  child: Center(
+                      child: Text(
+                    '${item.numberId}',
+                    style: SportifindTheme.textWhite,
+                  )),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    widget.selectedField = int.parse(value);
+                    widget.func(widget.selectedField!);
+                  });
+                }
+              },
+            ),
           ),
         ),
       ],

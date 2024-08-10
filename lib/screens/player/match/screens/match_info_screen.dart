@@ -60,8 +60,6 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
       team.add(teamInfo[i]);
     }
     userData = await userService.getUserPlayerData();
-    print("Team data");
-    print(team);
     matchStadium =
         await stadiumService.getSpecificStadiumsData(widget.matchInfo.stadium);
 

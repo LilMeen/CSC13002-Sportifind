@@ -45,21 +45,19 @@ class CommonButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Theme.of(context).textTheme;
-
     return InkWell(
       onTap: (isDisabled == null || isDisabled == false) ? onTap : null,
       child: Container(
         width: width ?? double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
-          color: _getButtonColor(),
+          color: SportifindTheme.bluePurple,
           borderRadius: const BorderRadius.all(Radius.circular(30)),
           border: (isActive == false && isDisabled == false) ? Border.all(color: SportifindTheme.grey, width: 2) : null,
         ),
         child: Text(
           text,
-          style: buttonStyle ?? themeData.labelLarge!.copyWith(color: _getTextColor()),
+          style: SportifindTheme.textWhite,
           textAlign: TextAlign.center,
         ),
       ),

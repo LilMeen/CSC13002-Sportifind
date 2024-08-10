@@ -2,43 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/models/field_data.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/models/stadium_data.dart';
+import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
 import 'package:sportifind/screens/player/match/util/booking_calendar.dart';
 import 'package:sportifind/screens/player/match/widgets/field_picker.dart';
+import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/widgets/date_picker.dart';
 import 'package:sportifind/util/match_service.dart';
 
 class DateSelectScreen extends StatefulWidget {
   const DateSelectScreen(
       {super.key,
-      required this.selectedStadiumId,
-      required this.selectedStadiumName,
-      required this.selectedStadiumOwner,
-      required this.selectedTeamId,
-      required this.selectedTeamName,
+      required this.stadiumData,
       required this.selectedTeamAvatar,
-      required this.fields,
+      required this.selectedTeamName,
+      required this.selectedTeamId,
       required this.addMatchCard});
 
+  final StadiumData stadiumData;
   final String selectedTeamId;
   final String selectedTeamName;
   final String selectedTeamAvatar;
-  final String selectedStadiumId;
-  final String selectedStadiumName;
-  final String selectedStadiumOwner;
-  final List<FieldData> fields;
   final void Function(MatchCard matchcard)? addMatchCard;
   @override
   State<StatefulWidget> createState() => _DateSelectScreenState();
 }
-
-int selectedField = 1;
 
 class _DateSelectScreenState extends State<DateSelectScreen> {
   DateTime? selectedDate;
   List<MatchCard> userMatches = [];
   List<DateTimeRange> bookedSlot = [];
   String selectedPlayTime = '1h00';
+  String selectedFieldType = '5-Player';
   MatchService matchService = MatchService();
+  int selectedField = 1;
+  List<String> typeOfField = [];
 
   var playTime = [
     '1h00',
@@ -46,33 +44,54 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     '2h00',
   ];
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getFieldType(widget.stadiumData.fields);
+  }
+
+  List<String> getFieldType(List<FieldData> fields) {
+    if (widget.stadiumData.getNumberOfTypeField('5-Player') != 0) {
+      typeOfField.add('5-Player');
+    }
+
+    if (widget.stadiumData.getNumberOfTypeField('7-Player') != 0) {
+      typeOfField.add('7-Player');
+    }
+    if (widget.stadiumData.getNumberOfTypeField('11-Player') != 0) {
+      typeOfField.add('11-Player');
+    }
+    return typeOfField;
+  }
+
   List<DateTimeRange> generatePauseSlot(int selectedPlayTime) {
     List<DateTimeRange> pauseSlot = [];
     if (selectedPlayTime == 60) {
       pauseSlot.add(
         DateTimeRange(
-          start: DateTime(selectedDate!.year, selectedDate!.month,
-              selectedDate!.day, 22, 30),
-          end: DateTime(selectedDate!.year, selectedDate!.month,
-              selectedDate!.day, 23, 00),
+          start: convertMinutesToDateTime(
+              convertTimeStringToMinutes(widget.stadiumData.closeTime) - 30),
+          end: convertMinutesToDateTime(
+              convertTimeStringToMinutes(widget.stadiumData.closeTime)),
         ),
       );
     } else if (selectedPlayTime == 90) {
       pauseSlot.add(
         DateTimeRange(
-          start: DateTime(selectedDate!.year, selectedDate!.month,
-              selectedDate!.day, 22, 00),
-          end: DateTime(selectedDate!.year, selectedDate!.month,
-              selectedDate!.day, 23, 00),
+          start: convertMinutesToDateTime(
+              convertTimeStringToMinutes(widget.stadiumData.closeTime) - 60),
+          end: convertMinutesToDateTime(
+              convertTimeStringToMinutes(widget.stadiumData.closeTime)),
         ),
       );
     } else if (selectedPlayTime == 120) {
       pauseSlot.add(
         DateTimeRange(
-          start: DateTime(selectedDate!.year, selectedDate!.month,
-              selectedDate!.day, 21, 30),
-          end: DateTime(selectedDate!.year, selectedDate!.month,
-              selectedDate!.day, 23, 00),
+          start: convertMinutesToDateTime(
+              convertTimeStringToMinutes(widget.stadiumData.closeTime) - 90),
+          end: convertMinutesToDateTime(
+              convertTimeStringToMinutes(widget.stadiumData.closeTime)),
         ),
       );
     } else {
@@ -91,7 +110,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
 
   void refreshByDate(DateTime pickedDate) async {
     await matchService.getMatchDate(pickedDate, selectedField,
-        widget.selectedStadiumId, userMatches, bookedSlot);
+        widget.stadiumData.id, userMatches, bookedSlot);
     setState(() {
       selectedDate = pickedDate;
     });
@@ -99,47 +118,135 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
 
   void refreshByField(int pickedField) async {
     await matchService.getMatchDate(selectedDate!, pickedField,
-        widget.selectedStadiumId, userMatches, bookedSlot);
+        widget.stadiumData.id, userMatches, bookedSlot);
     setState(() {
       selectedField = pickedField;
     });
   }
 
+  int convertTimeStringToMinutes(String timeString) {
+    // Split the string by the colon
+    List<String> parts = timeString.split(':');
+
+    // Parse the hour and minute from the string
+    int hour = int.parse(parts[0]);
+    int minute = int.parse(parts[1]);
+
+    // Convert the hour into minutes and add the minutes
+    int totalMinutes = hour * 60 + minute;
+
+    return totalMinutes;
+  }
+
+  DateTime convertMinutesToDateTime(int totalMinutes) {
+    // Get the current date
+    DateTime now = DateTime.now();
+
+    // Create a DateTime object by adding the total minutes to the start of the day
+    DateTime dateTime = DateTime(now.year, now.month, now.day)
+        .add(Duration(minutes: totalMinutes));
+
+    return dateTime;
+  }
+
   // Function to build duration dropdown button
   Widget durationPicker(double height, double width) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Duration",
-          style: SportifindTheme.dropdown,
+          style: SportifindTheme.body,
         ),
-        const Spacer(),
+        const SizedBox(
+          height: 5,
+        ),
         Container(
           padding: const EdgeInsets.only(left: 10.0),
-          height: height,
-          width: width,
+          height: 50,
+          width: 180,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: SportifindTheme.grey,
+            borderRadius: BorderRadius.circular(8),
+            color: SportifindTheme.bluePurple,
           ),
-          child: DropdownButton(
-            borderRadius: BorderRadius.circular(5.0),
-            value: selectedPlayTime,
-            isExpanded: true,
-            items: playTime.map((String items) {
-              return DropdownMenuItem(
-                value: items,
-                child: Text(items),
-              );
-            }).toList(),
-            onChanged: (value) {
-              if (value == null) {
-                return;
-              }
-              setState(() {
-                selectedPlayTime = value;
-              });
-            },
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton(
+              borderRadius: BorderRadius.circular(5.0),
+              value: selectedPlayTime,
+              style: SportifindTheme.textWhite,
+              isExpanded: true,
+              dropdownColor: SportifindTheme.bluePurple,
+              items: playTime.map((String items) {
+                return DropdownMenuItem(
+                  value: items,
+                  child: Center(
+                      child: Text(
+                    items,
+                    style: SportifindTheme.textWhite,
+                  )),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value == null) {
+                  return;
+                }
+                setState(() {
+                  selectedPlayTime = value;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget fieldTypePicker(double height, double width) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Type of field",
+          style: SportifindTheme.body,
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+        Container(
+          padding: const EdgeInsets.only(left: 10.0),
+          height: 50,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: SportifindTheme.bluePurple,
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton(
+              borderRadius: BorderRadius.circular(5.0),
+              value: selectedFieldType,
+              style: SportifindTheme.textWhite,
+              isExpanded: true,
+              dropdownColor: SportifindTheme.bluePurple,
+              items: typeOfField.map((String items) {
+                return DropdownMenuItem(
+                  value: items,
+                  child: Center(
+                    child: Text(
+                      items,
+                      style: SportifindTheme.textWhite,
+                    ),
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value == null) {
+                  return;
+                }
+                setState(() {
+                  selectedFieldType = value;
+                });
+              },
+            ),
           ),
         ),
       ],
@@ -148,25 +255,27 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
 
   // Function to build booking Calendar
   Widget bookingCalender(double bookingHeight) {
-    return SizedBox(
-      height: bookingHeight,
-      child: selectedDate != null
-          ? BookingCalendar(
+    print(selectedField);
+    return selectedDate != null
+        ? SizedBox(
+            height: bookingHeight,
+            child: BookingCalendar(
               bookingService: BookingService(
                 serviceName: 'Mock Service',
                 serviceDuration: 30,
-                bookingEnd: DateTime(selectedDate!.year, selectedDate!.month,
-                    selectedDate!.day, 23, 0),
-                bookingStart: DateTime(selectedDate!.year, selectedDate!.month,
-                    selectedDate!.day, 8, 0),
+                bookingEnd: convertMinutesToDateTime(
+                    convertTimeStringToMinutes(widget.stadiumData.closeTime) -
+                        30),
+                bookingStart: convertMinutesToDateTime(
+                    convertTimeStringToMinutes(widget.stadiumData.openTime)),
               ),
               hideBreakTime: false,
               loadingWidget: const Text('Fetching data...'),
               uploadingWidget: const CircularProgressIndicator(),
               locale: 'en',
               selectedPlayTime: convertDurationStringToInt(selectedPlayTime),
-              selectedStadium: widget.selectedStadiumId,
-              selectedStadiumOwner: widget.selectedStadiumOwner,
+              selectedStadium: widget.stadiumData.id,
+              selectedStadiumOwner: widget.stadiumData.owner,
               selectedTeam: widget.selectedTeamId,
               selectedTeamAvatar: widget.selectedTeamAvatar,
               selectedDate: selectedDate!,
@@ -177,46 +286,66 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               bookedSlot: bookedSlot,
               wholeDayIsBookedWidget:
                   const Text('Sorry, for this day everything is booked'),
-            )
-          : Text(
-              "Please choose a date to continue",
-              style: SportifindTheme.dropdown,
-              textAlign: TextAlign.center,
+            ))
+        : Container(
+            width: double.infinity,
+            height: 220,
+            child: Center(
+              child: Text(
+                "Please choose a date to continue",
+                style: SportifindTheme.body,
+              ),
             ),
-    );
+          );
   }
 
-  Widget displayBox(String title, String displayItem, String avatar) {
+  int getFirstFields(
+      List<FieldData> fields, String selectedFieldType, int selectedField) {
+    List<int> numberId = [];
+    fields = List.from(widget.stadiumData.fields)
+      ..sort((a, b) => a.numberId.compareTo(b.numberId));
+    for (var i = 0; i < fields.length; ++i) {
+      if (fields[i].type == selectedFieldType) {
+        numberId.add(fields[i].numberId);
+      }
+    }
+    if (selectedField != 0 &&
+        numberId.every((element) => element != selectedField)) {
+      return numberId[0];
+    } else if (numberId.any((element) => element == selectedField)) {
+      return selectedField;
+    } else {
+      return -1;
+    }
+  }
+
+  Widget displayBox(String title, String displayItem) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: SportifindTheme.dropdown,
+          style: SportifindTheme.body,
         ),
         const SizedBox(
-          height: 20,
+          height: 5,
         ),
         Container(
           padding: const EdgeInsets.only(left: 10.0),
-          height: 40,
+          height: 50,
           width: double.infinity,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: SportifindTheme.grey,
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.white,
+            border: Border.all(width: 3, color: SportifindTheme.bluePurple),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(avatar, width: 25),
-              Container(
-                margin: const EdgeInsets.only(left: 10),
-                child: Text(
-                  displayItem,
-                  style: SportifindTheme.dropdown,
-                ),
+          child: Container(
+            child: Center(
+              child: Text(
+                displayItem,
+                style: SportifindTheme.textBluePurple,
               ),
-            ],
+            ),
           ),
         ),
       ],
@@ -225,7 +354,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String selectedStadium = widget.selectedStadiumName;
+    final String selectedStadium = widget.stadiumData.name;
     return MaterialApp(
       home: SafeArea(
         child: Scaffold(
@@ -234,61 +363,74 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
             leading: BackButton(
               color: SportifindTheme.grey,
               onPressed: () {
-                Navigator.pop(
+                Navigator.pushReplacement(
                   context,
+                  MaterialPageRoute(
+                    builder: (context) => const MatchMainScreen(),
+                  ),
                 );
               },
             ),
             centerTitle: true,
             title: Text(
               "Create match",
-              style: SportifindTheme.dropdown,
+              style: SportifindTheme.sportifindAppBarForFeature,
             ),
           ),
-          backgroundColor: SportifindTheme.whiteSmoke,
+          backgroundColor: Colors.white,
           body: SingleChildScrollView(
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   displayBox(
-                    "Tean",
+                    "Selected tean",
                     widget.selectedTeamName,
-                    "lib/assets/logo/logo.png",
                   ),
                   const SizedBox(
-                    height: 40,
+                    height: 30,
                   ),
                   displayBox(
-                    "Stadium",
-                    selectedStadium,
-                    "lib/assets/logo/logo.png",
+                    "Selected stadium",
+                    "$selectedStadium stadium",
                   ),
                   const SizedBox(
-                    height: 40,
+                    height: 30,
                   ),
-                  durationPicker(40, 75),
+                  fieldTypePicker(40, 75),
                   const SizedBox(
-                    height: 40,
+                    height: 30,
                   ),
-                  FieldPicker(
-                      func: refreshByField,
-                      fields: widget.fields,
-                      selectedField: selectedField,
-                      height: 40,
-                      width: 125),
-                  const SizedBox(height: 40),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      durationPicker(40, 75),
+                      const SizedBox(
+                        width: 40,
+                      ),
+                      FieldPicker(
+                        func: refreshByField,
+                        fields: widget.stadiumData.fields,
+                        selectedField: getFirstFields(widget.stadiumData.fields,
+                            selectedFieldType, selectedField),
+                        selectedFieldType: selectedFieldType,
+                        height: 50,
+                        width: 125,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
                   DatePicker(
                     func: refreshByDate,
                     height: 40,
                     width: 175,
                     selectedDate: selectedDate,
                   ),
-                  const SizedBox(height: 40),
-                  bookingCalender(650),
+                  const SizedBox(height: 30),
+                  bookingCalender(365),
                 ],
               ),
             ),

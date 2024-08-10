@@ -95,8 +95,6 @@ class MatchService {
   }
 
   Future<void> deleteMatch(String matchId) async {
-    final TeamService teamService = TeamService();
-    final UserService userService = UserService();
     try {
       await FirebaseFirestore.instance
           .collection('matches')
@@ -124,10 +122,10 @@ class MatchService {
     await getMatchData(userMatches);
     for (var i = 0; i < userMatches.length; i++) {
       final String matchDate = userMatches[i].date;
-      print(selectedField);
-      print(userMatches[i].field);
+      final fieldMap =
+          await stadiumService.generateFieldIdMap(userMatches[i].stadium);
       if (date == matchDate &&
-          selectedField == userMatches[i].field &&
+          fieldMap[selectedField] == userMatches[i].field &&
           selectedStadiumId == userMatches[i].stadium) {
         bookedSlot.add(DateTimeRange(
             start: convertStringToDateTime(
