@@ -3,6 +3,8 @@ import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/core/util/search_util.dart';
+import 'package:sportifind/features/match/data/datasources/match_remote_data_source.dart';
+import 'package:sportifind/features/match/data/models/match_model.dart';
 import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
@@ -10,9 +12,11 @@ import 'package:sportifind/features/stadium/domain/repositories/stadium_reposito
 
 class StadiumRepositoryImpl implements StadiumRepository {
   final StadiumRemoteDataSource stadiumRemoteDataSource;
+  final MatchRemoteDataSource matchRemoteDataSource;
 
   StadiumRepositoryImpl({
     required this.stadiumRemoteDataSource,
+    required this.matchRemoteDataSource,
   });
 
   // CREATE STADIUM
@@ -68,6 +72,23 @@ class StadiumRepositoryImpl implements StadiumRepository {
   }
 
 
+  // DELETE STADIUM
+  // Delete a stadium by its id
+  @override
+  Future<Result<void>> deleteStadium(String id) async {
+    List<MatchModel> relatedMatches = await matchRemoteDataSource.getMatchesByStadium(id);
+    for (var match in relatedMatches) {
+      await matchRemoteDataSource.deleteMatch(match.id);
+    }
+    await stadiumRemoteDataSource.deleteStadium(id);
+    return Result.success(null);
+  }
+
+
+  ////////////////////////
+  // NON FUTURE METHODS //
+  ////////////////////////
+
   // SORT NEARBY STADIUMS
   // Sort stadiums by distance to a location
   @override
@@ -81,18 +102,18 @@ class StadiumRepositoryImpl implements StadiumRepository {
 }
 
 
-// PERFORM STADIUM SEARCH
-// Search stadiums by name and location
-@override
-Result<List<Stadium>> performStadiumSearch(List<Stadium> stadiums,
-    String searchText, String selectedCity, String selectedDistrict) {
-  return Result.success(searchingNameAndLocation(
-    listItems: stadiums,
-    searchText: searchText,
-    selectedCity: selectedCity,
-    selectedDistrict: selectedDistrict,
-    getNameOfItem: (stadium) => stadium.name,
-    getLocationOfItem: (stadium) => stadium.location,
-  ));
-}
+  // PERFORM STADIUM SEARCH
+  // Search stadiums by name and location
+  @override
+  Result<List<Stadium>> performStadiumSearch(List<Stadium> stadiums,
+      String searchText, String selectedCity, String selectedDistrict) {
+    return Result.success(searchingNameAndLocation(
+      listItems: stadiums,
+      searchText: searchText,
+      selectedCity: selectedCity,
+      selectedDistrict: selectedDistrict,
+      getNameOfItem: (stadium) => stadium.name,
+      getLocationOfItem: (stadium) => stadium.location,
+    ));
+  }
 }

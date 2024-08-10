@@ -21,6 +21,7 @@ void initializeStadiumDependencies (){
   sl.registerLazySingleton<StadiumRepository>(
     () => StadiumRepositoryImpl(
       stadiumRemoteDataSource: sl(), 
+      matchRemoteDataSource: sl(),
     )
   );
 
