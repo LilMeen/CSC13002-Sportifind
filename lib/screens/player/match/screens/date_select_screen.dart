@@ -6,7 +6,6 @@ import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
 import 'package:sportifind/screens/player/match/util/booking_calendar.dart';
 import 'package:sportifind/screens/player/match/widgets/field_picker.dart';
-import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/widgets/date_picker.dart';
 import 'package:sportifind/util/match_service.dart';
 
@@ -71,27 +70,33 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
       pauseSlot.add(
         DateTimeRange(
           start: convertMinutesToDateTime(
-              convertTimeStringToMinutes(widget.stadiumData.closeTime) - 30),
+              convertTimeStringToMinutes(widget.stadiumData.closeTime) - 30,
+              selectedDate!),
           end: convertMinutesToDateTime(
-              convertTimeStringToMinutes(widget.stadiumData.closeTime)),
+              convertTimeStringToMinutes(widget.stadiumData.closeTime),
+              selectedDate!),
         ),
       );
     } else if (selectedPlayTime == 90) {
       pauseSlot.add(
         DateTimeRange(
           start: convertMinutesToDateTime(
-              convertTimeStringToMinutes(widget.stadiumData.closeTime) - 60),
+              convertTimeStringToMinutes(widget.stadiumData.closeTime) - 60,
+              selectedDate!),
           end: convertMinutesToDateTime(
-              convertTimeStringToMinutes(widget.stadiumData.closeTime)),
+              convertTimeStringToMinutes(widget.stadiumData.closeTime),
+              selectedDate!),
         ),
       );
     } else if (selectedPlayTime == 120) {
       pauseSlot.add(
         DateTimeRange(
           start: convertMinutesToDateTime(
-              convertTimeStringToMinutes(widget.stadiumData.closeTime) - 90),
+              convertTimeStringToMinutes(widget.stadiumData.closeTime) - 90,
+              selectedDate!),
           end: convertMinutesToDateTime(
-              convertTimeStringToMinutes(widget.stadiumData.closeTime)),
+              convertTimeStringToMinutes(widget.stadiumData.closeTime),
+              selectedDate!),
         ),
       );
     } else {
@@ -138,13 +143,11 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     return totalMinutes;
   }
 
-  DateTime convertMinutesToDateTime(int totalMinutes) {
-    // Get the current date
-    DateTime now = DateTime.now();
-
+  DateTime convertMinutesToDateTime(int totalMinutes, DateTime selectedDate) {
     // Create a DateTime object by adding the total minutes to the start of the day
-    DateTime dateTime = DateTime(now.year, now.month, now.day)
-        .add(Duration(minutes: totalMinutes));
+    DateTime dateTime =
+        DateTime(selectedDate.year, selectedDate.month, selectedDate.day)
+            .add(Duration(minutes: totalMinutes));
 
     return dateTime;
   }
@@ -255,7 +258,6 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
 
   // Function to build booking Calendar
   Widget bookingCalender(double bookingHeight) {
-    print(selectedField);
     return selectedDate != null
         ? SizedBox(
             height: bookingHeight,
@@ -265,9 +267,9 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                 serviceDuration: 30,
                 bookingEnd: convertMinutesToDateTime(
                     convertTimeStringToMinutes(widget.stadiumData.closeTime) -
-                        30),
+                        30, selectedDate!),
                 bookingStart: convertMinutesToDateTime(
-                    convertTimeStringToMinutes(widget.stadiumData.openTime)),
+                    convertTimeStringToMinutes(widget.stadiumData.openTime), selectedDate!),
               ),
               hideBreakTime: false,
               loadingWidget: const Text('Fetching data...'),

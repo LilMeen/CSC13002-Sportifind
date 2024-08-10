@@ -16,7 +16,7 @@ import 'package:sportifind/widgets/member_list/member_card.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class MatchInfoScreen extends StatefulWidget {
-  const MatchInfoScreen({
+  const MatchInfoScreen({ 
     super.key,
     required this.matchInfo,
     required this.matchStatus,

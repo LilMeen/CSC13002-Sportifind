@@ -497,9 +497,7 @@ class StadiumService {
 
   Future<Map<int, String>> generateFieldIdMap(String stadiumId) async {
     final fieldData = await getFieldData(stadiumId);
-    print(fieldData);
     final fieldMap = {for (var field in fieldData) field.numberId: field.id};
-    print(fieldMap);
     return fieldMap;
   }
 }
