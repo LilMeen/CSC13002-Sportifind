@@ -1,119 +1,206 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/adapter/hex_color.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SportifindTheme {
   SportifindTheme._();
-  static const Color nearlyWhite = Color(0xFFFAFAFA);
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color background = Color.fromARGB(255, 242, 242, 242);
-  static Color bluePurple2 = HexColor("4B70F5");
-  static Color bluePurple1 = HexColor("3DC2EC");
-  static Color bluePurple3 = HexColor("4C3BCF");
-  static Color bluePurple4 = HexColor("402E7A");
 
-  static const Color nearlyBlack = Color(0xFF213333);
+  static const Color smokeScreen = Color.fromARGB(255, 174, 174, 174);
+  static const Color lead = Color.fromARGB(255, 33, 33, 33);
+  static const Color whiteSmoke = Color.fromARGB(255, 245, 245, 245);
+  static const Color whiteEdgar = Color.fromARGB(255, 237, 237, 237);
+  static const Color tinge = Color.fromARGB(255, 230, 230, 230);
+
+  // Color Hunt Palette
+  static Color shovelKnight = HexColor("3DC2EC");
+  static Color blueOyster = HexColor("4B70F5");
+  static Color bluePurple = HexColor("4C3BCF");
+  static Color clearPurple = HexColor("402E7A");
+
   static const Color grey = Color(0xFF3A5160);
   static const Color darkGrey = Color(0xFF313A44);
-
-  static const Color darkText = Color(0xFF253840);
-  static const Color darkerText = Color(0xFF17262A);
-  static const Color lightText = Color(0xFF4A6572);
-  static const Color deactivatedText = Color(0xFF767676);
-  static const Color dismissibleBackground = Color(0xFF364A54);
-  static const Color spacer = Color(0xFFF2F2F2);
-  static const String fontName = 'Roboto';
-
   static const Color matchCard = Color.fromARGB(255, 217, 217, 217);
 
-  static const TextTheme textTheme = TextTheme(
-    titleSmall: display1,
-    titleMedium: headline,
-    titleLarge: title,
-    displayMedium: subtitle,
-    bodyLarge: body2,
-    bodyMedium: body1,
-    labelLarge: caption,
+  // Match Management text styles
+  static TextStyle matchMonthDisplay = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 40,
+    color: bluePurple,
   );
 
-  static const TextStyle display1 = TextStyle(
-    fontFamily: fontName,
-    fontWeight: FontWeight.bold,
-    fontSize: 36,
-    letterSpacing: 0.4,
-    height: 0.9,
-    color: white,
+  static TextStyle matchVS = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 40,
+    color: Colors.white,
   );
 
-  static const TextStyle display2 = TextStyle(
-    fontFamily: fontName,
-    fontWeight: FontWeight.bold,
+  static TextStyle matchDateDisplay = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: bluePurple,
+  );
+
+  static TextStyle matchCardItem = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: Colors.white,
+  );
+
+  static TextStyle teamItem= GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: Colors.white,
+  );
+
+  static TextStyle memberItem = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: Colors.black,
+  );
+
+  static TextStyle yearOld = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+    color: Colors.black,
+  );
+
+  static TextStyle matchTeamInfo = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
     fontSize: 30,
-    letterSpacing: 0.4,
-    height: 0.9,
-    color: white,
+    color: lead,
   );
 
-  static const TextStyle headline = TextStyle(
-    fontFamily: fontName,
-    fontWeight: FontWeight.bold,
-    fontSize: 24,
-    letterSpacing: 0.27,
-    color: darkerText,
+  static TextStyle viewTeamDetails = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: bluePurple,
   );
 
-  static const TextStyle title = TextStyle(
-    fontFamily: fontName,
-    fontWeight: FontWeight.bold,
+  static TextStyle viewProfileDetails = GoogleFonts.lexend(
+    fontWeight: FontWeight.w300,
     fontSize: 16,
-    letterSpacing: 0.18,
-    color: darkerText,
+    color: bluePurple,
   );
 
-  static const TextStyle status = TextStyle(
-    fontFamily: fontName,
-    fontWeight: FontWeight.bold,
+  static TextStyle teamDisplay = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 30,
+    color: bluePurple,
+  );
+
+  // app bar text style
+  static TextStyle sportifindAppBar = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 48,
+    color: bluePurple,
+  );
+
+  static TextStyle sportifindAppBarForFeature = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 36,
+    color: lead,
+  );
+
+  // ex: create team, Profile
+  static TextStyle featureTitlePurple = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 30,
+    color: bluePurple,
+  );
+
+  // ex: Basic information
+  static TextStyle featureTitleBlack = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 30,
+    color: Colors.black,
+  );
+
+  static TextStyle featureTitleWhite = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 30,
+    color: Colors.white,
+  );
+
+  static TextStyle normalTextWhite = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: Colors.white,
+  );
+
+  // just adjust yourself to fit
+  static TextStyle normalText = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+  );
+
+  static TextStyle normalTextBlack = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: Colors.black,
+  );
+
+  static TextStyle normalTextSmokeScreen = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: smokeScreen,
+  );
+
+  static TextStyle roleInformationPicked = GoogleFonts.racingSansOne(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: bluePurple,
+  );
+
+  static TextStyle roleInformationUnpicked = GoogleFonts.racingSansOne(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: grey,
+  );
+
+  ////////////new
+  static TextStyle bodyTitle = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: bluePurple,
+  );
+
+  static TextStyle body = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
     fontSize: 16,
-    letterSpacing: 0.18,
-    color: white,
+    color: Colors.black,
   );
 
-  static const TextStyle greyTitle = TextStyle(
-    fontFamily: fontName,
-    fontWeight: FontWeight.bold,
-    fontSize: 16,
-    letterSpacing: 0.18,
-    color: Colors.grey,
+  static TextStyle appBar = GoogleFonts.lexend(
+    fontWeight: FontWeight.w700,
+    letterSpacing: 1.2,
+    color: SportifindTheme.darkGrey,
   );
 
-  static const TextStyle subtitle = TextStyle(
-    fontFamily: fontName,
+  static TextStyle dropdown = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
     fontSize: 14,
-    letterSpacing: -0.04,
-    color: darkText,
+    color: Colors.black87,
   );
 
-  static const TextStyle body2 = TextStyle(
-    fontFamily: fontName,
+  static TextStyle dropdownGreen = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
     fontSize: 14,
-    letterSpacing: 0.2,
-    color: darkText,
+    color: Colors.green,
+  );
+  static TextStyle dropdownGreenBold = GoogleFonts.lexend(
+    fontWeight: FontWeight.w900,
+    fontSize: 14,
+    color: Colors.green,
   );
 
-  static const TextStyle body1 = TextStyle(
-    fontFamily: fontName,
+  static TextStyle dropdownRed = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
-    fontSize: 16,
-    letterSpacing: -0.05,
-    color: darkText,
+    fontSize: 14,
+    color: Colors.red,
   );
 
-  static const TextStyle caption = TextStyle(
-    fontFamily: fontName,
-    fontWeight: FontWeight.w400,
-    fontSize: 12,
-    letterSpacing: 0.2,
-    color: lightText, // was lightText
+  static TextStyle dropdownRedBold = GoogleFonts.lexend(
+    fontWeight: FontWeight.w900,
+    fontSize: 14,
+    color: Colors.red,
   );
 }

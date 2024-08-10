@@ -59,7 +59,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build (BuildContext context){
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: SportifindTheme.background,
+        backgroundColor: SportifindTheme.whiteSmoke,
         body: Center(
           child: SingleChildScrollView(
             reverse: true,
@@ -73,9 +73,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     width: 100,
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Forgot Password',
-                    style: SportifindTheme.display1,
+                    style: SportifindTheme.bodyTitle,
                   ),
                   const SizedBox(
                     height: 50,
@@ -93,12 +93,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               // EMAIL
-                              const SizedBox(
+                              SizedBox(
                                 child: Padding(
-                                  padding: EdgeInsets.only(left: 15),
+                                  padding: const EdgeInsets.only(left: 15),
                                   child: Text(
                                     "Email",
-                                    style: SportifindTheme.headline,
+                                    style: SportifindTheme.normalText,
                                   ),
                                 ),
                               ),
@@ -111,7 +111,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     borderRadius: BorderRadius.circular(30.0),
                                   ),
                                   hintText: "example@gmail.com",
-                                  hintStyle: SportifindTheme.greyTitle,
+                                  hintStyle: SportifindTheme.bodyTitle,
                                   filled: true,
                                   fillColor: Colors.white70,
                                   prefixIcon: const Icon(Icons.email),

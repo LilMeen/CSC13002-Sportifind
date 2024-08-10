@@ -29,13 +29,20 @@ class _TeamDetailsState extends State<TeamDetails>
   late AnimationController animationController;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     animationController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    teamInformation = await TeamService().fetchTeamDetails(widget.teamId);
+    fetchTeamDetails(widget.teamId);
+  }
+
+  Future<void> fetchTeamDetails(String teamId) async {
+    TeamService teamService = TeamService();
+    teamInformation = await teamService.getTeamInformation(teamId);
+
+    teamInformation ?? TeamInformation.empty();
   }
 
   @override
@@ -104,8 +111,8 @@ class _TeamDetailsState extends State<TeamDetails>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              SportifindTheme.white,
-              SportifindTheme.nearlyWhite,
+              Colors.white,
+              SportifindTheme.whiteSmoke,
             ],
           ),
         ),
@@ -156,7 +163,7 @@ class _TeamDetailsState extends State<TeamDetails>
                                             fontWeight: FontWeight.w600,
                                             fontSize: 24,
                                             letterSpacing: 0.27,
-                                            color: SportifindTheme.darkerText,
+                                            color: SportifindTheme.darkGrey,
                                           ),
                                         ),
                                       ],
@@ -207,7 +214,7 @@ class _TeamDetailsState extends State<TeamDetails>
                                 children: [
                                   const Text('Address: '),
                                   Text(
-                                      '${teamInformation!.address} ${teamInformation!.district} ${teamInformation!.city}'),
+                                      '${teamInformation!.location.address} ${teamInformation!.location.district} ${teamInformation!.location.city}'),
                                 ],
                               ),
                               const SizedBox(
@@ -430,7 +437,7 @@ class _PlayerBoxState extends State<PlayerBox> {
                                                 fontSize: 16,
                                                 letterSpacing: 0.27,
                                                 color:
-                                                    SportifindTheme.darkerText,
+                                                    SportifindTheme.darkGrey,
                                               ),
                                             ),
                                           ),
@@ -457,7 +464,7 @@ class _PlayerBoxState extends State<PlayerBox> {
                                                     color: SportifindTheme.grey,
                                                   ),
                                                 ),
-                                                 SizedBox(
+                                                SizedBox(
                                                   child: Row(
                                                     children: <Widget>[
                                                       const Text(
@@ -476,7 +483,7 @@ class _PlayerBoxState extends State<PlayerBox> {
                                                       Icon(
                                                         Icons.star,
                                                         color: SportifindTheme
-                                                            .bluePurple1,
+                                                            .bluePurple,
                                                         size: 20,
                                                       ),
                                                     ],

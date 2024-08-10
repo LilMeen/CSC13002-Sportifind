@@ -1,44 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/models/location_info.dart';
-import 'package:uuid/uuid.dart';
-//import 'package:intl/intl.dart';
-
-//final formatter = DateFormat.yMd();
-
-const uuid = Uuid();
+import 'package:sportifind/models/notification_data.dart';
 
 class PlayerData {
   final String id;
   final String name;
   final String email;
-  //final String avatarImageUrl;
-  final String password;
+  final String avatarImage;
   final String role;
   final LocationInfo location;
   final String dob;
   final String gender;
   final String phoneNumber;
   final List<String> teams;
+  final List<NotificationData> notifications;
 
   PlayerData({
+    required this.id,
     required this.name,
-    //required this.avatarImageUrl,
+    required this.avatarImage,
     required this.email,
-    required this.password,
     required this.role,
     required this.location,
     required this.dob,
     required this.gender,
     required this.phoneNumber,
     required this.teams,
-  }) : id = uuid.v4();
+    required this.notifications,
+  });
 
   PlayerData.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         name = snapshot['name'],
-        //avatarImageUrl = snapshot['avatarImageUrl'],
+        avatarImage = snapshot['avatarImage'],
         email = snapshot['email'],
-        password = snapshot['password'],
         role = snapshot['role'],
         location = LocationInfo(
           district: snapshot['district'],
@@ -52,8 +47,31 @@ class PlayerData {
         teams = (snapshot.data()?['joinedTeams'] as List<dynamic>?)
                 ?.map((item) => item as String)
                 .toList() ??
-            [];
+            [],
+        notifications = [];
 
-  get avatarImageUrl =>
-      'https://console.firebase.google.com/u/0/project/sportifind-d0b25/storage/sportifind-d0b25.appspot.com/files/~2Fusers~2FfybmAxhicRdgBeqas8gkKfxM0v93~2Favatar';
+  static Future<PlayerData> fromSnapshotAsync(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) async {
+    final playerData = PlayerData.fromSnapshot(snapshot);
+
+    final notificationsSnapshot =
+        await snapshot.reference.collection('notifications').get();
+    final notifications = notificationsSnapshot.docs
+        .map((doc) => NotificationData.fromSnapshot(doc))
+        .toList();
+
+    return PlayerData(
+      id: playerData.id,
+      name: playerData.name,
+      email: playerData.email,
+      avatarImage: playerData.avatarImage,
+      role: playerData.role,
+      location: playerData.location,
+      dob: playerData.dob,
+      gender: playerData.gender,
+      phoneNumber: playerData.phoneNumber,
+      teams: playerData.teams,
+      notifications: notifications,
+    );
+  }
 }

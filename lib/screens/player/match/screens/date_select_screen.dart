@@ -1,37 +1,44 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:sportifind/models/field_data.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/screens/player/match/screens/select_stadium_screen.dart';
 import 'package:sportifind/screens/player/match/util/booking_calendar.dart';
 import 'package:sportifind/screens/player/match/widgets/field_picker.dart';
 import 'package:sportifind/widgets/date_picker.dart';
+import 'package:sportifind/util/match_service.dart';
 
 class DateSelectScreen extends StatefulWidget {
   const DateSelectScreen(
       {super.key,
       required this.selectedStadiumId,
       required this.selectedStadiumName,
-      required this.selectedTeam,
-      required this.numberOfField,
+      required this.selectedStadiumOwner,
+      required this.selectedTeamId,
+      required this.selectedTeamName,
+      required this.selectedTeamAvatar,
+      required this.fields,
       required this.addMatchCard});
 
-  final String selectedTeam;
+  final String selectedTeamId;
+  final String selectedTeamName;
+  final String selectedTeamAvatar;
   final String selectedStadiumId;
   final String selectedStadiumName;
-  final int numberOfField;
-  final void Function(MatchCard matchcard) addMatchCard;
+  final String selectedStadiumOwner;
+  final List<FieldData> fields;
+  final void Function(MatchCard matchcard)? addMatchCard;
   @override
   State<StatefulWidget> createState() => _DateSelectScreenState();
 }
 
+int selectedField = 1;
+
 class _DateSelectScreenState extends State<DateSelectScreen> {
   DateTime? selectedDate;
-  String selectedField = "1";
   List<MatchCard> userMatches = [];
   List<DateTimeRange> bookedSlot = [];
   String selectedPlayTime = '1h00';
+  MatchService matchService = MatchService();
 
   var playTime = [
     '1h00',
@@ -74,52 +81,6 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     return pauseSlot;
   }
 
-  DateTime convertStringToDateTime(String timeString, String selectedDate) {
-    final hourFormat = DateFormat('HH:mm');
-    final dateFormat = DateFormat('M/D/yyyy');
-    final time = hourFormat.parse(timeString);
-    final date = dateFormat.parse(selectedDate);
-    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
-  }
-
-  // Function for fetching data from firestore
-  Future<void> getMatchData() async {
-    final matchesQuery =
-        await FirebaseFirestore.instance.collection('matches').get();
-    final matches = matchesQuery.docs
-        .map((match) => MatchCard.fromSnapshot(match))
-        .toList();
-    for (var i = 0; i < matches.length; ++i) {
-      userMatches.add(matches[i]);
-    }
-  }
-
-  // Function for parsing data
-  Future<List<DateTimeRange>> getMatchDate(
-      DateTime selectedDate, String selectedField) async {
-    bookedSlot.clear();
-    userMatches.clear();
-    final String date = formatter.format(selectedDate);
-
-    await getMatchData();
-    for (var i = 0; i < userMatches.length; i++) {
-      final String matchDate = userMatches[i].date;
-      print(selectedField);
-      print(userMatches[i].field);
-      if (date == matchDate &&
-          selectedField == userMatches[i].field &&
-          widget.selectedStadiumId == userMatches[i].stadium) {
-        bookedSlot.add(DateTimeRange(
-            start: convertStringToDateTime(
-                userMatches[i].start, userMatches[i].date),
-            end: convertStringToDateTime(
-                userMatches[i].end, userMatches[i].date)));
-      }
-    }
-    userMatches.clear();
-    return bookedSlot;
-  }
-
   int convertDurationStringToInt(String durationString) {
     final parts = durationString.split('h');
     final hours = int.parse(parts[0]);
@@ -129,14 +90,16 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   }
 
   void refreshByDate(DateTime pickedDate) async {
-    bookedSlot = await getMatchDate(pickedDate, selectedField);
+    await matchService.getMatchDate(pickedDate, selectedField,
+        widget.selectedStadiumId, userMatches, bookedSlot);
     setState(() {
       selectedDate = pickedDate;
     });
   }
 
-  void refreshByField(String pickedField) async {
-    bookedSlot = await getMatchDate(selectedDate!, pickedField);
+  void refreshByField(int pickedField) async {
+    await matchService.getMatchDate(selectedDate!, pickedField,
+        widget.selectedStadiumId, userMatches, bookedSlot);
     setState(() {
       selectedField = pickedField;
     });
@@ -146,9 +109,9 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   Widget durationPicker(double height, double width) {
     return Row(
       children: [
-        const Text(
+        Text(
           "Duration",
-          style: SportifindTheme.display2,
+          style: SportifindTheme.dropdown,
         ),
         const Spacer(),
         Container(
@@ -203,19 +166,21 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               locale: 'en',
               selectedPlayTime: convertDurationStringToInt(selectedPlayTime),
               selectedStadium: widget.selectedStadiumId,
-              selectedTeam: widget.selectedTeam,
+              selectedStadiumOwner: widget.selectedStadiumOwner,
+              selectedTeam: widget.selectedTeamId,
+              selectedTeamAvatar: widget.selectedTeamAvatar,
               selectedDate: selectedDate!,
               selectedField: selectedField,
               pauseSlots: generatePauseSlot(
                   convertDurationStringToInt(selectedPlayTime)),
-              addMatchCard: widget.addMatchCard,
+              addMatchCard: widget.addMatchCard!,
               bookedSlot: bookedSlot,
               wholeDayIsBookedWidget:
                   const Text('Sorry, for this day everything is booked'),
             )
-          : const Text(
+          : Text(
               "Please choose a date to continue",
-              style: SportifindTheme.display2,
+              style: SportifindTheme.dropdown,
               textAlign: TextAlign.center,
             ),
     );
@@ -227,7 +192,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
       children: [
         Text(
           title,
-          style: SportifindTheme.display2,
+          style: SportifindTheme.dropdown,
         ),
         const SizedBox(
           height: 20,
@@ -248,7 +213,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                 margin: const EdgeInsets.only(left: 10),
                 child: Text(
                   displayItem,
-                  style: SportifindTheme.title,
+                  style: SportifindTheme.dropdown,
                 ),
               ),
             ],
@@ -261,32 +226,26 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   @override
   Widget build(BuildContext context) {
     final String selectedStadium = widget.selectedStadiumName;
-    final String selectedTeam = widget.selectedTeam;
     return MaterialApp(
       home: SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: SportifindTheme.background,
+            backgroundColor: SportifindTheme.whiteSmoke,
             leading: BackButton(
               color: SportifindTheme.grey,
               onPressed: () {
-                Navigator.push(
+                Navigator.pop(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => SelectStadiumScreen(
-                      addMatchCard: widget.addMatchCard,
-                    ),
-                  ),
                 );
               },
             ),
             centerTitle: true,
-            title: const Text(
+            title: Text(
               "Create match",
-              style: SportifindTheme.display1,
+              style: SportifindTheme.dropdown,
             ),
           ),
-          backgroundColor: SportifindTheme.background,
+          backgroundColor: SportifindTheme.whiteSmoke,
           body: SingleChildScrollView(
             child: Padding(
               padding:
@@ -297,7 +256,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                 children: [
                   displayBox(
                     "Tean",
-                    selectedTeam,
+                    widget.selectedTeamName,
                     "lib/assets/logo/logo.png",
                   ),
                   const SizedBox(
@@ -317,10 +276,10 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                   ),
                   FieldPicker(
                       func: refreshByField,
-                      numberOfField: widget.numberOfField,
+                      fields: widget.fields,
                       selectedField: selectedField,
                       height: 40,
-                      width: 75),
+                      width: 125),
                   const SizedBox(height: 40),
                   DatePicker(
                     func: refreshByDate,

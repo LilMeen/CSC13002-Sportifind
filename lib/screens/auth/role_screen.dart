@@ -57,10 +57,10 @@ class _RoleScreenState extends State<RoleScreen> {
                     horizontal: 20,
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'I am a Player',
                   textAlign: TextAlign.center,
-                  style: SportifindTheme.headline,
+                  style: SportifindTheme.roleInformationUnpicked,
                 )
               ),
             ),          
@@ -92,10 +92,10 @@ class _RoleScreenState extends State<RoleScreen> {
                     horizontal: 20,
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'I am a Stadium owner',
                   textAlign: TextAlign.center,
-                  style: SportifindTheme.headline,
+                  style: SportifindTheme.roleInformationUnpicked,
                 )
               ),
             ),          

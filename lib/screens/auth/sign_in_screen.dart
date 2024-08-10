@@ -20,7 +20,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: SportifindTheme.background,
+        backgroundColor: SportifindTheme.whiteSmoke,
         body: Center(
           child: SingleChildScrollView(
             reverse: true,
@@ -34,9 +34,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     width: 100,
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Sign in',
-                    style: SportifindTheme.display1,
+                    style: SportifindTheme.featureTitleBlack,
                   ),
                   const SizedBox(
                     height: 30,
@@ -44,7 +44,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(30),
                     child: Container(
-                      color: SportifindTheme.nearlyWhite,
+                      color: Colors.white,
                       child: const Padding(
                         padding: EdgeInsets.all(15.0),
                         child: SignIn(),
@@ -63,44 +63,44 @@ class _SignInScreenState extends State<SignInScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => const SignUpScreen()),
                           );
                         },
-                        child: const Text(
+                        child: Text(
                           'Sign up',
-                          style: TextStyle(
-                            color: Color(0xFF00C6AE),
-                          ),
+                          style: SportifindTheme.featureTitleWhite,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 5),
-                  const Row(
+                  Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Divider(
                           color: Colors.white,
                           thickness: 1,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: Text(
                           'OR',
-                          style: SportifindTheme.greyTitle
-                          ),
-                        ),                   
-                      Expanded(
+                          style: SportifindTheme.normalTextWhite,
+                        ),
+                      ),
+                      const Expanded(
                         child: Divider(
-                          color: Colors.white,
+                          color: SportifindTheme.tinge,
                           thickness: 1,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 15),
-                  SignInWithGoogleButton(onPressed: () => signInwithGoogle(context)),
+                  SignInWithGoogleButton(
+                      onPressed: () => signInwithGoogle(context)),
                 ],
               ),
             ),

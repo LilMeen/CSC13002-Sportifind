@@ -5,6 +5,7 @@ import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
 import 'package:sportifind/screens/player/match/util/booking_util.dart';
 import 'package:flutter/material.dart';
+import 'package:sportifind/util/stadium_service.dart';
 
 class BookingController extends ChangeNotifier {
   BookingService bookingService;
@@ -12,7 +13,9 @@ class BookingController extends ChangeNotifier {
     required this.bookingService,
     this.pauseSlots,
     required this.selectedStadium,
-    required this.selectedTeam,
+    required this.selectedStadiumOwner,
+    required this.selectedTeamId,
+    required this.selectedTeamAvatar,
     required this.addMatchCard,
     required this.bookedTime,
     required this.selectedDate,
@@ -30,11 +33,14 @@ class BookingController extends ChangeNotifier {
 
   late DateTime base;
 
-  final String selectedTeam;
+  final String selectedTeamId;
+  final String selectedTeamAvatar;
   final String selectedStadium;
   final DateTime selectedDate;
-  final String selectedField;
+  final String selectedStadiumOwner;
+  final int selectedField;
   final void Function(MatchCard matchcard) addMatchCard;
+  final user = FirebaseAuth.instance.currentUser!;
 
   DateTime? serviceOpening;
   DateTime? serviceClosing;
@@ -54,6 +60,8 @@ class BookingController extends ChangeNotifier {
 
   bool _successfullUploaded = false;
   bool get isSuccessfullUploaded => _successfullUploaded;
+
+  StadiumService stadiumService = StadiumService();
 
   void initBack() {
     _isUploading = false;
@@ -137,10 +145,17 @@ class BookingController extends ChangeNotifier {
           isSlotBooked(index) == false) {
         result = true;
         return result;
+      } else if (index != 0 &&
+          isSlotBooked(index - 1) == false &&
+          isSlotBooked(index + 1) == true &&
+          isSlotBooked(index) == false) {
+        result = true;
+        return result;
       }
     } else if (selectedPlayTime == 90) {
       if (index == 0 &&
-          isSlotBooked(index + 2) == true &&
+          (isSlotBooked(index + 1) == true ||
+              isSlotBooked(index + 2) == true) &&
           isSlotBooked(index) == false) {
         result = true;
         return result;
@@ -154,7 +169,9 @@ class BookingController extends ChangeNotifier {
       }
     } else if (selectedPlayTime == 120) {
       if (index == 0 &&
-          isSlotBooked(index + 3) == true &&
+          (isSlotBooked(index + 1) == true ||
+              isSlotBooked(index + 2) == true ||
+              isSlotBooked(index + 3) == true) &&
           isSlotBooked(index) == false) {
         result = true;
         return result;
@@ -211,36 +228,57 @@ class BookingController extends ChangeNotifier {
     return bookingService;
   }
 
-  void addData(BookingService bookingDate, int selectedPlayTime) {
-    final user = FirebaseAuth.instance.currentUser!;
+  Future<void> addData(BookingService bookingDate, int selectedPlayTime) async {
+    final fieldMap = await stadiumService.generateFieldIdMap(selectedStadium);
+
     MatchCard newMatchCard = MatchCard(
       stadium: selectedStadium,
+      stadiumOwner: selectedStadiumOwner,
       start: formattedTime.format(bookingDate.bookingStart),
       end: formattedTime.format(bookingDate.bookingEnd),
       date: formatter.format(selectedDate),
       playTime: convertMinutesToDurationString(selectedPlayTime),
-      avatarTeam1: 'lib/assets/logo/real_madrid.png',
-      team1: selectedTeam,
-      avatarTeam2: 'lib/assets/logo/logo.png',
-      team2: "?",
-      userId: user.uid,
-      field: selectedField,
+      avatarTeam1: selectedTeamAvatar,
+      team1: selectedTeamId,
+      avatarTeam2: "",
+      team2: "",
+      field: fieldMap[selectedField]!,
     );
+
     addMatchCard(newMatchCard);
 
     FirebaseFirestore.instance.collection('matches').doc(newMatchCard.id).set({
       'stadium': newMatchCard.stadium,
+      'stadiumOwner': newMatchCard.stadiumOwner,
       'start': newMatchCard.start,
       'end': newMatchCard.end,
       'playTime': newMatchCard.playTime,
       'date': newMatchCard.date,
-      'team': newMatchCard.team1,
-      'opponent': newMatchCard.team2,
-      'team_avatar': newMatchCard.avatarTeam1,
-      'opponent_avatar': newMatchCard.avatarTeam2,
-      'userId': user.uid,
-      'field': selectedField,
+      'team1': newMatchCard.team1,
+      'team2': newMatchCard.team2,
+      'team1_avatar': newMatchCard.avatarTeam1,
+      'team2_avatar': newMatchCard.avatarTeam2,
+      'field': fieldMap[selectedField],
     });
+
+    updateTeamsWhereCaptainIsUser(newMatchCard);
+  }
+
+  // Assume `user` is already defined and has a `uid` field
+  Future<void> updateTeamsWhereCaptainIsUser(MatchCard newMatchCard) async {
+    String userUid = user.uid;
+    // Reference to the Firestore collection
+    CollectionReference teamsCollection =
+        FirebaseFirestore.instance.collection('teams');
+
+    // Query to find documents where 'captain' is equal to `user.uid`
+    Query query = teamsCollection.where('captain', isEqualTo: userUid);
+
+    // Get the query snapshot
+    QuerySnapshot querySnapshot = await query.get();
+    List<QueryDocumentSnapshot> doc = querySnapshot.docs;
+    DocumentReference docRef = doc[0].reference;
+    await docRef.update({'incomingMatch.${newMatchCard.id}': false});
   }
 
   void returnToMainScreen(BuildContext context) {

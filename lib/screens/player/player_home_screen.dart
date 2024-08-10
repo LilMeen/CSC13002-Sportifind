@@ -1,4 +1,5 @@
 import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
+import 'package:sportifind/screens/player/notify/screeens/notification_screen.dart';
 import 'package:sportifind/screens/player/team/screens/team_main_screen.dart';
 import 'package:sportifind/widgets/bottom_navigation.dart';
 import 'package:sportifind/models/tab_icon.dart';
@@ -21,7 +22,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
 
   Widget tabBody = Container(
-    color: SportifindTheme.background,
+    color: Colors.white,
   );
 
   @override
@@ -45,24 +46,107 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: SportifindTheme.background,
+    return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: FutureBuilder<bool>(
-          future: getData(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (!snapshot.hasData) {
-              return const SizedBox();
-            } else {
-              return Stack(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          toolbarHeight: 100,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Sportifind',
+                style: SportifindTheme.sportifindAppBar,
+              ),
+              Stack(children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationScreen(),
+                      ),
+                    );
+                  },
+                  icon: Icon(
+                    Icons.notifications_none,
+                    size: 35,
+                    color: SportifindTheme.bluePurple,
+                  ),
+                ),
+                const Positioned(
+                  // draw a red marble
+                  top: 10.0,
+                  right: 10.0,
+                  child: Icon(Icons.brightness_1_rounded,
+                      size: 16.0, color: Color.fromARGB(255, 255, 0, 0)),
+                ),
+                const Positioned(
+                  // draw a red marble
+                  top: 10.0,
+                  right: 10.0,
+                  child: Icon(Icons.brightness_1_outlined,
+                      size: 16.0, color: Colors.white),
+                )
+              ]),
+              Stack(
                 children: <Widget>[
-                  tabBody,
-                  bottomBar(),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Text("hehe"),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.chat_bubble_outline_outlined,
+                      size: 30,
+                      color: SportifindTheme.bluePurple,
+                    ),
+                  ),
+                  const Positioned(
+                    // draw a red marble
+                    top: 6.0,
+                    right: 6.0,
+                    child: Icon(Icons.brightness_1_rounded,
+                        size: 16.0, color: Color.fromARGB(255, 255, 0, 0)),
+                  ),
+                  const Positioned(
+                    // draw a red marble
+                    top: 6.0,
+                    right: 6.0,
+                    child: Icon(Icons.brightness_1_outlined,
+                        size: 16.0, color: Colors.white),
+                  ),
                 ],
-              );
-            }
-          },
+              ),
+            ],
+          ),
+          backgroundColor: Colors.white,
+        ),
+        body: Container(
+          color: Colors.white,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: FutureBuilder<bool>(
+              future: getData(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (!snapshot.hasData) {
+                  return const SizedBox();
+                } else {
+                  return Stack(
+                    children: <Widget>[
+                      tabBody,
+                      bottomBar(),
+                    ],
+                  );
+                }
+              },
+            ),
+          ),
         ),
       ),
     );

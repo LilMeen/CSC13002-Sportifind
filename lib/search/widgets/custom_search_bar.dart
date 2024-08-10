@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class CustomSearchBar extends StatelessWidget {
   final TextEditingController searchController;
@@ -16,12 +17,12 @@ class CustomSearchBar extends StatelessWidget {
       controller: searchController,
       decoration: InputDecoration(
         hintText: hintText,
+        hintStyle: SportifindTheme.normalTextSmokeScreen,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(color: Colors.white),
+          borderRadius: BorderRadius.circular(30.0),
         ),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: SportifindTheme.whiteSmoke,
         prefixIcon: const Icon(Icons.search),
         suffixIcon: searchController.text.isNotEmpty
             ? IconButton(

@@ -25,9 +25,9 @@ class SignInWithGoogleButton extends StatelessWidget {
             width: 24,
           ),
           const Spacer(),
-          const Text(
+          Text(
             'Sign in with Google',
-            style: SportifindTheme.title,
+            style: SportifindTheme.normalText,
           ),          
           const Spacer(),
         ],

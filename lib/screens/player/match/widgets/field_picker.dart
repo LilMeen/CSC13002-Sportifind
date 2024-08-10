@@ -1,39 +1,40 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/field_data.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 
 // ignore: must_be_immutable
 class FieldPicker extends StatefulWidget {
   FieldPicker({
     super.key,
-    this.func,
     required this.height,
     required this.width,
     required this.selectedField,
-    required this.numberOfField,
+    required this.fields,
+    required this.func,
   });
+
   final double height;
   final double width;
-  String? selectedField;
-  int numberOfField;
-  final dynamic func;
+  int? selectedField;
+  List<FieldData> fields;
+  final void Function(int) func;
 
   @override
-  State<StatefulWidget> createState() => _FieldPickerState();
+  State<FieldPicker> createState() => _FieldPickerState();
 }
 
 class _FieldPickerState extends State<FieldPicker> {
   @override
   Widget build(BuildContext context) {
-    List<String> fieldList =
-        List<String>.filled(widget.numberOfField, '0', growable: false);
-    for (int i = 0; i < widget.numberOfField; ++i) {
-      fieldList[i] = (i + 1).toString();
-    }
+    widget.fields = List.from(widget.fields)
+      ..sort((a, b) => a.numberId.compareTo(b.numberId));
     return Row(
       children: [
-        const Text(
+        Text(
           "Field",
-          style: SportifindTheme.display2,
+          style: SportifindTheme.normalTextBlack,
         ),
         const Spacer(),
         Container(
@@ -44,24 +45,23 @@ class _FieldPickerState extends State<FieldPicker> {
             borderRadius: BorderRadius.circular(30),
             color: SportifindTheme.grey,
           ),
-          child: DropdownButton(
+          child: DropdownButton<String>(
             borderRadius: BorderRadius.circular(5.0),
-            value: widget.selectedField,
+            value: widget.selectedField.toString(),
             isExpanded: true,
-            items: fieldList.map((String items) {
-              return DropdownMenuItem(
-                value: items,
-                child: Text(items),
+            items: widget.fields.map((FieldData item) {
+              return DropdownMenuItem<String>(
+                value: item.numberId.toString(),
+                child: Text('${item.numberId} ${item.type}'),
               );
             }).toList(),
             onChanged: (value) {
-              if (value == null) {
-                return;
+              if (value != null) {
+                setState(() {
+                  widget.selectedField = value as int?;
+                  widget.func(value as int);
+                });
               }
-              setState(() {
-                widget.selectedField = value;
-                widget.func(value);
-              });
             },
           ),
         ),

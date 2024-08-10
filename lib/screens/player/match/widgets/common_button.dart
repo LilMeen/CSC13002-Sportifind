@@ -35,7 +35,7 @@ class CommonButton extends StatelessWidget {
 
   Color _getTextColor() {
     if (isActive == true && isDisabled == false) {
-      return SportifindTheme.darkText;
+      return SportifindTheme.darkGrey;
     } else if (isActive == false && isDisabled == false) {
       return buttonActiveColor ?? Colors.teal;
     } else {

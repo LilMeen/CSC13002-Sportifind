@@ -46,9 +46,9 @@ class _DatePickerState extends State<DatePicker> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Text(
+        Text(
           "Date",
-          style: SportifindTheme.display2,
+          style: SportifindTheme.bodyTitle,
         ),
         const Spacer(),
         Container(
@@ -67,7 +67,7 @@ class _DatePickerState extends State<DatePicker> {
                 widget.selectedDate == null
                     ? 'Selected Date'
                     : formatter.format(widget.selectedDate!),
-                style: SportifindTheme.status,
+                style: SportifindTheme.normalText,
               ),
               IconButton(
                 onPressed: () {

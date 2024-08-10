@@ -46,8 +46,8 @@ class _SignInState extends State<SignIn> {
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(userCredential.user!.uid)
-          .get(); 
-          
+          .get();
+
       if (!snapshot.exists) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -91,12 +91,12 @@ class _SignInState extends State<SignIn> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // EMAIL
-          const SizedBox(
+          SizedBox(
             child: Padding(
-              padding: EdgeInsets.only(left: 15),
+              padding: const EdgeInsets.only(left: 15),
               child: Text(
                 "Email",
-                style: SportifindTheme.headline,
+                style: SportifindTheme.normalTextBlack,
               ),
             ),
           ),
@@ -109,7 +109,7 @@ class _SignInState extends State<SignIn> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               hintText: "example@gmail.com",
-              hintStyle: SportifindTheme.greyTitle,
+              hintStyle: SportifindTheme.roleInformationUnpicked,
               filled: true,
               fillColor: Colors.white70,
               prefixIcon: const Icon(Icons.email),
@@ -132,12 +132,12 @@ class _SignInState extends State<SignIn> {
           const SizedBox(height: 15),
 
           // PASSWORD
-          const SizedBox(
+          SizedBox(
             child: Padding(
-              padding: EdgeInsets.only(left: 15),
+              padding: const EdgeInsets.only(left: 15),
               child: Text(
                 "Password",
-                style: SportifindTheme.headline,
+                style: SportifindTheme.normalTextBlack,
               ),
             ),
           ),
@@ -150,7 +150,7 @@ class _SignInState extends State<SignIn> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               hintText: "At least 8 words",
-              hintStyle: SportifindTheme.greyTitle,
+              hintStyle: SportifindTheme.roleInformationUnpicked,
               filled: true,
               fillColor: Colors.white70,
               prefixIcon: const Icon(Icons.lock),
@@ -188,17 +188,22 @@ class _SignInState extends State<SignIn> {
                       activeColor: const Color.fromARGB(255, 4, 203, 148),
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Remember me',
-                    style: SportifindTheme.body2,
+                    style: SportifindTheme.normalTextBlack,
                   ),
                 ],
               ),
               TextButton(
-                onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));} ,
-                child: const Text(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ForgotPasswordScreen()));
+                },
+                child: Text(
                   'Forgot Password',
-                  style: SportifindTheme.body2,
+                  style: SportifindTheme.normalTextBlack,
                 ),
               ),
             ],

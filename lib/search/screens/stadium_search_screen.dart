@@ -1,13 +1,14 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/models/owner_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
-import 'package:sportifind/screens/stadium_owner/stadium/create_stadium.dart';
-import 'dart:async';
+import 'package:sportifind/screens/stadium_owner/stadium/create_stadium_screen.dart';
 import 'package:sportifind/search/widgets/custom_search_bar.dart';
-import 'package:sportifind/util/search_service.dart';
 import 'package:sportifind/search/screens/stadium_map_search.dart';
+import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/widgets/card/stadium_card.dart';
 import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';
 import 'package:sportifind/widgets/dropdown_button/district_dropdown.dart';
@@ -20,8 +21,13 @@ class StadiumSearchScreen extends StatefulWidget {
   final LocationInfo userLocation;
   final List<StadiumData> stadiums;
   final List<OwnerData> owners;
+  final bool isStadiumOwnerUser;
   final bool forMatchCreate;
-  final bool forStadiumCreate;
+  final String? selectedTeamId;
+  final String? selectedTeamName;
+  final String? selectedTeamAvatar;
+  final void Function(MatchCard matchcard)? addMatchCard;
+
 
   const StadiumSearchScreen({
     super.key,
@@ -31,8 +37,12 @@ class StadiumSearchScreen extends StatefulWidget {
     required this.userLocation,
     required this.stadiums,
     required this.owners,
+    this.isStadiumOwnerUser = false,
     this.forMatchCreate = false,
-    this.forStadiumCreate = false,
+    this.addMatchCard,
+    this.selectedTeamId,
+    this.selectedTeamName,
+    this.selectedTeamAvatar,
   });
 
   @override
@@ -46,16 +56,16 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
   String searchText = '';
   String textResult = '-Nearby stadiums-';
   late Map<String, String> ownerMap;
-  static final Map<String, String> citiesNameAndId = {};
+  final Map<String, String> citiesNameAndId = {};
   String selectedCity = '';
   String selectedDistrict = '';
   late LocationInfo currentLocation;
   bool isLoadingLocation = false;
   double floatingDistance = 0.0;
+  StadiumService stadService = StadiumService();
   LocationService locService = LocationService();
-  SearchService srchService = SearchService();
 
-  @override
+  @override 
   void initState() {
     super.initState();
     searchController.addListener(onSearchChanged);
@@ -63,10 +73,10 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
 
     searchedStadiums = widget.stadiums;
     currentLocation = widget.userLocation;
-    sortNearbyStadiums();
+    searchedStadiums = stadService.sortNearbyStadiums(searchedStadiums, currentLocation);
 
     ownerMap = {for (var owner in widget.owners) owner.id: owner.name};
-    if (widget.forStadiumCreate) {
+    if (widget.isStadiumOwnerUser) {
       floatingDistance = 65.0;
     }
   }
@@ -79,7 +89,6 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
     super.dispose();
   }
 
-  // Debounced search text change handler
   void onSearchChanged() {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () {
@@ -90,25 +99,13 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
     });
   }
 
-  // Sort stadiums by distance from the user's location
-  void sortNearbyStadiums() {
-    locService.sortByDistance<StadiumData>(
-      searchedStadiums,
-      currentLocation,
-      (stadium) => stadium.location,
-    );
-  }
-
-  // Perform search based on the search text, selected city, and selected district
   void performSearch() {
     setState(() {
-      searchedStadiums = srchService.searchingNameAndLocation(
-        listItems: widget.stadiums,
-        searchText: searchText,
-        selectedCity: selectedCity,
-        selectedDistrict: selectedDistrict,
-        getNameOfItem: (stadium) => stadium.name,
-        getLocationOfItem: (stadium) => stadium.location,
+      searchedStadiums = stadService.performStadiumSearch(
+        widget.stadiums,
+        searchText,
+        selectedCity,
+        selectedDistrict,
       );
       textResult = '-Searching results-';
       if (searchText.isEmpty &&
@@ -119,7 +116,6 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
     });
   }
 
-  // Get current location and sort stadiums
   Future<void> getCurrentLocationAndSort() async {
     setState(() {
       isLoadingLocation = true;
@@ -130,7 +126,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
       if (location != null) {
         setState(() {
           currentLocation = location;
-          sortNearbyStadiums();
+          searchedStadiums = stadService.sortNearbyStadiums(searchedStadiums, currentLocation);
           textResult = '-Nearby stadiums-';
         });
       } else {
@@ -242,7 +238,12 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                             stadium: stadium,
                             ownerName: ownerName,
                             imageRatio: widget.imageRatio,
+                            isStadiumOwnerUser: widget.isStadiumOwnerUser,
                             forMatchCreate: widget.forMatchCreate,
+                            selectedTeamId: widget.selectedTeamId,
+                            selectedTeamName: widget.selectedTeamName,
+                            selectedTeamAvatar: widget.selectedTeamAvatar,
+                            addMatchCard: widget.addMatchCard,
                           );
                         },
                       ),
@@ -253,7 +254,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
       ),
       floatingActionButton: Stack(
         children: <Widget>[
-          widget.forStadiumCreate
+          widget.isStadiumOwnerUser
               ? Align(
                   alignment: Alignment.bottomRight,
                   child: Padding(
@@ -264,7 +265,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const CreateStadium()),
+                              builder: (context) => const CreateStadiumScreen()),
                         );
                       },
                       backgroundColor: Colors.teal,
@@ -289,7 +290,12 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                         userLocation: currentLocation,
                         stadiums: searchedStadiums,
                         owners: widget.owners,
+                        isStadiumOwnerUser: widget.isStadiumOwnerUser,
                         forMatchCreate: widget.forMatchCreate,
+                        selectedTeamId: widget.selectedTeamId,
+                        selectedTeamName: widget.selectedTeamName,
+                        selectedTeamAvatar: widget.selectedTeamAvatar,
+                        addMatchCard: widget.addMatchCard,
                       ),
                     ),
                   );

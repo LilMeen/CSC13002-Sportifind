@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:diacritic/diacritic.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/widgets/dropdown_button/general_dropdown.dart';
+import 'package:sportifind/widgets/dropdown_button/stadium_form_dropdown.dart';
 
 class DistrictDropdown extends StatefulWidget {
   final String selectedCity;
@@ -10,6 +12,7 @@ class DistrictDropdown extends StatefulWidget {
   final ValueChanged<String?> onChanged;
   final Map<String, String> citiesNameAndId;
   final Color fillColor;
+  final String type;
 
   const DistrictDropdown({
     super.key,
@@ -17,7 +20,8 @@ class DistrictDropdown extends StatefulWidget {
     required this.citiesNameAndId,
     required this.selectedDistrict,
     required this.onChanged,
-    this.fillColor = Colors.white,
+    this.fillColor = SportifindTheme.whiteSmoke,
+    this.type = 'general',
   });
 
   @override
@@ -27,6 +31,7 @@ class DistrictDropdown extends StatefulWidget {
 class _DistrictDropdownState extends State<DistrictDropdown> {
   List<String> _districts = [];
   bool _isLoading = false;
+  Map<String, String> aaa = {};
 
   @override
   void didUpdateWidget(covariant DistrictDropdown oldWidget) {
@@ -74,7 +79,6 @@ class _DistrictDropdownState extends State<DistrictDropdown> {
               .map((item) =>
                   eraseType(removeDiacritics(item['district_name'] as String)))
               .toList();
-          _isLoading = false;
         });
       } else {
         throw Exception('Failed to fetch districts');
@@ -93,6 +97,18 @@ class _DistrictDropdownState extends State<DistrictDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.type == 'stadium form') {
+      return StadiumFormDropdown(
+        selectedValue: widget.selectedDistrict,
+        hint: 'Select district',
+        items: _districts,
+        onChanged: widget.onChanged,
+        fillColor: widget.fillColor,
+        isLoading: _isLoading,
+        validatorText: 'Please select the district',
+      );
+    }
+
     return GeneralDropdown(
       selectedValue: widget.selectedDistrict,
       hint: 'Select district',

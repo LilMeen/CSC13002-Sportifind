@@ -1,155 +1,154 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
+import 'package:sportifind/util/location_service.dart';
+import 'package:sportifind/util/match_service.dart';
 import 'package:sportifind/widgets/match_list/match_list.dart';
-
 import '../../models/match_card.dart';
 
+// ignore: must_be_immutable
 class MatchCards extends StatefulWidget {
-  const MatchCards(
-      {super.key, required this.yourMatch, required this.nearByMatch});
+  MatchCards({
+    super.key,
+    required this.yourMatch,
+    required this.nearByMatch,
+    required this.status,
+  });
 
-  final List<MatchCard> yourMatch;
-  final List<MatchCard> nearByMatch;
+  List<MatchCard> yourMatch;
+  List<MatchCard> nearByMatch;
+  final int status;
 
   @override
   State<StatefulWidget> createState() => _MatchCardsState();
 }
 
 class _MatchCardsState extends State<MatchCards> {
-  final user = FirebaseAuth.instance.currentUser!;
-
-  void _openFilterOverlay() {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => const Text("hhehehehe"),
-    );
-  }
-
-  void getPersonalMatchData() async {
-    final List<MatchCard> userMatches = [];
-    final matchesQuery =
-        await FirebaseFirestore.instance.collection('matches').get();
-    final matches = matchesQuery.docs
-        .map((match) => MatchCard.fromSnapshot(match))
-        .toList();
-
-    final stadiumsQuery =
-        await FirebaseFirestore.instance.collection('stadiums').get();
-    final stadiums = stadiumsQuery.docs
-        .map((stadium) => StadiumData.fromSnapshot(stadium))
-        .toList();
-
-    for (var i = 0; i < matches.length; ++i) {
-      for (var j = 0; j < stadiums.length; ++j) {
-        if (matches[i].userId == user.uid && stadiums[j].id == matches[i].stadium) {
-          matches[i].stadium = stadiums[j].name;
-          userMatches.add(matches[i]);
-        }
-      }
-    }
-    setState(() {
-      widget.yourMatch.addAll(userMatches);
-    });
-  }
-
-  void getNearbyMatchData() async {
-    final List<MatchCard> userMatches = [];
-
-    final user = FirebaseAuth.instance.currentUser!;
-    final userData = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
-
-    final matchesQuery =
-        await FirebaseFirestore.instance.collection('matches').get();
-    final matches = matchesQuery.docs
-        .map((match) => MatchCard.fromSnapshot(match))
-        .toList();
-
-    final stadiumsQuery =
-        await FirebaseFirestore.instance.collection('stadiums').get();
-    final stadiums = stadiumsQuery.docs
-        .map((stadium) => StadiumData.fromSnapshot(stadium))
-        .toList();
-
-    for (var i = 0; i < stadiums.length; ++i) {
-      for (var j = 0; j < matches.length; ++j) {
-        if (matches[j].stadium == stadiums[i].name &&
-            stadiums[i].location.city == userData.data()!['city'] &&
-            stadiums[i].location.district == userData.data()!['district'] &&
-            matches[j].userId != user.uid) {
-          userMatches.add(matches[j]);
-        }
-      }
-      setState(() {
-        widget.nearByMatch.addAll(userMatches);
-      });
-    }
-  }
+  MatchService matchService = MatchService();
+  LocationService locService = LocationService();
+  List<StadiumData> stadiums = [];
+  PlayerData? user;
+  bool isLoadingUser = true;
+  List<StadiumData> searchedStadiums = [];
+  LocationInfo? currentLocation;
+  String errorMessage = '';
 
   @override
   void initState() {
     super.initState();
+    fetchData();
+  }
+
+  @override
+  void didUpdateWidget(covariant MatchCards oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.status != widget.status || oldWidget.status == widget.status) {
+      _refreshData();
+    }
+  }
+
+  Future<void> _loadMatchData() async {
+    final personalMatches = await matchService.getPersonalMatchData();
+    final nearbyMatches =
+        await matchService.getNearbyMatchData(searchedStadiums);
     setState(() {
-      getPersonalMatchData();
-      getNearbyMatchData();
+      widget.yourMatch = personalMatches;
+      widget.nearByMatch = nearbyMatches;
+      isLoadingUser = false;
     });
+  }
+
+  Widget buildMatch(List<MatchCard> matches) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    return SizedBox(
+      height: height - 150,
+      width: width,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: MatchCardList(matches: matches, status: widget.status,),
+      ),
+    );
+  }
+
+  Future<void> fetchData() async {
+    try {
+      await getStadiumsData();
+      await getUserData();
+      if (user != null) {
+        currentLocation = user!.location;
+        sortNearbyStadiums();
+      }
+      _loadMatchData();
+    } catch (error) {
+      print('Failed to load data: $error');
+    }
+  }
+
+  Future<void> getStadiumsData() async {
+    try {
+      final stadiumsQuery =
+          await FirebaseFirestore.instance.collection('stadiums').get();
+      stadiums = stadiumsQuery.docs
+          .map((stadium) => StadiumData.fromSnapshot(stadium))
+          .toList();
+      searchedStadiums = stadiums;
+    } catch (error) {
+      setState(() {
+        errorMessage = 'Failed to load stadiums data: $error';
+      });
+    }
+  }
+
+  Future<void> getUserData() async {
+    try {
+      User? userFB = FirebaseAuth.instance.currentUser;
+      if (userFB != null) {
+        String uid = userFB.uid;
+        DocumentSnapshot<Map<String, dynamic>> snapshot =
+            await FirebaseFirestore.instance.collection('users').doc(uid).get();
+        if (snapshot.exists) {
+          user = PlayerData.fromSnapshot(snapshot);
+        }
+      }
+    } catch (error) {
+      setState(() {
+        errorMessage = 'Failed to load user data: $error';
+      });
+    }
+  }
+
+  void sortNearbyStadiums() {
+    if (currentLocation != null) {
+      locService.sortByDistance<StadiumData>(
+        searchedStadiums,
+        currentLocation!,
+        (stadium) => stadium.location,
+      );
+    }
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      isLoadingUser = true;
+      errorMessage = '';
+    });
+    await _loadMatchData();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoadingUser) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 30),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30),
-            child: Text(
-              "Your match",
-              style: SportifindTheme.display1,
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 240,
-            child: MatchCardList(matches: widget.yourMatch),
-          ),
-          const SizedBox(height: 30),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Text(
-                  "Nearby match",
-                  style: SportifindTheme.display1,
-                ),
-                const Spacer(),
-                IconButton(
-                    onPressed: () {
-                      _openFilterOverlay();
-                    },
-                    icon: const Icon(
-                      Icons.filter_alt,
-                      color: SportifindTheme.grey,
-                      size: 40,
-                    ))
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 240,
-            child: MatchCardList(matches: widget.nearByMatch),
-          ),
-          const SizedBox(height: 100),
-        ],
-      ),
+      child: widget.status == 0
+          ? buildMatch(widget.yourMatch)
+          : buildMatch(widget.nearByMatch),
     );
   }
 }

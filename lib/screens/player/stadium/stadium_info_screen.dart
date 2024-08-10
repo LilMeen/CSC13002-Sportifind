@@ -1,18 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/models/stadium_data.dart';
-import 'package:sportifind/screens/player/match/util/pop_result.dart';
+import 'package:sportifind/screens/player/match/screens/date_select_screen.dart';
+import 'package:sportifind/screens/stadium_owner/stadium/edit_stadium_screen.dart';
+import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
+import 'package:sportifind/screens/stadium_owner/stadium/update_status_screen.dart';
+import 'package:sportifind/util/stadium_service.dart';
 
 class StadiumInfoScreen extends StatefulWidget {
   final StadiumData stadium;
   final String ownerName;
+  final bool isStadiumOwnerUser;
   final bool forMatchCreate;
+  final String? selectedTeamId;
+  final String? selectedTeamName;
+  final String? selectedTeamAvatar;
+  final void Function(MatchCard matchcard)? addMatchCard;
 
   const StadiumInfoScreen({
     super.key,
     required this.stadium,
     required this.ownerName,
+    required this.isStadiumOwnerUser,
     required this.forMatchCreate,
+    this.addMatchCard,
+    required this.selectedTeamId,
+    required this.selectedTeamName,
+    required this.selectedTeamAvatar,
   });
 
   @override
@@ -21,6 +36,8 @@ class StadiumInfoScreen extends StatefulWidget {
 
 class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
   late String selectedImage;
+  bool _isDeleting = false;
+  StadiumService stadService = StadiumService();
 
   @override
   void initState() {
@@ -103,6 +120,11 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
     );
   }
 
+  Widget _buildDetailFieldRow(String type) {
+    return _buildDetailRow(Icons.sports_soccer, '$type fields',
+        '${widget.stadium.getNumberOfTypeField(type).toString()}  (${formatPrice(widget.stadium.getPriceOfTypeField(type))} VND/h)');
+  }
+
   String formatPrice(double price) {
     final priceString = price.toStringAsFixed(0);
     final buffer = StringBuffer();
@@ -113,6 +135,69 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
       buffer.write(priceString[i]);
     }
     return buffer.toString();
+  }
+
+  void _showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirm Delete"),
+          content: const Text(
+              "Are you sure you want to delete this stadium? This action cannot be undone."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return TextButton(
+                  onPressed: _isDeleting
+                      ? null
+                      : () {
+                          setState(() {
+                            _isDeleting = true;
+                          });
+                          stadService
+                              .deleteStadium(widget.stadium.id)
+                              .then((_) {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const OwnerStadiumScreen(),
+                              ),
+                            );
+                          }).catchError((error) {
+                            setState(() {
+                              _isDeleting = false;
+                            });
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text("Failed to delete stadium: $error"),
+                              ),
+                            );
+                          });
+                        },
+                  child: _isDeleting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(),
+                        )
+                      : const Text("Delete"),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -157,53 +242,126 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                   ),
                 ),
               const SizedBox(height: 16),
-              Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+              Stack(
+                children: [
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Baseline(
-                            baseline: 23.5,
-                            baselineType: TextBaseline.alphabetic,
-                            child: Icon(Icons.stadium,
-                                color: Colors.teal, size: 30),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              widget.stadium.name,
-                              style: const TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.teal,
+                          Row(
+                            children: [
+                              const Baseline(
+                                baseline: 23.5,
+                                baselineType: TextBaseline.alphabetic,
+                                child: Icon(Icons.stadium,
+                                    color: Colors.teal, size: 30),
                               ),
-                              overflow: TextOverflow.visible,
-                            ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  widget.stadium.name,
+                                  style: const TextStyle(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.teal,
+                                  ),
+                                  overflow: TextOverflow.visible,
+                                ),
+                              ),
+                            ],
                           ),
+                          const SizedBox(height: 16),
+                          _buildDetailRow(
+                              Icons.person, 'Owner', widget.ownerName),
+                          _buildDetailRow(Icons.location_on, 'Address',
+                              '${widget.stadium.location.address}, ${widget.stadium.location.district}, ${widget.stadium.location.city}'),
+                          _buildDetailRow(Icons.access_time, 'Opening Time',
+                              '${widget.stadium.openTime} ~ ${widget.stadium.closeTime}'),
+                          _buildDetailRow(
+                              Icons.phone, 'Phone', widget.stadium.phone),
+                          if (widget.stadium.getNumberOfTypeField('5-Player') >
+                              0)
+                            _buildDetailFieldRow('5-Player'),
+                          if (widget.stadium.getNumberOfTypeField('7-Player') >
+                              0)
+                            _buildDetailFieldRow('7-Player'),
+                          if (widget.stadium.getNumberOfTypeField('11-Player') >
+                              0)
+                            _buildDetailFieldRow('11-Player'),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      _buildDetailRow(Icons.person, 'Owner', widget.ownerName),
-                      _buildDetailRow(Icons.location_on, 'Address',
-                          '${widget.stadium.location.address}, ${widget.stadium.location.district}, ${widget.stadium.location.city}'),
-                      _buildDetailRow(Icons.access_time, 'Opening Time',
-                          '${widget.stadium.openTime} ~ ${widget.stadium.closeTime}'),
-                      _buildDetailRow(
-                          Icons.phone, 'Phone', widget.stadium.phone),
-                      _buildDetailRow(Icons.attach_money, 'Price',
-                          '${formatPrice(widget.stadium.price)}/h'),
-                      _buildDetailRow(Icons.sports_soccer, 'Fields',
-                          widget.stadium.fields.toString()),
-                    ],
+                    ),
                   ),
-                ),
+                  widget.isStadiumOwnerUser
+                      ? Positioned(
+                          top: 10,
+                          right: 15,
+                          child: PopupMenuButton(
+                            constraints: const BoxConstraints(
+                              maxWidth: 40,
+                            ),
+                            color: Colors.white,
+                            itemBuilder: (context) {
+                              return [
+                                const PopupMenuItem(
+                                  value: 'edit',
+                                  height: 30,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8),
+                                  child: Icon(Icons.edit, size: 25),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  height: 30,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8),
+                                  child: Icon(Icons.delete, size: 25),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'update',
+                                  height: 30,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8),
+                                  child: Icon(Icons.rule, size: 25),
+                                ),
+                              ];
+                            },
+                            onSelected: (value) {
+                              if (value == 'edit') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        EditStadiumScreen(stadium: widget.stadium),
+                                  ),
+                                );
+                              } else if (value == 'delete') {
+                                _showDeleteDialog();
+                              } else if (value == 'update') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        UpdateStatusScreen(stadium: widget.stadium),
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Icon(
+                              Icons.more_horiz,
+                              color: Colors.black,
+                              size: 30,
+                            ),
+                          ),
+                        )
+                      : const SizedBox(),
+                ],
               ),
               const SizedBox(height: 16),
               widget.forMatchCreate == true
@@ -216,22 +374,25 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                       ),
                       child: TextButton(
                         onPressed: () {
-                          Navigator.popUntil(
-                              context,
-                              (route) =>
-                                  route.settings.name == 'Select_stadium');
-                          Navigator.pop(
+                          Navigator.push(
                             context,
-                            PopWithResults(
-                              fromPage: 'Stadium_info',
-                              toPage: 'Select_stadium',
-                              results: [widget.stadium.id, widget.stadium.name, widget.stadium.fields.toString()],
+                            MaterialPageRoute(
+                              builder: (context) => DateSelectScreen(
+                                selectedStadiumId: widget.stadium.id,
+                                selectedStadiumName: widget.stadium.name,
+                                selectedStadiumOwner: widget.stadium.owner,
+                                selectedTeamId: widget.selectedTeamId!,
+                                selectedTeamName: widget.selectedTeamName!,
+                                selectedTeamAvatar: widget.selectedTeamAvatar!,
+                                fields: widget.stadium.fields,
+                                addMatchCard: widget.addMatchCard,
+                              ),
                             ),
                           );
                         },
-                        child: const Text(
+                        child: Text(
                           "Pick this stadium",
-                          style: SportifindTheme.status,
+                          style: SportifindTheme.normalText,
                         ),
                       ),
                     )

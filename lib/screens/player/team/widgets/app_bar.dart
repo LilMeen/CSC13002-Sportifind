@@ -23,7 +23,7 @@ class SportifindAppBar extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontSize: 25,
                     letterSpacing: 0.27,
-                    color: SportifindTheme.nearlyBlack,
+                    color: Colors.black,
                   ),
                 ),
               ],

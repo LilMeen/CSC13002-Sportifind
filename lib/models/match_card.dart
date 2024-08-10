@@ -10,6 +10,7 @@ const uuid = Uuid();
 class MatchCard {
   MatchCard(
       {required this.stadium,
+      required this.stadiumOwner,
       required this.start,
       required this.end,
       required this.date,
@@ -18,34 +19,33 @@ class MatchCard {
       required this.avatarTeam2,
       required this.team1,
       required this.team2,
-      required this.userId,
       required this.field,})
       : id = uuid.v4();
 
-  MatchCard.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
+  MatchCard.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         stadium = snapshot['stadium'],
+        stadiumOwner = snapshot['stadiumOwner'],
         start = snapshot['start'],
         end = snapshot['end'],
         date =snapshot['date'],
         playTime = snapshot['playTime'],
-        avatarTeam1 = snapshot['team_avatar'],
-        team1 = snapshot['team'],
-        avatarTeam2 = snapshot['opponent_avatar'],
-        team2 = snapshot['opponent'],
-        userId = snapshot['userId'],
+        avatarTeam1 = snapshot['team1_avatar'],
+        team1 = snapshot['team1'],
+        avatarTeam2 = snapshot['team2_avatar'],
+        team2 = snapshot['team2'],
         field = snapshot['field'];
 
-  final String userId;
   final String id;
   String stadium;
+  final String stadiumOwner;
   final String start;
   final String end;
   final String date;
   final String playTime;
   final String avatarTeam1;
-  final String team1;
+  String team1;
   final String avatarTeam2;
-  final String team2;
+  String team2;
   final String field;
 }

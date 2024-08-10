@@ -80,6 +80,8 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
           'district': _districtController.text,
           'captain': userId,
           'members': [userId],
+          'sentRequest': [],
+          'joinRequest': [], 
         });
         final teamId = docRef.id;
         // final constantImageUrl = FirebaseStorage.instance
@@ -337,12 +339,12 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
                           children: [
                             Icon(
                               Icons.add_a_photo,
-                              color: SportifindTheme.bluePurple3,
+                              color: SportifindTheme.blueOyster,
                             ),
                             SizedBox(width: 10),
                             Text('Add Image',
                                 style: TextStyle(
-                                    color: SportifindTheme.bluePurple3)),
+                                    color: SportifindTheme.blueOyster)),
                           ],
                         ),
                       ),
