@@ -21,6 +21,10 @@ class SportifindTheme {
   static const Color darkGrey = Color(0xFF313A44);
   static const Color matchCard = Color.fromARGB(255, 217, 217, 217);
 
+  ////////////////////////////////////////////////////////////////////
+  static const Color backgroundColor = Colors.white;
+  ////////////////////////////////////////////////////////////////////
+
   // Match Management text styles
   static TextStyle matchMonthDisplay = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
@@ -145,26 +149,44 @@ class SportifindTheme {
     color: Colors.white,
   );
 
-  static TextStyle normalTextWhite = GoogleFonts.lexend(
-    fontWeight: FontWeight.normal,
-    fontSize: 20,
-    color: Colors.white,
-  );
-
   // just adjust yourself to fit
   static TextStyle normalText = GoogleFonts.lexend(
     fontWeight: FontWeight.normal,
   );
 
+  // static TextStyle normalTextBlack = GoogleFonts.lexend(
+  //   fontWeight: FontWeight.normal,
+  //   fontSize: 20,
+  //   color: Colors.black,
+  // );
+
+  // static TextStyle normalTextWhite = GoogleFonts.lexend(
+  //   fontWeight: FontWeight.normal,
+  //   fontSize: 20,
+  //   color: Colors.white,
+  // );
+
+  // static TextStyle normalTextSmokeScreen = GoogleFonts.lexend(
+  //   fontWeight: FontWeight.normal,
+  //   fontSize: 20,
+  //   color: smokeScreen,
+  // );
+
   static TextStyle normalTextBlack = GoogleFonts.lexend(
     fontWeight: FontWeight.normal,
-    fontSize: 20,
+    fontSize: 16,
     color: Colors.black,
+  );
+
+  static TextStyle normalTextWhite = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 16,
+    color: Colors.white,
   );
 
   static TextStyle normalTextSmokeScreen = GoogleFonts.lexend(
     fontWeight: FontWeight.normal,
-    fontSize: 20,
+    fontSize: 16,
     color: smokeScreen,
   );
 
@@ -196,13 +218,15 @@ class SportifindTheme {
   static TextStyle appBar = GoogleFonts.lexend(
     fontWeight: FontWeight.w700,
     letterSpacing: 1.2,
-    color: SportifindTheme.darkGrey,
+    color: const Color.fromRGBO(49, 58, 68, 1),
   );
 
-  static TextStyle dropdown = GoogleFonts.lexend(
+  //Stadium text style
+  static TextStyle stadiumCard = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
     fontSize: 14,
-    color: Colors.black87,
+    height: 1.5,
+    color: Colors.black,
   );
 
   static TextStyle dropdownGreen = GoogleFonts.lexend(

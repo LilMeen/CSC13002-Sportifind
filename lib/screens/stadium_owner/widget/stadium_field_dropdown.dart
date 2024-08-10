@@ -68,7 +68,7 @@ class _StadiumFieldDropdownState extends State<StadiumFieldDropdown> {
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide(
                 color: SportifindTheme.bluePurple,
-                width: 2.0,
+                width: 1.0,
               ),
             ),
             enabledBorder: OutlineInputBorder(
@@ -76,7 +76,7 @@ class _StadiumFieldDropdownState extends State<StadiumFieldDropdown> {
               borderSide: BorderSide(
                 color:
                     SportifindTheme.bluePurple,
-                width: 2.0,
+                width: 1.0,
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -84,7 +84,7 @@ class _StadiumFieldDropdownState extends State<StadiumFieldDropdown> {
               borderSide: BorderSide(
                 color:
                     SportifindTheme.bluePurple,
-                width: 2.0,
+                width: 1.0,
               ),
             ),
             contentPadding:

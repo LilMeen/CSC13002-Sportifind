@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/player/stadium/stadium_info_screen.dart';
 
@@ -32,6 +33,26 @@ class StadiumCard extends StatefulWidget {
 }
 
 class _StadiumCardState extends State<StadiumCard> {
+  Widget _buildDetailRow(IconData icon, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Row(
+        children: [
+          Icon(icon, color: SportifindTheme.bluePurple, size: 25),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              value,
+              style: SportifindTheme.stadiumCard,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -57,57 +78,42 @@ class _StadiumCardState extends State<StadiumCard> {
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
+          side: BorderSide(
+            color: SportifindTheme.bluePurple,
+            width: 2.0,
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AspectRatio(
-              aspectRatio: widget.imageRatio,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(8.0),
-                ),
-                child: Image.network(
-                  widget.stadium.avatar,
-                  width: double.infinity,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AspectRatio(
+                aspectRatio: widget.imageRatio,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.network(
+                    widget.stadium.avatar,
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+              const SizedBox(height: 6.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        widget.stadium.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(height: 4.0),
-                    Expanded(
-                      child: Text(
-                        '${widget.stadium.location.district}, ${widget.stadium.location.city}',
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        widget.stadium.location.address,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                    _buildDetailRow(Icons.stadium, widget.stadium.name),
+                    _buildDetailRow(Icons.place_outlined,
+                        '${widget.stadium.location.address}, ${widget.stadium.location.district}, ${widget.stadium.location.city}'),
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

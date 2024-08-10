@@ -30,7 +30,10 @@ class _GeneralDropdownState extends State<GeneralDropdown> {
       builder: (context, constraints) {
         return DropdownButtonFormField<String>(
           value: widget.selectedValue.isEmpty ? null : widget.selectedValue,
-          hint: Text(widget.hint),
+          hint: Text(
+            widget.hint,
+            style: SportifindTheme.normalTextSmokeScreen,
+          ),
           style: SportifindTheme.normalTextSmokeScreen,
           items: [
                 DropdownMenuItem(
@@ -49,7 +52,7 @@ class _GeneralDropdownState extends State<GeneralDropdown> {
                         48, // Adjust this value as needed
                     child: Text(
                       item,
-                      style: SportifindTheme.normalTextSmokeScreen,
+                      style: SportifindTheme.normalTextBlack,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
                     ),
@@ -62,23 +65,42 @@ class _GeneralDropdownState extends State<GeneralDropdown> {
             fillColor: widget.fillColor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
-              borderSide:
-                  BorderSide(width: 3, color: SportifindTheme.bluePurple),
+              borderSide: BorderSide(
+                color: SportifindTheme.bluePurple,
+                width: 1.0,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide(
+                color: SportifindTheme.bluePurple,
+                width: 1.0,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide(
+                color: SportifindTheme.bluePurple,
+                width: 1.0,
+              ),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
           ),
           dropdownColor: widget.fillColor,
           icon: widget.isLoading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                    backgroundColor: Colors.teal,
+                    backgroundColor: SportifindTheme.bluePurple,
                     color: Colors.white,
                   ),
                 )
-              : const Icon(Icons.arrow_drop_down),
+              : const Icon(
+                  Icons.expand_more,
+                  color: SportifindTheme.smokeScreen,
+                ),
           iconSize: 24,
           elevation: 4,
         );
