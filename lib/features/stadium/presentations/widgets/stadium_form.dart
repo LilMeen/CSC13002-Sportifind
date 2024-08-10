@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/util/image_service.dart';
 import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';
@@ -31,78 +32,86 @@ class StadiumForm {
   }
 
   Widget buildTimeFields(
-      TextEditingController openTimeController,
-      TextEditingController closeTimeController,
-      BuildContext context,
-      VoidCallback setState) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextFormField(
-            controller: openTimeController,
-            decoration: const InputDecoration(labelText: 'Open time'),
-            onTap: () async {
-              FocusScope.of(context).requestFocus(FocusNode());
-              TimeOfDay? picked = await showTimePicker(
-                context: context,
-                initialTime: const TimeOfDay(hour: 7, minute: 0),
-                initialEntryMode: TimePickerEntryMode.inputOnly,
-                builder: (BuildContext context, Widget? child) {
-                  return MediaQuery(
-                    data: MediaQuery.of(context)
-                        .copyWith(alwaysUse24HourFormat: true),
-                    child: child!,
-                  );
-                },
+    TextEditingController openTimeController,
+    TextEditingController closeTimeController,
+    BuildContext context,
+    VoidCallback setState) {
+  return Row(
+    children: [
+      Expanded(
+        child: TextFormField(
+          controller: openTimeController,
+          decoration: const InputDecoration(labelText: 'Open time'),
+          onTap: () async {
+            FocusScope.of(context).requestFocus(FocusNode());
+            TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: const TimeOfDay(hour: 7, minute: 0),
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: true),
+                  child: child!,
+                );
+              },
+            );
+            if (picked != null && context.mounted) {
+              final now = DateTime.now();
+              final formattedTime = DateFormat('HH:mm').format(
+                DateTime(now.year, now.month, now.day, picked.hour, picked.minute),
               );
-              if (picked != null && context.mounted) {
-                openTimeController.text = picked.format(context);
-                setState();
-              }
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter the open time';
-              }
-              return null;
-            },
-          ),
+              openTimeController.text = formattedTime;
+              setState();
+            }
+          },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter the open time';
+            }
+            return null;
+          },
         ),
-        const SizedBox(width: 50),
-        Expanded(
-          child: TextFormField(
-            controller: closeTimeController,
-            decoration: const InputDecoration(labelText: 'Close time'),
-            onTap: () async {
-              FocusScope.of(context).requestFocus(FocusNode());
-              TimeOfDay? picked = await showTimePicker(
-                context: context,
-                initialTime: const TimeOfDay(hour: 7, minute: 0),
-                initialEntryMode: TimePickerEntryMode.inputOnly,
-                builder: (BuildContext context, Widget? child) {
-                  return MediaQuery(
-                    data: MediaQuery.of(context)
-                        .copyWith(alwaysUse24HourFormat: true),
-                    child: child!,
-                  );
-                },
+      ),
+      const SizedBox(width: 50),
+      Expanded(
+        child: TextFormField(
+          controller: closeTimeController,
+          decoration: const InputDecoration(labelText: 'Close time'),
+          onTap: () async {
+            FocusScope.of(context).requestFocus(FocusNode());
+            TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: const TimeOfDay(hour: 7, minute: 0),
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: true),
+                  child: child!,
+                );
+              },
+            );
+            if (picked != null && context.mounted) {
+              final now = DateTime.now();
+              final formattedTime = DateFormat('HH:mm').format(
+                DateTime(now.year, now.month, now.day, picked.hour, picked.minute),
               );
-              if (picked != null && context.mounted) {
-                closeTimeController.text = picked.format(context);
-                setState();
-              }
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter the close time';
-              }
-              return null;
-            },
-          ),
+              closeTimeController.text = formattedTime;
+              setState();
+            }
+          },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter the close time';
+            }
+            return null;
+          },
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
   Widget buildFieldRow(
       String label,
