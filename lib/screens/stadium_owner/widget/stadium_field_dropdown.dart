@@ -54,7 +54,7 @@ class _StadiumFieldDropdownState extends State<StadiumFieldDropdown> {
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
                       style: TextStyle(
-                        color: SportifindTheme.blueOyster,
+                        color: SportifindTheme.bluePurple,
                       ),
                     ),
                   ),
@@ -67,7 +67,7 @@ class _StadiumFieldDropdownState extends State<StadiumFieldDropdown> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide(
-                color: SportifindTheme.blueOyster, // Set border color here
+                color: SportifindTheme.bluePurple,
                 width: 2.0,
               ),
             ),
@@ -75,7 +75,7 @@ class _StadiumFieldDropdownState extends State<StadiumFieldDropdown> {
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide(
                 color:
-                    SportifindTheme.blueOyster, // Set enabled border color here
+                    SportifindTheme.bluePurple,
                 width: 2.0,
               ),
             ),
@@ -83,7 +83,7 @@ class _StadiumFieldDropdownState extends State<StadiumFieldDropdown> {
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide(
                 color:
-                    SportifindTheme.blueOyster, // Set focused border color here
+                    SportifindTheme.bluePurple,
                 width: 2.0,
               ),
             ),

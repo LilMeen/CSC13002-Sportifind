@@ -83,7 +83,6 @@ class MatchService {
           .collection('matches')
           .where('stadium', isEqualTo: stadiumId)
           .where('field', isEqualTo: fieldId)
-          //.where('field', isEqualTo: '1')
           .get();
       return matchesQuery.docs
           .map((match) => MatchCard.fromSnapshot(match))

@@ -59,7 +59,9 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
       }
       team.add(teamInfo[i]);
     }
-    userData = await userService.getUserPlayerData();
+    if (widget.matchStatus != 3) {
+      userData = await userService.getUserPlayerData();
+    }
     matchStadium =
         await stadiumService.getSpecificStadiumsData(widget.matchInfo.stadium);
 
@@ -353,7 +355,8 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                     style: SportifindTheme.viewTeamDetails,
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 4.0, left: 4.0),
+                                    padding: const EdgeInsets.only(
+                                        top: 4.0, left: 4.0),
                                     child: Icon(
                                       Icons.arrow_forward_outlined,
                                       color: SportifindTheme.bluePurple
