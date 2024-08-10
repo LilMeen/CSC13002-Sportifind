@@ -76,6 +76,24 @@ class MatchService {
     }
   }
 
+  Future<List<MatchCard>> getMatchDataByStadiumAndFieldId(
+      String stadiumId, String fieldId) async {
+    try {
+      final matchesQuery = await FirebaseFirestore.instance
+          .collection('matches')
+          .where('stadium', isEqualTo: stadiumId)
+          .where('field', isEqualTo: fieldId)
+          //.where('field', isEqualTo: '1')
+          .get();
+      return matchesQuery.docs
+          .map((match) => MatchCard.fromSnapshot(match))
+          .toList();
+    } catch (error) {
+      throw Exception(
+          'Failed to load matches data by stadium and field id: $error');
+    }
+  }
+
   Future<void> deleteMatch(String matchId) async {
     final TeamService teamService = TeamService();
     final UserService userService = UserService();
@@ -212,5 +230,21 @@ class MatchService {
     int day = int.parse(parts[1]);
     int year = int.parse(parts[2]);
     return DateTime(year, month, day);
+  }
+
+  DateTime parseDateTime(String date, String hour) {
+    final dateFormat = DateFormat('M/d/yyyy HH:mm');
+
+    final dateTimeString = '$date $hour';
+
+    return dateFormat.parse(dateTimeString);
+  }
+
+  double timeToDouble(String hour) {
+    List<String> parts = hour.split(':');
+    int hours = int.parse(parts[0]);
+    int minutes = int.parse(parts[1]);
+
+    return hours + (minutes / 60);
   }
 }

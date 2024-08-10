@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/screens/stadium_owner/schedule/schedule_screen.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
 
 class StadiumOwnerHomeScreen extends StatefulWidget {
@@ -20,10 +21,7 @@ class _StadiumOwnerHomeScreenState extends State<StadiumOwnerHomeScreen> {
       'Index 0: Data',
       style: optionStyle,
     ),
-    Text(
-      'Index 1: Schedule',
-      style: optionStyle,
-    ),
+    ScheduleScreen(),
     Text(
       'Index 2: Home',
       style: optionStyle,
