@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/models/match_card.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 // ignore: must_be_immutable
 class DatePicker extends StatefulWidget {
   DatePicker({
     super.key,
     this.func,
+    required this.height,
+    required this.width,
     required this.selectedDate,
   });
+  final double height;
+  final double width;
   DateTime? selectedDate;
   final dynamic func;
 
@@ -37,7 +41,6 @@ class _DatePickerState extends State<DatePicker> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +81,7 @@ class _DatePickerState extends State<DatePicker> {
                     Text(
                       widget.selectedDate == null
                           ? 'Selecte Date'
-                          : DateFormat.yMd().format(widget.selectedDate!),
+                          : formatter.format(widget.selectedDate!),
                       style: SportifindTheme.textWhite,
                     ),
                   ],

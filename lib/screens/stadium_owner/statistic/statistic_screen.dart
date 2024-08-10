@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/widgets/card/statistic_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:sportifind/widgets/card/line_chart_card.dart';
 import 'package:sportifind/widgets/card/bar_chart.dart';
 import 'package:sportifind/widgets/card/rank_card.dart';
-import 'package:sportifind/screens/stadium_owner/statistic/statistic_remote_data_source.dart';
-import 'package:sportifind/screens/stadium_owner/statistic/match_data_impl.dart';
+// import 'package:sportifind/screens/stadium_owner/statistic/statistic_remote_data_source.dart';
+// import 'package:sportifind/screens/stadium_owner/statistic/match_data_impl.dart';
 
 
 class StadiumStatisticScreen extends StatefulWidget {
@@ -37,9 +38,9 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   //   ];
 
   bool isWeekly = true;
-  late Future<List<MatchDataModel>> futureMatches;
+  late Future<List<MatchCard>> futureMatches;
   List<double> weeklySummary = [];
-  late List<MatchDataModel> matches = [];
+  late List<MatchCard> matches = [];
   late Map<String, double> dailyRevenue = {};
   List<double> dailySummary = [];
   int selectedMonth = 8; 
@@ -48,7 +49,7 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   @override
   void initState() {
     super.initState();
-    futureMatches = fetchMatches();
+    // futureMatches = fetchMatches();
   }
   int getWeekOfYear(DateTime date) {
   // Get the week number of the date
@@ -60,7 +61,7 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<MatchDataModel>>(
+      body: FutureBuilder<List<MatchCard>>(
         future: futureMatches,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -70,10 +71,10 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No matches found'));
           } else {
-            List<MatchDataModel> matches = snapshot.data!;
-            calculateStatistics(matches);
-            dailyRevenue = calculateDailyRevenueForWeek(matches, 32);
-            dailySummary = calculateDailyRevenueForMonth(matches, selectedMonth, selectedYear);
+            List<MatchCard> matches = snapshot.data!;
+            //calculateStatistics(matches);
+            //dailyRevenue = calculateDailyRevenueForWeek(matches, 32);
+            //dailySummary = calculateDailyRevenueForMonth(matches, selectedMonth, selectedYear);
 
             return SingleChildScrollView(
               child: Column(
