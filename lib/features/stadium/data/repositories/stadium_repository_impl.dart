@@ -58,6 +58,16 @@ class StadiumRepositoryImpl implements StadiumRepository {
     return Result.success(stadiumEntities);
   }
 
+
+  // UPDATE STADIUM
+  // Update a stadium
+  @override
+  Future<Result<void>> updateStadium(Stadium stadium) async {
+    await stadiumRemoteDataSource.updateStadium(StadiumModel.fromEntity(stadium));
+    return Result.success(null);
+  }
+
+
   // SORT NEARBY STADIUMS
   // Sort stadiums by distance to a location
   @override

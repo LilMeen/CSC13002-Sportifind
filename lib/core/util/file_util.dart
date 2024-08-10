@@ -5,13 +5,9 @@ import 'package:path_provider/path_provider.dart';
 
 Future<void> deleteAllFilesInDirectory(Reference directoryRef) async {
   final ListResult listResult = await directoryRef.listAll();
-
-  // Delete all files
   for (Reference fileRef in listResult.items) {
     await fileRef.delete();
   }
-
-  // Recursively delete files in subdirectories
   for (Reference subDirRef in listResult.prefixes) {
     await deleteAllFilesInDirectory(subDirRef);
   }

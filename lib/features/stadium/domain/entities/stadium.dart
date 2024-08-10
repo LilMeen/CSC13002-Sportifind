@@ -27,6 +27,19 @@ class Stadium {
     required this.phone,
     required this.fields,
   });
+
+  int getNumberOfTypeField(String type) {
+    return fields.where((field) => field.type == type).length;
+  }
+
+  double getPriceOfTypeField(String type) {
+    for (var field in fields) {
+      if (field.type == type) {
+        return field.price;
+      }
+    }
+    return 0;
+  }
 }
 
 

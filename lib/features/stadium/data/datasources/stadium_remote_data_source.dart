@@ -11,6 +11,8 @@ abstract interface class StadiumRemoteDataSource {
   Future<StadiumModel> getStadium(String id);
   Future<List<StadiumModel>> getAllStadiums();
   Future<List<StadiumModel>> getStadiumsByOwner(String ownerId);
+  Future<void> updateStadium(StadiumModel stadium);
+  Future<void> deleteStadium(String id);
 }
 
 
@@ -97,6 +99,84 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
       stadiums.add(StadiumModel.fromFirestore(stadiumDoc, fieldDocs.docs));
     }
     return stadiums;
+  }
+
+
+  /// UPDATE STADIUM
+  /// Update a stadium
+  @override
+  Future<void> updateStadium(StadiumModel stadium) async {
+    final stadiumRef = FirebaseFirestore.instance.collection('stadiums').doc(stadium.id);
+    await stadiumRef.update(stadium.toFirestore());
+    await stadiumRef.collection('fields').get().then((fieldDocs) {
+      for (final fieldDoc in fieldDocs.docs) {
+        fieldDoc.reference.delete();
+      }
+    });
+    for (FieldModel field in stadium.fields) {
+      await stadiumRef.collection('fields').add(field.toFirestore());
+    }
+
+    final storageRef = FirebaseStorage.instance
+      .ref()
+      .child('stadiums')
+      .child(stadium.id);
+    await storageRef
+      .child('avatar')
+      .child('avatar.jpg')
+      .putFile(File(stadium.avatar));
+    for (int i = 0; i < stadium.images.length; i++) {
+      await storageRef
+        .child('images')
+        .child('image_$i.jpg')
+        .putFile(File(stadium.images[i]));
+    }
+
+    final avatarUrl = await storageRef
+      .child('avatar')
+      .child('avatar.jpg')
+      .getDownloadURL();
+    final imageUrls = <String>[];
+    for(int i = 0; i < stadium.images.length; i++) {
+      final imageUrl = await storageRef
+        .child('images')
+        .child('image_$i.jpg')
+        .getDownloadURL();
+      imageUrls.add(imageUrl);
+    }
+    await stadiumRef.update({
+      'avatar': avatarUrl,
+      'images': imageUrls,
+    });
+  }
+
+
+  /// DELETE STADIUM
+  /// Delete a stadium by its id
+  @override
+  Future<void> deleteStadium(String id) async {
+    final stadiumRef = FirebaseFirestore.instance.collection('stadiums').doc(id);
+    final stadiumStorageRef = FirebaseStorage.instance.ref().child('stadiums').child(id);
+    
+    await _deleteAllFilesInDirectory(stadiumStorageRef);
+    await stadiumRef.collection('fields').get().then((fieldDocs) {
+      for (final fieldDoc in fieldDocs.docs) {
+        fieldDoc.reference.delete();
+      }
+    });
+    await stadiumRef.delete();
+    final storageRef = FirebaseStorage.instance.ref().child('stadiums').child(id);
+    await storageRef.delete();
+  }
+
+  Future<void> _deleteAllFilesInDirectory(Reference ref) async {
+    final ListResult result = await ref.listAll();
+    for (Reference fileRef in result.items) {
+      await fileRef.delete();
+    }
+    for (Reference subDirRef in result.prefixes) {
+      await _deleteAllFilesInDirectory(subDirRef);
+    }
   }
 }
 
