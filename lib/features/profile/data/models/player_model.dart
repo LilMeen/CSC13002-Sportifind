@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get_it/get_it.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/features/profile/domain/entities/player.dart';
 import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
@@ -37,7 +36,7 @@ class PlayerModel extends UserModel {
 
 
   // REMOTE DATA SOURCE
-  TeamRemoteDataSource teamRemoteDataSource = GetIt.instance<TeamRemoteDataSource>();
+  TeamRemoteDataSource teamRemoteDataSource = TeamRemoteDataSourceImpl();
 
   // DATA CONVERSION
   @override

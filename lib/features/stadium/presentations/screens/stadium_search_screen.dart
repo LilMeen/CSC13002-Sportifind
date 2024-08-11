@@ -15,9 +15,6 @@ import 'package:sportifind/features/stadium/presentations/widgets/custom_search_
 const double floatingDistance = 65.0;
 
 class StadiumSearchScreen extends StatefulWidget {
-  final int gridCol;
-  final double gridRatio;
-  final double imageRatio;
   final Location userLocation;
   final List<Stadium> stadiums;
   final List<StadiumOwner> owners;
@@ -31,9 +28,6 @@ class StadiumSearchScreen extends StatefulWidget {
 
   const StadiumSearchScreen({
     super.key,
-    required this.gridCol,
-    required this.gridRatio,
-    required this.imageRatio,
     required this.userLocation,
     required this.stadiums,
     required this.owners,
@@ -148,10 +142,9 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                           ? const Center(child: Text('No stadiums found.'))
                           : GridView.builder(
                               padding: const EdgeInsets.all(8.0),
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: widget.gridCol,
-                                childAspectRatio: widget.gridRatio,
-                                crossAxisSpacing: 8,
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 1,
+                                childAspectRatio: 1.5,
                                 mainAxisSpacing: 8,
                               ),
                               itemCount: state.searchedStadiums.length,
@@ -163,7 +156,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                                 return StadiumCard(
                                   stadium: stadium,
                                   ownerName: ownerName,
-                                  imageRatio: widget.imageRatio,
+                                  imageRatio: 2.475,
                                   isStadiumOwnerUser: widget.isStadiumOwnerUser,
                                   forMatchCreate: widget.forMatchCreate,
                                   selectedTeamId: widget.selectedTeamId,

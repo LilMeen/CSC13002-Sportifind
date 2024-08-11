@@ -32,6 +32,7 @@ class EditStadiumState {
     this.isSubmitting = false,
     this.isLoadingLocation = false,
     this.errorMessage = '',
+
     this.selectedCity = '',
     this.selectedDistrict = '',
     this.num5PlayerFields = 0,
@@ -74,9 +75,9 @@ class EditStadiumState {
 }
 
 class EditStadiumBloc {
-  final BuildContext context;
   final Stadium stadium;
   
+  final BuildContext context;
   final _stateController = StreamController<EditStadiumState>.broadcast();
   late EditStadiumState _state;
 
@@ -96,6 +97,7 @@ class EditStadiumBloc {
   };
   final Map<String, String> citiesNameAndId = {};
 
+  Timer? _cityDelayTimer;
   Timer? _districtDelayTimer;
 
   final ImageService imgService = ImageService();
@@ -104,8 +106,8 @@ class EditStadiumBloc {
     _stateController.add(_state);
   }
 
-  void init() async {
-    await _prepareData();
+  void init()  {
+    _prepareData();
   }
 
   void dispose() {
@@ -119,7 +121,7 @@ class EditStadiumBloc {
     _stateController.add(_state);
   }
 
-  Future<void> _prepareData() async {
+  void _prepareData() {
     try {
       controllers['stadiumName']!.text = stadium.name;
       controllers['stadiumAddress']!.text = stadium.location.address;
@@ -141,10 +143,15 @@ class EditStadiumBloc {
         location: stadium.location,
         avatar: stadium.avatar,
         images: stadium.images,
-        selectedCity: stadium.location.city,
-        selectedDistrict: stadium.location.district,
+        //selectedCity: stadium.location.city,
+        //selectedDistrict: '',
         isLoading: false,
       ));
+
+      _cityDelayTimer?.cancel();
+      _cityDelayTimer = Timer(const Duration(seconds: 1, milliseconds: 300), () {
+        _updateState((state) => state.copyWith(selectedCity: stadium.location.city, selectedDistrict: ''));
+      });
 
     } catch (error) {
       _updateState((state) => state.copyWith(
@@ -278,39 +285,5 @@ class EditStadiumBloc {
     _updateState((state) => state.copyWith(
       selectedDistrict: value ?? '',
     ));
-  }
-
-  void incrementField(String fieldType) {
-    switch (fieldType) {
-      case '5-Player':
-        _updateState((state) => state.copyWith(num5PlayerFields: state.num5PlayerFields + 1));
-        break;
-      case '7-Player':
-        _updateState((state) => state.copyWith(num7PlayerFields: state.num7PlayerFields + 1));
-        break;
-      case '11-Player':
-        _updateState((state) => state.copyWith(num11PlayerFields: state.num11PlayerFields + 1));
-        break;
-    }
-  }
-
-  void decrementField(String fieldType) {
-    switch (fieldType) {
-      case '5-Player':
-        if (_state.num5PlayerFields > 0) {
-          _updateState((state) => state.copyWith(num5PlayerFields: state.num5PlayerFields - 1));
-        }
-        break;
-      case '7-Player':
-        if (_state.num7PlayerFields > 0) {
-          _updateState((state) => state.copyWith(num7PlayerFields: state.num7PlayerFields - 1));
-        }
-        break;
-      case '11-Player':
-        if (_state.num11PlayerFields > 0) {
-          _updateState((state) => state.copyWith(num11PlayerFields: state.num11PlayerFields - 1));
-        }
-        break;
-    }
   }
 }

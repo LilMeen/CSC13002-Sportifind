@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
 
 Future<void> deleteAllFilesInDirectory(Reference directoryRef) async {
   final ListResult listResult = await directoryRef.listAll();
@@ -13,21 +14,20 @@ Future<void> deleteAllFilesInDirectory(Reference directoryRef) async {
   }
 }
 
-Future<File> downloadAvatarFile(String stadiumId) async {
+Future<File> downloadAvatarFile(Stadium stadium) async {
   final ref = FirebaseStorage.instance
       .ref()
       .child('stadiums')
-      .child(stadiumId)
+      .child(stadium.id)
       .child('avatar')
       .child('avatar.jpg');
 
   try {
     final tempDir = await getTemporaryDirectory();
     final avatar = File('${tempDir.path}/avatar.jpg');
-
     await ref.writeToFile(avatar);
-
     return avatar;
+    
   } catch (e) {
     throw Exception('Failed to download avatar file: $e');
   }

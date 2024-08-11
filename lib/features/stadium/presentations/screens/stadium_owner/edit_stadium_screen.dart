@@ -22,6 +22,7 @@ class _EditStadiumScreenState extends State<EditStadiumScreen> {
   void initState() {
     super.initState();
     _bloc = EditStadiumBloc(context, widget.stadium);
+    _bloc.init();
   }
 
   @override
@@ -34,6 +35,7 @@ class _EditStadiumScreenState extends State<EditStadiumScreen> {
   Widget build(BuildContext context) {
     return StreamBuilder<EditStadiumState>(
       stream: _bloc.stateStream,
+      initialData: _bloc.currentState,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());

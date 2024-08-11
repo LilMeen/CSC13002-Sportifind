@@ -51,9 +51,6 @@ class _OwnerStadiumScreenState extends State<OwnerStadiumScreen> {
           onRefresh: _bloc.refreshStadiums,
           child: StadiumSearchScreen(
             userLocation: state.user!.location,
-            gridCol: 1,
-            gridRatio: 1.4,
-            imageRatio: 2,
             stadiums: state.stadiums,
             owners: [state.user!],
             isStadiumOwnerUser: true,

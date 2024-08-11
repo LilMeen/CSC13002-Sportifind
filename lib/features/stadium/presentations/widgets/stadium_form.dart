@@ -179,8 +179,8 @@ class StadiumForm {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(15),
-          child: Image.file(
-            avatar,
+          child: Image.network(
+            avatar.path,
             fit: BoxFit.cover,
             width: double.infinity,
             height: 200.0,
@@ -256,8 +256,8 @@ class StadiumForm {
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     height: 250,
-                    child: Image.file(
-                      image,
+                    child: Image.network(
+                      image.path,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -269,8 +269,8 @@ class StadiumForm {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.file(
-                image,
+              child: Image.network(
+                image.path,
                 fit: BoxFit.cover,
                 width: 150,
                 height: 100,

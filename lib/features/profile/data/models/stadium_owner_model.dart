@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get_it/get_it.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
 import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
@@ -25,7 +24,7 @@ class StadiumOwnerModel extends UserModel {
   });
 
   // REMOTE DATA SOURCE
-  StadiumRemoteDataSource stadiumRemoteDataSource = GetIt.instance<StadiumRemoteDataSource>();
+  StadiumRemoteDataSource stadiumRemoteDataSource = StadiumRemoteDataSourceImpl();
 
   // DATA CONVERSION
   @override

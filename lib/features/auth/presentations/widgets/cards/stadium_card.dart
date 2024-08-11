@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/presentations/screens/stadium_info_screen.dart';
 
 class StadiumCard extends StatefulWidget {
   final Stadium stadium;
@@ -34,7 +35,23 @@ class _StadiumCardState extends State<StadiumCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StadiumInfoScreen(
+              stadium: widget.stadium,
+              ownerName: widget.ownerName,
+              isStadiumOwnerUser: widget.isStadiumOwnerUser,
+              forMatchCreate: widget.forMatchCreate,
+              addMatchCard: widget.addMatchCard,
+              selectedTeamId: widget.selectedTeamId,
+              selectedTeamName: widget.selectedTeamName,
+              selectedTeamAvatar: widget.selectedTeamAvatar,
+            ),
+          ),
+        );
+      },
       child: Card(
         color: Colors.white,
         elevation: 4,

@@ -28,6 +28,32 @@ class Stadium {
     required this.fields,
   });
 
+  Stadium copyWith ({
+    String? id,
+    String? name,
+    String? owner,
+    File? avatar,
+    List<File>? images,
+    Location? location,
+    String? openTime,
+    String? closeTime,
+    String? phone,
+    List<Field>? fields,
+  }) {
+    return Stadium(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      owner: owner ?? this.owner,
+      avatar: avatar ?? this.avatar,
+      images: images ?? this.images,
+      location: location ?? this.location,
+      openTime: openTime ?? this.openTime,
+      closeTime: closeTime ?? this.closeTime,
+      phone: phone ?? this.phone,
+      fields: fields ?? this.fields,
+    );
+  }
+
   int getNumberOfTypeField(String type) {
     return fields.where((field) => field.type == type).length;
   }

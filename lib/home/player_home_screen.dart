@@ -1,3 +1,4 @@
+import 'package:sportifind/features/stadium/presentations/screens/player/player_stadium_screen.dart';
 import 'package:sportifind/home/widgets/bottom_navigation.dart';
 import 'package:sportifind/home/widgets/tab_icon.dart';
 import 'package:flutter/material.dart';
@@ -108,7 +109,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   }
                   setState(
                     () {
-                      //tabBody = const PlayerStadiumScreen();
+                      tabBody = const PlayerStadiumScreen();
                     },
                   );
                 },
