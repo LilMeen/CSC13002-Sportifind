@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class StadiumInfoAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onEdit;
@@ -22,7 +22,7 @@ class StadiumInfoAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: Text(
-        'Stadium information',
+        'Stadium Information',
         style: SportifindTheme.sportifindFeatureAppBarBluePurpleSmall,
       ),
       centerTitle: true,

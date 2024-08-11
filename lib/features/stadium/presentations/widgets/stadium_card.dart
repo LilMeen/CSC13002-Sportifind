@@ -1,17 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
-import 'package:sportifind/features/stadium/presentations/screens/stadium_info_screen.dart';
-import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/models/match_card.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/models/stadium_data.dart';
+import 'package:sportifind/screens/player/stadium/stadium_info_screen.dart';
 
 class StadiumCard extends StatefulWidget {
-  final StadiumEntity stadium;
+  final StadiumData stadium;
   final String ownerName;
   final double imageRatio;
   final bool isStadiumOwnerUser;
   final bool forMatchCreate;
-  final TeamEntity? selectedTeam;
+  final String? selectedTeamId;
+  final String? selectedTeamName;
+  final String? selectedTeamAvatar;
+  final void Function(MatchCard matchcard)? addMatchCard;
 
   const StadiumCard({
     required this.stadium,
@@ -19,7 +22,10 @@ class StadiumCard extends StatefulWidget {
     required this.isStadiumOwnerUser,
     required this.forMatchCreate,
     required this.imageRatio,
-    this.selectedTeam,
+    this.addMatchCard,
+    this.selectedTeamId,
+    this.selectedTeamName,
+    this.selectedTeamAvatar,
     super.key,
   });
 
@@ -28,6 +34,26 @@ class StadiumCard extends StatefulWidget {
 }
 
 class _StadiumCardState extends State<StadiumCard> {
+  Widget _buildDetailRow(IconData icon, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Row(
+        children: [
+          Icon(icon, color: SportifindTheme.bluePurple, size: 25),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              value,
+              style: SportifindTheme.stadiumCard,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -40,7 +66,10 @@ class _StadiumCardState extends State<StadiumCard> {
               ownerName: widget.ownerName,
               isStadiumOwnerUser: widget.isStadiumOwnerUser,
               forMatchCreate: widget.forMatchCreate,
-              selectedTeam: widget.selectedTeam,
+              addMatchCard: widget.addMatchCard,
+              selectedTeamId: widget.selectedTeamId,
+              selectedTeamName: widget.selectedTeamName,
+              selectedTeamAvatar: widget.selectedTeamAvatar,
             ),
           ),
         );
@@ -65,7 +94,7 @@ class _StadiumCardState extends State<StadiumCard> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: CachedNetworkImage(
-                    imageUrl: widget.stadium.avatar.path,
+                    imageUrl: widget.stadium.avatar,
                     fit: BoxFit.cover,
                     width: double.infinity,
                     placeholder: (context, url) => const Center(
@@ -91,26 +120,6 @@ class _StadiumCardState extends State<StadiumCard> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(IconData icon, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2.0),
-      child: Row(
-        children: [
-          Icon(icon, color: SportifindTheme.bluePurple, size: 25),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              value,
-              style: SportifindTheme.stadiumCard,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
       ),
     );
   }
