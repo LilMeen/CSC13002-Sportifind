@@ -86,7 +86,8 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                 BitmapDescriptor.hueAzure),
           );
 
-          nearbyStadiums =  stadService.sortNearbyStadiums(nearbyStadiums, searchLocation!);
+          nearbyStadiums =
+              stadService.sortNearbyStadiums(nearbyStadiums, searchLocation!);
         });
 
         mapController?.animateCamera(
@@ -153,7 +154,8 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                 BitmapDescriptor.hueOrange),
           );
 
-          nearbyStadiums =  stadService.sortNearbyStadiums(nearbyStadiums, searchLocation!);
+          nearbyStadiums =
+              stadService.sortNearbyStadiums(nearbyStadiums, searchLocation!);
         });
 
         mapController?.animateCamera(
@@ -243,22 +245,23 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
             right: 8.0,
             child: Card(
               child: ListTile(
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.of(context).pop(),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                title: TextField(
+                  controller: searchController,
+                  decoration: const InputDecoration(
+                    hintText: 'Search for a place, location',
+                    border: InputBorder.none,
                   ),
-                  title: TextField(
-                    controller: searchController,
-                    decoration: const InputDecoration(
-                      hintText: 'Search for a place, location',
-                      border: InputBorder.none,
-                    ),
-                    onSubmitted: _searchLocation,
-                  ),
-                  trailing: CurrentLocationIconButton(
-                    isLoading: isLoadingLocation,
-                    onPressed: _getCurrentLocationAndSortOnMap,
-                  )),
+                  onSubmitted: _searchLocation,
+                ),
+                trailing: CurrentLocationIconButton(
+                  isLoading: isLoadingLocation,
+                  onPressed: _getCurrentLocationAndSortOnMap,
+                ),
+              ),
             ),
           ),
           Align(
@@ -285,7 +288,7 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                         child: StadiumCard(
                           stadium: stadium,
                           ownerName: ownerName,
-                          imageRatio: 1,
+                          imageRatio: 1.1,
                           isStadiumOwnerUser: widget.isStadiumOwnerUser,
                           forMatchCreate: widget.forMatchCreate,
                           selectedTeamId: widget.selectedTeamId,

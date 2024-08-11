@@ -83,7 +83,6 @@ class _MatchMainScreenState extends State<MatchMainScreen>
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    print(isCaptain);
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -145,7 +144,6 @@ class _MatchMainScreenState extends State<MatchMainScreen>
                     onToggle: (index) {
                       setState(() {
                         status = index!;
-                        print(status);
                       });
                     },
                   ),

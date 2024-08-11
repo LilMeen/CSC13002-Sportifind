@@ -52,13 +52,37 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     }
   }
 
-  Future<void> fetchMatchesDataByStadiumAndFieldId() async {
+  Future<void> updateData() async {
     try {
       if (_selectedStadiumName.isNotEmpty && _selectedFieldName.isNotEmpty) {
         final matchesData = await matService.getMatchDataByStadiumAndFieldId(
             _selectedStadium!.id, _selectedField!.id);
         setState(() {
+          stadiumOpenTime = matService
+              .timeToDouble(_selectedStadium!.openTime)
+              .floorToDouble();
+          stadiumCloseTime = matService
+              .timeToDouble(_selectedStadium!.closeTime)
+              .ceilToDouble();
           matches = matchesData;
+        });
+      } else if (_selectedStadiumName.isNotEmpty) {
+        final matchesData =
+            await matService.getMatchDataByStadiumId(_selectedStadium!.id);
+        setState(() {
+          stadiumOpenTime = matService
+              .timeToDouble(_selectedStadium!.openTime)
+              .floorToDouble();
+          stadiumCloseTime = matService
+              .timeToDouble(_selectedStadium!.closeTime)
+              .ceilToDouble();
+          matches = matchesData;
+        });
+      } else {
+        setState(() {
+          stadiumOpenTime = defaultOpenTime;
+          stadiumCloseTime = defaultCloseTime;
+          matches.clear();
         });
       }
     } catch (error) {
@@ -75,19 +99,13 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     }
   }
 
-  void reset() {
-    stadiumOpenTime = defaultOpenTime;
-    stadiumCloseTime = defaultCloseTime;
-    matches.clear();
-  }
-
   Future<void> _refreshStadiums() async {
     setState(() {
       isLoadingStadiums = true;
       errorMessage = '';
     });
     await fetchStadiumData();
-    await fetchMatchesDataByStadiumAndFieldId();
+    await updateData();
   }
 
   @override
@@ -120,7 +138,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
           _selectedFieldName = '';
           _selectedField = null;
-          reset();
+          updateData();
         });
       },
     );
@@ -144,41 +162,31 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       onChanged: (value) async {
         setState(() {
           _selectedFieldName = value ?? '';
-          reset();
           if (_selectedFieldName.isNotEmpty) {
             _selectedField = fields.firstWhere(
                 (field) => 'Field ${field.numberId}' == _selectedFieldName);
-            stadiumOpenTime = matService
-                .timeToDouble(_selectedStadium!.openTime)
-                .floorToDouble();
-            stadiumCloseTime = matService
-                .timeToDouble(_selectedStadium!.closeTime)
-                .ceilToDouble();
           } else {
             _selectedField = null;
           }
         });
-
-        fetchMatchesDataByStadiumAndFieldId();
+        updateData();
       },
     );
   }
 
   List<Appointment> _getDataSource() {
     List<Appointment> meetings = <Appointment>[];
-    if (_selectedStadiumName.isNotEmpty && _selectedFieldName.isNotEmpty) {
-      meetings = matches.map((match) {
-        final startTime = matService.parseDateTime(match.date, match.start);
-        final endTime = matService.parseDateTime(match.date, match.end);
-        return Appointment(
-          startTime: startTime,
-          endTime: endTime,
-          subject: 'Booked',
-          notes: match.id,
-          color: SportifindTheme.blueOyster,
-        );
-      }).toList();
-    }
+    meetings = matches.map((match) {
+      final startTime = matService.parseDateTime(match.date, match.start);
+      final endTime = matService.parseDateTime(match.date, match.end);
+      return Appointment(
+        startTime: startTime,
+        endTime: endTime,
+        subject: 'Booked',
+        notes: match.id,
+        color: SportifindTheme.blueOyster,
+      );
+    }).toList();
 
     return meetings;
   }
@@ -282,7 +290,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                         builder: (context) => MatchInfoScreen(
                             matchInfo: matches.firstWhere(
                                 (match) => match.id == tappedAppointment.notes),
-                            matchStatus: 2),
+                            matchStatus: 3),
                       ),
                     );
                   }

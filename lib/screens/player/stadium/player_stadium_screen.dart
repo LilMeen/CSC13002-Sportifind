@@ -32,9 +32,6 @@ class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
   List<OwnerData> owners = [];
   late PlayerData user;
 
-  final int gridCol = 2;
-  final double gridRatio = 0.7;
-  final double imageRatio = 1;
   bool isLoadingStadiums = true;
   bool isLoadingUser = true;
   String errorMessage = '';
@@ -88,9 +85,6 @@ class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
       onRefresh: _refreshData,
       child: StadiumSearchScreen(
         userLocation: user.location,
-        gridCol: gridCol,
-        gridRatio: gridRatio,
-        imageRatio: imageRatio,
         stadiums: stadiums,
         owners: owners,
         forMatchCreate: widget.forMatchCreate,

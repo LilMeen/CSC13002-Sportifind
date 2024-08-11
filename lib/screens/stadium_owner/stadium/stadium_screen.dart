@@ -17,9 +17,6 @@ class _OwnerStadiumScreenState extends State<OwnerStadiumScreen> {
   List<OwnerData> owners = [];
   late OwnerData user;
 
-  final int gridCol = 1;
-  final double gridRatio = 1.4;
-  final double imageRatio = 2;
   bool isLoadingStadiums = true;
   bool isLoadingUser = true;
   String errorMessage = '';
@@ -76,9 +73,6 @@ class _OwnerStadiumScreenState extends State<OwnerStadiumScreen> {
       onRefresh: _refreshStadiums,
       child: StadiumSearchScreen(
         userLocation: user.location,
-        gridCol: gridCol,
-        gridRatio: gridRatio,
-        imageRatio: imageRatio,
         stadiums: stadiums,
         owners: owners,
         isStadiumOwnerUser: true,

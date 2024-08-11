@@ -15,18 +15,30 @@ class CustomSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: searchController,
+      style: SportifindTheme.normalTextBlack,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: SportifindTheme.normalTextSmokeScreen,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide.none,
         ),
         filled: true,
         fillColor: SportifindTheme.whiteSmoke,
-        prefixIcon: const Icon(Icons.search),
+        prefixIcon:
+            const Icon(Icons.search, color: SportifindTheme.smokeScreen),
         suffixIcon: searchController.text.isNotEmpty
             ? IconButton(
-                icon: const Icon(Icons.clear),
+                icon:
+                    const Icon(Icons.clear, color: SportifindTheme.smokeScreen),
                 onPressed: searchController.clear,
               )
             : null,
@@ -34,4 +46,3 @@ class CustomSearchBar extends StatelessWidget {
     );
   }
 }
-
