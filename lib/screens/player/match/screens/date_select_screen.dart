@@ -229,6 +229,12 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               value: selectedFieldType,
               style: SportifindTheme.textWhite,
               isExpanded: true,
+              icon: Icon(
+                // Add this
+                Icons.arrow_drop_down, // Add this
+                color: Colors.white, // Add this
+                size: 40,
+              ),
               dropdownColor: SportifindTheme.bluePurple,
               items: typeOfField.map((String items) {
                 return DropdownMenuItem(
@@ -267,9 +273,11 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                 serviceDuration: 30,
                 bookingEnd: convertMinutesToDateTime(
                     convertTimeStringToMinutes(widget.stadiumData.closeTime) -
-                        30, selectedDate!),
+                        30,
+                    selectedDate!),
                 bookingStart: convertMinutesToDateTime(
-                    convertTimeStringToMinutes(widget.stadiumData.openTime), selectedDate!),
+                    convertTimeStringToMinutes(widget.stadiumData.openTime),
+                    selectedDate!),
               ),
               hideBreakTime: false,
               loadingWidget: const Text('Fetching data...'),

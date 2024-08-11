@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
@@ -16,7 +17,7 @@ import 'package:sportifind/widgets/member_list/member_card.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class MatchInfoScreen extends StatefulWidget {
-  const MatchInfoScreen({ 
+  const MatchInfoScreen({
     super.key,
     required this.matchInfo,
     required this.matchStatus,
@@ -357,11 +358,16 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                   Padding(
                                     padding: const EdgeInsets.only(
                                         top: 4.0, left: 4.0),
-                                    child: Icon(
-                                      Icons.arrow_forward_outlined,
-                                      color: SportifindTheme.bluePurple
-                                          .withAlpha(212),
-                                      size: 16,
+                                    child: SizedBox(
+                                      width: 15,
+                                      height: 15,
+                                      child: SvgPicture.asset(
+                                        'lib/assets/button_icon/arrow-right.svg',
+                                        fit: BoxFit.fill,
+                                        color: SportifindTheme.bluePurple,
+                                        width: 30,
+                                        height: 30,
+                                      ),
                                     ),
                                   ),
                                 ],
