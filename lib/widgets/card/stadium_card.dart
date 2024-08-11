@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
@@ -92,11 +93,15 @@ class _StadiumCardState extends State<StadiumCard> {
                 aspectRatio: widget.imageRatio,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(
-                    widget.stadium.avatar,
-                    width: double.infinity,
-                    height: double.infinity,
+                  child: CachedNetworkImage(
+                    imageUrl: widget.stadium.avatar,
                     fit: BoxFit.cover,
+                    width: double.infinity,
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
                 ),
               ),

@@ -3,6 +3,7 @@ import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
 import 'package:sportifind/util/stadium_service.dart';
+import 'package:sportifind/widgets/app_bar/feature_app_bar_blue_purple.dart';
 
 class UpdateStatusScreen extends StatefulWidget {
   final StadiumData stadium;
@@ -163,24 +164,8 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
     final bool noFields = num5 == 0 && num7 == 0 && num11 == 0;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Update Status',
-          style: SportifindTheme.sportifindAppBar,
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: SportifindTheme.bluePurple),
-        elevation: 0,
-        surfaceTintColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      backgroundColor: Colors.white,
+      appBar: const FeatureAppBarBluePurple(title:'Update Status'),
+      backgroundColor: SportifindTheme.backgroundColor,
       body: noFields
           ? Center(
               child: Padding(

@@ -117,6 +117,18 @@ class SportifindTheme {
     color: lead,
   );
 
+  static TextStyle sportifindFeatureAppBarBluePurple = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 30,
+    color: bluePurple,
+  );
+
+  static TextStyle sportifindFeatureAppBarBluePurpleSmall = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 25,
+    color: bluePurple,
+  );
+
   // ex: create team, Profile
   static TextStyle featureTitlePurple = GoogleFonts.rowdies(
     fontWeight: FontWeight.normal,
@@ -227,6 +239,48 @@ class SportifindTheme {
     fontSize: 14,
     height: 1.5,
     color: Colors.black,
+  );
+
+  static TextStyle stadiumNameStadiumInfo = GoogleFonts.rowdies(
+    fontWeight: FontWeight.w400,
+    fontSize: 32,
+    color: Colors.white,
+  );
+
+  static TextStyle stadiumTimeStadiumInfo = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: Colors.white,
+  );
+
+  static TextStyle fieldNumberStadiumInfo = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 24,
+    color: bluePurple,
+  );
+
+  static TextStyle titleDeletStadium = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: Colors.black,
+  );
+  
+  static TextStyle contentDeletStadium = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: Colors.black,
+  );
+
+  static TextStyle noDeleteDialog = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: Colors.white,
+  );
+
+  static TextStyle yesDeleteDialog = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: bluePurple,
   );
 
   static TextStyle dropdownGreen = GoogleFonts.lexend(

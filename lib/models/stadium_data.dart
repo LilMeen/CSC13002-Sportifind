@@ -86,4 +86,17 @@ class StadiumData {
     }
     return 0;
   }
+
+  String formatPrice(double price) {
+    price = price / 1000;
+    final priceString = price.toStringAsFixed(0);
+    final buffer = StringBuffer();
+    for (int i = 0; i < priceString.length; i++) {
+      if (i > 0 && (priceString.length - i) % 3 == 0) {
+        buffer.write('.');
+      }
+      buffer.write(priceString[i]);
+    }
+    return '${buffer.toString()}k/h';
+  }
 }
