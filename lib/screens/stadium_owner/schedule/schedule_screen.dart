@@ -25,6 +25,14 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
   List<StadiumData> stadiums = [];
   List<MatchCard> matches = [];
+  List<Color> bookedColors = [
+    SportifindTheme.shovelKnight,
+    SportifindTheme.blueOyster,
+    SportifindTheme.bluePurple,
+    SportifindTheme.clearPurple
+  ];
+
+  Map<String, int> fieldMap = {};
 
   String _selectedStadiumName = '';
   String _selectedFieldName = '';
@@ -64,6 +72,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
           stadiumCloseTime = matService
               .timeToDouble(_selectedStadium!.closeTime)
               .ceilToDouble();
+          fieldMap = {_selectedField!.id: _selectedField!.numberId};
           matches = matchesData;
         });
       } else if (_selectedStadiumName.isNotEmpty) {
@@ -76,12 +85,14 @@ class ScheduleScreenState extends State<ScheduleScreen> {
           stadiumCloseTime = matService
               .timeToDouble(_selectedStadium!.closeTime)
               .ceilToDouble();
+          fieldMap = {for (var field in _selectedStadium!.fields) field.id: field.numberId};
           matches = matchesData;
         });
       } else {
         setState(() {
           stadiumOpenTime = defaultOpenTime;
           stadiumCloseTime = defaultCloseTime;
+          fieldMap = {};
           matches.clear();
         });
       }
@@ -184,7 +195,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
         endTime: endTime,
         subject: 'Booked',
         notes: match.id,
-        color: SportifindTheme.blueOyster,
+        color: bookedColors[(fieldMap[match.field]! - 1) % 4],
       );
     }).toList();
 
