@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/entities/location.dart';
-import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/location_util.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/usecases/search_stadium.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_nearby_stadium.dart';
 
@@ -12,7 +12,7 @@ class StadiumSearchState {
   final bool isLoadingLocation;
   final String errorMessage;
 
-  final List<Stadium> searchedStadiums;
+  final List<StadiumEntity> searchedStadiums;
   final Map<String, String> ownerMap;
   final String searchText;
   final String selectedCity;
@@ -37,7 +37,7 @@ class StadiumSearchState {
     bool? isLoadingLocation,
     String? errorMessage,
 
-    List<Stadium>? searchedStadiums,
+    List<StadiumEntity>? searchedStadiums,
     Map<String, String>? ownerMap,
     String? searchText,
     String? selectedCity,
@@ -63,8 +63,8 @@ class StadiumSearchState {
 
 class StadiumSearchBloc {
   final Location userLocation;
-  final List<Stadium> stadiums;
-  final List<StadiumOwner> owners;
+  final List<StadiumEntity> stadiums;
+  final List<StadiumOwnerEntity> owners;
 
   final BuildContext context;
   final _stateController = StreamController<StadiumSearchState>.broadcast();

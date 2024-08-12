@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_info_screen.dart';
 
 class StadiumCard extends StatefulWidget {
-  final Stadium stadium;
+  final StadiumEntity stadium;
   final String ownerName;
   final double imageRatio;
   final bool isStadiumOwnerUser;

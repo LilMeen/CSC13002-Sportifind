@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/entities/location.dart';
-import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/core/widgets/city_dropdown.dart';
 import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';
 import 'package:sportifind/features/auth/presentations/widgets/cards/stadium_card.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/presentations/bloc/stadium_search_bloc.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_map_search_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/create_stadium_screen.dart';
@@ -16,8 +16,8 @@ const double floatingDistance = 65.0;
 
 class StadiumSearchScreen extends StatefulWidget {
   final Location userLocation;
-  final List<Stadium> stadiums;
-  final List<StadiumOwner> owners;
+  final List<StadiumEntity> stadiums;
+  final List<StadiumOwnerEntity> owners;
   final bool isStadiumOwnerUser;
   final bool forMatchCreate;
   final String? selectedTeamId;

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/features/stadium/data/models/field_model.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/core/entities/location.dart';
 
 class StadiumModel {
@@ -78,7 +78,7 @@ class StadiumModel {
     };
   }
 
-  Future <Stadium> toEntity() async {
+  Future <StadiumEntity> toEntity() async {
     Location googleLocation = await getLocation('$latitude, $longitude');
     Location location = googleLocation.copyWith(
       name: googleLocation.name,
@@ -89,7 +89,7 @@ class StadiumModel {
       latitude: latitude,
       longitude: longitude,
     );
-    return Stadium(
+    return StadiumEntity(
       id: id,
       name: name,
       ownerId: owner,
@@ -103,7 +103,7 @@ class StadiumModel {
     );
   }
 
-  factory StadiumModel.fromEntity(Stadium entity) {
+  factory StadiumModel.fromEntity(StadiumEntity entity) {
     return StadiumModel(
       id: entity.id,
       name: entity.name,

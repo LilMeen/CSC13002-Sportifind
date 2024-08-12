@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';
 import 'package:sportifind/features/match/presentation/screens/date_select_screen.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/edit_stadium_screen.dart';
 import 'package:sportifind/features/stadium/presentations/bloc/stadium_info_bloc.dart';
 
 class StadiumInfoScreen extends StatefulWidget {
-  final Stadium stadium;
+  final StadiumEntity stadium;
   final String ownerName;
   final bool isStadiumOwnerUser;
   final bool forMatchCreate;

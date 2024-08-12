@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';
-import 'package:sportifind/features/stadium/domain/entities/field.dart';
+import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
 
 class DateSelectScreen extends StatefulWidget {
   const DateSelectScreen(
@@ -20,7 +20,7 @@ class DateSelectScreen extends StatefulWidget {
   final String selectedStadiumId;
   final String selectedStadiumName;
   final String selectedStadiumOwner;
-  final List<Field> fields;
+  final List<FieldEntity> fields;
   final void Function(MatchCard matchcard)? addMatchCard;
   @override
   State<StatefulWidget> createState() => _DateSelectScreenState();

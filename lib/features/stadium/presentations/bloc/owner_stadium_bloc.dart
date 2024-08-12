@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/profile/domain/usecases/get_stadium_owner.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_stadiums_by_owner.dart';
 
 class OwnerStadiumState {
   final bool isLoading;
   final String errorMessage;
-  final List<Stadium> stadiums;
-  final StadiumOwner? user;
+  final List<StadiumEntity> stadiums;
+  final StadiumOwnerEntity? user;
 
   OwnerStadiumState({
     this.isLoading = true,
@@ -23,8 +23,8 @@ class OwnerStadiumState {
   OwnerStadiumState copyWith({
     bool? isLoading,
     String? errorMessage,
-    List<Stadium>? stadiums,
-    StadiumOwner? user,
+    List<StadiumEntity>? stadiums,
+    StadiumOwnerEntity? user,
   }) {
     return OwnerStadiumState(
       isLoading: isLoading ?? this.isLoading,

@@ -7,7 +7,7 @@ import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/core/util/image_service.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/usecases/edit_stadium.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/stadium_form.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/owner_stadium_screen.dart';
@@ -75,7 +75,7 @@ class EditStadiumState {
 }
 
 class EditStadiumBloc {
-  final Stadium stadium;
+  final StadiumEntity stadium;
   
   final BuildContext context;
   final _stateController = StreamController<EditStadiumState>.broadcast();

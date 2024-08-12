@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/presentations/bloc/edit_stadium_bloc.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/current_location_button.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/stadium_form.dart';
 
 
 class EditStadiumScreen extends StatefulWidget {
-  final Stadium stadium;
+  final StadiumEntity stadium;
 
   const EditStadiumScreen({super.key, required this.stadium});
 

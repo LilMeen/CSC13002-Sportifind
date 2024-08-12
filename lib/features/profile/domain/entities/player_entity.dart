@@ -1,13 +1,13 @@
-import 'package:sportifind/features/user/domain/entities/user.dart';
+import 'package:sportifind/features/user/domain/entities/user_entity.dart';
 
-class Player extends UserEntity {
+class PlayerEntity extends UserEntity {
   final String height;
   final String weight;
   final String preferredFoot;
   final Stats stats;
   final List<String> teamsId;
 
-  Player({
+  PlayerEntity({
     required super.id,
     required super.name,
     required super.email,

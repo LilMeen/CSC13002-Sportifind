@@ -1,17 +1,17 @@
 
 import 'package:sportifind/core/models/result.dart';
-import 'package:sportifind/features/profile/domain/entities/player.dart';
-import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
-import 'package:sportifind/features/user/domain/entities/user.dart';
+import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
+import 'package:sportifind/features/user/domain/entities/user_entity.dart';
 
 abstract interface class ProfileRepository {
   Future<Result<UserEntity>> getCurrentProfile();
 
   // PLAYER
-  Future<Result<Player>> getPlayer(String id);
-  Future<Result<List<Player>>> getAllPlayers();
+  Future<Result<PlayerEntity>> getPlayer(String id);
+  Future<Result<List<PlayerEntity>>> getAllPlayers();
 
   // STADIUM OWNER
-  Future<Result<StadiumOwner>> getStadiumOwner(String id);
-  Future<Result<List<StadiumOwner>>> getAllStadiumOwners();
+  Future<Result<StadiumOwnerEntity>> getStadiumOwner(String id);
+  Future<Result<List<StadiumOwnerEntity>>> getAllStadiumOwners();
 }

@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/core/entities/location.dart';
-import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/user/data/models/user_model.dart';
 
 class StadiumOwnerModel extends UserModel {
@@ -63,11 +63,11 @@ class StadiumOwnerModel extends UserModel {
   }
 
   @override
-  Future<StadiumOwner> toEntity() async {
+  Future<StadiumOwnerEntity> toEntity() async {
     List<StadiumModel> stadiumModels = await stadiumRemoteDataSource.getStadiumsByOwner(id);
-    List<Stadium> stadiumsEntity = await Future.wait(stadiumModels.map((e) => e.toEntity()).toList());
+    List<StadiumEntity> stadiumsEntity = await Future.wait(stadiumModels.map((e) => e.toEntity()).toList());
 
-    return StadiumOwner(
+    return StadiumOwnerEntity(
       id: id,
       email: email,
       name: name,
@@ -82,7 +82,7 @@ class StadiumOwnerModel extends UserModel {
   }
 
   @override
-  factory StadiumOwnerModel.fromEntity(StadiumOwner entity) {
+  factory StadiumOwnerModel.fromEntity(StadiumOwnerEntity entity) {
     return StadiumOwnerModel(
       id: entity.id,
       email: entity.email,

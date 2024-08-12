@@ -1,37 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
-import 'package:sportifind/features/match/domain/entities/match.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
 import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
 
 class MatchModel {
   final String id;
-  final String stadium;
-  final String field;
-  final String stadiumOwner;
+  final String stadiumId;
+  final String fieldId;
+  final String stadiumOwnerId;
   final String date;
   final String start;
   final String end;
   final String playTime;
-  final String team1;
-  final String team1Avatar;
-  final String team2;
-  final String team2Avatar;
+  final String team1Id;
+  final String team2Id;
 
   MatchModel({
     required this.id,
-    required this.stadium,
-    required this.field,
-    required this.stadiumOwner,
+    required this.stadiumId,
+    required this.fieldId,
+    required this.stadiumOwnerId,
     required this.date,
     required this.start,
     required this.end,
     required this.playTime,
-    required this.team1,
-    required this.team1Avatar,
-    required this.team2,
-    required this.team2Avatar,
+    required this.team1Id,
+    required this.team2Id,
   });
 
 
@@ -46,43 +42,37 @@ class MatchModel {
 
     return MatchModel(
       id: matchDoc.id,
-      stadium: data['stadium'] ?? '',
-      field: data['field'] ?? '',
-      stadiumOwner: data['stadium_owner'] ?? '',
+      stadiumId: data['stadium'] ?? '',
+      fieldId: data['field'] ?? '',
+      stadiumOwnerId: data['stadium_owner'] ?? '',
       date: data['date'] ?? '',
       start: data['start'] ?? '',
       end: data['end'] ?? '',
       playTime: data['playTime'] ?? '',
-      team1: data['team1'] ?? '',
-      team1Avatar: data['team1_avatar'] ?? '',
-      team2: data['team2'] ?? '',
-      team2Avatar: data['team2_avatar'] ?? '',
+      team1Id: data['team1'] ?? '',
+      team2Id: data['team2'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'stadium': stadium,
-      'field': field,
-      'stadium_owner': stadiumOwner,
+      'stadium': stadiumId,
+      'field': fieldId,
+      'stadium_owner': stadiumOwnerId,
       'date': date,
       'start': start,
       'end': end,
       'playTime': playTime,
-      'team1': team1,
-      'team1_avatar': team1Avatar,
-      'team2': team2,
-      'team2_avatar': team2Avatar,
+      'team1': team1Id,
+      'team2': team2Id,
     };
   }
 
-  Future<Match> toEntity() async{
-    final stadiumEndity = await stadiumRemoteDataSource.getStadium(stadium).then((value) => value.toEntity());
-    final fieldEntity = stadiumEndity.fields.firstWhere((element) => element.id == field);
-    final team1Entity = await teamRemoteDataSource.getTeam(team1).then((value) => value.toEntity());
-    final team2Entity = await teamRemoteDataSource.getTeam(team2).then((value) => value.toEntity());
+  Future<MatchEntity> toEntity() async{
+    final stadiumEndity = await stadiumRemoteDataSource.getStadium(stadiumId).then((value) => value.toEntity());
+    final fieldEntity = stadiumEndity.fields.firstWhere((element) => element.id == fieldId);
 
-    return Match(
+    return MatchEntity(
       id: id,
       stadium: stadiumEndity,
       field: fieldEntity,
@@ -90,25 +80,23 @@ class MatchModel {
       start: start,
       end: end,
       playTime: playTime,
-      team1: team1Entity,
-      team2: team2Entity,
+      team1Id: team1Id,
+      team2Id: team2Id,
     );
   }
 
-  MatchModel fromEntity(Match match) {
+  MatchModel fromEntity(MatchEntity match) {
     return MatchModel(
       id: match.id,
-      stadium: match.stadium.id,
-      field: match.field.id,
-      stadiumOwner: match.stadium.ownerId,
+      stadiumId: match.stadium.id,
+      fieldId: match.field.id,
+      stadiumOwnerId: match.stadium.ownerId,
       date: match.date,
       start: match.start,
       end: match.end,
       playTime: match.playTime,
-      team1: match.team1.id,
-      team1Avatar: match.team1.avatar.path,
-      team2: match.team2.id,
-      team2Avatar: match.team2.avatar.path,
+      team1Id: match.team1Id,
+      team2Id: match.team2Id,
     );
   }
 }

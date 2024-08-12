@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:sportifind/features/stadium/domain/entities/field.dart';
+import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
 import 'package:sportifind/core/entities/location.dart';
 
-class Stadium {
+class StadiumEntity {
   final String id;
   final String name;
   final String ownerId;
@@ -13,9 +13,9 @@ class Stadium {
   final String openTime;
   final String closeTime;
   final String phone;
-  final List<Field> fields;
+  final List<FieldEntity> fields;
 
-  Stadium({
+  StadiumEntity({
     required this.id,
     required this.name,
     required this.ownerId,
@@ -28,7 +28,7 @@ class Stadium {
     required this.fields,
   });
 
-  Stadium copyWith ({
+  StadiumEntity copyWith ({
     String? id,
     String? name,
     String? ownerId,
@@ -38,9 +38,9 @@ class Stadium {
     String? openTime,
     String? closeTime,
     String? phone,
-    List<Field>? fields,
+    List<FieldEntity>? fields,
   }) {
-    return Stadium(
+    return StadiumEntity(
       id: id ?? this.id,
       name: name ?? this.name,
       ownerId: ownerId ?? this.ownerId,

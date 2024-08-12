@@ -7,7 +7,7 @@ import 'package:sportifind/features/match/data/datasources/match_remote_data_sou
 import 'package:sportifind/features/match/data/models/match_model.dart';
 import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 
 class StadiumRepositoryImpl implements StadiumRepository {
@@ -22,7 +22,7 @@ class StadiumRepositoryImpl implements StadiumRepository {
   // CREATE STADIUM
   // Create a new stadium
   @override
-  Future<Result<void>> createStadium(Stadium stadium) async { 
+  Future<Result<void>> createStadium(StadiumEntity stadium) async { 
     await stadiumRemoteDataSource.createStadium(StadiumModel.fromEntity(stadium));
     return Result.success(null);
   }
@@ -31,7 +31,7 @@ class StadiumRepositoryImpl implements StadiumRepository {
   // GET STADIUM
   // Get a stadium by its id
   @override
-  Future<Result<Stadium>> getStadium(String id) async {
+  Future<Result<StadiumEntity>> getStadium(String id) async {
     final stadium = await stadiumRemoteDataSource.getStadium(id);
     return Result.success(await stadium.toEntity());
   }
@@ -40,9 +40,9 @@ class StadiumRepositoryImpl implements StadiumRepository {
   // GET ALL STADIUMS
   // Get all stadiums
   @override
-  Future<Result<List<Stadium>>> getAllStadiums() async {
+  Future<Result<List<StadiumEntity>>> getAllStadiums() async {
     final stadiums = await stadiumRemoteDataSource.getAllStadiums();
-    List<Stadium> stadiumEntities = [];
+    List<StadiumEntity> stadiumEntities = [];
     for (StadiumModel stadium in stadiums) {
       stadiumEntities.add(await stadium.toEntity());
     }
@@ -53,9 +53,9 @@ class StadiumRepositoryImpl implements StadiumRepository {
   // GET STADIUMS BY OWNER
   // Get all stadiums by owner
   @override
-  Future<Result<List<Stadium>>> getStadiumsByOwner(String ownerId) async {
+  Future<Result<List<StadiumEntity>>> getStadiumsByOwner(String ownerId) async {
     final stadiums = await stadiumRemoteDataSource.getStadiumsByOwner(ownerId);
-    List<Stadium> stadiumEntities = [];
+    List<StadiumEntity> stadiumEntities = [];
     for (StadiumModel stadium in stadiums) {
       stadiumEntities.add(await stadium.toEntity());
     }
@@ -66,7 +66,7 @@ class StadiumRepositoryImpl implements StadiumRepository {
   // UPDATE STADIUM
   // Update a stadium
   @override
-  Future<Result<void>> updateStadium(Stadium stadium) async {
+  Future<Result<void>> updateStadium(StadiumEntity stadium) async {
     await stadiumRemoteDataSource.updateStadium(StadiumModel.fromEntity(stadium));
     return Result.success(null);
   }
@@ -92,8 +92,8 @@ class StadiumRepositoryImpl implements StadiumRepository {
   // SORT NEARBY STADIUMS
   // Sort stadiums by distance to a location
   @override
-  Result<List<Stadium>> sortNearbyStadiums(List<Stadium> stadiums, Location markedLocation) {
-    sortByDistance<Stadium>(
+  Result<List<StadiumEntity>> sortNearbyStadiums(List<StadiumEntity> stadiums, Location markedLocation) {
+    sortByDistance<StadiumEntity>(
       stadiums,
       markedLocation,
       (stadium) => stadium.location,
@@ -105,7 +105,7 @@ class StadiumRepositoryImpl implements StadiumRepository {
   // PERFORM STADIUM SEARCH
   // Search stadiums by name and location
   @override
-  Result<List<Stadium>> performStadiumSearch(List<Stadium> stadiums,
+  Result<List<StadiumEntity>> performStadiumSearch(List<StadiumEntity> stadiums,
       String searchText, String selectedCity, String selectedDistrict) {
     return Result.success(searchingNameAndLocation(
       listItems: stadiums,

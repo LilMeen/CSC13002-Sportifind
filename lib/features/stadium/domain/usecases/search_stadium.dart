@@ -1,15 +1,15 @@
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 
-class SearchStadium implements NonFutureUseCase<List<Stadium>, SearchStadiumParams> {
+class SearchStadium implements NonFutureUseCase<List<StadiumEntity>, SearchStadiumParams> {
   final StadiumRepository repository;
 
   SearchStadium(this.repository);
 
   @override
-  Result<List<Stadium>> call(SearchStadiumParams params) {
+  Result<List<StadiumEntity>> call(SearchStadiumParams params) {
     return repository.performStadiumSearch(
       params.stadiums,
       params.searchText,
@@ -20,7 +20,7 @@ class SearchStadium implements NonFutureUseCase<List<Stadium>, SearchStadiumPara
 }
 
 class SearchStadiumParams {
-  final List<Stadium> stadiums;
+  final List<StadiumEntity> stadiums;
   final String searchText;
   final String selectedCity;
   final String selectedDistrict;

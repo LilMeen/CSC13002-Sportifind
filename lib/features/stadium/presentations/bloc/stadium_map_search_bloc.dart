@@ -2,17 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sportifind/core/entities/location.dart';
-import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/location_util.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_nearby_stadium.dart';
 
 class StadiumMapSearchState {
   final bool isLoading;
   final bool isLoadingLocation;
   final String errorMessage;
-  final List<Stadium> nearbyStadiums;
+  final List<StadiumEntity> nearbyStadiums;
   final Map<String, String> ownerMap;
   final Marker? searchMarker;
   final Location? searchLocation;
@@ -33,7 +33,7 @@ class StadiumMapSearchState {
     bool? isLoading,
     bool? isLoadingLocation,
     String? errorMessage,
-    List<Stadium>? nearbyStadiums,
+    List<StadiumEntity>? nearbyStadiums,
     Map<String, String>? ownerMap,
     Marker? searchMarker,
     Location? searchLocation,
@@ -58,8 +58,8 @@ class StadiumMapSearchState {
 class StadiumMapSearchBloc {
   final BuildContext context;
   final Location userLocation;
-  final List<Stadium> stadiums;
-  final List<StadiumOwner> owners;
+  final List<StadiumEntity> stadiums;
+  final List<StadiumOwnerEntity> owners;
 
   final _stateController = StreamController<StadiumMapSearchState>.broadcast();
   late StadiumMapSearchState _state;

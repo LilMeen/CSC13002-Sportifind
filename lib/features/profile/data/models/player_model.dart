@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/core/entities/location.dart';
-import 'package:sportifind/features/profile/domain/entities/player.dart';
+import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
 import 'package:sportifind/features/user/data/models/user_model.dart';
 
@@ -84,7 +84,7 @@ class PlayerModel extends UserModel {
   }
 
   @override
-  Future<Player> toEntity() async {
+  Future<PlayerEntity> toEntity() async {
     Stats statsEntity = Stats(
       def: stats['DEF'] ?? 0,
       drive: stats['DRIVE'] ?? 0,
@@ -94,7 +94,7 @@ class PlayerModel extends UserModel {
       shoot: stats['SHOOT'] ?? 0,
     );
 
-    return Player(
+    return PlayerEntity(
       id: id,
       email: email,
       name: name,
@@ -113,7 +113,7 @@ class PlayerModel extends UserModel {
   }
 
   @override
-  factory PlayerModel.fromEntity(Player entity) {
+  factory PlayerModel.fromEntity(PlayerEntity entity) {
     return PlayerModel(
       id: entity.id,
       email: entity.email,

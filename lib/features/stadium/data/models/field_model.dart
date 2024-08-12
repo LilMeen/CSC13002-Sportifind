@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/features/stadium/domain/entities/field.dart';
+import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
 
 class FieldModel {
   final String id;
@@ -36,8 +36,8 @@ class FieldModel {
     };
   }
 
-  Field toEntity() {
-    return Field(
+  FieldEntity toEntity() {
+    return FieldEntity(
       id: id,
       numberId: numberId,
       type: type,
@@ -46,7 +46,7 @@ class FieldModel {
     );
   }
 
-  factory FieldModel.fromEntity(Field entity) {
+  factory FieldModel.fromEntity(FieldEntity entity) {
     return FieldModel(
       id: entity.id,
       numberId: entity.numberId,

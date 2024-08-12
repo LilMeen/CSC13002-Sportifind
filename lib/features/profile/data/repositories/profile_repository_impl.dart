@@ -2,10 +2,10 @@ import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:sportifind/features/profile/data/models/player_model.dart';
 import 'package:sportifind/features/profile/data/models/stadium_owner_model.dart';
-import 'package:sportifind/features/profile/domain/entities/player.dart';
-import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/features/profile/domain/repositories/profile_repository.dart';
-import 'package:sportifind/features/user/domain/entities/user.dart';
+import 'package:sportifind/features/user/domain/entities/user_entity.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   final ProfileRemoteDataSource profileRemoteDataSource;
@@ -27,7 +27,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   // GET PLAYER
   // Get a player by its id
   @override
-  Future<Result<Player>> getPlayer(String id) async{
+  Future<Result<PlayerEntity>> getPlayer(String id) async{
     PlayerModel player = await profileRemoteDataSource.getPlayer(id);
     return Result.success(await player.toEntity());
   }
@@ -35,7 +35,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   // GET ALL PLAYERS
   // Get all players
   @override
-  Future<Result<List<Player>>> getAllPlayers() async{
+  Future<Result<List<PlayerEntity>>> getAllPlayers() async{
     List<PlayerModel> players = await profileRemoteDataSource.getAllPlayers();
     return Result.success(await Future.wait(players.map((player) async => await player.toEntity()).toList()));
   }
@@ -46,7 +46,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   // GET STADIUM OWNER
   // Get a stadium owner by its id
   @override
-  Future<Result<StadiumOwner>> getStadiumOwner(String id) async{
+  Future<Result<StadiumOwnerEntity>> getStadiumOwner(String id) async{
     StadiumOwnerModel stadiumOwner = await profileRemoteDataSource.getStadiumOwner(id);
     return Result.success(await stadiumOwner.toEntity());
   }
@@ -54,7 +54,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   // GET ALL STADIUM OWNERS
   // Get all stadium owners
   @override
-  Future<Result<List<StadiumOwner>>> getAllStadiumOwners() async{
+  Future<Result<List<StadiumOwnerEntity>>> getAllStadiumOwners() async{
     List<StadiumOwnerModel> stadiumOwners = await profileRemoteDataSource.getAllStadiumOwners();
     return Result.success(await Future.wait(stadiumOwners.map((stadiumOwner) async => await stadiumOwner.toEntity()).toList()));
   }

@@ -1,7 +1,7 @@
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/features/profile/domain/repositories/profile_repository.dart';
-import 'package:sportifind/features/user/domain/entities/user.dart';
+import 'package:sportifind/features/user/domain/entities/user_entity.dart';
 
 class GetCurrentProfile implements UseCase<UserEntity, NoParams> {
   final ProfileRepository repository;

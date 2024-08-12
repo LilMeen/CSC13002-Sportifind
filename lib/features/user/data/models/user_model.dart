@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/core/entities/location.dart';
-import 'package:sportifind/features/user/domain/entities/user.dart';
+import 'package:sportifind/features/user/domain/entities/user_entity.dart';
 
 class UserModel {
   final String id;

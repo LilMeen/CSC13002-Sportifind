@@ -3,7 +3,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/usecases/delete_stadium.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/owner_stadium_screen.dart';
 
@@ -29,7 +29,7 @@ class StadiumInfoState {
 
 class StadiumInfoBloc {
   final BuildContext context;
-  final Stadium stadium;
+  final StadiumEntity stadium;
   
   final _stateController = StreamController<StadiumInfoState>.broadcast();
   late StadiumInfoState _state;

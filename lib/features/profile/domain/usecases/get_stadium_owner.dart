@@ -1,15 +1,15 @@
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
-import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/features/profile/domain/repositories/profile_repository.dart';
 
-class GetStadiumOwner implements UseCase<StadiumOwner, GetStadiumOwnerParams> {
+class GetStadiumOwner implements UseCase<StadiumOwnerEntity, GetStadiumOwnerParams> {
   GetStadiumOwner(this.repository);
 
   final ProfileRepository repository;
 
   @override
-  Future<Result<StadiumOwner>> call(GetStadiumOwnerParams params) async {
+  Future<Result<StadiumOwnerEntity>> call(GetStadiumOwnerParams params) async {
     return await repository.getStadiumOwner(params.id);
   }
 }

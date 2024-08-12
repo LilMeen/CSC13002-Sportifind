@@ -1,10 +1,10 @@
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
-import 'package:sportifind/features/user/domain/entities/user.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
+import 'package:sportifind/features/user/domain/entities/user_entity.dart';
 
-class StadiumOwner extends UserEntity {
-  List<Stadium> stadiums;
+class StadiumOwnerEntity extends UserEntity {
+  List<StadiumEntity> stadiums;
 
-  StadiumOwner({
+  StadiumOwnerEntity({
     required super.id,
     required super.name,
     required super.email,

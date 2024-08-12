@@ -4,9 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/util/location_util.dart';
+import 'package:sportifind/features/match/data/datasources/match_remote_data_source.dart';
+import 'package:sportifind/features/match/data/models/match_model.dart';
 import 'package:sportifind/features/profile/data/datasources/profile_remote_data_source.dart';
-import 'package:sportifind/features/profile/domain/entities/player.dart';
-import 'package:sportifind/features/team/domain/entities/team.dart';
+import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 
 class TeamModel {
   final String id;
@@ -33,6 +36,7 @@ class TeamModel {
 
   // REMOTE DATA SOURCE
   ProfileRemoteDataSource profileRemoteDataSource = GetIt.instance<ProfileRemoteDataSource>();
+  MatchRemoteDataSource matchRemoteDataSource = GetIt.instance<MatchRemoteDataSource>();
 
 
   // DATA CONVERSION
@@ -65,27 +69,37 @@ class TeamModel {
     };
   }
 
-  Future<Team> toEntity() async{
-    Player captainEntity = await profileRemoteDataSource.getPlayer(captain).then((value) => value.toEntity());
-    List<Player> playersEntity = await Future.wait(
+  Future<TeamEntity> toEntity() async{
+    PlayerEntity captainEntity = await profileRemoteDataSource.getPlayer(captain).then((value) => value.toEntity());
+    List<PlayerEntity> playersEntity = await Future.wait(
       players.map(
         (e) => profileRemoteDataSource.getPlayer(e).then((value) => value.toEntity())
       )
     );
     Location googleLocation = await findLatAndLngFull('', district, city) ;
+    Map<MatchEntity, bool> incomingMatchEntity = {};
+    for (var match in incomingMatch.keys) {
+      MatchModel matchModel = await matchRemoteDataSource.getMatch(match);
+      MatchEntity matchEntity = await matchModel.toEntity();
+      incomingMatchEntity[matchEntity] = incomingMatch[match]!;
+    }
 
-    return Team(
+    return TeamEntity(
       id: id,
       avatar: File(avatarImage),
       captain: captainEntity,
       location: googleLocation,
       name: name,
       players: playersEntity,
-      incomingMatch: incomingMatch,
+      incomingMatch: incomingMatchEntity,
     );
   }
 
-  factory TeamModel.fromEntity(Team team) {
+  factory TeamModel.fromEntity(TeamEntity team) {
+    Map<String, bool> incomingMatchModel = {};
+    for (var match in team.incomingMatch.keys) {
+      incomingMatchModel[match.id] = team.incomingMatch[match]!;
+    }
 
     return TeamModel(
       id: team.id,
@@ -96,7 +110,7 @@ class TeamModel {
       foundedDate: Timestamp.now(),
       name: team.name,
       players: team.players.map((e) => e.id).toList(),
-      incomingMatch: team.incomingMatch,
+      incomingMatch: incomingMatchModel,
     );
   }
 }

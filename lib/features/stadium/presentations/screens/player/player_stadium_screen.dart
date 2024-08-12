@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';
-import 'package:sportifind/features/profile/domain/entities/player.dart';
-import 'package:sportifind/features/profile/domain/entities/stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/features/profile/domain/usecases/get_all_stadium_owner.dart';
 import 'package:sportifind/features/profile/domain/usecases/get_player.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_all_stadiums.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_search_screen.dart';
 
@@ -32,9 +32,9 @@ class PlayerStadiumScreen extends StatefulWidget {
 }
 
 class _PlayerStadiumScreenState extends State<PlayerStadiumScreen> {
-  List<Stadium> stadiums = [];
-  List<StadiumOwner> owners = [];
-  late Player user;
+  List<StadiumEntity> stadiums = [];
+  List<StadiumOwnerEntity> owners = [];
+  late PlayerEntity user;
 
   bool isLoadingStadiums = true;
   bool isLoadingUser = true;

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 
 Future<void> deleteAllFilesInDirectory(Reference directoryRef) async {
   final ListResult listResult = await directoryRef.listAll();
@@ -14,7 +14,7 @@ Future<void> deleteAllFilesInDirectory(Reference directoryRef) async {
   }
 }
 
-Future<File> downloadAvatarFile(Stadium stadium) async {
+Future<File> downloadAvatarFile(StadiumEntity stadium) async {
   final ref = FirebaseStorage.instance
       .ref()
       .child('stadiums')

@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
-import 'package:sportifind/features/stadium/domain/entities/field.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium.dart';
+import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 
 class EditStadium implements UseCase<void, EditStadiumParams> {
@@ -14,11 +14,11 @@ class EditStadium implements UseCase<void, EditStadiumParams> {
 
   @override
   Future<Result<void>> call(EditStadiumParams params) async {
-    List<Field> fields = [];
+    List<FieldEntity> fields = [];
     int numberId = 1;
     void addFields(int numFields, double price, String type) {
       for (int i = 0; i < numFields; i++) {
-        fields.add(Field(
+        fields.add(FieldEntity(
           id: '',
           numberId: numberId++,
           type: type,
@@ -31,7 +31,7 @@ class EditStadium implements UseCase<void, EditStadiumParams> {
     addFields(params.num7PlayerFields, params.pricePerHour7, '7-player');
     addFields(params.num11PlayerFields, params.pricePerHour11, '11-player');
 
-    Stadium stadium = Stadium(
+    StadiumEntity stadium = StadiumEntity(
       id: params.id,
       name: params.name,
       ownerId: FirebaseAuth.instance.currentUser!.uid,
