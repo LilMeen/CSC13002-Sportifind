@@ -6,7 +6,7 @@ import 'package:sportifind/core/entities/location.dart';
 class Stadium {
   final String id;
   final String name;
-  final String owner;
+  final String ownerId;
   final File avatar;
   final List<File> images;
   final Location location;
@@ -18,7 +18,7 @@ class Stadium {
   Stadium({
     required this.id,
     required this.name,
-    required this.owner,
+    required this.ownerId,
     required this.avatar,
     required this.images,
     required this.location,
@@ -31,7 +31,7 @@ class Stadium {
   Stadium copyWith ({
     String? id,
     String? name,
-    String? owner,
+    String? ownerId,
     File? avatar,
     List<File>? images,
     Location? location,
@@ -43,7 +43,7 @@ class Stadium {
     return Stadium(
       id: id ?? this.id,
       name: name ?? this.name,
-      owner: owner ?? this.owner,
+      ownerId: ownerId ?? this.ownerId,
       avatar: avatar ?? this.avatar,
       images: images ?? this.images,
       location: location ?? this.location,

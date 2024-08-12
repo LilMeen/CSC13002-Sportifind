@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/features/profile/domain/entities/player.dart';
-import 'package:sportifind/features/match/domain/entities/match.dart';
 
 class Team {
   final String id;
@@ -9,9 +9,8 @@ class Team {
   final File avatar;
   final List<Player> players;
   final Player captain;
-  final String city;
-  final String district;
-  final List<Match> incomingMatch;
+  final Location location;
+  final Map<String, bool> incomingMatch;
 
   Team ({
     required this.id,
@@ -19,8 +18,7 @@ class Team {
     required this.avatar,
     required this.players,
     required this.captain,
-    required this.city,
-    required this.district,
+    required this.location,
     required this.incomingMatch,
   });
 }

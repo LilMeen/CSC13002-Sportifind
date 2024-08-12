@@ -34,7 +34,7 @@ class CreateStadium implements UseCase<void, CreateStadiumParams> {
     Stadium stadium = Stadium(
       id: '',
       name: params.name,
-      owner: FirebaseAuth.instance.currentUser!.uid,
+      ownerId: FirebaseAuth.instance.currentUser!.uid,
       avatar: params.avatar,
       images: params.images,
       location: params.location,

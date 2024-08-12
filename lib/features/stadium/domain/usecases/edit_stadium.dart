@@ -34,7 +34,7 @@ class EditStadium implements UseCase<void, EditStadiumParams> {
     Stadium stadium = Stadium(
       id: params.id,
       name: params.name,
-      owner: FirebaseAuth.instance.currentUser!.uid,
+      ownerId: FirebaseAuth.instance.currentUser!.uid,
       avatar: params.avatar,
       images: params.images,
       location: params.location,

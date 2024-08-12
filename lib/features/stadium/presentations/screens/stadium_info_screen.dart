@@ -216,7 +216,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                                   builder: (context) => DateSelectScreen(
                                 selectedStadiumId: widget.stadium.id,
                                 selectedStadiumName: widget.stadium.name,
-                                selectedStadiumOwner: widget.stadium.owner,
+                                selectedStadiumOwner: widget.stadium.ownerId,
                                 selectedTeamId: widget.selectedTeamId!,
                                 selectedTeamName: widget.selectedTeamName!,
                                 selectedTeamAvatar: widget.selectedTeamAvatar!,
@@ -339,7 +339,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                 return TextButton(
                   onPressed: state.isDeleting ? null : () {
                     Navigator.of(context).pop();
-                    _bloc.deleteStadium();
+                    _bloc.deleteStadium(); 
                   },
                   child: state.isDeleting
                       ? const SizedBox(

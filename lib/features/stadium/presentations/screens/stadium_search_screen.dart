@@ -151,7 +151,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                               itemBuilder: (ctx, index) {
                                 final stadium = state.searchedStadiums[index];
                                 final ownerName =
-                                    state.ownerMap[stadium.owner] ?? 'Unknown';
+                                    state.ownerMap[stadium.ownerId] ?? '';
 
                                 return StadiumCard(
                                   stadium: stadium,

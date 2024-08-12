@@ -92,7 +92,7 @@ class StadiumModel {
     return Stadium(
       id: id,
       name: name,
-      owner: owner,
+      ownerId: owner,
       avatar: File(avatar),
       images: List<File>.from(images.map((e) => File(e))),
       location: location,
@@ -108,7 +108,7 @@ class StadiumModel {
       id: entity.id,
       name: entity.name,
       phone: entity.phone,
-      owner: entity.owner,
+      owner: entity.ownerId,
       avatar: entity.avatar.path,
       images: entity.images.map((e) => e.path).toList(),
       openTime: entity.openTime,

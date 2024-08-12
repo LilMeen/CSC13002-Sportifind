@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/features/profile/domain/entities/player.dart';
 import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
-import 'package:sportifind/features/team/domain/entities/team.dart';
 import 'package:sportifind/features/user/data/models/user_model.dart';
 
 class PlayerModel extends UserModel {
@@ -95,11 +94,6 @@ class PlayerModel extends UserModel {
       shoot: stats['SHOOT'] ?? 0,
     );
 
-    List<Team> teamsEntity = [];
-    for (var team in teams) {
-      teamsEntity.add(await teamRemoteDataSource.getTeam(team).then((value) => value.toEntity()));
-    }
-
     return Player(
       id: id,
       email: email,
@@ -114,7 +108,7 @@ class PlayerModel extends UserModel {
       weight: weight,
       preferredFoot: preferredFoot,
       stats: statsEntity,
-      teams: teamsEntity,
+      teamsId: teams,
     );
   }
 
@@ -143,7 +137,7 @@ class PlayerModel extends UserModel {
         'PHYSIC': entity.stats.physic,
         'SHOOT': entity.stats.shoot,
       },
-      teams: entity.teams.map((team) => team.id).toList(),
+      teams: entity.teamsId,
     );
   }
 }

@@ -110,7 +110,7 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                         return SizedBox(width: MediaQuery.of(context).size.width * 0.2);
                       } else {
                         final stadium = state.nearbyStadiums[index - 1];
-                        final ownerName = state.ownerMap[stadium.owner] ?? 'Unknown';
+                        final ownerName = state.ownerMap[stadium.ownerId] ?? '';
 
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),

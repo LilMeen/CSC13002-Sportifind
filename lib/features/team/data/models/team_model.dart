@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:sportifind/features/profile/domain/entities/player.dart';
 import 'package:sportifind/features/team/domain/entities/team.dart';
-import 'package:sportifind/features/match/domain/entities/match.dart';
 
 class TeamModel {
   final String id;
@@ -65,20 +66,19 @@ class TeamModel {
   }
 
   Future<Team> toEntity() async{
-    Player captaimEntity = await profileRemoteDataSource.getPlayer(captain).then((value) => value.toEntity());
+    Player captainEntity = await profileRemoteDataSource.getPlayer(captain).then((value) => value.toEntity());
     List<Player> playersEntity = await Future.wait(
       players.map(
         (e) => profileRemoteDataSource.getPlayer(e).then((value) => value.toEntity())
       )
     );
-    List<Match> incomingMatch = [];
+    Location googleLocation = await findLatAndLngFull('', district, city) ;
 
     return Team(
       id: id,
       avatar: File(avatarImage),
-      captain: captaimEntity,
-      city: city,
-      district: district,
+      captain: captainEntity,
+      location: googleLocation,
       name: name,
       players: playersEntity,
       incomingMatch: incomingMatch,
@@ -86,20 +86,17 @@ class TeamModel {
   }
 
   factory TeamModel.fromEntity(Team team) {
-    Map<String, bool> incomingMatch = {};
-    for (var match in team.incomingMatch) {
-      incomingMatch[match.id] = true;
-    }
+
     return TeamModel(
       id: team.id,
       avatarImage: team.avatar.path,
       captain: team.captain.id,
-      city: team.city,
-      district: team.district,
+      city: team.location.city,
+      district: team.location.district,
       foundedDate: Timestamp.now(),
       name: team.name,
       players: team.players.map((e) => e.id).toList(),
-      incomingMatch: incomingMatch,
+      incomingMatch: team.incomingMatch,
     );
   }
 }

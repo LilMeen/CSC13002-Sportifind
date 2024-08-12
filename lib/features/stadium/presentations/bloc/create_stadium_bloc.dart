@@ -147,7 +147,7 @@ class CreateStadiumBloc {
       controllers['stadiumAddress']!.text,
       _state.selectedDistrict,
       _state.selectedCity,
-    ))!;
+    ));
     try {
       await UseCaseProvider.getUseCase<CreateStadium>().call(
         CreateStadiumParams(

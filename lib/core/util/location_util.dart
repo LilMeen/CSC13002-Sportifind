@@ -43,7 +43,7 @@ Future<Location> getLocation (String searchText) async{
   }
 }
 
-Future<Location?> findLatAndLngFull(
+Future<Location> findLatAndLngFull(
   String address, String district, String city) async {
   String searchText = '$address, $district, $city';
   Location? searchLocation = await findLocation(searchText);
@@ -59,7 +59,12 @@ Future<Location?> findLatAndLngFull(
       longitude: searchLocation.longitude,
     );
   }
-  return null;
+  return const Location(
+    name: '',
+    fullAddress: '',
+    latitude: 0.0,
+    longitude: 0.0,
+  );
 }
 
 
