@@ -4,6 +4,7 @@ import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/stadium_owner/statistic/month_navigator.dart';
 import 'package:sportifind/screens/stadium_owner/statistic/week_navigator.dart';
+import 'package:sportifind/util/statistic_service.dart';
 import 'package:sportifind/widgets/card/statistic_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:sportifind/widgets/card/line_chart_card.dart';
@@ -18,17 +19,50 @@ class StadiumStatisticScreen extends StatefulWidget {
   _StadiumStatisticScreenState createState() => _StadiumStatisticScreenState();
 }
 
+int status = 0;
 class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
+  // bool isWeekly = true;
+
+  // late List<MatchDataModel> matches;
+  // void fetchMatchesData() async{
+  // matches = await fetchMatches();
+  // calculateStatistics(matches);
+  // }
+  // late List<double> weeklySummary = calculateDailyRevenue(matches) as List<double>;
+
+  // List<double> weeklySummary = [
+  //     4.40,
+  //     2.50,
+  //     42.42,
+  //     10.50,
+  //     100.20,
+  //     88.99,
+  //     90.10,
+  //     23.44,
+  //   ];
+
+  StatisticService statisticService = StatisticService();
+
   bool isWeekly = true;
-  late Future<List<MatchCard>> futureMatches;
   List<double> weeklySummary = [];
-  late List<MatchCard> matches = [];
-  late Map<String, double> dailyRevenue = {};
+  late Map<String, List<MatchCard>> matchesMap = {};
   List<double> dailySummary = [];
   late int selectedWeek;
   late int selectedMonth;
   int selectedYear = 2024;
-  int status = 0;
+  DateFormat dateFornat = DateFormat('EEEE');
+  DateFormat dateFornatDate = DateFormat('dd/MM/yyyy');
+
+  String? dayOfWeek;
+  late Map<String, double> stadiumRevenue;
+  double? weelkyRevenue;
+  double? lastWeekRevenue;
+  double? monthlyRevenue;
+  double? lastMonthRevenue;
+  late Map<DateTime, int> mostDate;
+  late Map<DateTime, double> dailyRevenue;
+
+  bool isloading = true;
 
   @override
   void initState() {
