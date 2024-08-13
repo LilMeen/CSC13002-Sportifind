@@ -1,27 +1,32 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/core/widgets/city_dropdown.dart';
-import 'package:sportifind/core/widgets/district_dropdown.dart';
-import 'package:sportifind/features/auth/presentations/bloc/auth_bloc.dart';
-import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
+import 'package:flutter/services.dart';
+import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/screens/player/player_home_screen.dart';
+import 'package:sportifind/screens/stadium_owner/stadium_owner_home_screen.dart';
+import 'package:sportifind/util/location_service.dart';
+import 'package:sportifind/widgets/dropdown_button.dart';
+import 'package:sportifind/widgets/date_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';
+import 'package:sportifind/widgets/dropdown_button/district_dropdown.dart';
+
 final _formKey = GlobalKey<FormState>();
 
-class BasicInfoScreen extends StatefulWidget {
-  static route () =>
-    MaterialPageRoute(builder: (context) => const BasicInfoScreen());
-
-  const BasicInfoScreen({super.key});
+class BasicInformationScreen extends StatefulWidget {
+  const BasicInformationScreen({super.key});
 
   @override
   BasicInformationState createState() => BasicInformationState();
 }
 
-class BasicInformationState extends State<BasicInfoScreen> {
+class BasicInformationState extends State<BasicInformationScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -32,6 +37,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
 
   late double latitude;
   late double longitude;
+  final LocationService locService = LocationService();
 
   DateTime? selectedDate;
   DateTime? dob;
@@ -53,8 +59,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
+  void initState(){
     _delayCityTime?.cancel();
     _delayCityTime = Timer(const Duration(seconds: 2), () {
       setState(() {
@@ -69,34 +74,77 @@ class BasicInformationState extends State<BasicInfoScreen> {
       });
     });
   }
-
   UploadTask? uploadTask;
 
   void _done() async {
-    final isValid = _formKey.currentState!.validate();
-    if (isValid) {
-      _formKey.currentState!.save();
-      try {
-        await AuthBloc(context).setBasicInfo(
-          name: _enteredName,
-          dob: _dateController.text,
-          phone: _enteredPhone,
-          address: _enteredAddress,
-          gender:  _genderController.text,
-          city: _cityController.text,
-          district: _districtController.text,
-        );
-      } catch (error) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to store data: $error'),
-            backgroundColor: Colors.red,
-          ),
-        );
+  final isValid = _formKey.currentState!.validate();
+
+  if (isValid) {
+    _formKey.currentState!.save();
+
+    try {
+      final ByteData byteData = await rootBundle.load('lib/assets/no_avatar.png');
+      final Uint8List bytes = byteData.buffer.asUint8List();
+
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      LocationInfo? locationInfo = await locService.findLatAndLng(_districtController.text, _cityController.text);
+      latitude = locationInfo!.latitude;
+      longitude = locationInfo.longitude;
+
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('users')
+          .child(userId)
+          .child('avatar')
+          .child('avatar.jpg');
+
+      final uploadTask = storageRef.putData(bytes);
+      await uploadTask;
+
+      final imageUrl = await storageRef.getDownloadURL();
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update({
+        'name': _enteredName,
+        'phone': _enteredPhone,
+        'dob': _dateController.text,
+        'address': _enteredAddress,
+        'gender': _genderController.text,
+        'city': _cityController.text,
+        'district': _districtController.text,
+        'avatarImage': imageUrl, 
+        'latitude' : latitude,
+        'longitude' : longitude,
+      });
+
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      if (snapshot['role'] == 'player') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const PlayerHomeScreen()));
+      } else if (snapshot['role'] == 'stadium_owner') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const StadiumOwnerHomeScreen()));
       }
+    } catch (error) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to store data: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
+}
 
   String getHint(String type) {
     switch (type) {
@@ -128,14 +176,14 @@ class BasicInformationState extends State<BasicInfoScreen> {
   Widget _buildDobSection(String type, TextEditingController controller) {
     double width = 290; // Default width for Date Of Birth
 
-    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
           text: TextSpan(
-            style: SportifindTheme.normalTextBlack,
+            style: const TextStyle(color: Colors.black, fontSize: 14),
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -145,7 +193,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
         SizedBox(
           width: width,
           child: FormField<String>(
-            key: fieldKey,
+            key: _fieldKey,
             validator: (value) {
               if (controller.text.isEmpty) {
                 return 'Please select a date';
@@ -179,10 +227,11 @@ class BasicInformationState extends State<BasicInfoScreen> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
+                            backgroundColor:
+                                Colors.transparent,
+                            shadowColor: Colors.transparent, 
                             side: const BorderSide(
-                              color: Colors.black,
+                              color: Colors.black, 
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             shape: RoundedRectangleBorder(
@@ -195,11 +244,11 @@ class BasicInformationState extends State<BasicInfoScreen> {
                               controller.text.isNotEmpty
                                   ? controller.text
                                   : getHint(type),
-                              style: GoogleFonts.lexend(
+                              style: TextStyle(
                                 color: controller.text.isEmpty
                                     ? Colors.grey
                                     : Colors.black,
-                                fontSize: 14,
+                                fontSize: 16,
                               ),
                             ),
                           ),
@@ -212,7 +261,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
                         state.errorText ?? '',
-                        style: SportifindTheme.warningText,
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
                       ),
                     ),
                 ],
@@ -232,14 +281,18 @@ class BasicInformationState extends State<BasicInfoScreen> {
   Widget _buildSection(String type, TextEditingController controller) {
     double width = 290; // Default width
 
-    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
+    if (type == "Height" || type == "Weight") {
+      width = 137;
+    }
+
+    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
           text: TextSpan(
-            style: SportifindTheme.normalTextBlack,
+            style: const TextStyle(color: Colors.black, fontSize: 14),
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -248,26 +301,14 @@ class BasicInformationState extends State<BasicInfoScreen> {
         const SizedBox(height: 12),
         SizedBox(
           width: width,
-          child: FormField<String>(
-            key: fieldKey,
-            validator: (value) {
-              if (controller.text.isEmpty) {
-                return 'Please enter a value';
-              }
-              if (type == "Height" || type == "Weight") {
-                if (double.tryParse(controller.text) == null) {
-                  return 'Please enter a valid number';
-                }
-              }
-              return null;
-            },
-            builder: (FormFieldState<String> state) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Stack(
                 children: [
                   TextFormField(
+                    key: _fieldKey,
                     controller: controller,
-                    style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
                     decoration: InputDecoration(
                       hintText: controller.text.isEmpty
                           ? getHint(type)
@@ -303,37 +344,53 @@ class BasicInformationState extends State<BasicInfoScreen> {
                           color: Colors.black,
                         ),
                       ),
-                      // Remove the default errorStyle
-                      errorStyle: const TextStyle(height: 0),
+                      errorStyle: const TextStyle(
+                          height: 0), // Hide the default error message
                     ),
-                    onChanged: (value) {
-                      state.didChange(value);
+                    style: const TextStyle(color: Colors.black),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a value';
+                      }
+                      if (type == "Height" || type == "Weight") {
+                        if (double.tryParse(value) == null) {
+                          return 'Please enter a valid number';
+                        }
+                      }
+                      // Additional validation logic
+                      return null;
+                    },
+                    onSaved: (value) {
+                      switch (type) {
+                        case 'Name':
+                          _enteredName = value!;
+                          break;
+                        case 'Phone Number':
+                          _enteredPhone = value!;
+                          break;
+                        case 'Address':
+                          _enteredAddress = value!;
+                          break;
+                      }
                     },
                   ),
-                  if (state.hasError)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5.0),
-                      child: Text(
-                        state.errorText ?? '',
-                        style: SportifindTheme.warningText,
-                      ),
+                  Positioned(
+                    bottom: -20,
+                    left: 0,
+                    child: Builder(
+                      builder: (context) {
+                        final formFieldState = _fieldKey.currentState;
+                        return Text(
+                          formFieldState?.errorText ?? '',
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
+                        );
+                      },
                     ),
+                  ),
                 ],
-              );
-            },
-            onSaved: (value) {
-              switch (type) {
-                case 'Name':
-                  _enteredName = controller.text;
-                  break;
-                case 'Phone Number':
-                  _enteredPhone = controller.text;
-                  break;
-                case 'Address':
-                  _enteredAddress = controller.text;
-                  break;
-              }
-            },
+              ),
+            ],
           ),
         ),
       ],
@@ -342,14 +399,14 @@ class BasicInformationState extends State<BasicInfoScreen> {
 
   Widget _buildDropdownSection(String type, TextEditingController controller) {
     double width = 290; // Default width
-    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
           text: TextSpan(
-            style: SportifindTheme.normalTextBlack,
+            style: const TextStyle(color: Colors.black, fontSize: 14),
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -359,7 +416,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
         SizedBox(
           width: width,
           child: FormField<String>(
-            key: fieldKey,
+            key: _fieldKey,
             initialValue: controller.text.isNotEmpty ? controller.text : null,
             validator: (value) {
               if (controller.text.isEmpty) {
@@ -385,7 +442,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
                         state.errorText ?? '',
-                        style: SportifindTheme.warningText,
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
                       ),
                     ),
                 ],
@@ -402,7 +459,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
 
   Widget _nextButton(BuildContext context) {
     return SizedBox(
-      width: 100,
+      width: 80,
       height: 40,
       child: ElevatedButton(
         onPressed: () {
@@ -412,15 +469,16 @@ class BasicInformationState extends State<BasicInfoScreen> {
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
-          backgroundColor:
-              WidgetStateProperty.all<Color>(SportifindTheme.bluePurple),
+          backgroundColor: WidgetStateProperty.all<Color>(Color.fromARGB(255, 24, 24, 207)),
           shadowColor: WidgetStateProperty.all<Color>(
             const Color.fromARGB(255, 213, 211, 211),
           ),
         ),
-        child: Text(
+        child: const Text(
           'Next',
-          style: SportifindTheme.normalTextWhite.copyWith(fontSize: 14)
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
       ),
     );
@@ -439,8 +497,8 @@ class BasicInformationState extends State<BasicInfoScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 10),
-                Text('Basic Information',
-                    style: SportifindTheme.sportifindFeatureAppBarBluePurple),
+                const Text('Basic Information',
+                    style: TextStyle(color: Colors.black, fontSize: 27)),
                 const SizedBox(height: 27),
                 _buildSection('Name', _nameController),
                 const SizedBox(height: 16),
@@ -456,16 +514,15 @@ class BasicInformationState extends State<BasicInfoScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       RichText(
-                        text: TextSpan(
-                          style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
-                          children: const <TextSpan>[
+                        text: const TextSpan(
+                          style: TextStyle(color: Colors.black, fontSize: 14),
+                          children: <TextSpan>[
                             TextSpan(text: 'City'),
                           ],
                         ),
                       ),
                       const SizedBox(height: 12),
                       CityDropdown(
-                        type: 'custom form',
                         selectedCity: _cityController.text,
                         onChanged: (value) {
                           setState(() {
@@ -473,8 +530,9 @@ class BasicInformationState extends State<BasicInfoScreen> {
                             _districtController.text = '';
                           });
                         },
+                        //controller: _cityController,
                         citiesNameAndId: citiesNameAndId,
-                        fillColor: Colors.white,
+                        fillColor: Colors.transparent,
                       ),
                     ],
                   ),
@@ -484,9 +542,9 @@ class BasicInformationState extends State<BasicInfoScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RichText(
-                      text: TextSpan(
-                        style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
-                        children: const <TextSpan>[
+                      text: const TextSpan(
+                        style: TextStyle(color: Colors.black, fontSize: 14),
+                        children: <TextSpan>[
                           TextSpan(text: 'District'),
                         ],
                       ),
@@ -495,7 +553,6 @@ class BasicInformationState extends State<BasicInfoScreen> {
                     SizedBox(
                       width: 290,
                       child: DistrictDropdown(
-                        type: 'custom form',
                         selectedCity: _cityController.text,
                         selectedDistrict: _districtController.text,
                         onChanged: (value) {
@@ -504,7 +561,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                           });
                         },
                         citiesNameAndId: citiesNameAndId,
-                        fillColor: Colors.white,
+                        fillColor: Colors.transparent,
                       ),
                     ),
                   ],
@@ -513,7 +570,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                 _buildSection('Address', _addressController),
                 const SizedBox(height: 24),
                 Padding(
-                  padding: const EdgeInsets.only(left: 192, bottom: 20),
+                  padding: const EdgeInsets.only(left: 210),
                   child: _nextButton(context),
                 ),
               ],
