@@ -4,9 +4,8 @@ class StatisticCard extends StatelessWidget {
   final IconData icon;
   final String value;
   final String title;
-  final int percentage;
+  final double percentage;
   final VoidCallback onPressed;
-  final bool isUp;
 
   const StatisticCard({
     Key? key,
@@ -15,27 +14,34 @@ class StatisticCard extends StatelessWidget {
     required this.title,
     required this.percentage,
     required this.onPressed,
-    required this.isUp,
   }) : super(key: key);
 
-  Text trend(bool isUp){
-    if (isUp == true){
+  Text trend() {
+    if (percentage > 100) {
       return Text(
-        '+$percentage%',
+        '+${percentage.toStringAsFixed(2)}%',
         style: const TextStyle(
-        fontSize: 12,
-        color: Colors.green,
-        fontWeight: FontWeight.bold,
+          fontSize: 12,
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
         ),
       );
-    }
-    else {
+    } else if (percentage < 100) {
       return Text(
-        '-$percentage%',
+        '-${percentage.toStringAsFixed(2)}%',
         style: const TextStyle(
-        fontSize: 12,
-        color: Colors.red,
-        fontWeight: FontWeight.bold,
+          fontSize: 12,
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    } else {
+      return Text(
+        '0%',
+        style: const TextStyle(
+          fontSize: 12,
+          color: Colors.grey,
+          fontWeight: FontWeight.bold,
         ),
       );
     }
@@ -46,10 +52,12 @@ class StatisticCard extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Card(
-        elevation: 3, 
+        elevation: 3,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
-          side: const BorderSide(color: Color.fromARGB(255, 214, 214, 214), width: 1), // Stroke border
+          side: const BorderSide(
+              color: Color.fromARGB(255, 214, 214, 214),
+              width: 1), // Stroke border
         ),
         child: Container(
           padding: const EdgeInsets.all(18),
@@ -82,7 +90,7 @@ class StatisticCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 5),
-              trend(isUp),
+              trend(),
             ],
           ),
         ),

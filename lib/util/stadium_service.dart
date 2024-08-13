@@ -500,4 +500,10 @@ class StadiumService {
     final fieldMap = {for (var field in fieldData) field.numberId: field.id};
     return fieldMap;
   }
+
+  Future<Map<String, double>> generateFieldPriceMap(String stadiumId) async {
+    final fieldData = await getFieldData(stadiumId);
+    final fieldMap = {for (var field in fieldData) field.id: field.price};
+    return fieldMap;
+  }
 }
