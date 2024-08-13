@@ -5,8 +5,10 @@ import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/screens/player/player_home_screen.dart';
 import 'package:sportifind/screens/stadium_owner/stadium_owner_home_screen.dart';
+import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 import 'package:sportifind/widgets/date_picker.dart';
 import 'package:intl/intl.dart';
@@ -32,6 +34,10 @@ class BasicInformationState extends State<BasicInformationScreen> {
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _districtController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+
+  late double latitude;
+  late double longitude;
+  final LocationService locService = LocationService();
 
   DateTime? selectedDate;
   DateTime? dob;
@@ -81,6 +87,10 @@ class BasicInformationState extends State<BasicInformationScreen> {
       final Uint8List bytes = byteData.buffer.asUint8List();
 
       final userId = FirebaseAuth.instance.currentUser!.uid;
+      LocationInfo? locationInfo = await locService.findLatAndLng(_districtController.text, _cityController.text);
+      latitude = locationInfo!.latitude;
+      longitude = locationInfo.longitude;
+
       final storageRef = FirebaseStorage.instance
           .ref()
           .child('users')
@@ -105,6 +115,8 @@ class BasicInformationState extends State<BasicInformationScreen> {
         'city': _cityController.text,
         'district': _districtController.text,
         'avatarImage': imageUrl, 
+        'latitude' : latitude,
+        'longitude' : longitude,
       });
 
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
