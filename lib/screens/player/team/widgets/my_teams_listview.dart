@@ -6,10 +6,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/screens/player/team/screens/team_details.dart';
+import 'package:sportifind/util/team_service.dart';
 
 class MyTeamsListView extends StatefulWidget {
-  const MyTeamsListView({super.key, required this.callBack});
-  final Function()? callBack;
+  const MyTeamsListView({super.key});
 
   @override
   State<MyTeamsListView> createState() => _MyTeamsListViewState();
@@ -18,81 +18,21 @@ class MyTeamsListView extends StatefulWidget {
 class _MyTeamsListViewState extends State<MyTeamsListView>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-  List<TeamInformation> teamsInformation = [];
+  List<TeamInformation?> teamsInformation = [];
   bool isLoading = true;
+  TeamService teamService = TeamService();
+  late Future<void> initializationFuture;
+
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
     super.initState();
-    joinedTeam();
+    initializationFuture = _initialize();
   }
 
-  Future<bool> getData() async {
-    await Future<dynamic>.delayed(const Duration(milliseconds: 50));
-    return true;
-  }
-
-  Future<void> joinedTeam() async {
-    try {
-      final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
-
-      final DocumentReference currentUser =
-          FirebaseFirestore.instance.collection('users').doc(currentUserUid);
-      final DocumentSnapshot userSnapshot = await currentUser.get();
-
-      if (userSnapshot.exists) {
-        List<dynamic> joinedTeamsDynamic = userSnapshot['joinedTeams'] ?? [];
-        List<String> joinedTeams =
-            joinedTeamsDynamic.map((team) => team.toString()).toList();
-
-        List<TeamInformation> fetchedTeams = [];
-        for (var team in joinedTeams) {
-          final DocumentReference teamRef =
-              FirebaseFirestore.instance.collection('teams').doc(team);
-          final DocumentSnapshot teamSnapshot = await teamRef.get();
-
-          if (teamSnapshot.exists) {
-            final location = LocationInfo(
-              address: teamSnapshot['address'],
-              district: teamSnapshot['district'],
-              city: teamSnapshot['city'],
-            );
-
-            final teamInformation = TeamInformation(
-              name: teamSnapshot['name'],
-              location: location,
-              avatarImageUrl: teamSnapshot['avatarImage'],
-              incoming: Map<String, bool>.from(teamSnapshot['incoming']),
-              members: List<String>.from(teamSnapshot['members']),
-              captain: teamSnapshot['captain'],
-              teamId: teamSnapshot.id,
-            );
-            fetchedTeams.add(teamInformation);
-          }
-        }
-
-        setState(() {
-          teamsInformation = fetchedTeams;
-          isLoading = false; // Update loading state
-        });
-      } else {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'User document does not exist. Please sign out and sign in again.'),
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('An error occurred while fetching your teams list'),
-        ),
-      );
-    }
+  Future<void> _initialize() async {
+    teamsInformation = await teamService.joinedTeam();
   }
 
   @override
@@ -106,13 +46,15 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
     return Padding(
       padding: const EdgeInsets.only(top: 16, bottom: 16),
       child: SizedBox(
-        height: 134,
+        height: 350,
         width: double.infinity,
-        child: FutureBuilder<bool>(
-          future: getData(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (!snapshot.hasData) {
-              return const SizedBox();
+        child: FutureBuilder<void>(
+          future: initializationFuture,
+          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Center(child: Text("Error loading data"));
             } else {
               return ListView.builder(
                 padding: const EdgeInsets.only(
@@ -125,25 +67,18 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
                       : teamsInformation.length;
                   final Animation<double> animation =
                       Tween<double>(begin: 0.0, end: 1.0).animate(
-                          CurvedAnimation(
-                              parent: animationController!,
-                              curve: Interval((1 / count) * index, 1.0,
-                                  curve: Curves.fastOutSlowIn)));
+                    CurvedAnimation(
+                      parent: animationController!,
+                      curve: Interval((1 / count) * index, 1.0,
+                          curve: Curves.fastOutSlowIn),
+                    ),
+                  );
                   animationController?.forward();
-
                   return TeamBox(
-                      teamInformation: teamsInformation[index],
-                      animation: animation,
-                      animationController: animationController,
-                      callback: widget.callBack);
-                  // );
-                  // } else if (index == Category.categoryList.length) {
-                  //   return AddTeam(
-                  //     animation: animation,
-                  //     animationController: animationController,
-                  //     addTeam: callBack,
-                  //   );
-                  // }
+                    teamInformation: teamsInformation[index],
+                    animation: animation,
+                    animationController: animationController,
+                  );
                 },
               );
             }
@@ -155,14 +90,13 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
 }
 
 class TeamBox extends StatelessWidget {
-  const TeamBox(
-      {super.key,
-      this.teamInformation,
-      this.animationController,
-      this.animation,
-      this.callback});
+  const TeamBox({
+    super.key,
+    this.teamInformation,
+    this.animationController,
+    this.animation,
+  });
 
-  final Function()? callback;
   final TeamInformation? teamInformation;
   final AnimationController? animationController;
   final Animation<double>? animation;
@@ -181,193 +115,121 @@ class TeamBox extends StatelessWidget {
           child: Transform(
             transform: Matrix4.translationValues(
                 100 * (1.0 - animation!.value), 0.0, 0.0),
-            child: InkWell(
-              splashColor: Colors.transparent,
-              onTap: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return TeamDetails(teamId: teamInformation!.teamId);
-                    },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: InkWell(
+                splashColor: Colors.transparent,
+                onTap: () => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return TeamDetails(teamId: teamInformation!.teamId);
+                      },
+                    ),
                   ),
-                ),
-              },
-              child: SizedBox(
-                width: 300,
-                child: Stack(
-                  children: <Widget>[
-                    SizedBox(
-                      child: Row(
-                        children: <Widget>[
-                          const SizedBox(
-                            width: 48,
-                          ),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: HexColor('#F8FAFB'),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(16.0)),
+                },
+                child: Container(
+                  width: 250,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: Colors.black),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        spreadRadius: 3,
+                        blurStyle: BlurStyle.solid,
+                        offset: const Offset(0, 3),
+                      )
+                    ],
+                  ),
+                  child: ClipRRect(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          height: 160,
+                          width: 270,
+                          margin: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(16),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 5,
+                                spreadRadius: 3,
+                                blurStyle: BlurStyle.solid,
+                                offset: const Offset(0, 2),
                               ),
-                              child: Row(
-                                children: <Widget>[
-                                  const SizedBox(
-                                    width: 48 + 24.0,
-                                  ),
-                                  Expanded(
-                                    child: SizedBox(
-                                      child: Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 16),
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  teamInformation!.name,
-                                                  textAlign: TextAlign.left,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 19,
-                                                    letterSpacing: 0.27,
-                                                    color: SportifindTheme
-                                                        .darkGrey,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const Expanded(
-                                            child: SizedBox(),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 16, bottom: 8),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Text(
-                                                  '$getMemberCount members',
-                                                  textAlign: TextAlign.left,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.w200,
-                                                    fontSize: 16,
-                                                    letterSpacing: 0.27,
-                                                    color: SportifindTheme.grey,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  child: Row(
-                                                    children: <Widget>[
-                                                      const Text(
-                                                        '5',
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w200,
-                                                          fontSize: 18,
-                                                          letterSpacing: 0.27,
-                                                          color: SportifindTheme
-                                                              .grey,
-                                                        ),
-                                                      ),
-                                                      Icon(
-                                                        Icons.star,
-                                                        color: SportifindTheme
-                                                            .bluePurple,
-                                                        size: 20,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 6, right: 16),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  'Medium Level',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 14,
-                                                    letterSpacing: 0.27,
-                                                    color: SportifindTheme
-                                                        .blueOyster,
-                                                  ),
-                                                ),
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    color: SportifindTheme
-                                                        .blueOyster,
-                                                    borderRadius:
-                                                        const BorderRadius.all(
-                                                            Radius.circular(
-                                                                8.0)),
-                                                  ),
-                                                  child: const Padding(
-                                                    padding:
-                                                        EdgeInsets.all(4.0),
-                                                    child: Icon(
-                                                      Icons.notifications,
-                                                      color:
-                                                          Colors.white,
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                16), // Specify the border radius
+                            child: Image.network(
+                              teamInformation!.avatarImageUrl,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, bottom: 10),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    teamInformation!.name,
+                                    style: SportifindTheme.featureTitlePurple
+                                        .copyWith(
+                                      fontSize: 26,
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 24, bottom: 24, left: 16),
-                        child: Row(
-                          children: <Widget>[
-                            ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(16.0)),
-                              child: AspectRatio(
-                                aspectRatio: 1.0,
-                                child: Image.network(
-                                  teamInformation!.avatarImageUrl,
-                                  height: 64.0,
-                                  width: 64.0,
-                                ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      //teamInformation!.captain,
+                                      'Pham Gia Bao',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: SportifindTheme.normalTextBlack),
+                                ],
                               ),
-                            )
-                          ],
+                              const SizedBox(height: 3),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text('${getMemberCount} members',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: SportifindTheme.normalTextBlack),
+                                ],
+                              ),
+                              const SizedBox(height: 3),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      '${teamInformation!.location.district}, ${teamInformation!.location.city}',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: SportifindTheme.normalTextBlack),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -377,179 +239,3 @@ class TeamBox extends StatelessWidget {
     );
   }
 }
-
-// class AddTeam extends StatelessWidget {
-//   const AddTeam(
-//       {super.key, this.animationController, this.animation, this.addTeam});
-
-//   final Function()? addTeam;
-//   final AnimationController? animationController;
-//   final Animation<double>? animation;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return AnimatedBuilder(
-//       animation: animationController!,
-//       builder: (BuildContext context, Widget? child) {
-//         return FadeTransition(
-//           opacity: animation!,
-//           child: Transform(
-//             transform: Matrix4.translationValues(
-//                 100 * (1.0 - animation!.value), 0.0, 0.0),
-//             child: InkWell(
-//               splashColor: Colors.transparent,
-//               onTap: addTeam,
-//               child: SizedBox(
-//                 width: 270,
-//                 child: Stack(
-//                   children: <Widget>[
-//                     SizedBox(
-//                       child: Row(
-//                         children: <Widget>[
-//                           const SizedBox(
-//                             width: 48,
-//                           ),
-//                           Expanded(
-//                             child: Container(
-//                               decoration: BoxDecoration(
-//                                 color: HexColor('#F8FAFB'),
-//                                 borderRadius: const BorderRadius.all(
-//                                     Radius.circular(16.0)),
-//                               ),
-//                               child: const Row(
-//                                 children: <Widget>[
-//                                   SizedBox(
-//                                     width: 48 + 24.0,
-//                                   ),
-//                                   Expanded(
-//                                     child: SizedBox(
-//                                       child: Column(
-//                                         children: <Widget>[
-//                                           const Padding(
-//                                             padding: EdgeInsets.only(top: 16),
-//                                             child: Text(
-//                                               'Add new team',
-//                                               textAlign: TextAlign.left,
-//                                               style: TextStyle(
-//                                                 fontWeight: FontWeight.w600,
-//                                                 fontSize: 16,
-//                                                 letterSpacing: 0.27,
-//                                                 color:
-//                                                     SportifindTheme.darkerText,
-//                                               ),
-//                                             ),
-//                                           ),
-//                                           Expanded(
-//                                             child: SizedBox(),
-//                                           ),
-//                                           Padding(
-//                                             padding: EdgeInsets.only(
-//                                                 right: 16, bottom: 8),
-//                                             child: Row(
-//                                               mainAxisAlignment:
-//                                                   MainAxisAlignment
-//                                                       .spaceBetween,
-//                                               crossAxisAlignment:
-//                                                   CrossAxisAlignment.center,
-//                                               children: <Widget>[
-//                                                 Text(
-//                                                   '... members',
-//                                                   textAlign: TextAlign.left,
-//                                                   style: TextStyle(
-//                                                     fontWeight: FontWeight.w200,
-//                                                     fontSize: 12,
-//                                                     letterSpacing: 0.27,
-//                                                     color: SportifindTheme.grey,
-//                                                   ),
-//                                                 ),
-//                                                 SizedBox(
-//                                                   child: Row(
-//                                                     children: <Widget>[
-//                                                       Text(
-//                                                         'rating',
-//                                                         textAlign:
-//                                                             TextAlign.left,
-//                                                         style: TextStyle(
-//                                                           fontWeight:
-//                                                               FontWeight.w200,
-//                                                           fontSize: 18,
-//                                                           letterSpacing: 0.27,
-//                                                           color: SportifindTheme
-//                                                               .grey,
-//                                                         ),
-//                                                       ),
-//                                                       Icon(
-//                                                         Icons.star,
-//                                                         color: SportifindTheme
-//                                                             .nearlyBlue,
-//                                                         size: 20,
-//                                                       ),
-//                                                     ],
-//                                                   ),
-//                                                 )
-//                                               ],
-//                                             ),
-//                                           ),
-//                                           Padding(
-//                                             padding: EdgeInsets.only(
-//                                                 bottom: 6, right: 16),
-//                                             child: Row(
-//                                               mainAxisAlignment:
-//                                                   MainAxisAlignment
-//                                                       .spaceBetween,
-//                                               crossAxisAlignment:
-//                                                   CrossAxisAlignment.start,
-//                                               children: <Widget>[
-//                                                 Text(
-//                                                   'Age: 18 - 20',
-//                                                   textAlign: TextAlign.left,
-//                                                   style: TextStyle(
-//                                                     fontWeight: FontWeight.w600,
-//                                                     fontSize: 18,
-//                                                     letterSpacing: 0.27,
-//                                                     color: SportifindTheme
-//                                                         .nearlyBlue,
-//                                                   ),
-//                                                 ),
-//                                               ],
-//                                             ),
-//                                           ),
-//                                         ],
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                             ),
-//                           )
-//                         ],
-//                       ),
-//                     ),
-//                     SizedBox(
-//                       child: Padding(
-//                         padding: const EdgeInsets.only(
-//                             top: 24, bottom: 24, left: 16),
-//                         child: Row(
-//                           children: <Widget>[
-//                             ClipRRect(
-//                               borderRadius:
-//                                   const BorderRadius.all(Radius.circular(16.0)),
-//                               child: AspectRatio(
-//                                   aspectRatio: 1.0,
-//                                   child: Image.asset(
-//                                       'lib/assets/button_icon/tab_3s.png')),
-//                             )
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }

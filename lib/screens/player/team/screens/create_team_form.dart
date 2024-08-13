@@ -81,7 +81,8 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
           'captain': userId,
           'members': [userId],
           'sentRequest': [],
-          'joinRequest': [], 
+          'joinRequest': [],
+          'incomingMatch': {},
         });
         final teamId = docRef.id;
         // final constantImageUrl = FirebaseStorage.instance
@@ -334,7 +335,7 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: _pickImage,
-                        child:  Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(

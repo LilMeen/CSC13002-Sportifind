@@ -14,6 +14,8 @@ class TeamInformation {
     this.matchSentRequest,
     this.matchInviteRequest,
     required this.captain,
+    required this.foundedDate,
+
   });
 
   TeamInformation.empty()
@@ -25,7 +27,8 @@ class TeamInformation {
         matchSentRequest = [],
         matchInviteRequest = [],
         members = [],
-        captain = '';
+        captain = '',
+        foundedDate = DateTime.now();
 
   factory TeamInformation.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -56,6 +59,7 @@ class TeamInformation {
           [],
       captain: data['captain'],
       teamId: snapshot.id,
+      foundedDate: (data['foundedDate'] as Timestamp).toDate(),
     );
   }
 
@@ -68,6 +72,7 @@ class TeamInformation {
   List<MatchRequest>? matchSentRequest;
   List<MatchRequest>? matchInviteRequest;
   List<String> members;
+  DateTime foundedDate;
 }
 
 class MatchRequest {

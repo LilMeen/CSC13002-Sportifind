@@ -13,14 +13,14 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sportifind/screens/player/team/widgets/app_bar.dart';
-import 'package:sportifind/screens/player/team/models/player_information.dart';
+import 'package:sportifind/models/player_data.dart';
 import 'package:sportifind/adapter/hex_color.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/screens/player/team/widgets/my_teams_listview.dart';
 
 class TeamService {
   TeamInformation? teamInformation;
-  PlayerInformation? playerInformation;
+  PlayerData? playerInformation;
   SearchService searchService = SearchService();
   LocationService locationService = LocationService();
   bool isLoading = true;
@@ -97,6 +97,27 @@ class TeamService {
     return teams;
   }
 
+  List<TeamInformation> sortTeamByLocation(
+      List<TeamInformation> teams, LocationInfo location) {
+    // sort by district and city
+    String city = location.city;
+    String district = location.district;
+
+    List<TeamInformation> sortedTeamsByCity =
+        teams.where((team) => team.location.city == city).toList();
+
+    List<TeamInformation> sortedTeamsByDistrictUpper = sortedTeamsByCity
+        .where((team) => team.location.district == district)
+        .toList();
+    List<TeamInformation> sortedTeamByDistrictLower = sortedTeamsByCity
+        .where((team) => team.location.district != district)
+        .toList();
+
+    // concatenate the two lists
+    sortedTeamsByDistrictUpper.addAll(sortedTeamByDistrictLower);
+    return sortedTeamsByDistrictUpper;
+  }
+
   List<TeamInformation> performTeamSearch(List<TeamInformation> teams,
       String searchText, String selectedCity, String selectedDistrict) {
     return searchService.searchingNameAndLocation(
@@ -145,6 +166,87 @@ class TeamService {
 
       // Update the team document
       await teamDoc.reference.update(teamData);
+    }
+  }
+
+  Future<List<TeamInformation?>> joinedTeam() async {
+    try {
+      final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+
+      final DocumentReference currentUser =
+          FirebaseFirestore.instance.collection('users').doc(currentUserUid);
+      final DocumentSnapshot userSnapshot = await currentUser.get();
+
+      if (userSnapshot.exists) {
+        List<dynamic> joinedTeamsDynamic = userSnapshot['joinedTeams'] ?? [];
+        List<String> joinedTeams =
+            joinedTeamsDynamic.map((team) => team.toString()).toList();
+        List<TeamInformation> fetchedTeams = [];
+        for (var team in joinedTeams) {
+          final DocumentReference teamRef =
+              FirebaseFirestore.instance.collection('teams').doc(team);
+          final DocumentSnapshot teamSnapshot = await teamRef.get();
+
+          if (teamSnapshot.exists) {
+            final location = LocationInfo(
+              address: teamSnapshot['address'],
+              district: teamSnapshot['district'],
+              city: teamSnapshot['city'],
+            );
+            final teamInformation = TeamInformation(
+              name: teamSnapshot['name'],
+              location: location,
+              avatarImageUrl: teamSnapshot['avatarImage'],
+              incoming: Map<String, bool>.from(teamSnapshot['incomingMatch']),
+              members: List<String>.from(teamSnapshot['members']),
+              captain: teamSnapshot['captain'],
+              teamId: teamSnapshot.id,
+              foundedDate: (teamSnapshot['foundedDate'] as Timestamp).toDate(),
+            );
+            fetchedTeams.add(teamInformation);
+          }
+        }
+        return fetchedTeams;
+      } else {
+        // return a list with on TeamInformation object
+        return [];
+      }
+    } catch (e) {
+      throw Exception('Error getting joined team information: $e');
+    }
+  }
+
+  bool isNotJoined(String team, List<String> joinedTeams) {
+    return !joinedTeams.any((element) => element == team);
+  }
+
+  Future<List<TeamInformation>> getNearbyTeam() async {
+    try {
+      final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+      final DocumentReference currentUser =
+          FirebaseFirestore.instance.collection('users').doc(currentUserUid);
+      final DocumentSnapshot userSnapshot = await currentUser.get();
+      if (userSnapshot.exists) {
+        List<TeamInformation> fetchedTeam = [];
+        List<dynamic> joinedTeamsDynamic = userSnapshot['joinedTeams'] ?? [];
+        List<String> joinedTeams =
+            joinedTeamsDynamic.map((team) => team.toString()).toList();
+        // Get the collection reference
+        List<TeamInformation> teamData = await getTeamData();
+        print('${teamData.length}');
+        teamData.forEach(
+          (team) {
+            if (isNotJoined(team.teamId, joinedTeams)) {
+              fetchedTeam.add(team);
+            }
+          },
+        );
+        return fetchedTeam;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      throw Exception('Error getting all team information: $e');
     }
   }
 }

@@ -10,10 +10,10 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sportifind/screens/player/team/widgets/app_bar.dart';
-import 'package:sportifind/screens/player/team/models/player_information.dart';
 import 'package:sportifind/adapter/hex_color.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/screens/player/team/widgets/my_teams_listview.dart';
+import 'package:sportifind/models/player_data.dart';
 
 class PlayerDetails extends StatefulWidget {
   const PlayerDetails({super.key, required this.playerId});
@@ -25,7 +25,7 @@ class PlayerDetails extends StatefulWidget {
 
 class _PlayerDetailsState extends State<PlayerDetails>
     with TickerProviderStateMixin {
-  PlayerInformation? playerInformation;
+  PlayerData? playerInformation;
   bool isLoading = true;
   late AnimationController animationController;
   List<TeamInformation> teamsInformation = [];
@@ -48,7 +48,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
   }
 
   void fetchPlayerDetails() async {
-    PlayerInformation? fetchedPlayer = await getPlayerInformation();
+    PlayerData? fetchedPlayer = await getPlayerInformation();
     if (fetchedPlayer == null) {
       print('Player information not found');
       return;
@@ -93,6 +93,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
               incoming: Map<String, bool>.from(teamSnapshot['incoming']),
               members: List<String>.from(teamSnapshot['members']),
               captain: teamSnapshot['captain'],
+              foundedDate: (teamSnapshot['foundedDate'] as Timestamp).toDate(),
             );
             fetchedTeams.add(teamInformation);
           }
@@ -121,7 +122,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
     }
   }
 
-  Future<PlayerInformation?> getPlayerInformation() async {
+  Future<PlayerData?> getPlayerInformation() async {
     try {
       DocumentReference<Map<String, dynamic>> playerRef =
           FirebaseFirestore.instance.collection('users').doc(widget.playerId);
@@ -129,8 +130,8 @@ class _PlayerDetailsState extends State<PlayerDetails>
           await playerRef.get();
 
       if (playerSnapshot.exists) {
-        PlayerInformation playerInformation =
-            PlayerInformation.fromSnapshot(playerSnapshot);
+        PlayerData playerInformation =
+            PlayerData.fromSnapshot(playerSnapshot);
         return playerInformation;
       } else {
         throw Exception('Player not found');
@@ -193,7 +194,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(16.0),
                                   child: Image.network(
-                                    playerInformation!.avatarImageUrl,
+                                    playerInformation!.avatarImage,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -265,7 +266,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
                                 children: [
                                   const Text('Address: '),
                                   Text(
-                                      '${playerInformation!.address} ${playerInformation!.district} ${playerInformation!.city}'),
+                                      '${playerInformation!.location.address} ${playerInformation!.location.district} ${playerInformation!.location.city}'),
                                 ],
                               ),
                               const SizedBox(

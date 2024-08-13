@@ -29,7 +29,6 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
             SizedBox(
               height: MediaQuery.of(context).padding.top,
             ),
-            const SportifindAppBar(title: 'Sportifind'),
             Expanded(
               child: SingleChildScrollView(
                 child: SizedBox(
@@ -110,7 +109,6 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16),
           child: MyTeamsListView(
-            callBack: callBack,
           ),
         ),
       ],
@@ -136,7 +134,6 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
           ),
           Flexible(
             child: NearbyTeamListView(
-              callBack: callBack,
             ),
           )
         ],
