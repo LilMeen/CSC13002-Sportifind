@@ -51,18 +51,13 @@ void _nextMonth() {
 }
 
   void _notifyMonthNumberChange() {
-  // Calculate the new month by adding the offset to the current month
   DateTime newDate = DateTime(currentDate.year, currentDate.month + selectedMonthOffset, 1);
-
-  // Ensure the month value is within the 1-12 range
   int newMonth = newDate.month;
   if (newMonth > 12) {
     newMonth = newMonth % 12;
   } else if (newMonth < 1) {
     newMonth = 12 + newMonth;
   }
-
-  // Notify the parent with the updated month number
   widget.onMonthNumberChanged(newMonth);
 }
 
