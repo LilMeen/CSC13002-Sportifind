@@ -23,6 +23,7 @@ class TeamService {
   PlayerData? playerInformation;
   SearchService searchService = SearchService();
   LocationService locationService = LocationService();
+  UserService userService = UserService();
   bool isLoading = true;
 
   Future<Map<String, String>> generateTeamMap() async {
@@ -34,6 +35,17 @@ class TeamService {
   Future<String> convertTeamIdToName(String teamId) async {
     final teamMap = await generateTeamMap();
     return teamMap[teamId] ?? 'Unknown Team';
+  }
+
+  Future<List<PlayerData>> getPlayersData(List<String> teamMembers) async {
+    List<PlayerData> playersData = [];
+    for (var member in teamMembers) {
+      PlayerData? playerData = await userService.getPlayerData(member);
+      if (playerData != null) {
+        playersData.add(playerData);
+      }
+    }
+    return playersData;
   }
 
   Future<List<TeamInformation>> getTeamData() async {
@@ -248,5 +260,17 @@ class TeamService {
     } catch (e) {
       throw Exception('Error getting all team information: $e');
     }
+  }
+
+  int getTeamMemberCount(TeamInformation teamInformation) {
+    return teamInformation.members.length;
+  }
+
+  Future<String> getTeamCaptain(String teamId) async {
+    TeamInformation? teamInformation = await getTeamInformation(teamId);
+    PlayerData? playerData =
+        await userService.getPlayerData(teamInformation!.captain);
+
+    return playerData!.name;
   }
 }

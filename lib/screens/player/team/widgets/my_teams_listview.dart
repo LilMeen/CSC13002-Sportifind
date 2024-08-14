@@ -32,7 +32,12 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
   }
 
   Future<void> _initialize() async {
-    teamsInformation = await teamService.joinedTeam();
+
+    List<TeamInformation?> fetchedInformation = await teamService.joinedTeam();
+    setState(() {
+      teamsInformation = fetchedInformation;
+      isLoading = false;
+    });
   }
 
   @override
@@ -44,9 +49,9 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 16, bottom: 16),
+      padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: SizedBox(
-        height: 350,
+        height: 403,
         width: double.infinity,
         child: FutureBuilder<void>(
           future: initializationFuture,
@@ -57,8 +62,7 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
               return const Center(child: Text("Error loading data"));
             } else {
               return ListView.builder(
-                padding: const EdgeInsets.only(
-                    top: 0, bottom: 0, right: 16, left: 16),
+                padding: const EdgeInsets.only(top: 0, bottom: 0, left: 8),
                 itemCount: teamsInformation.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context, int index) {
@@ -130,7 +134,7 @@ class TeamBox extends StatelessWidget {
                   ),
                 },
                 child: Container(
-                  width: 250,
+                  width: 280,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: Colors.black),
@@ -151,8 +155,8 @@ class TeamBox extends StatelessWidget {
                       children: [
                         Container(
                           height: 160,
-                          width: 270,
-                          margin: EdgeInsets.all(10),
+                          width: 290,
+                          margin: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             borderRadius: const BorderRadius.all(
                               Radius.circular(16),
@@ -223,6 +227,44 @@ class TeamBox extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                       style: SportifindTheme.normalTextBlack),
                                 ],
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return TeamDetails(
+                                            teamId: teamInformation!.teamId);
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  height: 41,
+                                  width: double.infinity,
+                                  margin: const EdgeInsets.only(top: 10),
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: SportifindTheme.bluePurple,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'View',
+                                        style: SportifindTheme.normalTextWhite
+                                            .copyWith(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ],
                           ),
