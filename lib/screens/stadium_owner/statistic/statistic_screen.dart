@@ -21,54 +21,37 @@ class StadiumStatisticScreen extends StatefulWidget {
 
 int status = 0;
 class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
-  // bool isWeekly = true;
-
-  // late List<MatchDataModel> matches;
-  // void fetchMatchesData() async{
-  // matches = await fetchMatches();
-  // calculateStatistics(matches);
-  // }
-  // late List<double> weeklySummary = calculateDailyRevenue(matches) as List<double>;
-
-  // List<double> weeklySummary = [
-  //     4.40,
-  //     2.50,
-  //     42.42,
-  //     10.50,
-  //     100.20,
-  //     88.99,
-  //     90.10,
-  //     23.44,
-  //   ];
-
   StatisticService statisticService = StatisticService();
 
   bool isWeekly = true;
   List<double> weeklySummary = [];
   late Map<String, List<MatchCard>> matchesMap = {};
   List<double> dailySummary = [];
+  List<double> dummySummary = List.filled(31, 0);
   late int selectedWeek;
   late int selectedMonth;
   int selectedYear = 2024;
-  DateFormat dateFornat = DateFormat('EEEE');
+  DateFormat dateFormat = DateFormat('EEEE');
   DateFormat dateFornatDate = DateFormat('dd/MM/yyyy');
 
   String? dayOfWeek;
   late Map<String, double> stadiumRevenue;
-  double? weelkyRevenue;
+  double? weeklyRevenue;
   double? lastWeekRevenue;
   double? monthlyRevenue;
   double? lastMonthRevenue;
   late Map<DateTime, int> mostDate;
   late Map<DateTime, double> dailyRevenue;
 
-  bool isloading = true;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     selectedWeek = _getCurrentWeekNumber();
     selectedMonth = _getCurrentMonthNumber();
+    _loadWeeklySummary(selectedWeek);
+    _loadMonthlySummary(selectedMonth);
   }
 
   int _getCurrentWeekNumber() {
@@ -78,13 +61,14 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   }
 
   int _getCurrentMonthNumber() {
-  DateTime now = DateTime.now();
-  return now.month;
-}
+    DateTime now = DateTime.now();
+    return now.month;
+  }
 
   void _handleWeekNumberChanged(int weekNumber) {
     setState(() {
       selectedWeek = weekNumber;
+      _loadWeeklySummary(weekNumber);
       print('Updated Selected Week Number: $selectedWeek');
     });
   }
@@ -93,7 +77,32 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
     setState(() {
       print('hehe');
       selectedMonth = monthNumber;
-      print('Updated Selected Month Number: $selectedMonth'); 
+      _loadMonthlySummary(monthNumber);
+      print('Updated Selected Month Number: $selectedMonth');
+    });
+  }
+
+  Future<void> _loadWeeklySummary(int weekNumber) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    weeklySummary = await statisticService.getDataForBarChart(weekNumber);
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> _loadMonthlySummary(int monthNumber) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    dailySummary = await statisticService.getDataForLineChart(monthNumber);
+
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -137,13 +146,15 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
                     onWeekNumberChanged: _handleWeekNumberChanged,
                   )
                 : MonthNavigator(
-                  selectedMonth: selectedMonth,
-                  onMonthNumberChanged: _handleMonthNumberChanged,
+                    selectedMonth: selectedMonth,
+                    onMonthNumberChanged: _handleMonthNumberChanged,
                   ),
             const SizedBox(height: 10),
-            // status == 0
-            //     ? WeeklyBarChart()
-            //     : MonthlyLineChart(),
+            isLoading
+              ? CircularProgressIndicator()
+              : status == 0
+                  ? BarChartComponent(weeklySummary: weeklySummary)
+                  : LineChartCard(dailySummary: dailySummary),
             const SizedBox(height: 10),
           ],
         ),
