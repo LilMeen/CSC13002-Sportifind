@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(context) {
     return const MaterialApp(
-      home: TeamMainScreen(),
+      home: SplashScreen(),
     );
   }
 }
