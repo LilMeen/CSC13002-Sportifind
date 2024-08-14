@@ -14,10 +14,6 @@ class TeamMainScreen extends StatefulWidget {
 }
 
 class _TeamMainScreenState extends State<TeamMainScreen> {
-  void callBack() {
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,17 +27,12 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: Column(
-                    children: <Widget>[
-                      const SportifindSearchBar(),
-                      getMyTeamListview(),
-                      Flexible(
-                        child: getNearbyTeamListView(),
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  children: <Widget>[
+                    const SportifindSearchBar(),
+                    getMyTeamListview(),
+                    getNearbyTeamListView(),
+                  ],
                 ),
               ),
             ),
@@ -57,9 +48,9 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(top: 8.0, left: 18, right: 16),
+          padding: const EdgeInsets.only(top: 8.0, left: 16),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
@@ -72,57 +63,66 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
                   color: SportifindTheme.darkGrey,
                 ),
               ),
-              TextButton(
-                child:  Row(
-                  children: [
-                    Icon(
-                      Icons.add_circle_outline,
-                      color: SportifindTheme.bluePurple,
+              const SizedBox(width: 125),
+              SizedBox(
+                height: 34, 
+                width: 143,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: SportifindTheme.bluePurple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
                     ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      'Create Team',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        letterSpacing: 0.27,
-                        color: SportifindTheme.bluePurple,
+                    fixedSize: const Size(143, 34),
+                    elevation: 0,
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(
+                        size: 14,
+                        Icons.add_circle_outline,
+                        color: Colors.white,
                       ),
-                    ),
-                  ],
+                       SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        'Create Team',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                          letterSpacing: 0.27,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CreateTeamForm()));
+                  },
                 ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CreateTeamForm()));
-                },
               ),
             ],
           ),
         ),
-        const SizedBox(
-          height: 16,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16),
-          child: MyTeamsListView(
-          ),
+        const Padding(
+          padding: EdgeInsets.only(right: 0),
+          child: MyTeamsListView(),
         ),
       ],
     );
   }
 
   Widget getNearbyTeamListView() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0, left: 18, right: 16),
+    return const Padding(
+      padding: EdgeInsets.only(top: 0, left: 16, right: 10),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Text(
+          Text(
             'Nearby Teams',
             textAlign: TextAlign.left,
             style: TextStyle(
@@ -132,10 +132,8 @@ class _TeamMainScreenState extends State<TeamMainScreen> {
               color: SportifindTheme.darkGrey,
             ),
           ),
-          Flexible(
-            child: NearbyTeamListView(
-            ),
-          )
+          SizedBox(height: 0),
+          NearbyTeamListView(),
         ],
       ),
     );

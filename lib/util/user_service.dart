@@ -130,4 +130,26 @@ class UserService {
       }
     }
   }
+
+  int getUserAge(DateTime birthDate) {
+    final now = DateTime.now();
+    final age = now.year - birthDate.year;
+    final month1 = now.month;
+    final month2 = birthDate.month;
+    final day1 = now.day;
+    final day2 = birthDate.day;
+    if (month1 < month2) {
+      return age - 1;
+    } else if (month1 == month2) {
+      if (day1 < day2) {
+        return age - 1;
+      }
+    }
+    return age;
+  }
+
+  int getAgeFromDateString(String birthDate) {
+    final date = DateTime.parse(birthDate);
+    return getUserAge(date);
+  }
 }
