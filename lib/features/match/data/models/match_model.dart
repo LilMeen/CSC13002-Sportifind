@@ -71,7 +71,9 @@ class MatchModel {
   Future<MatchEntity> toEntity() async{
     final stadiumEndity = await stadiumRemoteDataSource.getStadium(stadiumId).then((value) => value.toEntity());
     final fieldEntity = stadiumEndity.fields.firstWhere((element) => element.id == fieldId);
-
+  
+    final team1 = await teamRemoteDataSource.getTeam(team1Id).then((value) => value.toEntity());
+    final team2 = team2Id != '' ? await teamRemoteDataSource.getTeam(team2Id).then((value) => value.toEntity()) : team1;
     return MatchEntity(
       id: id,
       stadium: stadiumEndity,
@@ -80,8 +82,8 @@ class MatchModel {
       start: start,
       end: end,
       playTime: playTime,
-      team1Id: team1Id,
-      team2Id: team2Id,
+      team1: team1,
+      team2: team2,
     );
   }
 
@@ -95,8 +97,8 @@ class MatchModel {
       start: match.start,
       end: match.end,
       playTime: match.playTime,
-      team1Id: match.team1Id,
-      team2Id: match.team2Id,
+      team1Id: match.team1.id,
+      team2Id: match.team2.id,
     );
   }
 }

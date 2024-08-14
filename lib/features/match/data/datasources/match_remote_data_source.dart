@@ -5,6 +5,7 @@ abstract interface class MatchRemoteDataSource {
   Future<MatchModel> getMatch(String id);
   Future<List<MatchModel>> getAllMatches();
   Future<List<MatchModel>> getMatchesByStadium(String stadiumId);
+  Future<List<MatchModel>> getMatchesByTeam(String teamId);
 
   Future<void> deleteMatch(String id);
 }
@@ -35,6 +36,26 @@ class MatchRemoteDataSourceImpl implements MatchRemoteDataSource {
   Future<List<MatchModel>> getMatchesByStadium(String stadiumId) async {
     final matches = await FirebaseFirestore.instance.collection('matches').where('stadium', isEqualTo: stadiumId).get();
     return matches.docs.map((doc) => MatchModel.fromFirestore(doc)).toList();
+  }
+
+
+  /// GET MATCHES BY TEAM
+  /// Get matches by team id
+  @override
+  Future<List<MatchModel>> getMatchesByTeam(String teamId) async {
+    final incomingMatch = await FirebaseFirestore.instance
+      .collection('teams')
+      .doc(teamId)
+      .get().then((doc) => doc.data()!['incomingMatch']);
+    List<MatchModel> matches = [];
+    for (var matchId in incomingMatch.keys) {
+      final match = await FirebaseFirestore.instance.collection('matches').doc(matchId).get();
+      if (!match.exists) {
+        continue;
+      }
+      matches.add(MatchModel.fromFirestore(match));
+    }
+    return matches;
   }
 
 

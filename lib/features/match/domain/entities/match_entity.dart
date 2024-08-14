@@ -1,5 +1,6 @@
 import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 class MatchEntity {
   final String id;
@@ -9,8 +10,8 @@ class MatchEntity {
   final String start;
   final String end;
   final String playTime;
-  final String team1Id;
-  final String team2Id;
+  final TeamEntity team1;
+  final TeamEntity team2;
 
   MatchEntity({
     required this.id,
@@ -20,7 +21,7 @@ class MatchEntity {
     required this.start,
     required this.end,
     required this.playTime,
-    required this.team1Id,
-    required this.team2Id,
+    required this.team1,
+    required this.team2,
   });
 }

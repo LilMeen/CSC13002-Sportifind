@@ -1,0 +1,13 @@
+import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/core/models/result.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+
+abstract interface class MatchRepository {
+  Future<Result<MatchEntity>> getMatch(String id);
+  Future<Result<List<MatchEntity>>> getAllMatches();
+  Future<Result<List<MatchEntity>>> getMatchesByStadium(String stadiumId);
+  Future<Result<List<MatchEntity>>> getMatchesByTeam(String teamId);
+  Future<Result<List<MatchEntity>>> getMatchesByPlayer(String playerId);
+
+  Result<List<MatchEntity>> sortNearbyMatches(List<MatchEntity> matches, Location markedLocation);
+}

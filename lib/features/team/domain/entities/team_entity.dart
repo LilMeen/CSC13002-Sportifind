@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:sportifind/core/entities/location.dart';
-import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 
 class TeamEntity {
@@ -11,7 +10,7 @@ class TeamEntity {
   final List<PlayerEntity> players;
   final PlayerEntity captain;
   final Location location;
-  final Map<MatchEntity, bool> incomingMatch;
+  final Map<String, bool> incomingMatch;
 
   TeamEntity ({
     required this.id,

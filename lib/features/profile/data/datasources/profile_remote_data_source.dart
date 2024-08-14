@@ -43,9 +43,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<PlayerModel> getPlayer(String id) async {
     final playerDoc = await FirebaseFirestore.instance.collection('users').doc(id).get();
-    if (playerDoc['role'] != 'player') {
-      throw Exception('${playerDoc['name']} is not a player');
-    }
     return PlayerModel.fromFirestore(playerDoc);
   }
 

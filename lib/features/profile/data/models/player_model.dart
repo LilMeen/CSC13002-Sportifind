@@ -41,6 +41,8 @@ class PlayerModel extends UserModel {
   @override
   factory PlayerModel.fromFirestore(DocumentSnapshot playerDoc) {
     Map<String, dynamic> data = playerDoc.data() as Map<String, dynamic>;
+    List<String> teams = data['joinedTeams'] != null ? List<String>.from(data['joinedTeams']) : [];
+    Map<String, int> stats = data['stats'] != null ? Map<String, int>.from(data['stats']) : {};
 
     return PlayerModel(
       id: playerDoc.id,
@@ -57,8 +59,8 @@ class PlayerModel extends UserModel {
       height: data['height'] ?? '',
       weight: data['weight'] ?? '',
       preferredFoot: data['preferredFoot'] ?? '',
-      stats: data['stats'] ?? {},
-      teams: data['joinedTeams'] ?? [],
+      stats: stats,
+      teams: teams,
     );
   }
 
