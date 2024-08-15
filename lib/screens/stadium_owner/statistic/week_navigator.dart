@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class WeekNavigator extends StatefulWidget {
   final int selectedWeek; 
@@ -79,7 +80,7 @@ class _WeekNavigatorState extends State<WeekNavigator> {
         ),
         Text(
           "${DateFormat('dd/MM').format(startOfWeek)} - ${DateFormat('dd/MM').format(endOfWeek)}",
-          style: TextStyle(fontSize: 20),
+          style: SportifindTheme.titleDeletStadium,
         ),
         IconButton(
           icon: Icon(Icons.arrow_forward),

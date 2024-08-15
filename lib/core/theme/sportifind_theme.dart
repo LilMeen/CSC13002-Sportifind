@@ -511,4 +511,10 @@ class SportifindTheme {
     fontWeight: FontWeight.w900,
     fontSize: 14,
   );
+
+  static TextStyle titleChart = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    color: Colors.grey,
+  );
 }

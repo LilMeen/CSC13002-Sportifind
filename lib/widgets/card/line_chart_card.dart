@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/widgets/card/line_chart_data.dart';
 import 'package:sportifind/widgets/card/custom_card.dart';
 
 class LineChartCard extends StatelessWidget {
   final List<double> dailySummary;
 
-  LineChartCard({super.key, required this.dailySummary});
+  const LineChartCard({super.key, required this.dailySummary});
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +18,14 @@ class LineChartCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Total Revenue",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          Row(
+            children: [
+              const SizedBox(width: 10),
+              Text(
+                "Total Revenue",
+                style: SportifindTheme.textBluePurple.copyWith(fontSize: 16),
+              ),
+            ],
           ),
           const SizedBox(height: 20),
           AspectRatio(
@@ -31,18 +37,29 @@ class LineChartCard extends StatelessWidget {
                   touchTooltipData: LineTouchTooltipData(
                     tooltipRoundedRadius: 30,
                     maxContentWidth: 80,
-                    getTooltipColor: (LineBarSpot spot) => Color.fromARGB(255, 232, 232, 232),
+                    getTooltipColor: (LineBarSpot spot) => Colors.white,
                     getTooltipItems: (List<LineBarSpot> touchedSpots) {
                       return touchedSpots.map((LineBarSpot touchedSpot) {
                         return LineTooltipItem(
                           touchedSpot.y.toStringAsFixed(2),
-                          const TextStyle(color: Color.fromARGB(255, 3, 6, 194)),
+                          TextStyle(color: SportifindTheme.bluePurple),
                         );
                       }).toList();
                     },
                   ),
                 ),
-                gridData: const FlGridData(show: false),
+                gridData: FlGridData(
+                  show: true,
+                  drawHorizontalLine: true,
+                  drawVerticalLine: false,
+                  horizontalInterval: maxY / 5, 
+                  getDrawingHorizontalLine: (value) {
+                    return FlLine(
+                      color: Colors.blueGrey[100],
+                      strokeWidth: 1,
+                    );
+                  },
+                ),
                 titlesData: FlTitlesData(
                   rightTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
@@ -59,8 +76,7 @@ class LineChartCard extends StatelessWidget {
                                 axisSide: meta.axisSide,
                                 child: Text(
                                     data.bottomTitle[value.toInt()].toString(),
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.grey[400])),
+                                    style: SportifindTheme.titleChart),
                               )
                             : const SizedBox();
                       },
@@ -69,33 +85,38 @@ class LineChartCard extends StatelessWidget {
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       getTitlesWidget: (double value, TitleMeta meta) {
-                        return data.leftTitle[value] != null
-                            ? Text(data.leftTitle[value] ?? '',
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey[400]))
-                            : const SizedBox();
+                        String? title = data.leftTitle[value];
+                        if (title != null) {
+                          return SideTitleWidget(
+                            axisSide: meta.axisSide,
+                            child: Text(
+                              title,
+                              style: SportifindTheme.titleChart,
+                            ),
+                          );
+                        }
+                        return const SizedBox();
                       },
                       showTitles: true,
-                      interval: maxY / 4,
+                      interval: maxY / 5,             
                       reservedSize: 40,
                     ),
                   ),
                 ),
-                borderData: FlBorderData(show: false),
+                borderData: FlBorderData(
+                  show: false,
+                ),
                 lineBarsData: [
                   LineChartBarData(
-                    isCurved: true,  // Smooth lines
-                    curveSmoothness: 0.023,  // Adjust smoothness here
+                    isCurved: true,
+                    curveSmoothness: 0.023,
                     color: const Color.fromARGB(255, 3, 6, 194),
                     barWidth: 2.5,
                     belowBarData: BarAreaData(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [
-                          const Color.fromARGB(255, 74, 38, 172).withOpacity(0.5),
-                          Colors.transparent
-                        ],
+                        colors: [SportifindTheme.bluePurple, Colors.white],
                       ),
                       show: true,
                     ),
@@ -122,12 +143,31 @@ double calculateMaxY(List<double> dailySummary) {
   return roundedMaxY;
 }
 
+String formatNumber(double value) {
+  if (value < 1000) {
+    double roundedValue = (value / 100).roundToDouble() * 100;
+    return roundedValue.toInt().toString();
+  } else {
+    double roundedValue;
+    if (value < 1000000) {
+      roundedValue = ((value / 1000).ceil() * 1000).toDouble();
+      return '${(roundedValue / 1000).toInt()}k';
+    } else {
+      roundedValue = ((value / 1000000).ceil() * 1000000).toDouble();
+      return '${(roundedValue / 1000000).toInt()}M';
+    }
+  }
+}
+
 Map<double, String> generateLeftTitles(double maxY) {
-  return {
-    0: '0',
-    maxY * 0.25: (maxY * 0.25).toInt().toString(),
-    maxY * 0.5: (maxY * 0.5).toInt().toString(),
-    maxY * 0.75: (maxY * 0.75).toInt().toString(),
-    maxY: maxY.toInt().toString(),
-  };
+  Map<double, String> titles = {};
+  int intervals = 5; // You can adjust this for more or fewer intervals
+  double interval = maxY / intervals;
+
+  for (int i = 0; i <= intervals; i++) {
+    double value = i * interval;
+    titles[value] = formatNumber(value);
+  }
+
+  return titles;
 }
