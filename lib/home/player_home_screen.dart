@@ -44,26 +44,104 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
     super.dispose();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
-    return Container(
-      color: SportifindTheme.background,
+    return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: FutureBuilder<bool>(
-          future: getData(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (!snapshot.hasData) {
-              return const SizedBox();
-            } else {
-              return Stack(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          toolbarHeight: 100,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Sportifind',
+                style: SportifindTheme.sportifindAppBar,
+              ),
+              Stack(children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    // Notification Screen
+                  },
+                  icon: Icon(
+                    Icons.notifications_none,
+                    size: 35,
+                    color: SportifindTheme.bluePurple,
+                  ),
+                ),
+                const Positioned(
+                  // draw a red marble
+                  top: 10.0,
+                  right: 10.0,
+                  child: Icon(Icons.brightness_1_rounded,
+                      size: 16.0, color: Color.fromARGB(255, 255, 0, 0)),
+                ),
+                const Positioned(
+                  // draw a red marble
+                  top: 10.0,
+                  right: 10.0,
+                  child: Icon(Icons.brightness_1_outlined,
+                      size: 16.0, color: Colors.white),
+                )
+              ]),
+              Stack(
                 children: <Widget>[
-                  tabBody,
-                  bottomBar(),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Text("hehe"),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.chat_bubble_outline_outlined,
+                      size: 30,
+                      color: SportifindTheme.bluePurple,
+                    ),
+                  ),
+                  const Positioned(
+                    // draw a red marble
+                    top: 6.0,
+                    right: 6.0,
+                    child: Icon(Icons.brightness_1_rounded,
+                        size: 16.0, color: Color.fromARGB(255, 255, 0, 0)),
+                  ),
+                  const Positioned(
+                    // draw a red marble
+                    top: 6.0,
+                    right: 6.0,
+                    child: Icon(Icons.brightness_1_outlined,
+                        size: 16.0, color: Colors.white),
+                  ),
                 ],
-              );
-            }
-          },
+              ),
+            ],
+          ),
+          backgroundColor: Colors.white,
+        ),
+        body: Container(
+          color: Colors.white,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: FutureBuilder<bool>(
+              future: getData(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (!snapshot.hasData) {
+                  return const SizedBox();
+                } else {
+                  return Stack(
+                    children: <Widget>[
+                      tabBody,
+                      bottomBar(),
+                    ],
+                  );
+                }
+              },
+            ),
+          ),
         ),
       ),
     );
@@ -123,7 +201,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   }
                   setState(
                     () {
-                      //tabBody = const TeamMainScreen();
+                      // tabBody = const TeamMainScreen();
                     },
                   );
                 },
@@ -136,7 +214,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   }
                   setState(
                     () {
-                      //tabBody = const ProfileScreen();
+                      // tabBody = const ProfileScreen();
                     },
                   );
                 },

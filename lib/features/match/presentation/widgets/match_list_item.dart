@@ -27,7 +27,6 @@ class _MatchListItemState extends State<MatchListItem> {
 
 
   Future<void> _initialize() async {
-
     team1ImageProvider = NetworkImage(widget.matchCard.team1.avatar.path);
     team2ImageProvider = NetworkImage(
       widget.matchCard.team1 == widget.matchCard.team2
@@ -75,7 +74,7 @@ class _MatchListItemState extends State<MatchListItem> {
         children: <Widget>[
           Container(
             width: 50,
-            height: 180,
+            height: 170,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -100,7 +99,7 @@ class _MatchListItemState extends State<MatchListItem> {
           ),
           Expanded(
             child: Container(
-              padding: const EdgeInsets.only(left: 30, right: 30, bottom: 20),
+              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
               height: 210,
               decoration: BoxDecoration(
                 color: Colors.grey,
@@ -186,7 +185,7 @@ class _MatchListItemState extends State<MatchListItem> {
                         style: SportifindTheme.matchCardItem,
                       ),
                       const SizedBox(
-                        width: 40,
+                        width: 20,
                       ),
                       const Icon(
                         Icons.hourglass_top_rounded,
@@ -200,7 +199,7 @@ class _MatchListItemState extends State<MatchListItem> {
                         style: SportifindTheme.matchCardItem,
                       ),
                       const SizedBox(
-                        width: 40,
+                        width: 20,
                       ),
                       const Icon(
                         Icons.stadium,
@@ -211,7 +210,7 @@ class _MatchListItemState extends State<MatchListItem> {
                       ),
                       Expanded(
                         child: Text(
-                          stadiumNames[widget.matchCard.stadium.name] ?? "Unknow",
+                          widget.matchCard.stadium.name,
                           style: SportifindTheme.matchCardItem,
                           maxLines: 1, // Maximum number of lines for the text
                           overflow: TextOverflow
