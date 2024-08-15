@@ -73,7 +73,7 @@ class MatchModel {
     final fieldEntity = stadiumEndity.fields.firstWhere((element) => element.id == fieldId);
   
     final team1 = await teamRemoteDataSource.getTeam(team1Id).then((value) => value.toEntity());
-    final team2 = team2Id != '' ? await teamRemoteDataSource.getTeam(team2Id).then((value) => value.toEntity()) : team1;
+    final team2 = team2Id != '' ? await teamRemoteDataSource.getTeam(team2Id).then((value) => value.toEntity()) : null;
     return MatchEntity(
       id: id,
       stadium: stadiumEndity,
@@ -98,7 +98,7 @@ class MatchModel {
       end: match.end,
       playTime: match.playTime,
       team1Id: match.team1.id,
-      team2Id: match.team2.id,
+      team2Id: match.team2 != null ?  match.team2!.id : '',
     );
   }
 }

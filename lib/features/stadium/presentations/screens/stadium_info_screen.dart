@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';
-import 'package:sportifind/features/match/presentation/screens/date_select_screen.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/match/presentation/screens/create_match/date_select_screen.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/edit_stadium_screen.dart';
 import 'package:sportifind/features/stadium/presentations/bloc/stadium_info_bloc.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 class StadiumInfoScreen extends StatefulWidget {
   final StadiumEntity stadium;
   final String ownerName;
   final bool isStadiumOwnerUser;
   final bool forMatchCreate;
-  final String? selectedTeamId;
-  final String? selectedTeamName;
-  final String? selectedTeamAvatar;
-  final void Function(MatchCard matchcard)? addMatchCard;
+  final TeamEntity? selectedTeam;
+  final void Function(MatchEntity matchcard)? addMatchCard;
 
   const StadiumInfoScreen({
     super.key,
@@ -23,9 +22,7 @@ class StadiumInfoScreen extends StatefulWidget {
     required this.isStadiumOwnerUser,
     required this.forMatchCreate,
     this.addMatchCard,
-    required this.selectedTeamId,
-    required this.selectedTeamName,
-    required this.selectedTeamAvatar,
+    required this.selectedTeam,
   });
 
   @override
@@ -214,13 +211,8 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                                 context,
                                 MaterialPageRoute( 
                                   builder: (context) => DateSelectScreen(
-                                selectedStadiumId: widget.stadium.id,
-                                selectedStadiumName: widget.stadium.name,
-                                selectedStadiumOwner: widget.stadium.ownerId,
-                                selectedTeamId: widget.selectedTeamId!,
-                                selectedTeamName: widget.selectedTeamName!,
-                                selectedTeamAvatar: widget.selectedTeamAvatar!,
-                                fields: widget.stadium.fields,
+                                stadiumData: widget.stadium,
+                                selectedTeam: widget.selectedTeam!,
                                 addMatchCard: widget.addMatchCard,
                               ),
                             ),

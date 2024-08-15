@@ -10,4 +10,7 @@ abstract interface class MatchRepository {
   Future<Result<List<MatchEntity>>> getMatchesByPlayer(String playerId);
 
   Result<List<MatchEntity>> sortNearbyMatches(List<MatchEntity> matches, Location markedLocation);
+
+  Future<Result<void>> sendRequestToJoinMatch(String teamSendId, String teamReceiveId, String matchId);
+  Future<Result<void>> sendInvitationToMatch(String teamSendId, String teamReceiveId, String matchId);
 }

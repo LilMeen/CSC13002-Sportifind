@@ -3,6 +3,7 @@ import 'package:sportifind/features/team/data/datasources/team_remote_data_sourc
 import 'package:sportifind/features/team/data/repositories/team_repository_impl.dart';
 import 'package:sportifind/features/team/domain/repositories/team_repository.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team.dart';
+import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -22,4 +23,5 @@ void initializeTeamDependencies (){
 
   // Use cases
   sl.registerLazySingleton<GetTeam>(() => GetTeam(sl()));
+  sl.registerLazySingleton<GetTeamByPlayer>(() => GetTeamByPlayer(sl()));
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_info_screen.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 class StadiumCard extends StatefulWidget {
   final StadiumEntity stadium;
@@ -9,10 +10,8 @@ class StadiumCard extends StatefulWidget {
   final double imageRatio;
   final bool isStadiumOwnerUser;
   final bool forMatchCreate;
-  final String? selectedTeamId;
-  final String? selectedTeamName;
-  final String? selectedTeamAvatar;
-  final void Function(MatchCard matchcard)? addMatchCard;
+  final TeamEntity? selectedTeam;
+  final void Function(MatchEntity matchcard)? addMatchCard;
 
   const StadiumCard({
     required this.stadium,
@@ -21,9 +20,7 @@ class StadiumCard extends StatefulWidget {
     required this.forMatchCreate,
     required this.imageRatio,
     this.addMatchCard,
-    this.selectedTeamId,
-    this.selectedTeamName,
-    this.selectedTeamAvatar,
+    this.selectedTeam,
     super.key,
   });
 
@@ -45,9 +42,7 @@ class _StadiumCardState extends State<StadiumCard> {
               isStadiumOwnerUser: widget.isStadiumOwnerUser,
               forMatchCreate: widget.forMatchCreate,
               addMatchCard: widget.addMatchCard,
-              selectedTeamId: widget.selectedTeamId,
-              selectedTeamName: widget.selectedTeamName,
-              selectedTeamAvatar: widget.selectedTeamAvatar,
+              selectedTeam: widget.selectedTeam,
             ),
           ),
         );

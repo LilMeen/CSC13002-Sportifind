@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/core/models/result.dart';
-import 'package:sportifind/core/util/init/init_user.dart';
 
 
 abstract interface class AuthRemoteDataSource {
@@ -62,7 +61,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
     final userCredential = await _firebaseAuth.signInWithCredential(credential);
 
     if (userCredential.additionalUserInfo!.isNewUser) {
-      initUser(userCredential.user!.uid.toString());
+      _initUser(userCredential.user!.uid.toString());
       FirebaseFirestore.instance
         .collection('users')
         .doc(userCredential.user!.uid)
@@ -86,7 +85,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
         password: password,
       );
 
-      initUser(userCredential.user!.uid);
+      _initUser(userCredential.user!.uid);
       FirebaseFirestore.instance
         .collection('users')
         .doc(userCredential.user!.uid)
@@ -153,4 +152,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
     final role = snapshot['role'];
     return Result.success(null, message: role);
   }
+
+
+  void _initUser (String uid) async {
+    final usersData = FirebaseFirestore.instance.collection('users');
+    await usersData.doc(uid).set({
+      'email': '',
+      'role': '',
+      'name': '',
+      'dob': '',
+      'city': '',
+      'district': '',
+      'address': '',
+      'phone': '',
+    });
+  }
 }
+

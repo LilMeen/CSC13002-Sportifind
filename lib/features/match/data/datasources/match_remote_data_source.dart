@@ -8,9 +8,13 @@ abstract interface class MatchRemoteDataSource {
   Future<List<MatchModel>> getMatchesByTeam(String teamId);
 
   Future<void> deleteMatch(String id);
+
+  Future<void> sendRequestToJoinMatch(String teamSendId, String teamReceiveId, String matchId);
+  Future<void> sendInvitationToMatch(String teamSendId, String teamReceiveId, String matchId);
 }
 
 class MatchRemoteDataSourceImpl implements MatchRemoteDataSource {
+  // REMOTE DATA SOURCE
 
   /// GET MATCH
   /// Get match by id
@@ -64,5 +68,59 @@ class MatchRemoteDataSourceImpl implements MatchRemoteDataSource {
   @override
   Future<void> deleteMatch(String id) async {
     await FirebaseFirestore.instance.collection('matches').doc(id).delete();
+  }
+
+
+  /// SEND REQUEST TO JOIN MATCH
+  /// Send request to join match
+  @override
+  Future<void> sendRequestToJoinMatch(String teamSendId, String teamReceiveId, String matchId) async {
+    try {
+      DocumentReference<Map<String, dynamic>> senderDoc = FirebaseFirestore.instance.collection('teams').doc(teamSendId);
+      DocumentReference<Map<String, dynamic>> receiverDoc = FirebaseFirestore.instance.collection('teams').doc(teamReceiveId);
+
+      Map<String, String> matchInfo = {
+        'matchId': matchId,
+        'senderId': teamSendId,
+        'receiverId': teamReceiveId,
+      };
+
+      await senderDoc.update({
+        'matchJoinRequest': FieldValue.arrayUnion([matchInfo]),
+      });
+
+      await receiverDoc.update({
+        'joinMatchRequest': FieldValue.arrayUnion([matchInfo]),
+      });
+    } catch (e) {
+      throw('error: $e');
+    }
+  }
+
+
+  /// SEND INVITATION TO MATCH
+  /// Send invitation to match
+  @override
+  Future<void> sendInvitationToMatch(String teamSendId, String teamReceiveId, String matchId) async {
+    try {
+      DocumentReference<Map<String, dynamic>> senderDoc = FirebaseFirestore.instance.collection('teams').doc(teamSendId);
+      DocumentReference<Map<String, dynamic>> receiverDoc = FirebaseFirestore.instance.collection('teams').doc(teamReceiveId);
+
+      Map<String, String> matchInfo = {
+        'matchId': matchId,
+        'senderId': teamSendId,
+        'receiverId': teamReceiveId,
+      };
+
+      await senderDoc.update({
+        'matchSentRequest': FieldValue.arrayUnion([matchInfo]),
+      });
+
+      await receiverDoc.update({
+        'matchInviteRequest': FieldValue.arrayUnion([matchInfo]),
+      });
+    } catch (e) {
+      throw('error: $e');
+    }
   }
 }

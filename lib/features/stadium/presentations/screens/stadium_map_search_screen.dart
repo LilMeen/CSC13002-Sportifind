@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
-import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';
-import 'package:sportifind/features/auth/presentations/widgets/cards/stadium_card.dart';
+import 'package:sportifind/features/stadium/presentations/widgets/stadium_card.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/presentations/bloc/stadium_map_search_bloc.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/current_location_icon_button.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 class StadiumMapSearchScreen extends StatefulWidget {
   final Location userLocation;
@@ -14,10 +15,8 @@ class StadiumMapSearchScreen extends StatefulWidget {
   final List<StadiumOwnerEntity> owners;
   final bool isStadiumOwnerUser;
   final bool forMatchCreate;
-  final String? selectedTeamId;
-  final String? selectedTeamName;
-  final String? selectedTeamAvatar;
-  final void Function(MatchCard matchcard)? addMatchCard;
+  final TeamEntity? selectedTeam;
+  final void Function(MatchEntity matchcard)? addMatchCard;
 
   const StadiumMapSearchScreen({
     super.key,
@@ -27,9 +26,7 @@ class StadiumMapSearchScreen extends StatefulWidget {
     required this.isStadiumOwnerUser,
     required this.forMatchCreate,
     this.addMatchCard,
-    this.selectedTeamId,
-    this.selectedTeamName,
-    this.selectedTeamAvatar,
+    this.selectedTeam,
   });
 
   @override
@@ -122,8 +119,7 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                               imageRatio: 1,
                               isStadiumOwnerUser: widget.isStadiumOwnerUser,
                               forMatchCreate: widget.forMatchCreate,
-                              selectedTeamId: widget.selectedTeamId,
-                              selectedTeamName: widget.selectedTeamName,
+                              selectedTeam: widget.selectedTeam,
                               addMatchCard: widget.addMatchCard,
                             ),
                           ),

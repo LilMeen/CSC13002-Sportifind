@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/core/widgets/city_dropdown.dart';
 import 'package:sportifind/core/widgets/district_dropdown.dart';
-import 'package:sportifind/features/auth/presentations/widgets/cards/match_card.dart';
-import 'package:sportifind/features/auth/presentations/widgets/cards/stadium_card.dart';
+import 'package:sportifind/features/stadium/presentations/widgets/stadium_card.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/presentations/bloc/stadium_search_bloc.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_map_search_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/create_stadium_screen.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/current_location_button.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/custom_search_bar.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 const double floatingDistance = 65.0;
 
@@ -20,10 +21,8 @@ class StadiumSearchScreen extends StatefulWidget {
   final List<StadiumOwnerEntity> owners;
   final bool isStadiumOwnerUser;
   final bool forMatchCreate;
-  final String? selectedTeamId;
-  final String? selectedTeamName;
-  final String? selectedTeamAvatar;
-  final void Function(MatchCard matchcard)? addMatchCard;
+  final TeamEntity? selectedTeam;
+  final void Function(MatchEntity matchcard)? addMatchCard;
 
 
   const StadiumSearchScreen({
@@ -34,9 +33,7 @@ class StadiumSearchScreen extends StatefulWidget {
     this.isStadiumOwnerUser = false,
     this.forMatchCreate = false,
     this.addMatchCard,
-    this.selectedTeamId,
-    this.selectedTeamName,
-    this.selectedTeamAvatar,
+    this.selectedTeam,
   });
 
   @override
@@ -159,9 +156,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                                   imageRatio: 2.475,
                                   isStadiumOwnerUser: widget.isStadiumOwnerUser,
                                   forMatchCreate: widget.forMatchCreate,
-                                  selectedTeamId: widget.selectedTeamId,
-                                  selectedTeamName: widget.selectedTeamName,
-                                  selectedTeamAvatar: widget.selectedTeamAvatar,
+                                  selectedTeam: widget.selectedTeam,
                                   addMatchCard: widget.addMatchCard,
                                 );
                               },
@@ -211,9 +206,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                               owners: widget.owners,
                               isStadiumOwnerUser: widget.isStadiumOwnerUser,
                               forMatchCreate: widget.forMatchCreate,
-                              selectedTeamId: widget.selectedTeamId,
-                              selectedTeamName: widget.selectedTeamName,
-                              selectedTeamAvatar: widget.selectedTeamAvatar,
+                              selectedTeam: widget.selectedTeam!,
                               addMatchCard: widget.addMatchCard,
                             ),
                           ),

@@ -19,6 +19,7 @@ void initializeMatchDependencies (){
     () => MatchRepositoryImpl(
       matchRemoteDataSource: sl(), 
       profileRemoteDataSource: sl(),
+      notificationRemoteDataSource: sl(),
     )
   );
 

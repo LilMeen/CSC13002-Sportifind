@@ -11,7 +11,7 @@ class MatchEntity {
   final String end;
   final String playTime;
   final TeamEntity team1;
-  final TeamEntity team2;
+  final TeamEntity? team2;
 
   MatchEntity({
     required this.id,

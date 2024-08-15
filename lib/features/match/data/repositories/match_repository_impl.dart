@@ -5,16 +5,19 @@ import 'package:sportifind/features/match/data/datasources/match_remote_data_sou
 import 'package:sportifind/features/match/data/models/match_model.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/domain/repositories/match_repository.dart';
+import 'package:sportifind/features/notification/data/datasources/notification_remote_data_source.dart';
 import 'package:sportifind/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:sportifind/features/profile/data/models/player_model.dart';
 
 class MatchRepositoryImpl implements MatchRepository {
   final MatchRemoteDataSource matchRemoteDataSource;
   final ProfileRemoteDataSource profileRemoteDataSource;
+  final NotificationRemoteDataSource notificationRemoteDataSource;
 
   MatchRepositoryImpl({
     required this.matchRemoteDataSource,
     required this.profileRemoteDataSource,
+    required this.notificationRemoteDataSource,
   });
 
   // GET MATCH
@@ -91,5 +94,25 @@ class MatchRepositoryImpl implements MatchRepository {
       (match) => match.stadium.location,
     );
     return Result.success(matches);
+  }
+
+
+  // SEND REQUEST TO JOIN MATCH
+  // Send request to join a match
+  @override
+  Future<Result<void>> sendRequestToJoinMatch(String teamSendId, String teamReceiveId, String matchId) async {
+    matchRemoteDataSource.sendRequestToJoinMatch(teamSendId, teamReceiveId, matchId);
+    notificationRemoteDataSource.inviteMatchRequest(teamSendId, teamReceiveId, matchId);  
+    return Result.success(null);
+  }
+
+
+  // SEND INVITATION TO MATCH
+  // Send invitation to a match
+  @override
+  Future<Result<void>> sendInvitationToMatch(String teamSendId, String teamReceiveId, String matchId) async {
+    matchRemoteDataSource.sendInvitationToMatch(teamSendId, teamReceiveId, matchId);
+    notificationRemoteDataSource.inviteMatchRequest(teamSendId, teamReceiveId, matchId);  
+    return Result.success(null);
   }
 }

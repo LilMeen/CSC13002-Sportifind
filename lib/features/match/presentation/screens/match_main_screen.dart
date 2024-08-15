@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/match/presentation/screens/create_match/select_team_screen.dart';
 import 'package:sportifind/features/match/presentation/widgets/match_cards.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/profile/domain/usecases/get_player.dart';
@@ -96,7 +97,7 @@ class _MatchMainScreenState extends State<MatchMainScreen>
           child: isCaptain == true
               ? FloatingActionButton(
                   onPressed: () {
-                    // SelectTeamScreen(addMatchCard: addMatchCard)
+                    SelectTeamScreen(addMatchCard: addMatchCard);
                   },
                   backgroundColor: SportifindTheme.bluePurple,
                   shape: const CircleBorder(),

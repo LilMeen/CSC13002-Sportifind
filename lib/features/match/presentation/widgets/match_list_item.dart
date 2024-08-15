@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/util/datetime_util.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/match/presentation/screens/match_info_screen.dart';
 
 
 class MatchListItem extends StatefulWidget {
@@ -29,13 +30,11 @@ class _MatchListItemState extends State<MatchListItem> {
   Future<void> _initialize() async {
     team1ImageProvider = NetworkImage(widget.matchCard.team1.avatar.path);
     team2ImageProvider = NetworkImage(
-      widget.matchCard.team1 == widget.matchCard.team2
+      widget.matchCard.team2 == null
           ? "https://imgur.com/S1rPE1S.png"
-          : widget.matchCard.team2.avatar.path,
+          : widget.matchCard.team2!.avatar.path,
     );
 
-    await precacheImage(team1ImageProvider!, context);
-    await precacheImage(team2ImageProvider!, context);
     setState(() {
       isLoadingUser = false;
     });
@@ -64,15 +63,23 @@ class _MatchListItemState extends State<MatchListItem> {
       11: "NOV",
       12: "DEC"
     };
-    bool missingMatch = widget.matchCard.team1 == widget.matchCard.team2;
+
     return GestureDetector(
       onTap: () {
-        // MatchInfoScreen(matchInfo: widget.matchCard, matchStatus: widget.status),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MatchInfoScreen(
+              matchInfo: widget.matchCard,
+              matchStatus: widget.status,
+            ),
+          ),
+        );
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Container(
+          SizedBox(
             width: 50,
             height: 170,
             child: Column(
@@ -150,7 +157,7 @@ class _MatchListItemState extends State<MatchListItem> {
                       Column(
                         children: [
                           Text(
-                            missingMatch ? "Unknown" : widget.matchCard.team2.name,
+                            widget.matchCard.team2 == null ? "Unknown" : widget.matchCard.team2!.name,
                             style: SportifindTheme.matchCardItem,
                             maxLines: 1, // Maximum number of lines for the text
                             overflow: TextOverflow
