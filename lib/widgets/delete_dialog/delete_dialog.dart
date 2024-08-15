@@ -57,9 +57,13 @@ class StadiumDeleteDialog extends StatelessWidget {
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         vertical: 8, horizontal: 33),
-                    backgroundColor: SportifindTheme.bluePurple,
+                    backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
+                      side: BorderSide(
+                        width: 1,
+                        color: Colors.grey,
+                      )
                     ),
                   ),
                   child: Text("No", style: SportifindTheme.noDeleteDialog),
@@ -69,7 +73,7 @@ class StadiumDeleteDialog extends StatelessWidget {
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         vertical: 8, horizontal: 32),
-                    backgroundColor: Colors.grey.shade200,
+                    backgroundColor: const Color.fromARGB(255, 255, 126, 126),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
