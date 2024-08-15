@@ -305,4 +305,10 @@ class SportifindTheme {
     fontSize: 14,
     color: Colors.red,
   );
+
+  static TextStyle titleChart = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    color: Colors.grey,
+  );
 }

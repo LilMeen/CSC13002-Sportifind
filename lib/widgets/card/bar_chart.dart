@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/widgets/card/bar_data.dart';
 
 class BarChartComponent extends StatelessWidget {
@@ -8,8 +9,9 @@ class BarChartComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate the maximum value in the weekly summary and adjust the max Y value
-    double maxYValue = (weeklySummary.reduce((a, b) => a > b ? a : b) / 100).ceil() * 100 + 100;
+    double maxYValue =
+        (weeklySummary.reduce((a, b) => a > b ? a : b) / 100).ceil() * 100 +
+            100;
 
     BarData myBarData = BarData(
       monAmount: weeklySummary[0],
@@ -24,117 +26,177 @@ class BarChartComponent extends StatelessWidget {
     myBarData.initializeBarData();
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        height: 200,
-        child: BarChart(
-          BarChartData(
-            maxY: maxYValue,
-            minY: 0,
-            gridData: FlGridData(drawVerticalLine: true),
-            borderData: FlBorderData(show: false),
-            titlesData: FlTitlesData(
-              show: true,
-              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 40, // Increased reserved size for larger labels
-                  getTitlesWidget: (value, meta) {
-                    return getLeftTitles(value, meta, maxYValue);
-                  },
-                ),
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const SizedBox(width: 10),
+                  Text(
+                    "Total Revenue",
+                    style: SportifindTheme.textBluePurple.copyWith(fontSize: 16),
+                  ),
+                ],
               ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: getBottomTitles,
-                ),
-              ),
-            ),
-            barGroups: myBarData.barData
-                .map(
-                  (data) => BarChartGroupData(
-                    x: data.x,
-                    barRods: [
-                      BarChartRodData(
-                        toY: data.y,
-                        color: Colors.blueGrey,
-                        width: 25,
-                        borderRadius: BorderRadius.circular(4),
-                        backDrawRodData: BackgroundBarChartRodData(
-                          show: true,
-                          toY: maxYValue,
-                          color: Colors.grey[200],
+              const SizedBox(height: 20),
+              Container(
+                height: 200,
+                child: BarChart(
+                  BarChartData(
+                    maxY: maxYValue,
+                    minY: 0,
+                    gridData: FlGridData(
+                      drawVerticalLine: false,
+                      drawHorizontalLine: true,
+                      horizontalInterval: maxYValue / 5,
+                      getDrawingHorizontalLine: (value) {
+                        return FlLine(
+                          color: Colors.grey[300]!,
+                          strokeWidth: 1,
+                        );
+                      },
+                    ),
+                    borderData: FlBorderData(show: false),
+                    titlesData: FlTitlesData(
+                      show: true,
+                      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      rightTitles:
+                          const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 40,
+                          interval: maxYValue / 5,
+                          getTitlesWidget: (value, meta) {
+                            return getLeftTitles(value, meta, maxYValue);
+                          },
                         ),
                       ),
-                    ],
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: getBottomTitles,
+                        ),
+                      ),
+                    ),
+                    barGroups: myBarData.barData
+                        .map(
+                          (data) => BarChartGroupData(
+                            x: data.x,
+                            barRods: [
+                              BarChartRodData(
+                                toY: data.y,
+                                color: SportifindTheme.bluePurple,
+                                width: 25,
+                                borderRadius: BorderRadius.circular(30),
+                                backDrawRodData: BackgroundBarChartRodData(
+                                  show: true,
+                                  toY: maxYValue,
+                                  color: Colors.grey[200],
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        .toList(),
+                    barTouchData: BarTouchData(
+                      enabled: true, // Enable touch interaction
+                      touchTooltipData: BarTouchTooltipData(
+                        getTooltipColor: (group) => SportifindTheme
+                            .bluePurple, // Set the tooltip background color to blue
+                        //tooltipMargin: 8,
+                        tooltipPadding: const EdgeInsets.all(8),
+                        tooltipRoundedRadius: 30,
+                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                          return BarTooltipItem(
+                            '${rod.toY.toInt()}', // Tooltip value
+                            const TextStyle(
+                              color: Colors.white, // Tooltip text color
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          );
+                        },
+                      ),
+                      touchCallback: (FlTouchEvent event, barTouchResponse) {
+                        if (event.isInterestedForInteractions &&
+                            barTouchResponse != null &&
+                            barTouchResponse.spot != null) {
+                        }
+                      },
+                      handleBuiltInTouches:
+                          true, 
+                    ),
                   ),
-                )
-                .toList(),
-          ),
-        ),
+                ),
+              ),
+            ],
       ),
     );
   }
 
-  Widget getLeftTitles(double value, TitleMeta meta, double maxYValue) {
-    const style = TextStyle(
-      color: Colors.grey,
-      fontWeight: FontWeight.normal,
-      fontSize: 12,
-    );
-
-    Widget text;
-    double interval = maxYValue / 4;
-    if (value == 0) {
-      text = Text('0', style: style);
-    } else if (value == maxYValue) {
-      text = Text('${maxYValue.toInt()}', style: style);
-    } else if (value == interval || value == interval * 2 || value == interval * 3) {
-      text = Text('${value.toInt()}', style: style);
+  String formatNumber(double value) {
+  if (value < 1000) {
+    double roundedValue = (value / 100).roundToDouble() * 100;
+    return roundedValue.toInt().toString();
+  } else {
+    double roundedValue;
+    if (value < 1000000) {
+      roundedValue = ((value / 1000).ceil() * 1000).toDouble();
+      return '${(roundedValue / 1000).toInt()}k';
     } else {
-      text = Text('', style: style);
+      roundedValue = ((value / 1000000).ceil() * 1000000).toDouble();
+      return '${(roundedValue / 1000000).toInt()}M';
     }
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      child: text,
-    );
+  }
+}
+
+  Widget getLeftTitles(double value, TitleMeta meta, double maxYValue) {
+    TextStyle style = SportifindTheme.titleChart;
+
+    int desiredIntervals = 5;
+    double interval = maxYValue / desiredIntervals;
+
+    double roundedValue = (value / interval).round() * interval;
+
+    if ((value - roundedValue).abs() < 0.1) {
+      return SideTitleWidget(
+        axisSide: meta.axisSide,
+        child: Text(formatNumber(roundedValue), style: style),
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Widget getBottomTitles(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.grey,
-      fontWeight: FontWeight.bold,
-      fontSize: 12,
-    );
+    TextStyle style = SportifindTheme.titleChart;
 
     Widget text;
     switch (value.toInt()) {
       case 0:
-        text = const Text('Mon', style: style);
+        text = Text('Mon', style: style);
         break;
       case 1:
-        text = const Text('Tue', style: style);
+        text = Text('Tue', style: style);
         break;
       case 2:
-        text = const Text('Wed', style: style);
+        text = Text('Wed', style: style);
         break;
       case 3:
-        text = const Text('Thu', style: style);
+        text = Text('Thu', style: style);
         break;
       case 4:
-        text = const Text('Fri', style: style);
+        text = Text('Fri', style: style);
         break;
       case 5:
-        text = const Text('Sat', style: style);
+        text = Text('Sat', style: style);
         break;
       case 6:
-        text = const Text('Sun', style: style);
+        text = Text('Sun', style: style);
         break;
       default:
-        text = const Text('', style: style);
+        text = Text('', style: style);
         break;
     }
     return SideTitleWidget(

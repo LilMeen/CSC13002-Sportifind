@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class MonthNavigator extends StatefulWidget {
   final int selectedMonth; 
@@ -79,7 +80,7 @@ void _nextMonth() {
         ),
         Text(
           "${DateFormat('MM/yyyy').format(selectedDate)} - ${DateFormat('MM/yyyy').format(nextMonthDate)}",
-          style: TextStyle(fontSize: 20),
+          style: SportifindTheme.titleDeletStadium,
         ),
         IconButton(
           icon: Icon(Icons.arrow_forward),
