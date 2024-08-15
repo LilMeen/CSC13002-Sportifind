@@ -274,13 +274,13 @@ class SportifindTheme {
   static TextStyle noDeleteDialog = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
     fontSize: 16,
-    color: Colors.white,
+    color: Colors.black,
   );
 
   static TextStyle yesDeleteDialog = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
     fontSize: 16,
-    color: bluePurple,
+    color: Colors.white,
   );
 
   static TextStyle dropdownGreen = GoogleFonts.lexend(

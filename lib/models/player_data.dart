@@ -38,8 +38,10 @@ class PlayerData {
         location = LocationInfo(
           district: snapshot['district'],
           city: snapshot['city'],
-          latitude: snapshot['latitude'] ?? 0.0,
-          longitude: snapshot['longtitude'] ?? 0.0,
+          // latitude: snapshot['latitude'] ?? 0.0,
+          // longitude: snapshot['longtitude'] ?? 0.0,
+          latitude: 0.0,
+          longitude: 0.0,
         ),
         dob = snapshot['dob'],
         gender = snapshot['gender'],

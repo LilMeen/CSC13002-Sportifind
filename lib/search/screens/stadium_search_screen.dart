@@ -25,7 +25,7 @@ class StadiumSearchScreen extends StatefulWidget {
   final String? selectedTeamId;
   final String? selectedTeamName;
   final String? selectedTeamAvatar;
-  final void Function(MatchCard matchcard)? addMatchCard;
+  final void Function(MatchCard matchCard)? addMatchCard;
 
   const StadiumSearchScreen({
     super.key,
@@ -56,7 +56,6 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
   String selectedDistrict = '';
   late LocationInfo currentLocation;
   bool isLoadingLocation = false;
-  double floatingDistance = 0.0;
   StadiumService stadService = StadiumService();
   LocationService locService = LocationService();
 
@@ -72,9 +71,6 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
         stadService.sortNearbyStadiums(searchedStadiums, currentLocation);
 
     ownerMap = {for (var owner in widget.owners) owner.id: owner.name};
-    if (widget.isStadiumOwnerUser) {
-      floatingDistance = 65.0;
-    }
   }
 
   @override
@@ -107,6 +103,8 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
       if (searchText.isEmpty &&
           selectedCity.isEmpty &&
           selectedDistrict.isEmpty) {
+        searchedStadiums =
+            stadService.sortNearbyStadiums(widget.stadiums, currentLocation);
         textResult = 'Nearby stadiums';
       }
     });
@@ -141,157 +139,161 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
     }
   }
 
+  List<Widget> buildStadiumCards() {
+    return searchedStadiums.map((stadium) {
+      final ownerName = ownerMap[stadium.owner] ?? 'Unknown';
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+        child: StadiumCard(
+          stadium: stadium,
+          ownerName: ownerName,
+          imageRatio: 2.475,
+          isStadiumOwnerUser: widget.isStadiumOwnerUser,
+          forMatchCreate: widget.forMatchCreate,
+          selectedTeamId: widget.selectedTeamId,
+          selectedTeamName: widget.selectedTeamName,
+          selectedTeamAvatar: widget.selectedTeamAvatar,
+          addMatchCard: widget.addMatchCard,
+        ),
+      );
+    }).toList();
+  }
+
+  Widget buildStadiumSection() {
+    return searchedStadiums.isEmpty
+        ? Padding(
+          padding: const EdgeInsets.only(top: 80.0),
+          child: Center(child: Text('No stadiums found.', style: SportifindTheme.normalTextSmokeScreen)),
+        )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: buildStadiumCards(),
+          );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: SportifindTheme.backgroundColor,
       body: SafeArea(
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomSearchBar(
-                      searchController: searchController,
-                      hintText: 'Stadium name',
-                    ),
-                    const SizedBox(height: 20.0),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CityDropdown(
-                            selectedCity: selectedCity,
-                            citiesNameAndId: citiesNameAndId,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedCity = value ?? '';
-                                selectedDistrict = '';
-                                performSearch();
-                              });
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 8.0),
-                        Expanded(
-                          child: DistrictDropdown(
-                            selectedCity: selectedCity,
-                            citiesNameAndId: citiesNameAndId,
-                            selectedDistrict: selectedDistrict,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedDistrict = value ?? '';
-                                performSearch();
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20.0),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: StadiumMapButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => StadiumMapSearchScreen(
-                                    userLocation: currentLocation,
-                                    stadiums: searchedStadiums,
-                                    owners: widget.owners,
-                                    isStadiumOwnerUser:
-                                        widget.isStadiumOwnerUser,
-                                    forMatchCreate: widget.forMatchCreate,
-                                    selectedTeamId: widget.selectedTeamId,
-                                    selectedTeamName: widget.selectedTeamName,
-                                    selectedTeamAvatar:
-                                        widget.selectedTeamAvatar,
-                                    addMatchCard: widget.addMatchCard,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        CurrentLocationIconButton(
-                          isLoading: isLoadingLocation,
-                          onPressed: getCurrentLocationAndSort,
-                          size: 30,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10.0),
-                    Text(
-                      textResult,
-                      style: SportifindTheme.normalTextBlack,
-                    ),
-                    const SizedBox(height: 2.0),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: searchedStadiums.isEmpty
-                    ? const Center(child: Text('No stadiums found.'))
-                    : GridView.builder(
-                        padding: const EdgeInsets.all(8.0),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 1,
-                          childAspectRatio: 1.5,
-                          mainAxisSpacing: 8,
-                        ),
-                        itemCount: searchedStadiums.length,
-                        itemBuilder: (ctx, index) {
-                          final stadium = searchedStadiums[index];
-                          final ownerName =
-                              ownerMap[stadium.owner] ?? 'Unknown';
-
-                          return StadiumCard(
-                            stadium: stadium,
-                            ownerName: ownerName,
-                            imageRatio: 2.475,
-                            isStadiumOwnerUser: widget.isStadiumOwnerUser,
-                            forMatchCreate: widget.forMatchCreate,
-                            selectedTeamId: widget.selectedTeamId,
-                            selectedTeamName: widget.selectedTeamName,
-                            selectedTeamAvatar: widget.selectedTeamAvatar,
-                            addMatchCard: widget.addMatchCard,
-                          );
-                        },
+        child: SingleChildScrollView(
+          child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomSearchBar(
+                        searchController: searchController,
+                        hintText: 'Stadium name',
                       ),
-              ),
-            ],
+                      const SizedBox(height: 20.0),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CityDropdown(
+                              selectedCity: selectedCity,
+                              citiesNameAndId: citiesNameAndId,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedCity = value ?? '';
+                                  selectedDistrict = '';
+                                  performSearch();
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 8.0),
+                          Expanded(
+                            child: DistrictDropdown(
+                              selectedCity: selectedCity,
+                              citiesNameAndId: citiesNameAndId,
+                              selectedDistrict: selectedDistrict,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedDistrict = value ?? '';
+                                  performSearch();
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20.0),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: StadiumMapButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        StadiumMapSearchScreen(
+                                      userLocation: currentLocation,
+                                      stadiums: searchedStadiums,
+                                      owners: widget.owners,
+                                      isStadiumOwnerUser:
+                                          widget.isStadiumOwnerUser,
+                                      forMatchCreate: widget.forMatchCreate,
+                                      selectedTeamId: widget.selectedTeamId,
+                                      selectedTeamName: widget.selectedTeamName,
+                                      selectedTeamAvatar:
+                                          widget.selectedTeamAvatar,
+                                      addMatchCard: widget.addMatchCard,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          CurrentLocationIconButton(
+                            isLoading: isLoadingLocation,
+                            onPressed: getCurrentLocationAndSort,
+                            size: 30,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10.0),
+                      Text(
+                        textResult,
+                        style: SportifindTheme.normalTextBlack,
+                      ),
+                      const SizedBox(height: 2.0),
+                    ],
+                  ),
+                ),
+                buildStadiumSection(),
+              ],
+            ),
           ),
         ),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 70, right: 10),
-        child: widget.isStadiumOwnerUser
-            ? FloatingActionButton(
-                heroTag: "createStadium",
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CreateStadiumScreen()),
-                  );
-                },
-                backgroundColor: SportifindTheme.bluePurple,
-                shape: const CircleBorder(),
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-              )
-            : const SizedBox(),
-      ),
+      floatingActionButton: widget.isStadiumOwnerUser
+          ? FloatingActionButton(
+              heroTag: "createStadium",
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CreateStadiumScreen(),
+                  ),
+                );
+              },
+              backgroundColor: SportifindTheme.bluePurple,
+              shape: const CircleBorder(),
+              child: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }

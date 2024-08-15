@@ -4,9 +4,10 @@ import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/player/match/screens/match_info_screen.dart';
-import 'package:sportifind/screens/stadium_owner/widget/stadium_field_dropdown.dart';
 import 'package:sportifind/util/match_service.dart';
 import 'package:sportifind/util/stadium_service.dart';
+import 'package:sportifind/widgets/app_bar/feature_app_bar_blue_purple.dart';
+import 'package:sportifind/widgets/dropdown_button/general_dropdown.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class ScheduleScreen extends StatefulWidget {
@@ -87,6 +88,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
               .ceilToDouble();
           fieldMap = {for (var field in _selectedStadium!.fields) field.id: field.numberId};
           matches = matchesData;
+          matches.sort((a, b) => fieldMap[a.field]!.compareTo(fieldMap[b.field]!));
         });
       } else {
         setState(() {
@@ -133,10 +135,11 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       stadiumNames = stadiums.map((stadium) => stadium.name).toList();
     }
 
-    return StadiumFieldDropdown(
+    return GeneralDropdown(
       selectedValue: _selectedStadiumName,
       hint: 'Select stadium',
       items: stadiumNames,
+      fillColor: SportifindTheme.backgroundColor,
       onChanged: (value) {
         setState(() {
           _selectedStadiumName = value ?? '';
@@ -166,10 +169,11 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       fieldNames = fields.map((field) => 'Field ${field.numberId}').toList();
     }
 
-    return StadiumFieldDropdown(
+    return GeneralDropdown(
       selectedValue: _selectedFieldName,
       hint: 'Select field',
       items: fieldNames,
+      fillColor: SportifindTheme.backgroundColor,
       onChanged: (value) async {
         setState(() {
           _selectedFieldName = value ?? '';
@@ -195,7 +199,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
         endTime: endTime,
         subject: 'Booked',
         notes: match.id,
-        color: bookedColors[(fieldMap[match.field]! - 1) % 4],
+        color: bookedColors[(fieldMap[match.field]! - 1) % bookedColors.length],
       );
     }).toList();
 
@@ -238,17 +242,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     return RefreshIndicator(
       onRefresh: _refreshStadiums,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Schedule',
-            style: SportifindTheme.featureTitlePurple,
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          surfaceTintColor: Colors.white,
-          automaticallyImplyLeading: false,
-        ),
+        appBar: const FeatureAppBarBluePurple(title: 'Schedule'),
         backgroundColor: Colors.white,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
