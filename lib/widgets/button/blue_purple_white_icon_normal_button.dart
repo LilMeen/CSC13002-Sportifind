@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 
-class BluePurpleWhiteWithIconButton extends StatelessWidget {
+class BluePurpleWhiteIconNormalButton extends StatelessWidget {
   final IconData icon;
   final String text;
   final VoidCallback onPressed;
   final String type;
   final String size;
 
-  const BluePurpleWhiteWithIconButton({
+  const BluePurpleWhiteIconNormalButton({
     super.key,
     required this.icon,
     required this.text,
@@ -19,14 +19,14 @@ class BluePurpleWhiteWithIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
+    return TextButton.icon(
       onPressed: onPressed,
-      icon: const Icon(Icons.map_outlined),
+      icon: Icon(icon, size: size == 'small' ? 20 : 24),
       label: Text(text, style: size == 'large' ? SportifindTheme.largeTextIconButton: size == 'small' ? SportifindTheme.smallTextIconButton: SportifindTheme.averageTextIconButton),
-      style: ElevatedButton.styleFrom(
+      style: TextButton.styleFrom(
         foregroundColor: Colors.white,
         backgroundColor: SportifindTheme.bluePurple,
-        padding: const EdgeInsets.symmetric(vertical: 13),
+        padding: const EdgeInsets.symmetric(vertical: 14),
         shape: RoundedRectangleBorder(
           borderRadius: type == 'round square'
               ? BorderRadius.circular(8.0)

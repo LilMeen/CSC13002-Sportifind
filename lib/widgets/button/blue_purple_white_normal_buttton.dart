@@ -15,9 +15,9 @@ class BluePurpleWhiteNormalButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    return TextButton(
       onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
+      style: TextButton.styleFrom(
         backgroundColor: SportifindTheme.bluePurple,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(

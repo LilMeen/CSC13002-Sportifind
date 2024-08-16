@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/core/widgets/button/blue_purple_white_normal_buttton.dart';
-import 'package:sportifind/features/match/presentation/screens/create_match/date_select_screen.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
-import 'package:sportifind/features/stadium/presentations/bloc/stadium_info_bloc.dart';
-import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/edit_stadium_screen.dart';
-import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/update_status_screen.dart';
-import 'package:sportifind/features/stadium/presentations/widgets/stadium_delete_dialog.dart';
-import 'package:sportifind/features/stadium/presentations/widgets/stadium_info_app_bar.dart';
-import 'package:sportifind/features/team/domain/entities/team_entity.dart';
-import 'package:sportifind/features/stadium/presentations/widgets/stadium_sliding_photos.dart';
+import 'package:sportifind/models/match_card.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/models/stadium_data.dart';
+import 'package:sportifind/screens/player/match/screens/date_select_screen.dart';
+import 'package:sportifind/screens/stadium_owner/widget/stadium_sliding_photos.dart';
+import 'package:sportifind/screens/stadium_owner/stadium/edit_stadium_screen.dart';
+import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
+import 'package:sportifind/screens/stadium_owner/stadium/update_status_screen.dart';
+import 'package:sportifind/screens/stadium_owner/widget/stadium_info_app_bar.dart';
+import 'package:sportifind/util/stadium_service.dart';
+import 'package:sportifind/widgets/button/blue_purple_white_normal_buttton.dart';
+import 'package:sportifind/widgets/delete_dialog/delete_dialog.dart';
 
-class StadiumInfoScreen extends StatefulWidget {
-  final StadiumEntity stadium;
+class StadiumInfoScreen extends StatelessWidget {
+  final StadiumData stadium;
   final String ownerName;
   final bool isStadiumOwnerUser;
   final bool forMatchCreate;
-  final TeamEntity? selectedTeam;
+  final String? selectedTeamId;
+  final String? selectedTeamName;
+  final String? selectedTeamAvatar;
+  final void Function(MatchCard matchcard)? addMatchCard;
 
   const StadiumInfoScreen({
     super.key,
@@ -24,27 +28,11 @@ class StadiumInfoScreen extends StatefulWidget {
     required this.ownerName,
     required this.isStadiumOwnerUser,
     required this.forMatchCreate,
-    required this.selectedTeam,
+    this.addMatchCard,
+    required this.selectedTeamId,
+    required this.selectedTeamName,
+    required this.selectedTeamAvatar,
   });
-
-  @override
-  State<StadiumInfoScreen> createState() => _StadiumInfoScreenState();
-}
-
-class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
-  late StadiumInfoBloc _bloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _bloc = StadiumInfoBloc(context, widget.stadium);
-  }
-
-  @override
-  void dispose() {
-    _bloc.dispose();
-    super.dispose();
-  }
 
   Widget _buildDetailRow(IconData icon, String value) {
     return Padding(
@@ -68,7 +56,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
   }
 
   Widget _buildDetailFieldRow(String type) {
-    return widget.stadium.getNumberOfTypeField(type) > 0
+    return stadium.getNumberOfTypeField(type) > 0
         ? Row(
             children: [
               Expanded(
@@ -76,7 +64,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                   children: [
                     CircleAvatar(
                       backgroundColor: const Color.fromARGB(255, 237, 237, 237),
-                      child: Text(widget.stadium.getNumberOfTypeField(type).toString(),
+                      child: Text(stadium.getNumberOfTypeField(type).toString(),
                           style: SportifindTheme.fieldNumberStadiumInfo),
                     ),
                     const SizedBox(width: 12),
@@ -93,7 +81,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
               SizedBox(
                 width: 130,
                 child: _buildDetailRow(Icons.attach_money,
-                    _bloc.formatPrice(widget.stadium.getPriceOfTypeField(type))),
+                    stadium.formatPrice(stadium.getPriceOfTypeField(type))),
               ),
             ],
           )
@@ -107,8 +95,21 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
         return StadiumDeleteDialog(
           content: 'Do you want to delete this stadium?',
           onDelete: () {
-            Navigator.of(context).pop();
-            _bloc.deleteStadium(); 
+            StadiumService().deleteStadium(stadium.id).then((_) {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const OwnerStadiumScreen(),
+                ),
+              );
+            }).catchError((error) {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Failed to delete stadium: $error"),
+                ),
+              );
+            });
           },
         );
       },
@@ -119,12 +120,12 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: StadiumInfoAppBar(
-        isStadiumOwnerUser: widget.isStadiumOwnerUser,
+        isStadiumOwnerUser: isStadiumOwnerUser,
         onEdit: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => EditStadiumScreen(stadium: widget.stadium),
+              builder: (context) => EditStadiumScreen(stadium: stadium),
             ),
           );
         },
@@ -135,7 +136,7 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => UpdateStatusScreen(stadium: widget.stadium),
+              builder: (context) => UpdateStatusScreen(stadium: stadium),
             ),
           );
         },
@@ -147,22 +148,22 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              StadiumSlidingPhotos(stadium: widget.stadium),
+              StadiumSlidingPhotos(stadium: stadium),
               const SizedBox(height: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildDetailRow(Icons.person_outlined, widget.ownerName),
+                  _buildDetailRow(Icons.person_outlined, ownerName),
                   _buildDetailRow(Icons.place_outlined,
-                      '${widget.stadium.location.address}, ${widget.stadium.location.district}, ${widget.stadium.location.city}'),
-                  _buildDetailRow(Icons.phone_outlined, widget.stadium.phone),
+                      '${stadium.location.address}, ${stadium.location.district}, ${stadium.location.city}'),
+                  _buildDetailRow(Icons.phone_outlined, stadium.phone),
                   _buildDetailFieldRow('5-Player'),
                   _buildDetailFieldRow('7-Player'),
                   _buildDetailFieldRow('11-Player'),
                 ],
               ),
               const SizedBox(height: 16),
-              widget.forMatchCreate == true
+              forMatchCreate == true
                   ? SizedBox(
                       width: double.infinity,
                       child: BluePurpleWhiteNormalButton(
@@ -172,8 +173,11 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => DateSelectScreen(
-                                stadiumData: widget.stadium,
-                                selectedTeam: widget.selectedTeam!,
+                                selectedTeamId: selectedTeamId!,
+                                selectedTeamName: selectedTeamName!,
+                                selectedTeamAvatar: selectedTeamAvatar!,
+                                stadiumData: stadium,
+                                addMatchCard: addMatchCard,
                               ),
                             ),
                           );
