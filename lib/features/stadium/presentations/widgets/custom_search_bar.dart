@@ -33,15 +33,13 @@ class CustomSearchBar extends StatelessWidget {
         ),
         filled: true,
         fillColor: SportifindTheme.whiteSmoke,
-        prefixIcon:
-            const Icon(Icons.search, color: SportifindTheme.smokeScreen),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 18.0),
         suffixIcon: searchController.text.isNotEmpty
             ? IconButton(
-                icon:
-                    const Icon(Icons.clear, color: SportifindTheme.smokeScreen),
+                icon: const Icon(Icons.clear, color: SportifindTheme.smokeScreen),
                 onPressed: searchController.clear,
               )
-            : null,
+            : const Icon(Icons.search, color: SportifindTheme.smokeScreen),
       ),
     );
   }
