@@ -1,4 +1,7 @@
 import 'package:sportifind/core/models/result.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/match/domain/repositories/match_repository.dart';
+import 'package:sportifind/features/profile/domain/repositories/profile_repository.dart';
 import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
 import 'package:sportifind/features/team/data/models/team_model.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
@@ -7,7 +10,14 @@ import 'package:sportifind/features/team/domain/repositories/team_repository.dar
 class TeamRepositoryImpl implements TeamRepository {
   final TeamRemoteDataSource teamRemoteDataSource;
 
-  TeamRepositoryImpl({required this.teamRemoteDataSource});
+  final ProfileRepository profileRepository;
+  final MatchRepository matchRepository;
+
+  TeamRepositoryImpl({
+    required this.teamRemoteDataSource,
+    required this.profileRepository,
+    required this.matchRepository,
+  });
 
   // CREATE TEAM
   // Create a new team
@@ -52,6 +62,15 @@ class TeamRepositoryImpl implements TeamRepository {
   // Delete team
   @override
   Future<Result<void>> deleteTeam(String teamId) async {
+    TeamEntity team = await getTeam(teamId).then((value) => value.data!);
+    for (var player in team.players){
+      player.teamsId.remove(teamId);
+      await profileRepository.updatePlayer(player);
+    }
+    List<MatchEntity> matchesrelated = await matchRepository.getMatchesByTeam(teamId).then((value) => value.data!);
+    for (var match in matchesrelated){
+      matchRepository.deleteMatch(match.id);
+    }
     await teamRemoteDataSource.deleteTeam(teamId);
     return Result.success(null);
   }

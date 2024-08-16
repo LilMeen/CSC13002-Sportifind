@@ -10,10 +10,14 @@ abstract interface class ProfileRemoteDataSource {
   // PLAYER
   Future<PlayerModel> getPlayer(String id);
   Future<List<PlayerModel>> getAllPlayers();
+  Future<void> updatePlayer(PlayerModel player);
+  Future<void> deletePlayer(String playerId);
 
   // STADIUM OWNER
   Future<StadiumOwnerModel> getStadiumOwner(String id);
   Future<List<StadiumOwnerModel>> getAllStadiumOwners();
+  Future<void> updateStadiumOwner(StadiumOwnerModel stadiumOwner);
+  Future<void> deleteStadiumOwner(String stadiumOwnerId);
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -55,6 +59,22 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }
 
 
+  /// UPDATE PLAYER
+  /// Update player
+  @override
+  Future<void> updatePlayer(PlayerModel player) async {
+    await FirebaseFirestore.instance.collection('users').doc(player.id).update(player.toFirestore());
+  }
+
+
+  /// DELETE PLAYER
+  /// Delete player by id
+  @override
+  Future<void> deletePlayer(String playerId) async {
+    await FirebaseFirestore.instance.collection('users').doc(playerId).delete();
+  }
+
+
   /// STADIUM OWNER
   
   /// GET STADIUM OWNER
@@ -80,6 +100,22 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       .where('role', isEqualTo: 'stadium_owner')
       .get();
     return stadiumOwnersDocs.docs.map((stadiumOwnerDoc) => StadiumOwnerModel.fromFirestore(stadiumOwnerDoc)).toList();
+  }
+
+
+  /// UPDATE STADIUM OWNER
+  /// Update stadium owner
+  @override
+  Future<void> updateStadiumOwner(StadiumOwnerModel stadiumOwner) async {
+    await FirebaseFirestore.instance.collection('users').doc(stadiumOwner.id).update(stadiumOwner.toFirestore());
+  }
+
+
+  /// DELETE STADIUM OWNER
+  /// Delete stadium owner by id
+  @override
+  Future<void> deleteStadiumOwner(String stadiumOwnerId) async {
+    await FirebaseFirestore.instance.collection('users').doc(stadiumOwnerId).delete();
   }
 
 }

@@ -3,9 +3,9 @@ import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/core/util/search_util.dart';
-import 'package:sportifind/features/match/data/datasources/match_remote_data_source.dart';
 import 'package:sportifind/features/match/data/models/match_model.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/match/domain/repositories/match_repository.dart';
 import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
 import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
@@ -14,11 +14,12 @@ import 'package:sportifind/features/stadium/domain/repositories/stadium_reposito
 
 class StadiumRepositoryImpl implements StadiumRepository {
   final StadiumRemoteDataSource stadiumRemoteDataSource;
-  final MatchRemoteDataSource matchRemoteDataSource;
+
+  final MatchRepository matchRepository;
 
   StadiumRepositoryImpl({
     required this.stadiumRemoteDataSource,
-    required this.matchRemoteDataSource,
+    required this.matchRepository,
   });
 
   // CREATE STADIUM
@@ -100,9 +101,9 @@ class StadiumRepositoryImpl implements StadiumRepository {
   // Delete a stadium by its id
   @override
   Future<Result<void>> deleteStadium(String id) async {
-    List<MatchModel> relatedMatches = await matchRemoteDataSource.getMatchesByStadium(id);
+    List<MatchEntity> relatedMatches = await matchRepository.getMatchesByStadium(id).then((result) => result.data!);
     for (var match in relatedMatches) {
-      await matchRemoteDataSource.deleteMatch(match.id);
+      await matchRepository.deleteMatch(match.id);
     }
     await stadiumRemoteDataSource.deleteStadium(id);
     return Result.success(null);
