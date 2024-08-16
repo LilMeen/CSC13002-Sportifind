@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/features/match/data/models/match_model.dart';
 
 abstract interface class MatchRemoteDataSource {
+  Future<void> createMatch(MatchModel match);
   Future<MatchModel> getMatch(String id);
   Future<List<MatchModel>> getAllMatches();
   Future<List<MatchModel>> getMatchesByStadium(String stadiumId);
@@ -14,7 +15,17 @@ abstract interface class MatchRemoteDataSource {
 }
 
 class MatchRemoteDataSourceImpl implements MatchRemoteDataSource {
-  // REMOTE DATA SOURCE
+  // CREATE MATCH
+  // Create a new match
+  @override
+  Future<void> createMatch(MatchModel match) async {
+    final matchRef = await FirebaseFirestore.instance.collection('matches').add(
+      match.toFirestore(),
+    );
+    await FirebaseFirestore.instance.collection('teams').doc(match.team1Id).update({
+      'incomingMatch.${matchRef.id}': false,
+    });
+  }
 
   /// GET MATCH
   /// Get match by id

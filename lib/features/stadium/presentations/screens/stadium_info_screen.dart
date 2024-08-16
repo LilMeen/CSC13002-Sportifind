@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/presentation/screens/create_match/date_select_screen.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/edit_stadium_screen.dart';
@@ -13,7 +12,6 @@ class StadiumInfoScreen extends StatefulWidget {
   final bool isStadiumOwnerUser;
   final bool forMatchCreate;
   final TeamEntity? selectedTeam;
-  final void Function(MatchEntity matchcard)? addMatchCard;
 
   const StadiumInfoScreen({
     super.key,
@@ -21,7 +19,6 @@ class StadiumInfoScreen extends StatefulWidget {
     required this.ownerName,
     required this.isStadiumOwnerUser,
     required this.forMatchCreate,
-    this.addMatchCard,
     required this.selectedTeam,
   });
 
@@ -213,7 +210,6 @@ class _StadiumInfoScreenState extends State<StadiumInfoScreen> {
                                   builder: (context) => DateSelectScreen(
                                 stadiumData: widget.stadium,
                                 selectedTeam: widget.selectedTeam!,
-                                addMatchCard: widget.addMatchCard,
                               ),
                             ),
                           );

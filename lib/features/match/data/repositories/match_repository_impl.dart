@@ -20,6 +20,14 @@ class MatchRepositoryImpl implements MatchRepository {
     required this.notificationRemoteDataSource,
   });
 
+  // CREATE MATCH
+  // Create a new match
+  @override
+  Future<Result<void>> createMatch(MatchEntity match) async {
+    await matchRemoteDataSource.createMatch(MatchModel.fromEntity(match));
+    return Result.success(null);
+  }
+
   // GET MATCH
   // Get match by match id
   @override

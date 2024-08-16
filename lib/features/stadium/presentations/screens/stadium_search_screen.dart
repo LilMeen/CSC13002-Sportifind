@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/entities/location.dart';
-import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/core/widgets/city_dropdown.dart';
 import 'package:sportifind/core/widgets/district_dropdown.dart';
@@ -22,7 +21,6 @@ class StadiumSearchScreen extends StatefulWidget {
   final bool isStadiumOwnerUser;
   final bool forMatchCreate;
   final TeamEntity? selectedTeam;
-  final void Function(MatchEntity matchcard)? addMatchCard;
 
 
   const StadiumSearchScreen({
@@ -32,7 +30,6 @@ class StadiumSearchScreen extends StatefulWidget {
     required this.owners,
     this.isStadiumOwnerUser = false,
     this.forMatchCreate = false,
-    this.addMatchCard,
     this.selectedTeam,
   });
 
@@ -157,7 +154,6 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                                   isStadiumOwnerUser: widget.isStadiumOwnerUser,
                                   forMatchCreate: widget.forMatchCreate,
                                   selectedTeam: widget.selectedTeam,
-                                  addMatchCard: widget.addMatchCard,
                                 );
                               },
                             ),
@@ -207,7 +203,6 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                               isStadiumOwnerUser: widget.isStadiumOwnerUser,
                               forMatchCreate: widget.forMatchCreate,
                               selectedTeam: widget.selectedTeam!,
-                              addMatchCard: widget.addMatchCard,
                             ),
                           ),
                         );

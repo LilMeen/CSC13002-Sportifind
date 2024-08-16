@@ -1,17 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
-import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/domain/usecases/get_nearby_match.dart';
 import 'package:sportifind/features/match/domain/usecases/get_personal_match.dart';
 import 'package:sportifind/features/match/presentation/widgets/match_list.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
+import 'package:sportifind/features/profile/domain/usecases/get_current_profile.dart';
 import 'package:sportifind/features/profile/domain/usecases/get_player.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
-import 'package:sportifind/features/stadium/domain/usecases/get_all_stadiums.dart';
 
 // ignore: must_be_immutable
 class MatchCards extends StatefulWidget {
@@ -31,16 +31,13 @@ class MatchCards extends StatefulWidget {
 }
 
 class _MatchCardsState extends State<MatchCards> {
-  PlayerEntity? user;
   bool isLoadingUser = true;
   List<StadiumEntity> searchedStadiums = [];
-  Location? currentLocation;
   String errorMessage = '';
 
   @override
   void initState() {
     super.initState();
-    fetchData();
   }
 
   @override
@@ -52,18 +49,27 @@ class _MatchCardsState extends State<MatchCards> {
   }
 
   Future<void> _loadMatchData() async {
+    final user = await UseCaseProvider
+        .getUseCase<GetPlayer>()
+        .call(
+          GetPlayerParams(
+            id: FirebaseAuth.instance.currentUser!.uid,
+          )
+        )
+        .then((value) => value.data!);
     final personalMatches = await UseCaseProvider
         .getUseCase<GetPersonalMatch>()
         .call(NoParams())
         .then((value) => value.data!);
-    final nearbyMatches = NonFutureUseCaseProvider
+    var nearbyMatches = NonFutureUseCaseProvider
         .getUseCase<GetNearbyMatch>()
         .call(
           GetNearbyMatchParams(
             personalMatches,
-            currentLocation!,
+            user.location,
           )
         ).data!;
+    // nearbyMatches.removeWhere((match) => personalMatches.contains(match));
     setState(() {
       widget.yourMatch = personalMatches;
       widget.nearByMatch = nearbyMatches;
@@ -82,37 +88,6 @@ class _MatchCardsState extends State<MatchCards> {
         child: MatchCardList(matches: matches, status: widget.status,),
       ),
     );
-  }
-
-  Future<void> fetchData() async {
-    try {
-      searchedStadiums = await UseCaseProvider
-        .getUseCase<GetAllStadiums>()
-        .call(NoParams())
-        .then((value) => value.data!);
-      user = await UseCaseProvider
-        .getUseCase<GetPlayer>()
-        .call(GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid))
-        .then((value) => value.data);
-        
-      if (user != null) {
-        currentLocation = user!.location;
-        sortNearbyStadiums();
-      }
-      _loadMatchData();
-    } catch (error) {
-      throw('Failed to load data: $error');
-    }
-  }
-
-  void sortNearbyStadiums() {
-    if (currentLocation != null) {
-      sortByDistance<StadiumEntity>(
-        searchedStadiums,
-        currentLocation!,
-        (stadium) => stadium.location,
-      );
-    }
   }
 
   Future<void> _refreshData() async {

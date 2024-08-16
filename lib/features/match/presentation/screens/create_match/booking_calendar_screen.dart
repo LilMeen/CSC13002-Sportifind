@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/util/booking_util.dart';
-import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/presentation/bloc/booking_bloc.dart';
 import 'package:sportifind/features/match/presentation/widgets/booking_dialog.dart';
 import 'package:sportifind/features/match/presentation/widgets/booking_explanation.dart';
@@ -45,7 +44,6 @@ class BookingCalendarMain extends StatefulWidget {
     required this.selectedTeam,
     required this.selectedDate,
     required this.bookedSlot,
-    required this.addMatchCard,
   });
 
   ///Customizable
@@ -92,7 +90,6 @@ class BookingCalendarMain extends StatefulWidget {
   final DateTime selectedDate;
   // get bookedSlot
   final List<DateTimeRange> bookedSlot;
-  final void Function(MatchEntity matchcard) addMatchCard;
 
   @override
   State<BookingCalendarMain> createState() => _BookingCalendarMainState();
@@ -180,13 +177,11 @@ class _BookingCalendarMainState extends State<BookingCalendarMain> {
                 CommonButton(
                   text: widget.bookingButtonText ?? 'Create Match',
                   onTap: () async {
-                    //controller.toggleUploading();
                     final newBooking =
                         controller.generateNewBookingForUploading(
                             widget.selectedPlayTime);
-                    //controller.toggleUploading();
                     controller.resetSelectedSlot();
-                    controller.addData(newBooking, widget.selectedPlayTime);
+                    controller.createMatch(newBooking, widget.selectedPlayTime);
                     controller.returnToMainScreen(context);
                   },
                   isDisabled: controller.selectedSlot == -1,

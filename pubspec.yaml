@@ -60,6 +60,7 @@ dependencies:
   flutter_svg: ^1.0.0
   toggle_switch: ^2.3.0
   get_it: ^7.7.0
+  darq: ^2.0.0
 
   
 dev_dependencies:
@@ -104,8 +105,13 @@ flutter:
      - 'lib/assets/right_picked.png'
      - 'lib/assets/right_unpicked.png'
      - 'lib/assets/avatar/default_stadium_avatar.jpg'
+     - 'lib/assets/no_data/no_data.png'
      - 'lib/assets/images/match.jpg'
-     - 'lib/assets/images/bg.jpg'
+     - 'lib/assets/images/matchNearby.jpg'
+     - 'lib/assets/images/bg.png'
+     - 'lib/assets/images/loginBackground.jpg'
+     - 'lib/assets/images/matchDetailBackground.png'
+     - 'lib/assets/no_avatar.png'
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

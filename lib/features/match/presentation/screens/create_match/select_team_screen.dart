@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
-import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/domain/usecases/send_request_to_join_match.dart';
 import 'package:sportifind/features/stadium/presentations/screens/player/player_stadium_screen.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
@@ -11,14 +10,12 @@ import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart
 class SelectTeamScreen extends StatefulWidget {
   const SelectTeamScreen({
     super.key,
-    this.addMatchCard,
     this.forMatchCreate = true,
     this.forJoinRequest = false,
     this.hostId,
     this.matchId,
   });
 
-  final void Function(MatchEntity matchcard)? addMatchCard;
   final bool forMatchCreate;
   final bool forJoinRequest;
   final String? hostId;
@@ -109,7 +106,6 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
               builder: (context) => PlayerStadiumScreen(
                 forMatchCreate: true,
                 selectedTeam: team,
-                addMatchCard: widget.addMatchCard,
               ),
             ),
           );
@@ -207,7 +203,27 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
                 child: FittedBox(
                   fit: BoxFit.fitWidth,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (widget.forMatchCreate == true) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PlayerStadiumScreen(
+                              forMatchCreate: true,
+                              selectedTeam: team,
+                            ),
+                          ),
+                        );            
+                      } else if (widget.forJoinRequest == true) {
+                        UseCaseProvider.getUseCase<SendRequestToJoinMatch>().call(
+                          SendRequestToJoinMatchParams(
+                            teamSendId: team.id,
+                            teamReceiveId: widget.hostId!,
+                            matchId: widget.matchId!,
+                          ),
+                        );      
+                      }   
+                    },
                     child: const Text(
                       "Pick this team",
                       style: TextStyle(

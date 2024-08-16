@@ -9,6 +9,14 @@ class TeamRepositoryImpl implements TeamRepository {
 
   TeamRepositoryImpl({required this.teamRemoteDataSource});
 
+  // CREATE TEAM
+  // Create a new team
+  @override
+  Future<Result<void>> createTeam (TeamEntity team) async {
+    await teamRemoteDataSource.createTeam(TeamModel.fromEntity(team));
+    return Result.success(null);
+  }
+
   // GET TEAM BY ID
   // Get team by team id
   @override

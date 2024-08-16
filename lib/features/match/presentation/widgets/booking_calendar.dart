@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sportifind/features/match/domain/entities/booking_entity.dart';
-import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/presentation/bloc/booking_bloc.dart';
 import 'package:sportifind/features/match/presentation/screens/create_match/booking_calendar_screen.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
@@ -17,7 +16,6 @@ class BookingCalendar extends StatelessWidget {
     required this.selectedDate,
     required this.selectedField,
     required this.bookedSlot,
-    required this.addMatchCard,
     this.bookingExplanation,
     this.bookingGridCrossAxisCount,
     this.bookingGridChildAspectRatio,
@@ -131,8 +129,6 @@ class BookingCalendar extends StatelessWidget {
   final DateTime selectedDate;
   final int selectedField;
   final List<DateTimeRange>? bookedSlot;
-  final void Function(MatchEntity matchcard) addMatchCard;
-
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +138,6 @@ class BookingCalendar extends StatelessWidget {
         pauseSlots: pauseSlots,
         selectedStadium: selectedStadium,
         selectedTeam: selectedTeam,
-        addMatchCard: addMatchCard,
         bookedTime: bookedSlot!,
         selectedDate: selectedDate,
         selectedFieldNumberId: selectedField,
@@ -180,7 +175,6 @@ class BookingCalendar extends StatelessWidget {
         selectedTeam: selectedTeam,
         selectedDate: selectedDate,
         bookedSlot: bookedSlot!,
-        addMatchCard: addMatchCard,
       ),
     );
   }

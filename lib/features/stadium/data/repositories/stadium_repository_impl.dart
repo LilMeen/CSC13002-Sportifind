@@ -5,8 +5,10 @@ import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/core/util/search_util.dart';
 import 'package:sportifind/features/match/data/datasources/match_remote_data_source.dart';
 import 'package:sportifind/features/match/data/models/match_model.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
+import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
 
@@ -62,6 +64,28 @@ class StadiumRepositoryImpl implements StadiumRepository {
     return Result.success(stadiumEntities);
   }
 
+
+  // GET FIELD BY NUMBER ID
+  // Get a field by its number id
+  @override
+  Future<Result<FieldEntity>> getFieldByNumberId(StadiumEntity stadium, int numberId) async {
+    final field = await stadiumRemoteDataSource.getFieldByNumberId(stadium.id, numberId);
+    return Result.success(field.toEntity());
+  }
+
+
+  // GET SCHEDULE
+  // Get a field's schedule of the stadium
+  @override
+  Future<Result<List<MatchEntity>>> getFieldScedule(FieldEntity field, String date) async {
+    final matches = await stadiumRemoteDataSource.getFieldScedule(field.id, date);
+    List<MatchEntity> matchEntities = [];
+    for (MatchModel match in matches) {
+      matchEntities.add(await match.toEntity());
+    }
+    return Result.success(matchEntities);
+  }
+  
 
   // UPDATE STADIUM
   // Update a stadium

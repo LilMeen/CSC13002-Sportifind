@@ -54,7 +54,7 @@ class MatchModel {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toFirestore() {
     return {
       'stadium': stadiumId,
       'field': fieldId,
@@ -87,7 +87,7 @@ class MatchModel {
     );
   }
 
-  MatchModel fromEntity(MatchEntity match) {
+  factory MatchModel.fromEntity(MatchEntity match) {
     return MatchModel(
       id: match.id,
       stadiumId: match.stadium.id,

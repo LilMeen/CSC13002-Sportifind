@@ -54,7 +54,7 @@ class TeamModel {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toFirestore() {
     return {
       'avatarImage': avatarImage,
       'captain': captain,
@@ -102,3 +102,4 @@ class TeamModel {
     );
   }
 }
+

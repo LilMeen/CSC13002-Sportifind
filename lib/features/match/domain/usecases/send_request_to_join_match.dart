@@ -5,7 +5,7 @@ import 'package:sportifind/features/match/domain/repositories/match_repository.d
 class SendRequestToJoinMatch implements UseCase<void, SendRequestToJoinMatchParams> {
   final MatchRepository matchRepository;
 
-  SendRequestToJoinMatch({required this.matchRepository});
+  SendRequestToJoinMatch(this.matchRepository);
 
   @override
   Future<Result<void>> call(SendRequestToJoinMatchParams params) async {

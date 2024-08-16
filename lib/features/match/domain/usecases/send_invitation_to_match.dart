@@ -5,7 +5,7 @@ import 'package:sportifind/features/match/domain/repositories/match_repository.d
 class SendInvitationToMatch implements UseCase<void, SendInvitationToMatchParams> {
   final MatchRepository matchRepository;
 
-  SendInvitationToMatch({required this.matchRepository});
+  SendInvitationToMatch(this.matchRepository);
 
   @override
   Future<Result<void>> call(SendInvitationToMatchParams params) async {

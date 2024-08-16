@@ -6,6 +6,8 @@ import 'package:sportifind/features/stadium/domain/usecases/create_stadium.dart'
 import 'package:sportifind/features/stadium/domain/usecases/delete_stadium.dart';
 import 'package:sportifind/features/stadium/domain/usecases/edit_stadium.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_all_stadiums.dart';
+import 'package:sportifind/features/stadium/domain/usecases/get_field_by_numberid.dart';
+import 'package:sportifind/features/stadium/domain/usecases/get_field_schedule.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_nearby_stadium.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_stadiums_by_owner.dart';
 import 'package:sportifind/features/stadium/domain/usecases/search_stadium.dart';
@@ -32,6 +34,8 @@ void initializeStadiumDependencies (){
   sl.registerLazySingleton<DeleteStadium>(() => DeleteStadium(sl()));
   sl.registerLazySingleton<EditStadium>(() => EditStadium(sl()));
   sl.registerLazySingleton<GetAllStadiums>(() => GetAllStadiums(sl()));
+  sl.registerLazySingleton<GetFieldByNumberid>(() => GetFieldByNumberid(sl()));
+  sl.registerLazySingleton<GetFieldSchedule>(() => GetFieldSchedule(sl()));
   sl.registerLazySingleton<GetNearbyStadium>(() => GetNearbyStadium(sl()));
   sl.registerLazySingleton<GetStadiumsByOwner>(() => GetStadiumsByOwner(sl()));
   sl.registerLazySingleton<SearchStadium>(() => SearchStadium(sl()));

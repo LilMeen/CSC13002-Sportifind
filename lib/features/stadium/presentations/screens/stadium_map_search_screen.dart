@@ -120,7 +120,6 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                               isStadiumOwnerUser: widget.isStadiumOwnerUser,
                               forMatchCreate: widget.forMatchCreate,
                               selectedTeam: widget.selectedTeam,
-                              addMatchCard: widget.addMatchCard,
                             ),
                           ),
                         );

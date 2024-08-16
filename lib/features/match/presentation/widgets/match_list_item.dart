@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/util/datetime_util.dart';
@@ -34,7 +36,8 @@ class _MatchListItemState extends State<MatchListItem> {
           ? "https://imgur.com/S1rPE1S.png"
           : widget.matchCard.team2!.avatar.path,
     );
-
+    await precacheImage(team1ImageProvider!, context);
+    await precacheImage(team2ImageProvider!, context);
     setState(() {
       isLoadingUser = false;
     });

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/core/util/datetime_util.dart';
 import 'package:sportifind/core/widgets/date_picker.dart';
 import 'package:sportifind/features/match/domain/entities/booking_entity.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
@@ -8,6 +11,8 @@ import 'package:sportifind/features/match/presentation/widgets/booking_calendar.
 import 'package:sportifind/features/match/presentation/widgets/field_picker.dart';
 import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
+import 'package:sportifind/features/stadium/domain/usecases/get_field_by_numberid.dart';
+import 'package:sportifind/features/stadium/domain/usecases/get_field_schedule.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 class DateSelectScreen extends StatefulWidget {
@@ -15,18 +20,17 @@ class DateSelectScreen extends StatefulWidget {
       {super.key,
       required this.stadiumData,
       required this.selectedTeam,
-      required this.addMatchCard});
+    });
 
   final StadiumEntity stadiumData;
   final TeamEntity selectedTeam;
-  final void Function(MatchEntity matchcard)? addMatchCard;
+
   @override
   State<StatefulWidget> createState() => _DateSelectScreenState();
 }
 
 class _DateSelectScreenState extends State<DateSelectScreen> {
   DateTime? selectedDate;
-  List<MatchEntity> userMatches = [];
   List<DateTimeRange> bookedSlot = [];
   String selectedPlayTime = '1h00';
   String selectedFieldType = '5-Player';
@@ -100,56 +104,46 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     return pauseSlot;
   }
 
-  int convertDurationStringToInt(String durationString) {
-    final parts = durationString.split('h');
-    final hours = int.parse(parts[0]);
-    final minutes =
-        int.parse(parts.length > 1 ? parts[1].substring(0, 2) : '00');
-    return hours * 60 + minutes;
+
+  Future<List<DateTimeRange>> _updateBookingSlot(DateTime pickedDate) async {
+    bookedSlot.clear();
+    final String date = DateFormat.yMd().format(pickedDate);
+    FieldEntity field = await UseCaseProvider.getUseCase<GetFieldByNumberid>()
+      .call(GetFieldByNumberidParams(
+        stadium: widget.stadiumData,
+        numberId: selectedField,
+      ))
+      .then((value) => value.data!);
+    List<MatchEntity> matches = await UseCaseProvider.getUseCase<GetFieldSchedule>()
+      .call(GetFieldScheduleParams(
+        date: date,
+        field: field,
+      ))
+      .then((value) => value.data!);
+    for (var i = 0; i < matches.length; i++) {
+      bookedSlot.add(DateTimeRange(
+          start: convertStringToDateTime(
+              matches[i].start, matches[i].date),
+          end: convertStringToDateTime(
+              matches[i].end, matches[i].date)));
+    }
+    return bookedSlot;
   }
 
   void refreshByDate(DateTime pickedDate) async {
-    /* await matchService.getMatchDate(pickedDate, selectedField,
-        widget.stadiumData.id, userMatches, bookedSlot); */
-
-    ////////////////////////////// REMEMBER TO FIX THIS LINE //////////////////////////////
+    final newBookSlot = await _updateBookingSlot(pickedDate);
     setState(() {
       selectedDate = pickedDate;
+      bookedSlot = newBookSlot;
     });
   }
 
   void refreshByField(int pickedField) async {
-    /* await matchService.getMatchDate(selectedDate!, pickedField,
-        widget.stadiumData.id, userMatches, bookedSlot); */
-
-    ////////////////////////////// REMEMBER TO FIX THIS LINE //////////////////////////////
-    
+    final newBookSlot = await _updateBookingSlot(selectedDate!);
     setState(() {
       selectedField = pickedField;
+      bookedSlot = newBookSlot;
     });
-  }
-
-  int convertTimeStringToMinutes(String timeString) {
-    // Split the string by the colon
-    List<String> parts = timeString.split(':');
-
-    // Parse the hour and minute from the string
-    int hour = int.parse(parts[0]);
-    int minute = int.parse(parts[1]);
-
-    // Convert the hour into minutes and add the minutes
-    int totalMinutes = hour * 60 + minute;
-
-    return totalMinutes;
-  }
-
-  DateTime convertMinutesToDateTime(int totalMinutes, DateTime selectedDate) {
-    // Create a DateTime object by adding the total minutes to the start of the day
-    DateTime dateTime =
-        DateTime(selectedDate.year, selectedDate.month, selectedDate.day)
-            .add(Duration(minutes: totalMinutes));
-
-    return dateTime;
   }
 
   // Function to build duration dropdown button
@@ -247,6 +241,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                 }
                 setState(() {
                   selectedFieldType = value;
+
                 });
               },
             ),
@@ -282,10 +277,9 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               selectedField: selectedField,
               pauseSlots: generatePauseSlot(
                   convertDurationStringToInt(selectedPlayTime)),
-              addMatchCard: widget.addMatchCard!,
-              bookedSlot: bookedSlot,
+              bookedSlot: bookedSlot = bookedSlot,
               wholeDayIsBookedWidget:
-                  const Text('Sorry, for this day everything is booked'),
+                  const Text('Sorry, for this day everything is booked'),          
             ))
         : SizedBox(
             width: double.infinity,

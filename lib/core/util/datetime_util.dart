@@ -33,3 +33,34 @@
 
     return hours + (minutes / 60);
   }
+
+  int convertDurationStringToInt(String durationString) {
+    final parts = durationString.split('h');
+    final hours = int.parse(parts[0]);
+    final minutes =
+        int.parse(parts.length > 1 ? parts[1].substring(0, 2) : '00');
+    return hours * 60 + minutes;
+  }
+
+int convertTimeStringToMinutes(String timeString) {
+  // Split the string by the colon
+  List<String> parts = timeString.split(':');
+
+  // Parse the hour and minute from the string
+  int hour = int.parse(parts[0]);
+  int minute = int.parse(parts[1]);
+
+  // Convert the hour into minutes and add the minutes
+  int totalMinutes = hour * 60 + minute;
+
+  return totalMinutes;
+}
+
+DateTime convertMinutesToDateTime(int totalMinutes, DateTime selectedDate) {
+  // Create a DateTime object by adding the total minutes to the start of the day
+  DateTime dateTime =
+      DateTime(selectedDate.year, selectedDate.month, selectedDate.day)
+          .add(Duration(minutes: totalMinutes));
+
+  return dateTime;
+}

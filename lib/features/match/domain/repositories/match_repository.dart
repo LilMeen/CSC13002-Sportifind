@@ -3,6 +3,7 @@ import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 
 abstract interface class MatchRepository {
+  Future<Result<void>> createMatch(MatchEntity match);
   Future<Result<MatchEntity>> getMatch(String id);
   Future<Result<List<MatchEntity>>> getAllMatches();
   Future<Result<List<MatchEntity>>> getMatchesByStadium(String stadiumId);

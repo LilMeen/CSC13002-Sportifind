@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:sportifind/features/match/data/models/match_model.dart';
 import 'package:sportifind/features/stadium/data/models/field_model.dart';
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
 
@@ -11,6 +12,8 @@ abstract interface class StadiumRemoteDataSource {
   Future<StadiumModel> getStadium(String id);
   Future<List<StadiumModel>> getAllStadiums();
   Future<List<StadiumModel>> getStadiumsByOwner(String ownerId);
+  Future<FieldModel> getFieldByNumberId(String stadiumId, int numberId);
+  Future<List<MatchModel>> getFieldScedule(String fieldId, String date);
   Future<void> updateStadium(StadiumModel stadium);
   Future<void> deleteStadium(String id);
 }
@@ -99,6 +102,38 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
       stadiums.add(StadiumModel.fromFirestore(stadiumDoc, fieldDocs.docs));
     }
     return stadiums;
+  }
+
+
+  /// GET FIELD BY NUMBER ID
+  /// Get a field by its number id
+  @override
+  Future<FieldModel> getFieldByNumberId(String stadiumId, int numberId) async {
+    final fieldDocs = await FirebaseFirestore.instance
+      .collection('stadiums')
+      .doc(stadiumId)
+      .collection('fields')
+      .where('numberId', isEqualTo: numberId)
+      .get();
+    final fieldDoc = fieldDocs.docs.first;
+    return FieldModel.fromFirestore(fieldDoc);
+  }
+
+
+  /// GET SCHEDULE
+  /// Get a field's schedule of the stadium
+  @override
+  Future<List<MatchModel>> getFieldScedule(String fieldId, String date) async {
+    final matchDocs = await FirebaseFirestore.instance
+      .collection('matches')
+      .where('field', isEqualTo: fieldId)
+      .where('date', isEqualTo: date)
+      .get();
+    List<MatchModel> matches = [];
+    for (final matchDoc in matchDocs.docs) {
+      matches.add(MatchModel.fromFirestore(matchDoc));
+    }
+    return matches;
   }
 
 

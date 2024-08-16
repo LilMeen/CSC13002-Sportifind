@@ -3,11 +3,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/features/team/data/models/team_model.dart';
 
 abstract interface class TeamRemoteDataSource {
+  Future<void> createTeam(TeamModel team);
   Future<TeamModel> getTeam(String id);
   Future<List<TeamModel>> getTeamByPlayer(String playerId);
 }
 
 class TeamRemoteDataSourceImpl implements TeamRemoteDataSource {
+  /// CREATE TEAM
+  /// Create a new team
+  @override
+  Future<void> createTeam(TeamModel team) async {
+    await FirebaseFirestore.instance.collection('teams').add(team.toFirestore());
+  }
+
+
   /// GET TEAM
   /// Get a team by its id
   @override
