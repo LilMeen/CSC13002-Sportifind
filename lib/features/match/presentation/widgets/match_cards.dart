@@ -1,15 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/domain/usecases/get_nearby_match.dart';
 import 'package:sportifind/features/match/domain/usecases/get_personal_match.dart';
 import 'package:sportifind/features/match/presentation/widgets/match_list.dart';
-import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
-import 'package:sportifind/features/profile/domain/usecases/get_current_profile.dart';
 import 'package:sportifind/features/profile/domain/usecases/get_player.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 

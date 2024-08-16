@@ -10,7 +10,6 @@ import 'package:sportifind/features/profile/data/datasources/profile_remote_data
 import 'package:sportifind/features/profile/data/models/player_model.dart';
 import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
 import 'package:sportifind/features/team/data/models/team_model.dart';
-import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 class MatchRepositoryImpl implements MatchRepository {
   final MatchRemoteDataSource matchRemoteDataSource;
