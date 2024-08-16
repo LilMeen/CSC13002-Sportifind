@@ -214,6 +214,30 @@ class SportifindTheme {
     color: grey,
   );
 
+  static TextStyle normalTextButton = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: Colors.white,
+  );
+
+  static TextStyle smallTextIconButton = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 12,
+    color: Colors.white,
+  );
+
+  static TextStyle averageTextIconButton = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 16,
+    color: Colors.white,
+  );
+
+  static TextStyle largeTextIconButton = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: Colors.white,
+  );
+
   ////////////new
   static TextStyle bodyTitle = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,

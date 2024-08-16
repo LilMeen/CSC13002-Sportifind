@@ -9,6 +9,7 @@ import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/update_status_screen.dart';
 import 'package:sportifind/screens/stadium_owner/widget/stadium_info_app_bar.dart';
 import 'package:sportifind/util/stadium_service.dart';
+import 'package:sportifind/widgets/button/blue_purple_white_normal_buttton.dart';
 import 'package:sportifind/widgets/delete_dialog/delete_dialog.dart';
 
 class StadiumInfoScreen extends StatelessWidget {
@@ -88,46 +89,45 @@ class StadiumInfoScreen extends StatelessWidget {
   }
 
   void _showDeleteDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      bool isDeleting = false;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        bool isDeleting = false;
 
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return StadiumDeleteDialog(
-            content: 'Do you want to delete this stadium?',
-            isDeleting: isDeleting,
-            onDelete: () {
-              setState(() {
-                isDeleting = true;
-              });
-              StadiumService().deleteStadium(stadium.id).then((_) {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => const OwnerStadiumScreen(),
-                  ),
-                );
-              }).catchError((error) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return StadiumDeleteDialog(
+              content: 'Do you want to delete this stadium?',
+              isDeleting: isDeleting,
+              onDelete: () {
                 setState(() {
-                  isDeleting = false;
+                  isDeleting = true;
                 });
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Failed to delete stadium: $error"),
-                  ),
-                );
-              });
-            },
-          );
-        },
-      );
-    },
-  );
-}
-
+                StadiumService().deleteStadium(stadium.id).then((_) {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const OwnerStadiumScreen(),
+                    ),
+                  );
+                }).catchError((error) {
+                  setState(() {
+                    isDeleting = false;
+                  });
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Failed to delete stadium: $error"),
+                    ),
+                  );
+                });
+              },
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,14 +177,10 @@ class StadiumInfoScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               forMatchCreate == true
-                  ? Container(
+                  ? SizedBox(
                       width: double.infinity,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: SportifindTheme.grey,
-                      ),
-                      child: TextButton(
+                      child: BluePurpleWhiteNormalButton(
+                        text: 'Pick this stadium',
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -199,10 +195,6 @@ class StadiumInfoScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        child: Text(
-                          "Pick this stadium",
-                          style: SportifindTheme.normalText,
-                        ),
                       ),
                     )
                   : const SizedBox(),
