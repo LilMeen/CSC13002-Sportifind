@@ -10,7 +10,7 @@ import 'package:sportifind/screens/stadium_owner/stadium/create_stadium_screen.d
 import 'package:sportifind/search/widgets/custom_search_bar.dart';
 import 'package:sportifind/search/screens/stadium_map_search.dart';
 import 'package:sportifind/util/stadium_service.dart';
-import 'package:sportifind/widgets/button/icon_blue_purple_button.dart';
+import 'package:sportifind/widgets/button/blue_purple_white_icon_normal_button.dart';
 import 'package:sportifind/widgets/card/stadium_card.dart';
 import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';
 import 'package:sportifind/widgets/dropdown_button/district_dropdown.dart';
@@ -229,7 +229,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: BluePurpleWhiteWithIconButton(
+                            child: BluePurpleWhiteIconNormalButton(
                               text: 'Open stadium map',
                               icon: Icons.map_outlined,
                               onPressed: () {

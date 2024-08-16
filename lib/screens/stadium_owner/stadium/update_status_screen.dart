@@ -4,6 +4,7 @@ import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
 import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/widgets/app_bar/feature_app_bar_blue_purple.dart';
+import 'package:sportifind/widgets/button/blue_purple_white_loading_buttton.dart';
 
 class UpdateStatusScreen extends StatefulWidget {
   final StadiumData stadium;
@@ -15,7 +16,6 @@ class UpdateStatusScreen extends StatefulWidget {
 }
 
 class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
-  bool _isUpdating = false;
   final Map<String, String> _fieldsStatus = {};
   final StadiumService _stadiumService = StadiumService();
 
@@ -29,16 +29,8 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
   }
 
   Future<void> _updateStatus() async {
-    setState(() {
-      _isUpdating = true;
-    });
-
     try {
       await _stadiumService.updateFieldStatus(widget.stadium, _fieldsStatus);
-
-      setState(() {
-        _isUpdating = false;
-      });
 
       if (mounted) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -46,9 +38,6 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
         ));
       }
     } catch (e) {
-      setState(() {
-        _isUpdating = false;
-      });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to update status: $e')),
@@ -164,7 +153,7 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
     final bool noFields = num5 == 0 && num7 == 0 && num11 == 0;
 
     return Scaffold(
-      appBar: const FeatureAppBarBluePurple(title:'Update Status'),
+      appBar: const FeatureAppBarBluePurple(title: 'Update Status'),
       backgroundColor: SportifindTheme.backgroundColor,
       body: noFields
           ? Center(
@@ -186,21 +175,11 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
                     _buildFieldSection('7-Player', num7),
                     _buildFieldSection('11-Player', num11),
                     const SizedBox(height: 40),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: ElevatedButton(
-                        onPressed: _isUpdating ? null : _updateStatus,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: SportifindTheme.bluePurple,
-                        ),
-                        child: _isUpdating
-                            ? const SizedBox(
-                                width: 40,
-                                height: 30,
-                                child: CircularProgressIndicator(),
-                              )
-                            : const Text('Update'),
+                    SizedBox(
+                      width: double.infinity,
+                      child: BluePurpleWhiteLoadingButton(
+                        text: 'Update',
+                        onPressed: _updateStatus,
                       ),
                     ),
                   ],

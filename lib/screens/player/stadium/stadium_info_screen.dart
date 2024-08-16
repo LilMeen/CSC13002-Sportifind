@@ -92,37 +92,24 @@ class StadiumInfoScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        bool isDeleting = false;
-
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return StadiumDeleteDialog(
-              content: 'Do you want to delete this stadium?',
-              isDeleting: isDeleting,
-              onDelete: () {
-                setState(() {
-                  isDeleting = true;
-                });
-                StadiumService().deleteStadium(stadium.id).then((_) {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => const OwnerStadiumScreen(),
-                    ),
-                  );
-                }).catchError((error) {
-                  setState(() {
-                    isDeleting = false;
-                  });
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Failed to delete stadium: $error"),
-                    ),
-                  );
-                });
-              },
-            );
+        return StadiumDeleteDialog(
+          content: 'Do you want to delete this stadium?',
+          onDelete: () {
+            StadiumService().deleteStadium(stadium.id).then((_) {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const OwnerStadiumScreen(),
+                ),
+              );
+            }).catchError((error) {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Failed to delete stadium: $error"),
+                ),
+              );
+            });
           },
         );
       },

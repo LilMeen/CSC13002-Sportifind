@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 
-class StadiumDeleteDialog extends StatelessWidget {
+class StadiumDeleteDialog extends StatefulWidget {
   final String content;
-  final bool isDeleting;
   final VoidCallback onDelete;
 
   const StadiumDeleteDialog({
     super.key,
     required this.content,
-    required this.isDeleting,
     required this.onDelete,
   });
+
+  @override
+  State<StadiumDeleteDialog> createState() => _StadiumDeleteDialogState();
+}
+
+class _StadiumDeleteDialogState extends State<StadiumDeleteDialog> {
+  bool isDeleting = false;
+
+  void _handleDelete() {
+    setState(() {
+      isDeleting = true;
+    });
+
+    widget.onDelete();
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +56,7 @@ class StadiumDeleteDialog extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              content,
+              widget.content,
               textAlign: TextAlign.center,
               style: SportifindTheme.contentDeletStadium,
             ),
@@ -52,38 +66,38 @@ class StadiumDeleteDialog extends StatelessWidget {
               children: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();  // Close the dialog
+                    Navigator.of(context).pop(); // Close the dialog
                   },
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8, horizontal: 33),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 33),
                     backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      side: BorderSide(
-                        width: 1,
-                        color: Colors.grey,
-                      )
-                    ),
+                        borderRadius: BorderRadius.circular(30),
+                        side: const BorderSide(
+                          width: 1,
+                          color: Colors.grey,
+                        )),
                   ),
                   child: Text("No", style: SportifindTheme.noDeleteDialog),
                 ),
                 TextButton(
-                  onPressed: isDeleting ? null : onDelete,
+                  onPressed: isDeleting ? null : _handleDelete,
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8, horizontal: 32),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
                     backgroundColor: const Color.fromARGB(255, 255, 126, 126),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
                   child: isDeleting
-                      ? SizedBox(
-                          width: 26,
-                          height: 26,
+                      ? const SizedBox(
+                          width: 25.5,
+                          height: 25.5,
                           child: CircularProgressIndicator(
-                            color: SportifindTheme.bluePurple,
+                            backgroundColor: Color.fromARGB(255, 255, 126, 126),
+                            color: Colors.white,
                           ),
                         )
                       : Text("Yes", style: SportifindTheme.yesDeleteDialog),
