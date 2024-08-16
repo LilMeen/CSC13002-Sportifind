@@ -37,4 +37,22 @@ class TeamRepositoryImpl implements TeamRepository {
     }
     return Result.success(teamEntityList);
   }
+
+
+  // UPDATE TEAM
+  // Update team
+  @override
+  Future<Result<void>> updateTeam(TeamEntity team) async {
+    await teamRemoteDataSource.updateTeam(TeamModel.fromEntity(team));
+    return Result.success(null);
+  }
+
+
+  // DELETE TEAM
+  // Delete team
+  @override
+  Future<Result<void>> deleteTeam(String teamId) async {
+    await teamRemoteDataSource.deleteTeam(teamId);
+    return Result.success(null);
+  }
 }

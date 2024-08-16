@@ -3,6 +3,7 @@ import 'package:sportifind/features/match/data/datasources/match_remote_data_sou
 import 'package:sportifind/features/match/data/repositories/match_repository_impl.dart';
 import 'package:sportifind/features/match/domain/repositories/match_repository.dart';
 import 'package:sportifind/features/match/domain/usecases/create_match.dart';
+import 'package:sportifind/features/match/domain/usecases/delete_match.dart';
 import 'package:sportifind/features/match/domain/usecases/get_nearby_match.dart';
 import 'package:sportifind/features/match/domain/usecases/get_personal_match.dart';
 import 'package:sportifind/features/match/domain/usecases/send_invitation_to_match.dart';
@@ -21,6 +22,7 @@ void initializeMatchDependencies (){
   sl.registerLazySingleton<MatchRepository>(
     () => MatchRepositoryImpl(
       matchRemoteDataSource: sl(), 
+      teamRemoteDataSource: sl(),
       profileRemoteDataSource: sl(),
       notificationRemoteDataSource: sl(),
     )
@@ -30,6 +32,7 @@ void initializeMatchDependencies (){
   sl.registerLazySingleton<CreateMatch>(() => CreateMatch(sl()));
   sl.registerLazySingleton<GetPersonalMatch>(() => GetPersonalMatch(sl()));
   sl.registerLazySingleton<GetNearbyMatch>(() => GetNearbyMatch(sl()));
+  sl.registerLazySingleton<DeleteMatch>(() => DeleteMatch(sl()));
   
   sl.registerLazySingleton<SendRequestToJoinMatch>(() => SendRequestToJoinMatch(sl()));
   sl.registerLazySingleton<SendInvitationToMatch>(() => SendInvitationToMatch(sl()));

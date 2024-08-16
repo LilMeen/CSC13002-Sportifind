@@ -6,6 +6,8 @@ abstract interface class TeamRemoteDataSource {
   Future<void> createTeam(TeamModel team);
   Future<TeamModel> getTeam(String id);
   Future<List<TeamModel>> getTeamByPlayer(String playerId);
+  Future<void> updateTeam(TeamModel team);
+  Future<void> deleteTeam(String teamId);
 }
 
 class TeamRemoteDataSourceImpl implements TeamRemoteDataSource {
@@ -37,5 +39,21 @@ class TeamRemoteDataSourceImpl implements TeamRemoteDataSource {
       teamList.add(TeamModel.fromFirestore(teamDoc));
     }
     return teamList;
+  }
+
+
+  /// UPDATE TEAM
+  /// Update a team
+  @override
+  Future<void> updateTeam(TeamModel team) async {
+    await FirebaseFirestore.instance.collection('teams').doc(team.id).update(team.toFirestore());
+  }
+
+
+  /// DELETE TEAM
+  /// Delete a team
+  @override
+  Future<void> deleteTeam(String teamId) async {
+    await FirebaseFirestore.instance.collection('teams').doc(teamId).delete();
   }
 }

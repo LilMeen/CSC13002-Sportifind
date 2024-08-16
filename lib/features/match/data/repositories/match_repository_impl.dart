@@ -8,14 +8,19 @@ import 'package:sportifind/features/match/domain/repositories/match_repository.d
 import 'package:sportifind/features/notification/data/datasources/notification_remote_data_source.dart';
 import 'package:sportifind/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:sportifind/features/profile/data/models/player_model.dart';
+import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
+import 'package:sportifind/features/team/data/models/team_model.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 class MatchRepositoryImpl implements MatchRepository {
   final MatchRemoteDataSource matchRemoteDataSource;
+  final TeamRemoteDataSource teamRemoteDataSource;
   final ProfileRemoteDataSource profileRemoteDataSource;
   final NotificationRemoteDataSource notificationRemoteDataSource;
 
   MatchRepositoryImpl({
     required this.matchRemoteDataSource,
+    required this.teamRemoteDataSource,
     required this.profileRemoteDataSource,
     required this.notificationRemoteDataSource,
   });
@@ -91,6 +96,31 @@ class MatchRepositoryImpl implements MatchRepository {
     return Result.success(matchEntities);
   }
 
+
+  // UPDATE MATCH
+  // Update match by match id
+  @override
+  Future<Result<void>> updateMatch(MatchEntity match) async {
+    await matchRemoteDataSource.updateMatch(MatchModel.fromEntity(match));
+    return Result.success(null);
+  }
+
+
+  // DELETE MATCH
+  // Delete match by match id
+  @override
+  Future<Result<void>> deleteMatch(String matchId) async {
+    MatchEntity match = await getMatch(matchId).then((value) => value.data!);
+    match.team1.incomingMatch.remove(matchId);
+    teamRemoteDataSource.updateTeam(TeamModel.fromEntity(match.team1));
+    
+    if (match.team2 != null) {
+      match.team2!.incomingMatch.remove(matchId);
+      teamRemoteDataSource.updateTeam(TeamModel.fromEntity(match.team2!));
+    }
+    await matchRemoteDataSource.deleteMatch(matchId);
+    return Result.success(null);
+  }
 
   // SORT NEARBY MATCHES
   // Sort matches by distance to marked location

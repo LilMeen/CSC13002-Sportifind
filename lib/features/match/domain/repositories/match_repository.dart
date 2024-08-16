@@ -9,6 +9,8 @@ abstract interface class MatchRepository {
   Future<Result<List<MatchEntity>>> getMatchesByStadium(String stadiumId);
   Future<Result<List<MatchEntity>>> getMatchesByTeam(String teamId);
   Future<Result<List<MatchEntity>>> getMatchesByPlayer(String playerId);
+  Future<Result<void>> updateMatch(MatchEntity match);
+  Future<Result<void>> deleteMatch(String matchId);
 
   Result<List<MatchEntity>> sortNearbyMatches(List<MatchEntity> matches, Location markedLocation);
 

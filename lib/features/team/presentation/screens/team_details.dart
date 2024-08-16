@@ -29,6 +29,7 @@ class _TeamDetailsState extends State<TeamDetails>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
+    isLoading = false;
   }
 
 

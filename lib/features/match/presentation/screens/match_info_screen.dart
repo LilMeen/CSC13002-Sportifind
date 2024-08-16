@@ -4,7 +4,7 @@ import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/presentation/screens/create_match/select_team_screen.dart';
-import 'package:sportifind/features/match/presentation/screens/invite_team_screen.dart';
+import 'package:sportifind/features/match/presentation/screens/match_info/invite_team_screen.dart';
 import 'package:sportifind/features/team/presentation/screens/team_details.dart';
 import 'package:sportifind/features/team/presentation/widgets/member_card.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
