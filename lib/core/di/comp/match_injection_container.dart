@@ -22,8 +22,8 @@ void initializeMatchDependencies (){
   sl.registerLazySingleton<MatchRepository>(
     () => MatchRepositoryImpl(
       matchRemoteDataSource: sl(), 
-      teamRepository: sl(),
-      profileRepository: sl(),
+      profileRemoteDataSource: sl(),
+      teamRemoteDataSource: sl(),
       notificationRemoteDataSource: sl(),
     )
   );

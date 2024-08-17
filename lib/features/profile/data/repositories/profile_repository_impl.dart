@@ -5,24 +5,24 @@ import 'package:sportifind/features/profile/data/models/stadium_owner_model.dart
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/features/profile/domain/repositories/profile_repository.dart';
-import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
-import 'package:sportifind/features/stadium/domain/repositories/stadium_repository.dart';
-import 'package:sportifind/features/team/domain/entities/team_entity.dart';
-import 'package:sportifind/features/team/domain/repositories/team_repository.dart';
+import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
+import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
+import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
+import 'package:sportifind/features/team/data/models/team_model.dart';
 import 'package:sportifind/features/user/domain/entities/user_entity.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   final ProfileRemoteDataSource profileRemoteDataSource;
 
-  final TeamRepository teamRepository;
-  final StadiumRepository stadiumRepository;
+  final TeamRemoteDataSource teamRemoteDataSource;
+  final StadiumRemoteDataSource stadiumRemoteDataSource;
 
 
   ProfileRepositoryImpl({
     required this.profileRemoteDataSource,
+    required this.teamRemoteDataSource,
+    required this.stadiumRemoteDataSource,
 
-    required this.teamRepository,
-    required this.stadiumRepository,
   });
 
   // GET CURRENT USER
@@ -63,13 +63,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
   // Delete a player by its id
   @override
   Future<Result<void>> deletePlayer(String playerId) async{
-    List<TeamEntity> teamsRelated = await teamRepository.getTeamByPlayer(playerId).then((result) => result.data!);
-    for (var team in teamsRelated) {
-      if (team.captain.id == playerId) {
-        await teamRepository.deleteTeam(team.id);
+    List<TeamModel> teamsRelatedModel = await teamRemoteDataSource.getTeamByPlayer(playerId);
+    for (var team in teamsRelatedModel) {
+      if (team.captain == playerId) {
+        await teamRemoteDataSource.deleteTeam(team.id);
       } else {
-        team.players.removeWhere((player) => player.id == playerId);
-        await teamRepository.updateTeam(team);
+        team.players.removeWhere((player) => player == playerId);
+        await teamRemoteDataSource.updateTeam(team);
       }
     }
     await profileRemoteDataSource.deletePlayer(playerId);
@@ -107,9 +107,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
   // Delete a stadium owner by its id
   @override
   Future<Result<void>> deleteStadiumOwner(String stadiumOwnerId) async{
-    List<StadiumEntity> stadiumsRelated = await stadiumRepository.getStadiumsByOwner(stadiumOwnerId).then((value) => value.data!);
+    List<StadiumModel> stadiumsRelated = await stadiumRemoteDataSource.getStadiumsByOwner(stadiumOwnerId);
     for (var stadium in stadiumsRelated) {
-      await stadiumRepository.deleteStadium(stadium.id);
+      await stadiumRemoteDataSource.deleteStadium(stadium.id);
     }
     await profileRemoteDataSource.deleteStadiumOwner(stadiumOwnerId);
     return Result.success(null);

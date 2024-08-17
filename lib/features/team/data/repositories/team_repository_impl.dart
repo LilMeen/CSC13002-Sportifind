@@ -1,7 +1,8 @@
 import 'package:sportifind/core/models/result.dart';
-import 'package:sportifind/features/match/domain/entities/match_entity.dart';
-import 'package:sportifind/features/match/domain/repositories/match_repository.dart';
-import 'package:sportifind/features/profile/domain/repositories/profile_repository.dart';
+import 'package:sportifind/features/match/data/datasources/match_remote_data_source.dart';
+import 'package:sportifind/features/match/data/models/match_model.dart';
+import 'package:sportifind/features/profile/data/datasources/profile_remote_data_source.dart';
+import 'package:sportifind/features/profile/data/models/player_model.dart';
 import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
 import 'package:sportifind/features/team/data/models/team_model.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
@@ -10,13 +11,13 @@ import 'package:sportifind/features/team/domain/repositories/team_repository.dar
 class TeamRepositoryImpl implements TeamRepository {
   final TeamRemoteDataSource teamRemoteDataSource;
 
-  final ProfileRepository profileRepository;
-  final MatchRepository matchRepository;
+  final ProfileRemoteDataSource profileRemoteDataSource;
+  final MatchRemoteDataSource matchRemoteDataSource;
 
   TeamRepositoryImpl({
     required this.teamRemoteDataSource,
-    required this.profileRepository,
-    required this.matchRepository,
+    required this.profileRemoteDataSource,
+    required this.matchRemoteDataSource,
   });
 
   // CREATE TEAM
@@ -62,14 +63,15 @@ class TeamRepositoryImpl implements TeamRepository {
   // Delete team
   @override
   Future<Result<void>> deleteTeam(String teamId) async {
-    TeamEntity team = await getTeam(teamId).then((value) => value.data!);
+    TeamModel team = await teamRemoteDataSource.getTeam(teamId);
     for (var player in team.players){
-      player.teamsId.remove(teamId);
-      await profileRepository.updatePlayer(player);
+      PlayerModel playerModel = await profileRemoteDataSource.getPlayer(player);
+      playerModel.teams.remove(teamId);
+      await profileRemoteDataSource.updatePlayer(playerModel);
     }
-    List<MatchEntity> matchesrelated = await matchRepository.getMatchesByTeam(teamId).then((value) => value.data!);
+    List<MatchModel> matchesrelated = await matchRemoteDataSource.getMatchesByTeam(teamId);
     for (var match in matchesrelated){
-      matchRepository.deleteMatch(match.id);
+      await matchRemoteDataSource.deleteMatch(match.id);
     }
     await teamRemoteDataSource.deleteTeam(teamId);
     return Result.success(null);

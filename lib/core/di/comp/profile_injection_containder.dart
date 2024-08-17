@@ -22,8 +22,8 @@ void initializeProfileDependencies (){
   sl.registerLazySingleton<ProfileRepository>(
     () => ProfileRepositoryImpl(
       profileRemoteDataSource: sl(),
-      teamRepository: sl(),
-      stadiumRepository: sl(),
+      teamRemoteDataSource: sl(),
+      stadiumRemoteDataSource: sl(),
     )
   );
 

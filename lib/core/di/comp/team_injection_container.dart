@@ -19,9 +19,8 @@ void initializeTeamDependencies (){
   sl.registerLazySingleton<TeamRepository>(
     () => TeamRepositoryImpl(
       teamRemoteDataSource: sl(),
-
-      profileRepository: sl(),
-      matchRepository: sl(),
+      profileRemoteDataSource: sl(),
+      matchRemoteDataSource: sl(),
     )
   );
 

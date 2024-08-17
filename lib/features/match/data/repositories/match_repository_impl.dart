@@ -6,21 +6,22 @@ import 'package:sportifind/features/match/data/models/match_model.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/domain/repositories/match_repository.dart';
 import 'package:sportifind/features/notification/data/datasources/notification_remote_data_source.dart';
+import 'package:sportifind/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
-import 'package:sportifind/features/profile/domain/repositories/profile_repository.dart';
-import 'package:sportifind/features/team/domain/repositories/team_repository.dart';
+import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
+import 'package:sportifind/features/team/data/models/team_model.dart';
 
 class MatchRepositoryImpl implements MatchRepository {
   final MatchRemoteDataSource matchRemoteDataSource;
-
-  final TeamRepository teamRepository;
-  final ProfileRepository profileRepository;
+  final ProfileRemoteDataSource profileRemoteDataSource;
+  final TeamRemoteDataSource teamRemoteDataSource;
   final NotificationRemoteDataSource notificationRemoteDataSource;
+
 
   MatchRepositoryImpl({
     required this.matchRemoteDataSource,
-    required this.teamRepository,
-    required this.profileRepository,
+    required this.profileRemoteDataSource,
+    required this.teamRemoteDataSource,
     required this.notificationRemoteDataSource,
   });
 
@@ -82,7 +83,7 @@ class MatchRepositoryImpl implements MatchRepository {
   // Get all matches by player id
   @override
   Future<Result<List<MatchEntity>>> getMatchesByPlayer(String playerId) async {
-    PlayerEntity currentPlayer = await profileRepository.getPlayer(playerId).then((value) => value.data!);
+    PlayerEntity currentPlayer = await profileRemoteDataSource.getPlayer(playerId).then((value) => value.toEntity());
     List<MatchModel> playerMatchesModel = [];
     for (var teamId in currentPlayer.teamsId) {
       List<MatchModel> teamMatches = await matchRemoteDataSource.getMatchesByTeam(teamId);
@@ -111,11 +112,11 @@ class MatchRepositoryImpl implements MatchRepository {
   Future<Result<void>> deleteMatch(String matchId) async {
     MatchEntity match = await getMatch(matchId).then((value) => value.data!);
     match.team1.incomingMatch.remove(matchId);
-    teamRepository.updateTeam(match.team1);
+    teamRemoteDataSource.updateTeam(TeamModel.fromEntity(match.team1));
     
     if (match.team2 != null) {
       match.team2!.incomingMatch.remove(matchId);
-      teamRepository.updateTeam(match.team2!);
+      teamRemoteDataSource.updateTeam(TeamModel.fromEntity(match.team2!));
     }
     await matchRemoteDataSource.deleteMatch(matchId);
     return Result.success(null);
