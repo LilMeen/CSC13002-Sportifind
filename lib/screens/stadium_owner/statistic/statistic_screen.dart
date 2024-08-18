@@ -25,6 +25,7 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
 
   bool isWeekly = true;
   List<double> weeklySummary = [];
+  late int getTotalMatch;
   late Map<String, List<MatchCard>> matchesMap = {};
   List<double> dailySummary = [];
   List<double> dummySummary = List.filled(31, 0);
@@ -42,6 +43,7 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   double? lastMonthRevenue;
   late Map<DateTime, int> mostDate;
   late Map<DateTime, double> dailyRevenue;
+  DateTime now = DateTime.now();
 
   bool isLoading = true;
 
@@ -55,13 +57,11 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   }
 
   int _getCurrentWeekNumber() {
-    DateTime now = DateTime.now();
     int dayOfYear = int.parse(DateFormat("D").format(now));
     return ((dayOfYear - now.weekday + 10) / 7).floor();
   }
 
   int _getCurrentMonthNumber() {
-    DateTime now = DateTime.now();
     return now.month;
   }
 
@@ -88,6 +88,9 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
     });
 
     weeklySummary = await statisticService.getDataForBarChart(weekNumber);
+    DateTimeRange range = statisticService.getDateTimeRangeFromWeekNumber(weekNumber, now.year);
+    getTotalMatch = await statisticService.getTotalMatch(range);
+    print('Total match: $getTotalMatch');
 
     setState(() {
       isLoading = false;
@@ -100,6 +103,9 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
     });
 
     dailySummary = await statisticService.getDataForLineChart(monthNumber);
+    DateTimeRange range = statisticService.getDateTimeRangeFromMonthNumber(monthNumber, now.year);
+    getTotalMatch = await statisticService.getTotalMatch(range);
+    print('Total match: $getTotalMatch');
 
     setState(() {
       isLoading = false;

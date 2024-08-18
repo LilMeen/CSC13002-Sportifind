@@ -66,13 +66,6 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
     matchStadium =
         await stadiumService.getSpecificStadiumsData(widget.matchInfo.stadium);
 
-    team1ImageProvider = NetworkImage(widget.matchInfo.avatarTeam1);
-    team2ImageProvider = NetworkImage(
-      widget.matchInfo.avatarTeam2.isEmpty
-          ? "https://imgur.com/S1rPE1S.png"
-          : widget.matchInfo.avatarTeam2,
-    );
-
     await precacheImage(team1ImageProvider, context);
     await precacheImage(team2ImageProvider, context);
   }

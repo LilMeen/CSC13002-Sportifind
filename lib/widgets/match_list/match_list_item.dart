@@ -32,13 +32,6 @@ class _MatchListItemState extends State<MatchListItem> {
     teamNames = await teamService.generateTeamNameMap();
     stadiumNames = await stadiumService.generateStadiumMap();
 
-    team1ImageProvider = NetworkImage(widget.matchCard.avatarTeam1);
-    team2ImageProvider = NetworkImage(
-      widget.matchCard.avatarTeam2.isEmpty
-          ? "https://imgur.com/S1rPE1S.png"
-          : widget.matchCard.avatarTeam2,
-    );
-
     await precacheImage(team1ImageProvider!, context);
     await precacheImage(team2ImageProvider!, context);
     setState(() {
