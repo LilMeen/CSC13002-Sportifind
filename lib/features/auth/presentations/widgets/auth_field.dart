@@ -9,7 +9,7 @@ class AuthField extends StatelessWidget {
   final bool obscureText;
   final String? Function(String?) validator;
 
-  const AuthField ({
+  const AuthField({
     super.key,
     required this.label,
     required this.hintText,
@@ -19,44 +19,41 @@ class AuthField extends StatelessWidget {
     required this.validator,
   });
 
-
   @override
   Widget build(BuildContext context) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children:[
-      SizedBox(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 15),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(
           child: Text(
             label,
-            style: SportifindTheme.headline,
+            style: SportifindTheme.textBlack,
           ),
         ),
-      ),
-      const SizedBox(height: 5),
-      TextFormField(
-        textAlign: TextAlign.left,
-        textAlignVertical: TextAlignVertical.bottom,
-        controller: controller,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          hintText: hintText,
-          hintStyle: SportifindTheme.greyTitle,
-          filled: true,
-          fillColor: Colors.white70,
-          prefixIcon: icon,
+        const SizedBox(
+          height: 5,
         ),
-        autocorrect: false,
-        textCapitalization: TextCapitalization.none,
-        validator: validator,
-        obscureText: obscureText,
-      ),
-    ],
-  );
+        TextFormField(
+          textAlign: TextAlign.left,
+          textAlignVertical: TextAlignVertical.center,
+          controller: controller,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            hintText: hintText,
+            hintStyle: SportifindTheme.hintTextSmokeScreen,
+            filled: true,
+            fillColor: Colors.white70,
+          ),
+          autocorrect: false,
+          textCapitalization: TextCapitalization.none,
+          validator: validator,
+          obscureText: obscureText,
+        ),
+      ],
+    );
   }
 }
 //value == null || value.trim().isEmpty || !value.contains('@') 'Invalid email!'

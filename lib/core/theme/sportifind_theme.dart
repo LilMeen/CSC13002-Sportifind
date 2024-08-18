@@ -258,6 +258,18 @@ class SportifindTheme {
     color: Colors.white,
   );
 
+  static TextStyle textBlack = GoogleFonts.lexend(
+    fontWeight: FontWeight.w500,
+    fontSize: 20,
+    color: Colors.black,
+  );
+
+  static TextStyle auth = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 48,
+    color: Colors.white,
+  );
+
   // just adjust yourself to fit
   static TextStyle normalText = GoogleFonts.lexend(
     fontWeight: FontWeight.normal,
@@ -275,11 +287,41 @@ class SportifindTheme {
   //   color: Colors.white,
   // );
 
-  // static TextStyle normalTextSmokeScreen = GoogleFonts.lexend(
-  //   fontWeight: FontWeight.normal,
-  //   fontSize: 20,
-  //   color: smokeScreen,
-  // );
+  static TextStyle hintTextSmokeScreen = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 18,
+    color: smokeScreen,
+  );
+
+  static TextStyle normalTextWhiteW400 = GoogleFonts.inter(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: Colors.white,
+  );
+
+  static TextStyle normalTextBlackW500 = GoogleFonts.inter(
+    fontWeight: FontWeight.w600,
+    fontSize: 20,
+    color: Colors.black,
+  );
+
+  static TextStyle normalTextBlackW400 = GoogleFonts.lexend(
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    color: Colors.black,
+  );
+
+  static TextStyle normalTextBlackW700 = GoogleFonts.lexend(
+    fontWeight: FontWeight.w700,
+    fontSize: 14,
+    color: Colors.black,
+  );
+
+  static TextStyle smallSpan = GoogleFonts.inter(
+      fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white);
+
+  static TextStyle bigSpan = GoogleFonts.inter(
+      fontWeight: FontWeight.w700, fontSize: 16, color: Colors.white);
 
   static TextStyle normalTextBlack = GoogleFonts.lexend(
     fontWeight: FontWeight.normal,

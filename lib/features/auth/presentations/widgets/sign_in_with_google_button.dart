@@ -12,22 +12,22 @@ class SignInWithGoogleButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(30),
           side: const BorderSide(color: Colors.grey),
         ),
-        minimumSize: const Size(double.infinity, 50),
+        minimumSize: const Size(double.infinity, 55),
       ),
       child: Row(
         children: [
           Image.asset(
             'lib/assets/google_logo.png',
-            height: 24,
-            width: 24,
+            height: 30,
+            width: 30,
           ),
           const Spacer(),
-          const Text(
+          Text(
             'Sign in with Google',
-            style: SportifindTheme.title,
+            style: SportifindTheme.normalTextBlackW500,
           ),          
           const Spacer(),
         ],
