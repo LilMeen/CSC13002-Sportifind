@@ -15,8 +15,6 @@ class MatchCard {
       required this.end,
       required this.date,
       required this.playTime,
-      required this.avatarTeam1,
-      required this.avatarTeam2,
       required this.team1,
       required this.team2,
       required this.field,})
@@ -30,9 +28,7 @@ class MatchCard {
         end = snapshot['end'],
         date =snapshot['date'],
         playTime = snapshot['playTime'],
-        avatarTeam1 = snapshot['team1_avatar'],
         team1 = snapshot['team1'],
-        avatarTeam2 = snapshot['team2_avatar'],
         team2 = snapshot['team2'],
         field = snapshot['field'];
 
@@ -43,9 +39,7 @@ class MatchCard {
   final String end;
   final String date;
   final String playTime;
-  final String avatarTeam1;
   String team1;
-  final String avatarTeam2;
   String team2;
   final String field;
 }

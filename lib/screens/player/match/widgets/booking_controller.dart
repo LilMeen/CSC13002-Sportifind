@@ -241,9 +241,7 @@ class BookingController extends ChangeNotifier {
       end: formattedTime.format(bookingDate.bookingEnd),
       date: formatter.format(selectedDate),
       playTime: convertMinutesToDurationString(selectedPlayTime),
-      avatarTeam1: selectedTeamAvatar,
       team1: selectedTeamId,
-      avatarTeam2: "",
       team2: "",
       field: fieldMap[selectedField]!,
     );
@@ -258,8 +256,6 @@ class BookingController extends ChangeNotifier {
       'date': newMatchCard.date,
       'team1': newMatchCard.team1,
       'team2': newMatchCard.team2,
-      'team1_avatar': newMatchCard.avatarTeam1,
-      'team2_avatar': newMatchCard.avatarTeam2,
       'field': fieldMap[selectedField],
     });
 

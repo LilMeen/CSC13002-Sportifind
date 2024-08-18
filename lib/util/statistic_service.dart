@@ -177,6 +177,38 @@ class StatisticService {
     return mostDateMap;
   }
 
+  Future<int> getTotalMatch(DateTimeRange week) async {
+    List<MatchCard> filteredMatch = [];
+    int count = 0;
+
+    final List<StadiumData> ownerStadium =
+        await stadiumService.getOwnerStadiumsData();
+    for (var i = 0; i < ownerStadium.length; ++i) {
+      final List<MatchCard> matchData =
+          await matchService.getMatchDataByStadiumId(ownerStadium[i].id);
+      for (var j = 0; j < matchData.length; ++j) {
+        DateTime matchDate =
+            parseDateTime(matchData[j].date, matchData[j].start);
+        if (matchDate.isBefore(week.end) &&
+            matchDate.isAfter(week.start)) {
+          filteredMatch.add(matchData[j]);
+        }
+      }
+    }
+
+    for (DateTime date = week.start;
+        date.isBefore(week.end) ||
+            date.isAtSameMomentAs(week.end);
+        date = date.add(Duration(days: 1))) {
+      for (var i = 0; i < filteredMatch.length; ++i) {
+        if (date == parseDateTime(filteredMatch[i].date, "00:00")) {
+          count += 1;
+        }
+      }
+    }
+    return count;
+  }
+
   Future<Map<DateTime, double>> getRevenueForEachDate(
       Map<String, List<MatchCard>> matchMap, DateTimeRange week) async {
     Map<DateTime, double> result = {};
@@ -241,7 +273,8 @@ class StatisticService {
     while (startOfWeek.weekday != DateTime.monday) {
       startOfWeek = startOfWeek.subtract(Duration(days: 1));
     }
-    DateTime endOfWeek = startOfWeek.add(Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+    DateTime endOfWeek =
+        startOfWeek.add(Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
 
     return DateTimeRange(start: startOfWeek, end: endOfWeek);
   }
