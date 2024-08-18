@@ -123,32 +123,34 @@ class _MatchListItemState extends State<MatchListItem> {
                 ),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        children: [
-                          Text(
-                            widget.matchCard.team1.name,
-                            textAlign: TextAlign.center,
-                            style: SportifindTheme.matchCardItem,
-                            maxLines: 1, // Maximum number of lines for the text
-                            overflow: TextOverflow
-                                .ellipsis, // Add ellipsis (...) if text overflows
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Center(
-                            child: CircleAvatar(
-                              radius: 35,
-                              backgroundImage: team1ImageProvider,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              widget.matchCard.team1.name,
+                              textAlign: TextAlign.center,
+                              style: SportifindTheme.matchCardItem,
+                              maxLines: 1, // Maximum number of lines for the text
+                              overflow: TextOverflow
+                                  .ellipsis, // Add ellipsis (...) if text overflows
                             ),
-                          ),
-                        ],
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            Center(
+                              child: CircleAvatar(
+                                radius: 35,
+                                backgroundImage: team1ImageProvider,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 30.0),
@@ -157,31 +159,34 @@ class _MatchListItemState extends State<MatchListItem> {
                           style: SportifindTheme.matchVS,
                         ),
                       ),
-                      Column(
-                        children: [
-                          Text(
-                            widget.matchCard.team2 == null ? "Unknown" : widget.matchCard.team2!.name,
-                            style: SportifindTheme.matchCardItem,
-                            maxLines: 1, // Maximum number of lines for the text
-                            overflow: TextOverflow
-                                .ellipsis, // Add ellipsis (...) if text overflows
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Center(
-                            child: CircleAvatar(
-                              radius: 35,
-                              backgroundImage: team2ImageProvider,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              widget.matchCard.team2 == null ? "Unknown" : widget.matchCard.team2!.name,
+                              style: SportifindTheme.matchCardItem,
+                              maxLines: 1, // Maximum number of lines for the text
+                              overflow: TextOverflow
+                                  .ellipsis, // Add ellipsis (...) if text overflows
                             ),
-                          ),
-                        ],
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            Center(
+                              child: CircleAvatar(
+                                radius: 35,
+                                backgroundImage: team2ImageProvider,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 30),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       const Icon(
                         Icons.access_time,
@@ -195,7 +200,7 @@ class _MatchListItemState extends State<MatchListItem> {
                         style: SportifindTheme.matchCardItem,
                       ),
                       const SizedBox(
-                        width: 20,
+                        width: 40,
                       ),
                       const Icon(
                         Icons.hourglass_top_rounded,
@@ -209,7 +214,7 @@ class _MatchListItemState extends State<MatchListItem> {
                         style: SportifindTheme.matchCardItem,
                       ),
                       const SizedBox(
-                        width: 20,
+                        width: 40,
                       ),
                       const Icon(
                         Icons.stadium,

@@ -16,11 +16,11 @@ import 'package:sportifind/features/stadium/domain/usecases/get_field_schedule.d
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 class DateSelectScreen extends StatefulWidget {
-  const DateSelectScreen(
-      {super.key,
-      required this.stadiumData,
-      required this.selectedTeam,
-    });
+  const DateSelectScreen({
+    super.key,
+    required this.stadiumData,
+    required this.selectedTeam,
+  });
 
   final StadiumEntity stadiumData;
   final TeamEntity selectedTeam;
@@ -34,7 +34,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   List<DateTimeRange> bookedSlot = [];
   String selectedPlayTime = '1h00';
   String selectedFieldType = '5-Player';
-  int selectedField = 1;
+  int? selectedField;
   List<String> typeOfField = [];
 
   var playTime = [
@@ -47,6 +47,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   void initState() {
     super.initState();
     getFieldType(widget.stadiumData.fields);
+    selectedField = 1;
   }
 
   List<String> getFieldType(List<FieldEntity> fields) {
@@ -104,34 +105,33 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     return pauseSlot;
   }
 
-
-  Future<List<DateTimeRange>> _updateBookingSlot(DateTime pickedDate) async {
+  Future<List<DateTimeRange>> _updateBookingSlot(
+      DateTime pickedDate, int selectedField) async {
     bookedSlot.clear();
     final String date = DateFormat.yMd().format(pickedDate);
     FieldEntity field = await UseCaseProvider.getUseCase<GetFieldByNumberid>()
-      .call(GetFieldByNumberidParams(
-        stadium: widget.stadiumData,
-        numberId: selectedField,
-      ))
-      .then((value) => value.data!);
-    List<MatchEntity> matches = await UseCaseProvider.getUseCase<GetFieldSchedule>()
-      .call(GetFieldScheduleParams(
-        date: date,
-        field: field,
-      ))
-      .then((value) => value.data!);
+        .call(GetFieldByNumberidParams(
+          stadium: widget.stadiumData,
+          numberId: selectedField,
+        ))
+        .then((value) => value.data!);
+    List<MatchEntity> matches =
+        await UseCaseProvider.getUseCase<GetFieldSchedule>()
+            .call(GetFieldScheduleParams(
+              date: date,
+              field: field,
+            ))
+            .then((value) => value.data!);
     for (var i = 0; i < matches.length; i++) {
       bookedSlot.add(DateTimeRange(
-          start: convertStringToDateTime(
-              matches[i].start, matches[i].date),
-          end: convertStringToDateTime(
-              matches[i].end, matches[i].date)));
+          start: convertStringToDateTime(matches[i].start, matches[i].date),
+          end: convertStringToDateTime(matches[i].end, matches[i].date)));
     }
     return bookedSlot;
   }
 
   void refreshByDate(DateTime pickedDate) async {
-    final newBookSlot = await _updateBookingSlot(pickedDate);
+    final newBookSlot = await _updateBookingSlot(pickedDate, selectedField!);
     setState(() {
       selectedDate = pickedDate;
       bookedSlot = newBookSlot;
@@ -139,11 +139,17 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   }
 
   void refreshByField(int pickedField) async {
-    final newBookSlot = await _updateBookingSlot(selectedDate!);
-    setState(() {
-      selectedField = pickedField;
-      bookedSlot = newBookSlot;
-    });
+    if (selectedDate == null) {
+      setState(() {
+        selectedField = pickedField;
+      });
+    } else {
+      final newBookSlot = await _updateBookingSlot(selectedDate!, pickedField);
+      setState(() {
+        selectedField = pickedField;
+        bookedSlot = newBookSlot;
+      });
+    }
   }
 
   // Function to build duration dropdown button
@@ -241,7 +247,6 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                 }
                 setState(() {
                   selectedFieldType = value;
-
                 });
               },
             ),
@@ -262,9 +267,11 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                 serviceDuration: 30,
                 bookingEnd: convertMinutesToDateTime(
                     convertTimeStringToMinutes(widget.stadiumData.closeTime) -
-                        30, selectedDate!),
+                        30,
+                    selectedDate!),
                 bookingStart: convertMinutesToDateTime(
-                    convertTimeStringToMinutes(widget.stadiumData.openTime), selectedDate!),
+                    convertTimeStringToMinutes(widget.stadiumData.openTime),
+                    selectedDate!),
               ),
               hideBreakTime: false,
               loadingWidget: const Text('Fetching data...'),
@@ -274,12 +281,12 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               selectedStadium: widget.stadiumData,
               selectedTeam: widget.selectedTeam,
               selectedDate: selectedDate!,
-              selectedField: selectedField,
+              selectedField: selectedField!,
               pauseSlots: generatePauseSlot(
                   convertDurationStringToInt(selectedPlayTime)),
               bookedSlot: bookedSlot = bookedSlot,
               wholeDayIsBookedWidget:
-                  const Text('Sorry, for this day everything is booked'),          
+                  const Text('Sorry, for this day everything is booked'),
             ))
         : SizedBox(
             width: double.infinity,
@@ -407,7 +414,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                         func: refreshByField,
                         fields: widget.stadiumData.fields,
                         selectedField: getFirstFields(widget.stadiumData.fields,
-                            selectedFieldType, selectedField),
+                            selectedFieldType, selectedField!),
                         selectedFieldType: selectedFieldType,
                         height: 50,
                         width: 125,

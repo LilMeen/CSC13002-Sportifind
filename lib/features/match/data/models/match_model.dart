@@ -44,7 +44,7 @@ class MatchModel {
       id: matchDoc.id,
       stadiumId: data['stadium'] ?? '',
       fieldId: data['field'] ?? '',
-      stadiumOwnerId: data['stadium_owner'] ?? '',
+      stadiumOwnerId: data['stadiumOwner'] ?? '',
       date: data['date'] ?? '',
       start: data['start'] ?? '',
       end: data['end'] ?? '',
@@ -58,7 +58,7 @@ class MatchModel {
     return {
       'stadium': stadiumId,
       'field': fieldId,
-      'stadium_owner': stadiumOwnerId,
+      'stadiumOwner': stadiumOwnerId,
       'date': date,
       'start': start,
       'end': end,

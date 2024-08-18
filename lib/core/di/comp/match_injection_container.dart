@@ -4,6 +4,7 @@ import 'package:sportifind/features/match/data/repositories/match_repository_imp
 import 'package:sportifind/features/match/domain/repositories/match_repository.dart';
 import 'package:sportifind/features/match/domain/usecases/create_match.dart';
 import 'package:sportifind/features/match/domain/usecases/delete_match.dart';
+import 'package:sportifind/features/match/domain/usecases/get_all_match.dart';
 import 'package:sportifind/features/match/domain/usecases/get_nearby_match.dart';
 import 'package:sportifind/features/match/domain/usecases/get_personal_match.dart';
 import 'package:sportifind/features/match/domain/usecases/send_invitation_to_match.dart';
@@ -30,6 +31,7 @@ void initializeMatchDependencies (){
 
   // Use cases
   sl.registerLazySingleton<CreateMatch>(() => CreateMatch(sl()));
+  sl.registerLazySingleton<GetAllMatch>(() => GetAllMatch(sl()));
   sl.registerLazySingleton<GetPersonalMatch>(() => GetPersonalMatch(sl()));
   sl.registerLazySingleton<GetNearbyMatch>(() => GetNearbyMatch(sl()));
   sl.registerLazySingleton<DeleteMatch>(() => DeleteMatch(sl()));

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/match/domain/usecases/get_all_match.dart';
 import 'package:sportifind/features/match/domain/usecases/get_nearby_match.dart';
 import 'package:sportifind/features/match/domain/usecases/get_personal_match.dart';
 import 'package:sportifind/features/match/presentation/widgets/match_list.dart';
@@ -39,33 +40,41 @@ class _MatchCardsState extends State<MatchCards> {
   @override
   void didUpdateWidget(covariant MatchCards oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.status != widget.status || oldWidget.status == widget.status) {
+    if (oldWidget.status != widget.status ||
+        oldWidget.status == widget.status) {
       _refreshData();
     }
   }
 
   Future<void> _loadMatchData() async {
-    final user = await UseCaseProvider
-        .getUseCase<GetPlayer>()
-        .call(
-          GetPlayerParams(
-            id: FirebaseAuth.instance.currentUser!.uid,
-          )
-        )
+    final user = await UseCaseProvider.getUseCase<GetPlayer>()
+        .call(GetPlayerParams(
+          id: FirebaseAuth.instance.currentUser!.uid,
+        ))
         .then((value) => value.data!);
-    final personalMatches = await UseCaseProvider
-        .getUseCase<GetPersonalMatch>()
+    final allMatches = await UseCaseProvider.getUseCase<GetAllMatch>()
         .call(NoParams())
         .then((value) => value.data!);
-    var nearbyMatches = NonFutureUseCaseProvider
-        .getUseCase<GetNearbyMatch>()
-        .call(
-          GetNearbyMatchParams(
-            personalMatches,
-            user.location,
-          )
-        ).data!;
-    // nearbyMatches.removeWhere((match) => personalMatches.contains(match));
+    final personalMatches = await UseCaseProvider.getUseCase<GetPersonalMatch>()
+        .call(NoParams())
+        .then((value) => value.data!);
+    var nearbyMatches = NonFutureUseCaseProvider.getUseCase<GetNearbyMatch>()
+        .call(GetNearbyMatchParams(
+          allMatches,
+          user.location,
+        ))
+        .data!;
+    
+    for (var i = 0; i < nearbyMatches.length; ++i) {
+      for (var j = 0; j < personalMatches.length; ++j) {
+        if (nearbyMatches[i].id == personalMatches[j].id) {
+          nearbyMatches.removeAt(i);
+          nearbyMatches.length--;
+        }
+      }
+    }
+    print(nearbyMatches);
+
     setState(() {
       widget.yourMatch = personalMatches;
       widget.nearByMatch = nearbyMatches;
@@ -81,7 +90,10 @@ class _MatchCardsState extends State<MatchCards> {
       width: width,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: MatchCardList(matches: matches, status: widget.status,),
+        child: MatchCardList(
+          matches: matches,
+          status: widget.status,
+        ),
       ),
     );
   }
