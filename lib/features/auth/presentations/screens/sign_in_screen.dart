@@ -46,14 +46,17 @@ class _SignInScreenState extends State<SignInScreen> {
           child: SingleChildScrollView(
             reverse: true,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Sign in',
-                    style: SportifindTheme.auth,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      'Sign in',
+                      style: SportifindTheme.auth,
+                    ),
                   ),
                   const SizedBox(
                     height: 30,
@@ -61,10 +64,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      height: 420,
+                      height: 405,
                       color: SportifindTheme.nearlyWhite,
                       child: Padding(
-                        padding: const EdgeInsets.all(15.0),
+                        padding: const EdgeInsets.all(18.0),
                         child: Form(
                           key: formKey,
                           child: Column(
@@ -86,7 +89,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 30),
+                              const SizedBox(height: 25),
                               AuthField(
                                 label: 'Password',
                                 hintText: 'At least 8 words',
@@ -100,7 +103,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 13),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -144,7 +147,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 13),
                               GreenWhiteButton(
                                 text: "Sign in",
                                 onTap: () async {
