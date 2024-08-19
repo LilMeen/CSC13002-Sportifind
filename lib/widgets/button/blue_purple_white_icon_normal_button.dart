@@ -13,8 +13,8 @@ class BluePurpleWhiteIconNormalButton extends StatelessWidget {
     required this.icon,
     required this.text,
     required this.onPressed,
-    this.type = 'round',
-    this.size = 'average'
+    this.type = 'round', // round, round square
+    this.size = 'normal', // large, normal, small
   });
 
   @override
@@ -22,7 +22,14 @@ class BluePurpleWhiteIconNormalButton extends StatelessWidget {
     return TextButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, size: size == 'small' ? 20 : 24),
-      label: Text(text, style: size == 'large' ? SportifindTheme.largeTextIconButton: size == 'small' ? SportifindTheme.smallTextIconButton: SportifindTheme.averageTextIconButton),
+      label: Text(
+        text,
+        style: size == 'large'
+            ? SportifindTheme.largeTextIconButton
+            : size == 'small'
+                ? SportifindTheme.smallTextIconButton
+                : SportifindTheme.normalTextIconButton,
+      ),
       style: TextButton.styleFrom(
         foregroundColor: Colors.white,
         backgroundColor: SportifindTheme.bluePurple,

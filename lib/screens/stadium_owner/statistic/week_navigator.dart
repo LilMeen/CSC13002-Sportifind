@@ -80,7 +80,7 @@ class _WeekNavigatorState extends State<WeekNavigator> {
         ),
         Text(
           "${DateFormat('dd/MM').format(startOfWeek)} - ${DateFormat('dd/MM').format(endOfWeek)}",
-          style: SportifindTheme.titleDeletStadium,
+          style: SportifindTheme.titleDeleteStadium,
         ),
         IconButton(
           icon: Icon(Icons.arrow_forward),

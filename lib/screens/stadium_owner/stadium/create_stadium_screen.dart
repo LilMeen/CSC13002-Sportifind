@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/location_info.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
-import 'package:sportifind/screens/stadium_owner/widget/stadium_form.dart';
+import 'package:sportifind/widgets/form/custom_form.dart';
 import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/util/stadium_service.dart';
 import 'package:sportifind/util/image_service.dart';
-import 'package:sportifind/widgets/location_button/current_location_button.dart';
+import 'package:sportifind/widgets/app_bar/feature_app_bar_blue_purple.dart';
+import 'package:sportifind/widgets/button/blue_purple_white_icon_loading_button.dart';
+import 'package:sportifind/widgets/button/blue_purple_white_loading_buttton.dart';
 
 class CreateStadiumScreen extends StatefulWidget {
   const CreateStadiumScreen({super.key});
@@ -44,11 +47,9 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
   final List<File> _images = [];
 
   bool _isLoading = true;
-  bool _isSubmitting = false;
-  bool _isLoadingLocation = false;
   String _errorMessage = '';
 
-  final StadiumForm stadiumForm = StadiumForm();
+  final CustomForm stadiumForm = CustomForm();
   final StadiumService stadService = StadiumService();
   final LocationService locService = LocationService();
   final ImageService imgService = ImageService();
@@ -85,9 +86,6 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
   Future<void> _creatingStadium() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isSubmitting = true;
-    });
     try {
       await stadService.stadiumProcessing(
         action: 'create',
@@ -101,10 +99,6 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
         avatar: _avatar,
         images: _images,
       );
-
-      setState(() {
-        _isSubmitting = false;
-      });
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -113,11 +107,9 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
       }
     } finally {
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const OwnerStadiumScreen(),
-        )
-      );
+        ));
       }
     }
   }
@@ -131,52 +123,7 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
     });
   }
 
-  Future<void> _addImageInList(bool fromCamera) async {
-    final pickedFile = await imgService.pickImage(fromCamera);
-    setState(() {
-      if (pickedFile != null) {
-        _images.add(pickedFile);
-      }
-    });
-  }
-
-  Future<void> _replaceImageInList(bool fromCamera, int index) async {
-    final pickedFile = await imgService.pickImage(fromCamera);
-    setState(() {
-      if (pickedFile != null) {
-        _images[index] = pickedFile;
-      }
-    });
-  }
-
-  void _deleteImageInList(int index) {
-    setState(() {
-      _images.removeAt(index);
-    });
-  }
-
-  Widget _buildAvatarSection() {
-    return stadiumForm.buildAvatarSection(
-      _avatar,
-      () => imgService.showImagePickerOptions(context, _pickImageForAvatar),
-    );
-  }
-
-  Widget _buildImageList() {
-    return stadiumForm.buildImageList(
-      _avatar,
-      _images,
-      () => imgService.showImagePickerOptions(context, _addImageInList),
-      _replaceImageInList,
-      _deleteImageInList,
-    );
-  }
-
   Future<void> _getCurrentLocation() async {
-    setState(() {
-      _isLoadingLocation = true;
-    });
-
     try {
       LocationInfo? currentLoc = await locService.getCurrentLocation();
       if (currentLoc != null) {
@@ -212,10 +159,6 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error.toString())),
       );
-    } finally {
-      setState(() {
-        _isLoadingLocation = false;
-      });
     }
   }
 
@@ -230,118 +173,123 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Upload Stadium')),
+      appBar: const FeatureAppBarBluePurple(title: 'Create stadium'),
+      backgroundColor: SportifindTheme.backgroundColor,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-              _buildAvatarSection(),
-              const SizedBox(height: 25),
-              _buildImageList(),
-              const SizedBox(height: 25),
               stadiumForm.buildTextFormField(
-                _controllers['stadiumName']!,
-                'Stadium name',
-                'Please enter the stadium name',
+                controller: _controllers['stadiumName']!,
+                label: 'Name',
+                hint: 'Enter your stadium\'s name',
+                validatorText: 'Please enter the stadium name',
               ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    children: [
-                      stadiumForm.buildCityDropdown(
-                        _selectedCity,
-                        _citiesNameAndId,
-                        (value) {
-                          setState(() {
-                            _selectedCity = value ?? '';
-                            _selectedDistrict = '';
-                          });
-                        },
-                      ),
-                      stadiumForm.buildDistrictDropdown(
-                        _selectedCity,
-                        _selectedDistrict,
-                        _citiesNameAndId,
-                        (value) {
-                          setState(() {
-                            _selectedDistrict = value ?? '';
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  CurrentLocationButton(
-                    width: 56,
-                    height: 56,
-                    isLoading: _isLoadingLocation,
-                    onPressed: _getCurrentLocation,
-                  ),
-                ],
+              stadiumForm.buildCityDropdown(
+                selectedCity: _selectedCity,
+                citiesNameAndId: _citiesNameAndId,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedCity = value ?? '';
+                    _selectedDistrict = '';
+                  });
+                },
               ),
-              const SizedBox(height: 8),
+              stadiumForm.buildDistrictDropdown(
+                selectedCity: _selectedCity,
+                selectedDistrict: _selectedDistrict,
+                citiesNameAndId: _citiesNameAndId,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedDistrict = value ?? '';
+                  });
+                },
+              ),
               stadiumForm.buildTextFormField(
-                _controllers['stadiumAddress']!,
-                'Address',
-                'Please enter the address',
+                controller: _controllers['stadiumAddress']!,
+                label: 'Address details',
+                hint: 'Enter your stadium\'s address',
+                validatorText: 'Please enter the address',
+                spacingSection: 8.0,
               ),
-              const SizedBox(height: 10),
+              Center(
+                child: Text('or', style: SportifindTheme.normalTextSmokeScreen),
+              ),
+              const SizedBox(height: 8.0),
+              SizedBox(
+                width: double.infinity,
+                child: BluePurpleWhiteIconLoadingButton(
+                  icon: Icons.place,
+                  text: 'Set curent location as address',
+                  onPressed: _getCurrentLocation,
+                  type: 'round square',
+                  size: 'small',
+                ),
+              ),
+              const SizedBox(height: 16.0),
               stadiumForm.buildTextFormField(
-                _controllers['phoneNumber']!,
-                'Phone number',
-                'Please enter the phone number',
-                TextInputType.phone,
+                controller: _controllers['phoneNumber']!,
+                label: 'Phone number',
+                hint: 'Example: 0848182847',
+                validatorText: 'Please enter the phone number',
+                inputType: TextInputType.phone,
               ),
-              const SizedBox(height: 10),
               stadiumForm.buildTimeFields(
-                _controllers['openTime']!,
-                _controllers['closeTime']!,
-                context,
-                () => setState(() {}),
+                openTimeController: _controllers['openTime']!,
+                closeTimeController: _controllers['closeTime']!,
+                context: context,
+                setState: () => setState(() {}),
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 8.0),
+              stadiumForm.buildAvatarSection(
+                buttonText: 'Add avatar image',
+                avatar: _avatar,
+                onPressed: () => imgService.showImagePickerOptions(
+                    context, _pickImageForAvatar),
+              ),
+              const SizedBox(height: 16.0),
+              Center(
+                child: Text(
+                  'Fields information',
+                  style: SportifindTheme.sportifindFeatureAppBarBluePurpleSmall,
+                ),
+              ),
+              const SizedBox(height: 12.0),
               stadiumForm.buildFieldRow(
-                '5-Player',
-                _num5PlayerFields,
-                _controllers['pricePerHour5']!,
-                () => setState(() => _num5PlayerFields++),
-                () => setState(() {
+                fieldType: '5-Player',
+                fieldCount: _num5PlayerFields,
+                priceController: _controllers['pricePerHour5']!,
+                onIncrement: () => setState(() => _num5PlayerFields++),
+                onDecrement: () => setState(() {
                   if (_num5PlayerFields > 0) _num5PlayerFields--;
                 }),
               ),
               stadiumForm.buildFieldRow(
-                '7-Player',
-                _num7PlayerFields,
-                _controllers['pricePerHour7']!,
-                () => setState(() => _num7PlayerFields++),
-                () => setState(() {
+                fieldType: '7-Player',
+                fieldCount: _num7PlayerFields,
+                priceController: _controllers['pricePerHour7']!,
+                onIncrement: () => setState(() => _num7PlayerFields++),
+                onDecrement: () => setState(() {
                   if (_num7PlayerFields > 0) _num7PlayerFields--;
                 }),
               ),
               stadiumForm.buildFieldRow(
-                '11-Player',
-                _num11PlayerFields,
-                _controllers['pricePerHour11']!,
-                () => setState(() => _num11PlayerFields++),
-                () => setState(() {
+                fieldType: '11-Player',
+                fieldCount: _num11PlayerFields,
+                priceController: _controllers['pricePerHour11']!,
+                onIncrement: () => setState(() => _num11PlayerFields++),
+                onDecrement: () => setState(() {
                   if (_num11PlayerFields > 0) _num11PlayerFields--;
                 }),
               ),
-              const SizedBox(height: 30),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: ElevatedButton(
-                  onPressed: _isSubmitting ? null : _creatingStadium,
-                  child: _isSubmitting
-                      ? const SizedBox(
-                          width: 40,
-                          height: 30,
-                          child: CircularProgressIndicator(),
-                        )
-                      : const Text('Submit'),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: BluePurpleWhiteLoadingButton(
+                  text: 'Create',
+                  onPressed: _creatingStadium,
                 ),
               ),
             ],

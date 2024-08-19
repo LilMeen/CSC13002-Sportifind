@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:diacritic/diacritic.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/widgets/dropdown_button/general_dropdown.dart';
-import 'package:sportifind/widgets/dropdown_button/stadium_form_dropdown.dart';
+import 'package:sportifind/widgets/dropdown_button/custom_form_dropdown.dart';
 
 class DistrictDropdown extends StatefulWidget {
   final String selectedCity;
@@ -97,8 +97,8 @@ class _DistrictDropdownState extends State<DistrictDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.type == 'stadium form') {
-      return StadiumFormDropdown(
+    if (widget.type == 'custom form') {
+      return CustomFormDropdown(
         selectedValue: widget.selectedDistrict,
         hint: 'Select district',
         items: _districts,

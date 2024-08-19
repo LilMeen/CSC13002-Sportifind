@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/widgets/form/custom_form.dart';
 
-class StadiumFormDropdown extends StatefulWidget {
+class CustomFormDropdown extends StatefulWidget {
   final String selectedValue;
   final String hint;
   final List<String> items;
@@ -10,7 +11,7 @@ class StadiumFormDropdown extends StatefulWidget {
   final bool isLoading;
   final String validatorText;
 
-  const StadiumFormDropdown({
+  const CustomFormDropdown({
     super.key,
     required this.selectedValue,
     required this.hint,
@@ -22,25 +23,27 @@ class StadiumFormDropdown extends StatefulWidget {
   });
 
   @override
-  State<StadiumFormDropdown> createState() => _StadiumFormDropdownState();
+  State<CustomFormDropdown> createState() => _CustomFormDropdownState();
 }
 
-class _StadiumFormDropdownState extends State<StadiumFormDropdown> {
+class _CustomFormDropdownState extends State<CustomFormDropdown> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return DropdownButtonFormField<String>(
           value: widget.selectedValue.isEmpty ? null : widget.selectedValue,
-          hint: Text(widget.hint),
-          style: SportifindTheme.normalTextSmokeScreen,
+          hint: Text(
+            widget.hint,
+            style: SportifindTheme.smallTextSmokeScreen,
+          ),
           isExpanded: true,
           items: [
                 DropdownMenuItem(
                   value: '',
                   child: Text(
                     widget.hint,
-                    style: SportifindTheme.normalTextSmokeScreen,
+                    style: SportifindTheme.smallTextSmokeScreen,
                   ),
                 )
               ] +
@@ -52,7 +55,7 @@ class _StadiumFormDropdownState extends State<StadiumFormDropdown> {
                         48, // Adjust this value as needed
                     child: Text(
                       item,
-                      style: SportifindTheme.normalTextSmokeScreen,
+                      style: SportifindTheme.smallTextBlack,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
                     ),
@@ -60,18 +63,25 @@ class _StadiumFormDropdownState extends State<StadiumFormDropdown> {
                 );
               }).toList(),
           onChanged: widget.isLoading ? null : widget.onChanged,
+          decoration: CustomForm().customInputDecoration('').copyWith(
+            filled: true,
+            fillColor: widget.fillColor,
+          ),
           dropdownColor: widget.fillColor,
           icon: widget.isLoading
               ? SizedBox(
-                width: 15,
-                height: 15,
-                child: CircularProgressIndicator(
-                    backgroundColor: SportifindTheme.blueOyster,
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    backgroundColor: SportifindTheme.bluePurple,
                     color: Colors.white,
                   ),
-              )
-              : const Icon(Icons.arrow_drop_down),
-          iconSize: 20,
+                )
+              : const Icon(
+                  Icons.expand_more,
+                  color: Colors.black,
+                ),
+          iconSize: 24,
           validator: (value) {
         if (value == null || value.isEmpty) {
           return widget.validatorText;

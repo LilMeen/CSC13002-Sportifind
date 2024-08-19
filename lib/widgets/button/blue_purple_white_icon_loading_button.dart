@@ -13,8 +13,8 @@ class BluePurpleWhiteIconLoadingButton extends StatefulWidget {
     required this.icon,
     required this.text,
     required this.onPressed,
-    this.type = 'round',
-    this.size = 'average',
+    this.type = 'round', // round, round square
+    this.size = 'normal', // large, normal, small
   });
 
   @override
@@ -43,15 +43,15 @@ class _BluePurpleWhiteIconLoadingButtonState extends State<BluePurpleWhiteIconLo
     return TextButton.icon(
       onPressed: isLoading ? null : _handlePressed,
       icon: isLoading
-          ? const SizedBox(
-              height: 24.0,
-              width: 24.0,
-              child: CircularProgressIndicator(
+          ? SizedBox(
+              height: widget.size == 'small' ? 20 : 24,
+              width: widget.size == 'small' ? 20 : 24,
+              child: const CircularProgressIndicator(
                 color: Colors.white,
                 strokeWidth: 3.0,
               ),
             )
-          : Icon(widget.icon, size: widget.size == 'small' ? 18 : 24),
+          : Icon(widget.icon, size: widget.size == 'small' ? 20 : 24),
       label: isLoading
           ? const SizedBox.shrink()
           : Text(
@@ -60,7 +60,7 @@ class _BluePurpleWhiteIconLoadingButtonState extends State<BluePurpleWhiteIconLo
                   ? SportifindTheme.largeTextIconButton
                   : widget.size == 'small'
                       ? SportifindTheme.smallTextIconButton
-                      : SportifindTheme.averageTextIconButton,
+                      : SportifindTheme.normalTextIconButton,
             ),
       style: TextButton.styleFrom(
         foregroundColor: Colors.white,

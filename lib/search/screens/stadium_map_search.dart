@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/models/match_card.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/models/owner_data.dart';
 import 'package:sportifind/models/stadium_data.dart';
@@ -246,13 +247,15 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
             child: Card(
               child: ListTile(
                 leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
+                  icon: Icon(Icons.arrow_back_ios, color: SportifindTheme.bluePurple),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 title: TextField(
                   controller: searchController,
-                  decoration: const InputDecoration(
+                  style: SportifindTheme.normalText,
+                  decoration: InputDecoration(
                     hintText: 'Search for a place, location',
+                    hintStyle: SportifindTheme.normalText.copyWith(color: Colors.grey),
                     border: InputBorder.none,
                   ),
                   onSubmitted: _searchLocation,
