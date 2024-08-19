@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/screens/player/profile/widgets/rating.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'dart:math';
-
-import 'package:sportifind/features/profile/presentation/widgets/rating.dart';
 
 class Hexagon extends StatelessWidget {
   const Hexagon({super.key, required this.screenWidth, required this.ratings});
@@ -14,35 +13,41 @@ class Hexagon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: diameter + 100,
-        height: diameter + 100,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Labels(radius: radius, diameter: diameter, ratings: ratings),
-            CustomPaint(painter: HexagonPainter(radius: radius), size: Size(diameter, diameter)),
-            ClipPath(
-              clipper: HexagonClipper(
-                radius: radius,
-                multipliers: ratings.map((rating) => rating.value / 100.0).toList(),
-              ),
-              child: SizedBox(
-                width: diameter,
-                height: diameter,
-                child: ColoredBox(
-                  color: SportifindTheme.bluePurple.withOpacity(0.7),
-                ),
-              ),
+    print(ratings);
+    // return SingleChildScrollView(
+    //   child: Center(
+    //     child: Container(
+    //       width: diameter,
+    //       height: diameter,
+          return Center(
+            child: SizedBox(
+              width: diameter + 100,
+              height: diameter + 100,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Labels(radius: radius, diameter: diameter, ratings: ratings),
+                  CustomPaint(painter: HexagonPainter(radius: radius), size: Size(diameter, diameter)),
+                  ClipPath(
+                    clipper: HexagonClipper(
+                      radius: radius,
+                      multipliers: ratings.map((rating) => rating.value / 100.0).toList(),
+                    ),
+                    child: SizedBox(
+                      width: diameter,
+                      height: diameter,
+                      child: ColoredBox(
+                        color: SportifindTheme.bluePurple.withOpacity(0.7),
+                      ),
+                    ),
+                  ),
+                ],
+                     //   ),
+                    //   ),
+                    // ),
+                  ),
             ),
-          ],
-                //   ),
-              //   ),
-              // ),
-            ),
-      ),
-    );
+          );
   }
 }
 
@@ -80,11 +85,11 @@ class HexagonClipper extends CustomClipper<Path> {
 
 class Labels extends StatelessWidget {
   const Labels({
-    super.key,
+    Key? key,
     required this.radius,
     required this.diameter,
     required this.ratings,
-  });
+  }) : super(key: key);
 
   final double radius, diameter;
   final List<Rating> ratings;

@@ -15,9 +15,6 @@ class ViewReportList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Report List', style: SportifindTheme.featureTitleBlack),
-      ),
       body: SafeArea(
         child: GestureDetector(
           onTap: () {

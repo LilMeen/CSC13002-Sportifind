@@ -315,6 +315,18 @@ class SportifindTheme {
     color: Colors.red,
   );
 
+  static TextStyle dropdownGreenBold = GoogleFonts.lexend(
+    fontWeight: FontWeight.w900,
+    fontSize: 14,
+    color: Colors.green,
+  );
+
+  static TextStyle warningText = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    color: Colors.red,
+  );
+
   static TextStyle statusDropdown = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
     fontSize: 14,

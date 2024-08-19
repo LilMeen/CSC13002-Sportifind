@@ -132,6 +132,9 @@ flutter:
      - 'lib/assets/images/loginBackground.jpg'
      - 'lib/assets/images/matchDetailBackground.png'
      - 'lib/assets/no_avatar.png'
+     - 'lib/assets/left.png'
+     - 'lib/assets/right.png'
+     - 'lib/assets/sole.png'
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
