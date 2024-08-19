@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:sportifind/models/sportifind_theme.dart'; 
 
 class StatisticCard extends StatelessWidget {
   final IconData icon;
@@ -6,6 +8,7 @@ class StatisticCard extends StatelessWidget {
   final String title;
   final double percentage;
   final VoidCallback onPressed;
+  final bool isText;
 
   const StatisticCard({
     Key? key,
@@ -14,36 +17,61 @@ class StatisticCard extends StatelessWidget {
     required this.title,
     required this.percentage,
     required this.onPressed,
+    required this.isText,
   }) : super(key: key);
 
   Text trend() {
-    if (percentage > 100) {
-      return Text(
-        '+${percentage.toStringAsFixed(2)}%',
-        style: const TextStyle(
-          fontSize: 12,
-          color: Colors.green,
-          fontWeight: FontWeight.bold,
-        ),
-      );
-    } else if (percentage < 100) {
-      return Text(
-        '-${percentage.toStringAsFixed(2)}%',
-        style: const TextStyle(
-          fontSize: 12,
-          color: Colors.red,
-          fontWeight: FontWeight.bold,
-        ),
-      );
+    if (isText) {
+      try {
+        DateTime date = DateFormat('dd/MM').parse(value);
+        String dayOfWeek = DateFormat('E').format(date); 
+        return Text(
+          dayOfWeek,
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.green,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      } catch (e) {
+        return const Text(
+          'Invalid date',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      }
     } else {
-      return Text(
-        '0%',
-        style: const TextStyle(
-          fontSize: 12,
-          color: Colors.grey,
-          fontWeight: FontWeight.bold,
-        ),
-      );
+      if (percentage >= 100) {
+        return Text(
+          '+${percentage.toStringAsFixed(2)}%',
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.green,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      } else if (percentage < 100) {
+        return Text(
+          '-${percentage.toStringAsFixed(2)}%',
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      } else {
+        return const Text(
+          '0%',
+          style: TextStyle(
+            fontSize: 12,
+            color: Color.fromARGB(255, 218, 218, 218),
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      }
     }
   }
 
@@ -56,8 +84,9 @@ class StatisticCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
           side: const BorderSide(
-              color: Color.fromARGB(255, 214, 214, 214),
-              width: 1), // Stroke border
+            color: SportifindTheme.backgroundColor,
+            width: 1,
+          ),
         ),
         child: Container(
           padding: const EdgeInsets.all(18),
@@ -70,26 +99,19 @@ class StatisticCard extends StatelessWidget {
                 backgroundColor: const Color.fromARGB(255, 218, 218, 218),
                 child: Icon(
                   icon,
-                  color: Colors.blue,
+                  color: SportifindTheme.bluePurple,
                   size: 24,
                 ),
-              ),
-              const SizedBox(height: 3),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              ), 
+              const SizedBox(height: 2),          
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+                style: SportifindTheme.normalTextBlack
               ),
-              const SizedBox(height: 5),
+              Text(
+                value,
+                style: SportifindTheme.normalTextBlack.copyWith(fontSize: 20),
+              ),
               trend(),
             ],
           ),

@@ -332,42 +332,4 @@ class StatisticService {
 
     return revenue;
   }
-
-  // ignore: non_constant_identifier_names
-  // Future<List<double>> GetWeeklyRevenue(DateTimeRange week) async {
-  //   List<MatchCard> totalMatch = [];
-  //   List<MatchCard> filteredMatch = [];
-  //   double revenue = 0;
-
-  //   final List<StadiumData> ownerStadium =
-  //       await stadiumService.getOwnerStadiumsData();
-  //   for (var i = 0; i < ownerStadium.length; ++i) {
-  //     final List<MatchCard> matchData =
-  //         await matchService.getMatchDataByStadiumId(ownerStadium[i].id);
-  //     totalMatch.addAll(matchData);
-  //   }
-
-  //   for (var i = 0; i < totalMatch.length; ++i) {
-  //     DateTime matchDate = dateFormat.parse(totalMatch[i].date);
-  //     if (matchDate.isBefore(week.end) && matchDate.isAfter(week.start)) {
-  //       filteredMatch.add(totalMatch[i]);
-  //     }
-  //   }
-  //   List<double> weeklyRevenue = List<double>.filled(7, 0);
-
-  //   for (var i = 0; i < filteredMatch.length; ++i) {
-  //     for (var j = 0; j < ownerStadium.length; ++j) {
-  //       if (ownerStadium[j].id == filteredMatch[i].stadium &&
-  //           ownerStadium[j]
-  //               .fields
-  //               .any((element) => element == filteredMatch[i].field)) {
-  //         DateTime matchDate = dateFormat.parse(filteredMatch[i].date);
-  //         int weekday = matchDate.weekday - 1; // Monday = 0, Sunday = 6
-  //         weeklyRevenue[weekday] += filteredMatch[i].revenue;
-  //       }
-  //     }
-  //   }
-
-  //   return weeklyRevenue;
-  // }
 }

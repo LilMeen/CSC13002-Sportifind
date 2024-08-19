@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class Dropdown extends StatefulWidget {
   final String type;
@@ -81,7 +82,7 @@ class _DropdownState extends State<Dropdown> {
                     vertical: 0.0, horizontal: widget.horizontalPadding),
                 child: Text(
                   item,
-                  style: const TextStyle(color: Colors.black),
+                  style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
                   overflow: TextOverflow.ellipsis,
                 ),
               );
@@ -102,10 +103,7 @@ class _DropdownState extends State<Dropdown> {
             padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),
             child: Text(
               hint,
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 16,
-              ),
+              style: SportifindTheme.titleChart.copyWith(fontSize: 14),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -135,7 +133,7 @@ class _DropdownState extends State<Dropdown> {
       value: item,
       child: Text(
         item,
-        style: const TextStyle(color: Colors.black),
+        style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
         overflow: TextOverflow.ellipsis,
       ),
     );

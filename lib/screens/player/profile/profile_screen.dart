@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/widgets/setting.dart';
 import 'package:sportifind/widgets/information_menu.dart';
 import 'package:sportifind/screens/player/profile/widgets/hexagon_stat.dart';
@@ -33,7 +34,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<DocumentSnapshot> getUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      return await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      return await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
     } else {
       throw Exception('User not logged in');
     }
@@ -47,10 +51,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return data['weight'] ?? '';
       case "foot":
         if (data['preferred_foot'] != null) {
-        return data['preferred_foot'] ? 'Right' : 'Left';
-      } else {
-        return '';
-      }
+          return data['preferred_foot'] ? 'Right footed' : 'Left footed';
+        } else {
+          return '';
+        }
       case "address":
         return data['address'] ?? '';
       case "city":
@@ -74,8 +78,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case "stat":
         if (data['stat'] is List) {
           final statsList = data['stat'] as List;
-          final ratings = statsList.map((stat) => Rating.fromMap(stat)).toList();
-          return ratings.map((rating) => '${rating.name}: ${rating.value}').join(', ');
+          final ratings =
+              statsList.map((stat) => Rating.fromMap(stat)).toList();
+          return ratings
+              .map((rating) => '${rating.name}: ${rating.value}')
+              .join(', ');
         } else {
           return '';
         }
@@ -103,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Container(
         width: 10,
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 24, 24, 207),
+          color: SportifindTheme.bluePurple,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
@@ -125,52 +132,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _pickImageFromGallery() async {
     final picture = await ImagePicker().pickImage(source: ImageSource.gallery);
 
-    if(picture != null){
+    if (picture != null) {
       image = picture;
       setState(() {});
     }
 
     final userId = FirebaseAuth.instance.currentUser!.uid;
     final storageRef = FirebaseStorage.instance
-      .ref()
-      .child('users')
-      .child(userId)
-      .child('avatar')
-      .child('avatar.jpg');
+        .ref()
+        .child('users')
+        .child(userId)
+        .child('avatar')
+        .child('avatar.jpg');
 
     uploadTask = storageRef.putFile(File(image!.path));
 
     await storageRef.putFile(File(image!.path));
-        final imageUrl = await storageRef.getDownloadURL();
+    final imageUrl = await storageRef.getDownloadURL();
 
-        firestore.collection('users').doc(userId).update({
-          'avatarImage': imageUrl,
-        });
-
+    firestore.collection('users').doc(userId).update({
+      'avatarImage': imageUrl,
+    });
   }
 
   Future<void> _pickImageFromCamera() async {
     final picture = await ImagePicker().pickImage(source: ImageSource.camera);
 
-    if(picture != null){
+    if (picture != null) {
       image = picture;
       setState(() {});
     }
 
     final userId = FirebaseAuth.instance.currentUser!.uid;
     final storageRef = FirebaseStorage.instance
-      .ref()
-      .child('users')
-      .child(userId)
-      .child('avatar')
-      .child('avatar.jpg');
+        .ref()
+        .child('users')
+        .child(userId)
+        .child('avatar')
+        .child('avatar.jpg');
 
     uploadTask = storageRef.putFile(File(image!.path));
     await storageRef.putFile(File(image!.path));
-        final imageUrl = await storageRef.getDownloadURL();
+    final imageUrl = await storageRef.getDownloadURL();
 
-        firestore.collection('users').doc(userId).update({
-          'avatarImage': imageUrl,
+    firestore.collection('users').doc(userId).update({
+      'avatarImage': imageUrl,
     });
   }
 
@@ -184,15 +190,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: <Widget>[
                 ListTile(
                   leading: const Icon(Icons.photo_library),
-                  title: const Text('Pick from Gallery'),
+                  title: Text('Pick from Gallery', style: SportifindTheme.normalTextBlack),
                   onTap: () {
                     Navigator.of(context).pop();
                     _pickImageFromGallery();
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: const Text('Take a Picture'),
+                  leading: const Icon(Icons.camera_alt_rounded),
+                  title: Text('Take a Picture', style: SportifindTheme.normalTextBlack),
                   onTap: () {
                     Navigator.of(context).pop();
                     _pickImageFromCamera();
@@ -221,9 +227,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text('Profile', style: SportifindTheme.sportifindFeatureAppBarBluePurple),
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: SportifindTheme.backgroundColor,
         elevation: 0.0,
         actions: [
           IconButton(
@@ -235,11 +241,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               );
             },
-            icon: const Icon(Icons.settings, color: Color.fromARGB(255, 24, 24, 207)),
+            icon: Icon(Icons.settings, color: SportifindTheme.bluePurple),
           ),
         ],
       ),
-      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: SportifindTheme.backgroundColor,
       body: FutureBuilder<DocumentSnapshot>(
         future: userDataFuture,
         builder: (context, snapshot) {
@@ -249,118 +255,144 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (snapshot.hasError) {
             return const Center(child: Text('Error fetching data'));
           }
-          if (!snapshot.hasData || snapshot.data == null || snapshot.data!.data() == null) {
+          if (!snapshot.hasData ||
+              snapshot.data == null ||
+              snapshot.data!.data() == null) {
             return const Center(child: Text('No data available'));
           }
 
-          Map<String, dynamic> userData = snapshot.data!.data() as Map<String, dynamic>;
+          Map<String, dynamic> userData =
+              snapshot.data!.data() as Map<String, dynamic>;
 
           print(userData['avatarImage']);
 
           List<Rating> ratings = defaultRatings;
           if (userData['stats'] is Map) {
+            //print(userData['stats']);
             final statsMap = userData['stats'] as Map<String, dynamic>;
-            ratings = statsMap.entries.map((entry) => Rating.fromMapEntry(entry)).toList();
+            ratings = statsMap.entries
+                .map((entry) => Rating.fromMapEntry(entry))
+                .toList();
           }
 
-          print(userData['dob']);
-
-          return 
-              Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    children: [
-                      Stack(
-                        children: [
-                          SizedBox(
-                            width: 120,
-                            height: 120,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(100),
-                              child: userData['avatarImage'] == null ? const Image(image: AssetImage("lib/assets/google_logo.png"),)
-                              : Image.network(userData['avatarImage']),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              width: 35,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Color.fromARGB(255, 24, 24, 207),
-                              ),
-                              child: IconButton(
-                                onPressed: () => _showImagePickerOptions(context),
-                                icon: const Icon(
-                                  Icons.camera_alt_outlined,
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      Text(userData['name'] ?? 'Name', style: const TextStyle(color: Colors.black)),
-                      Text(userData['email'] ?? 'Email', style: const TextStyle(color: Colors.black)),
-                      const SizedBox(height: 15),
-                      SizedBox(
-                        width: 120,
-                        height: 40,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const EditInformationScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text('Edit', style: TextStyle(color: Colors.white)),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 24, 24, 207),
-                            side: BorderSide.none,
-                            shape: const StadiumBorder(),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          height: 120,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: userData['avatarImage'] == null
+                                ? const Image(
+                                    image: AssetImage(
+                                        "lib/assets/google_logo.png"),
+                                  )
+                                : Image.network(userData['avatarImage']),
                           ),
                         ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 35,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              color: SportifindTheme.bluePurple,
+                            ),
+                            child: IconButton(
+                              onPressed: () => _showImagePickerOptions(context),
+                              icon: const Icon(
+                                Icons.camera_alt_outlined,
+                                color: SportifindTheme.backgroundColor,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    Text(userData['name'] ?? 'Name',
+                        style: SportifindTheme.normalTextBlack
+                            .copyWith(fontSize: 16)),
+                    Text(userData['email'] ?? 'Email',
+                        style: SportifindTheme.normalTextBlack
+                            .copyWith(fontSize: 16)),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: 120,
+                      height: 40,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const EditInformationScreen(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: SportifindTheme.bluePurple,
+                          side: BorderSide.none,
+                          shape: const StadiumBorder(),
+                        ),
+                        child: Text('Edit',
+                            style: SportifindTheme.normalTextWhite
+                                .copyWith(fontSize: 16)),
                       ),
-                      const SizedBox(height: 5),
-                      InformationMenu(textContent: userData['phone'] ?? "Phone", icon: "phone"),
-                      InformationMenu(textContent: userData['address'] ?? "address", icon: "location"),
-                      InformationMenu(textContent: userData['dob'] ?? "Date of Birth", icon: "dob"),
-                      Divider(),
-                      InformationMenu(textContent: userData['height'] ?? "height", icon: "height"),
-                      InformationMenu(textContent: userData['weight'] ?? "weight", icon: "weight"),
-                      InformationMenu(textContent: userData['foot'] ?? "foot", icon: "foot"),
-                      const SizedBox(height: 15),
-                      Row(
-                        children: [
-                          buildSection("height", userData),
-                          const SizedBox(width: 15),
-                          buildSection("weight", userData),
-                          const SizedBox(width: 15),
-                          buildSection("foot", userData),
-                        ],
-                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    InformationMenu(
+                        textContent: userData['phone'] ?? "Phone",
+                        icon: "phone"),
+                    InformationMenu(
+                        textContent: (userData['district'] != null &&
+                                userData['city'] != null)
+                            ? "District ${userData['district']}, ${userData['city']} City"
+                            : "Address",
+                        icon: "location"),
+                    InformationMenu(
+                        textContent: userData['dob'] ?? "Date of Birth",
+                        icon: "dob"),
+                    const Divider(),
+                    InformationMenu(
+                        textContent: userData['height'] != null
+                            ? "${userData['height']} m"
+                            : "No information",
+                        icon: "height"),
+                    InformationMenu(
+                        textContent: userData['weight'] != null
+                            ? "${userData['weight']} kg"
+                            : "No information",
+                        icon: "weight"),
+                    InformationMenu(
+  textContent: userData['preferred_foot'] == true
+      ? "Right footed"
+      : userData['preferred_foot'] == false
+          ? "Left footed"
+          : "No information",
+  icon: "foot",
+),
                     const SizedBox(height: 50),
                     Hexagon(
-                        screenWidth: MediaQuery.of(context).size.width,
-                        ratings: ratings,
-                      ),  
-                    ],
-                  ),
-                  
+                      screenWidth: MediaQuery.of(context).size.width,
+                      ratings: ratings,
+                    ),
+                  ],
                 ),
               ),
-            );    
+            ),
+          );
         },
-        
       ),
     );
   }

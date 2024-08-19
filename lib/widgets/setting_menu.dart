@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class SettingMenu extends StatelessWidget {
   const SettingMenu({
@@ -40,15 +41,14 @@ class SettingMenu extends StatelessWidget {
         ),
         child: Icon(
           getIcon(title),
-          color: Color.fromARGB(255, 24, 24, 207),
+          color: SportifindTheme.bluePurple,
           size: title == 'Help & Feedback' ? 22 : 24,
         ),
       ),
       title: Text(
         title,
-        style: TextStyle(
-          color: textColor,
-        ),
+        style: 
+          SportifindTheme.normalTextBlack.copyWith(fontSize : 16)
       ),
       trailing: endIcon
           ? Container(

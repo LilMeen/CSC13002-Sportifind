@@ -14,18 +14,19 @@ import 'package:toggle_switch/toggle_switch.dart';
 
 class StadiumStatisticScreen extends StatefulWidget {
   const StadiumStatisticScreen({super.key});
-  
+
   @override
   _StadiumStatisticScreenState createState() => _StadiumStatisticScreenState();
 }
 
 int status = 0;
+
 class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   StatisticService statisticService = StatisticService();
 
   bool isWeekly = true;
   List<double> weeklySummary = [];
-  late int getTotalMatch;
+
   late Map<String, List<MatchCard>> matchesMap = {};
   List<double> dailySummary = [];
   List<double> dummySummary = List.filled(31, 0);
@@ -41,7 +42,10 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   double? lastWeekRevenue;
   double? monthlyRevenue;
   double? lastMonthRevenue;
+  late int getTotalMatch;
+  late double getTotalRevenue;
   late Map<DateTime, int> mostDate;
+
   late Map<DateTime, double> dailyRevenue;
   DateTime now = DateTime.now();
 
@@ -88,9 +92,25 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
     });
 
     weeklySummary = await statisticService.getDataForBarChart(weekNumber);
-    DateTimeRange range = statisticService.getDateTimeRangeFromWeekNumber(weekNumber, now.year);
+    DateTimeRange range =
+        statisticService.getDateTimeRangeFromWeekNumber(weekNumber, now.year);
     getTotalMatch = await statisticService.getTotalMatch(range);
+    //mostDate = (await statisticService.getTotalMatch(range)) as Map<DateTime, int>;
+    matchesMap = await statisticService.getFilteredMatch(range);
+    stadiumRevenue = await statisticService.getRevenueOfEachStadium(matchesMap);
+    getTotalRevenue = statisticService.getTotalRevenue(stadiumRevenue);
+
+    weeklyRevenue = getTotalRevenue;
+
+    DateTimeRange lastRange =
+        statisticService.getDateTimeRangeFromWeekNumber(weekNumber - 1, now.year);
+    getTotalMatch = await statisticService.getTotalMatch(lastRange);
+    matchesMap = await statisticService.getFilteredMatch(lastRange);
+    stadiumRevenue = await statisticService.getRevenueOfEachStadium(matchesMap);
+    monthlyRevenue = statisticService.getTotalRevenue(stadiumRevenue);
+
     print('Total match: $getTotalMatch');
+    //print(mostDate);
 
     setState(() {
       isLoading = false;
@@ -103,8 +123,10 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
     });
 
     dailySummary = await statisticService.getDataForLineChart(monthNumber);
-    DateTimeRange range = statisticService.getDateTimeRangeFromMonthNumber(monthNumber, now.year);
+    DateTimeRange range =
+        statisticService.getDateTimeRangeFromMonthNumber(monthNumber, now.year);
     getTotalMatch = await statisticService.getTotalMatch(range);
+    //mostDate = (await statisticService.getTotalMatch(range)) as Map<DateTime, int>;
     print('Total match: $getTotalMatch');
 
     setState(() {
@@ -142,6 +164,11 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
               onToggle: (index) {
                 setState(() {
                   status = index!;
+                  if (status == 0) {
+                    _loadWeeklySummary(selectedWeek);
+                  } else {
+                    _loadMonthlySummary(selectedMonth);
+                  }
                 });
               },
             ),
@@ -156,11 +183,101 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
                     onMonthNumberChanged: _handleMonthNumberChanged,
                   ),
             const SizedBox(height: 10),
+            status == 0
+                ? BarChartComponent(weeklySummary: weeklySummary)
+                : LineChartCard(dailySummary: dailySummary),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child:
+                  Text('Statistic', style: SportifindTheme.smallTextBluePurple),
+            ),
             isLoading
-              ? CircularProgressIndicator()
-              : status == 0
-                  ? BarChartComponent(weeklySummary: weeklySummary)
-                  : LineChartCard(dailySummary: dailySummary),
+                ? const CircularProgressIndicator()
+                : Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Spacer(),
+                          StatisticCard(
+                            icon: Icons.attach_money,
+                            value: getTotalRevenue.toString(),
+                            title: 'Revenue',
+                            percentage: status == 0
+                                ? ((weeklyRevenue ?? 0) -
+                                        (lastWeekRevenue ?? 0)) /
+                                    (lastWeekRevenue ?? 1) *
+                                    100
+                                : ((monthlyRevenue ?? 0) -
+                                        (lastMonthRevenue ?? 0)) /
+                                    (lastMonthRevenue ?? 1) *
+                                    100,
+                            isText: false,
+                            onPressed: () {
+                              // Implement any action you want on tap
+                            },
+                          ),
+                          const Spacer(),
+                          StatisticCard(
+                            icon: Icons.attach_money,
+                            value: getTotalMatch.toString(),
+                            title: 'Matches',
+                            percentage: status == 0
+                                ? ((weeklyRevenue ?? 0) -
+                                        (lastWeekRevenue ?? 0)) /
+                                    (lastWeekRevenue ?? 1) *
+                                    100
+                                : ((monthlyRevenue ?? 0) -
+                                        (lastMonthRevenue ?? 0)) /
+                                    (lastMonthRevenue ?? 1) *
+                                    100,
+                            isText: false,
+                            onPressed: () {
+                              // Implement any action you want on tap
+                            },
+                          ),
+                          const Spacer(),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const Spacer(),
+                          StatisticCard(
+                            icon: Icons.attach_money,
+                            value: status == 0
+                                ? weeklyRevenue.toString()
+                                : monthlyRevenue.toString(),
+                            title: 'Hot Day',
+                            percentage: status == 0
+                                ? ((weeklyRevenue ?? 0) -
+                                        (lastWeekRevenue ?? 0)) /
+                                    (lastWeekRevenue ?? 1) *
+                                    100
+                                : ((monthlyRevenue ?? 0) -
+                                        (lastMonthRevenue ?? 0)) /
+                                    (lastMonthRevenue ?? 1) *
+                                    100,
+                            isText: false,
+                            onPressed: () {
+
+                            },
+                          ),
+                          const Spacer(),
+                          StatisticCard(
+                            icon: Icons.attach_money,
+                            value: getTotalMatch.toString(),
+                            title: 'Hot Stadium',
+                            percentage: 0,
+                            isText: true,
+                            onPressed: () {
+
+                            },
+                          ),
+                          const Spacer(),
+                        ],
+                      ),
+                    ],
+                  ),
             const SizedBox(height: 10),
           ],
         ),

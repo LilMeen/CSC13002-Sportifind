@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/screens/admin/view_report_list.dart';
 import 'dart:async';
 import 'package:sportifind/search/widgets/custom_search_bar.dart';
 import 'package:sportifind/util/search_service.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -17,6 +20,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   String _searchText = '';
   final List<String> _searchFields = ['email', 'role'];
   SearchService srchService = SearchService();
+  int status = 0; // 0 for Users, 1 for Reports
 
   @override
   void initState() {
@@ -44,21 +48,21 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Are you sure?'),
-        content: const Text('Do you want to delete this user?'),
+        title: Text('Are you sure?', style: SportifindTheme.normalTextBlack),
+        content: Text('Do you want to delete this user?', style: SportifindTheme.normalTextBlack),
         actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
             },
-            child: const Text('No'),
+            child: Text('No'),
           ),
           TextButton(
             onPressed: () {
               FirebaseFirestore.instance.collection('users').doc(user.id).delete();
               Navigator.of(ctx).pop();
             },
-            child: const Text('Yes'),
+            child: Text('Yes', style: SportifindTheme.normalTextBlack),
           ),
         ],
       ),
@@ -67,17 +71,40 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User list'),
+        title: Text('Admin Home', style: SportifindTheme.sportifindFeatureAppBarBluePurple),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CustomSearchBar(
-              searchController: _searchController,
-              hintText: 'Search by email or role',
-            ),
+          child: Column(
+            children: [
+              ToggleSwitch(
+                minWidth: width - 80,
+                minHeight: 50.0,
+                initialLabelIndex: status,
+                cornerRadius: 8.0,
+                activeFgColor: Colors.white,
+                inactiveBgColor: Colors.grey.shade300,
+                inactiveFgColor: Colors.black,
+                totalSwitches: 2,
+                radiusStyle: true,
+                labels: const ['Users', 'Reports'],
+                fontSize: 20.0,
+                activeBgColors: const [
+                  [Color.fromARGB(255, 76, 59, 207)],
+                  [Color.fromARGB(255, 76, 59, 207)],
+                ],
+                animate: true,
+                curve: Curves.fastOutSlowIn,
+                onToggle: (index) {
+                  setState(() {
+                    status = index!;
+                  });
+                },
+              ),
+            ],
           ),
         ),
       ),
@@ -86,52 +113,73 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           onTap: () {
             FocusScope.of(context).unfocus();
           },
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('users').snapshots(),
-            builder: (ctx, userSnapshot) {
-              if (userSnapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (userSnapshot.hasError) {
-                return AlertDialog(
-                    title: const Text('Delete complete'),
-                    content: const Text('Press continue to return to the user list.'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminHomeScreen()));
-                        },
-                        child: const Text('Continue'),
-                      ),
-                    ],
-                  ); 
-                //return Center(child: Text('Error: ${userSnapshot.error}'));
-              } 
-              final users = userSnapshot.data!.docs;
-              final filteredUsers = srchService.searchAndSortDocuments(users, _searchText, _searchFields);
-
-              if (filteredUsers.isEmpty) {
-                return const Center(child: Text('No users found.'));
-              }
-
-              return ListView.builder(
-                itemCount: filteredUsers.length,
-                itemBuilder: (ctx, index) => Card(
-                  elevation: 4,
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: ListTile(
-                    leading: const CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      child: Icon(Icons.person),
-                    ),
-                    title: Text(filteredUsers[index]['email']),
-                    subtitle: Text(filteredUsers[index]['role']),
-                    onTap: () => _showDeleteDialog(ctx, filteredUsers[index]),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0), // Add padding to avoid overflow
+            child: Column(
+              children: [
+                if (status == 0) ...[
+                  CustomSearchBar(
+                    searchController: _searchController,
+                    hintText: 'Search by email or role',
                   ),
+                  const SizedBox(height: 8.0), // Space between search bar and list
+                ],
+                Expanded(
+                  child: status == 0
+                      ? StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance.collection('users').snapshots(),
+                          builder: (ctx, userSnapshot) {
+                            if (userSnapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+                            if (userSnapshot.hasError) {
+                              return AlertDialog(
+                                title: Text('Error', style: SportifindTheme.normalTextBlack),
+                                content: Text('An error occurred while fetching data.', style: SportifindTheme.normalTextBlack),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('OK', style: SportifindTheme.normalTextBlack),
+                                  ),
+                                ],
+                              );
+                            }
+
+                            final users = userSnapshot.data!.docs;
+                            final filteredUsers = srchService.searchAndSortDocuments(
+                              users,
+                              _searchText,
+                              _searchFields,
+                            );
+
+                            if (filteredUsers.isEmpty) {
+                              return Center(child: Text('No users found.', style: SportifindTheme.normalTextBlack));
+                            }
+
+                            return ListView.builder(
+                              itemCount: filteredUsers.length,
+                              itemBuilder: (ctx, index) => Card(
+                                elevation: 4,
+                                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                child: ListTile(
+                                  leading: const CircleAvatar(
+                                    backgroundColor: Colors.transparent,
+                                    child: Icon(Icons.person),
+                                  ),
+                                  title: Text(filteredUsers[index]['email'], style: SportifindTheme.normalTextBlack),
+                                  subtitle: Text(filteredUsers[index]['role'], style: SportifindTheme.normalTextBlack),
+                                  onTap: () => _showDeleteDialog(ctx, filteredUsers[index]),
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : ViewReportList(), // Show ViewReportsList when Reports is selected
                 ),
-              );
-            },
+              ],
+            ),
           ),
         ),
       ),

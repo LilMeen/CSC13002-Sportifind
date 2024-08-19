@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class InformationMenu extends StatelessWidget {
   const InformationMenu(
@@ -6,22 +7,49 @@ class InformationMenu extends StatelessWidget {
   final String textContent;
   final String icon;
 
-  IconData getIcon(String icon) {
+  Widget getIcon(String icon) {
     switch (icon) {
       case "phone":
-        return Icons.local_phone;
+        return Icon(
+          Icons.local_phone,
+          color: SportifindTheme.bluePurple,
+        );
       case "location":
-        return Icons.location_on_rounded;
+        return Icon(
+          Icons.location_on_rounded,
+          color: SportifindTheme.bluePurple,
+        );
       case "dob":
-        return Icons.calendar_month_rounded;
+        return Icon(
+          Icons.calendar_month_rounded,
+          color: SportifindTheme.bluePurple,
+        );
       case "height":
-        return Icons.create_outlined;
+        return Icon(
+          Icons.height_rounded,
+          color: SportifindTheme.bluePurple,
+        );
       case "weight":
-        return Icons.create_outlined;
+        return Icon(
+          Icons.create_outlined,
+          color: SportifindTheme.bluePurple,
+        );
       case "foot":
-        return Icons.create_outlined;
+        // Handle foot with custom images
+        return Image.asset(
+          textContent == 'Right footed'
+              ? 'lib/assets/right.png'
+              : textContent == 'Left footed'
+                  ? 'lib/assets/left.png'
+                  : 'lib/assets/sole.png',
+          width: 24,
+          height: 24,
+        );
       default:
-        return Icons.home; // Default icon if no match is found
+        return Icon(
+          Icons.home,
+          color: SportifindTheme.bluePurple,
+        ); // Default icon if no match is found
     }
   }
 
@@ -37,16 +65,13 @@ class InformationMenu extends StatelessWidget {
               shape: BoxShape.circle,
               color: Colors.grey.withOpacity(0.3),
             ),
-            child: Icon(
-              getIcon(icon),
-              color: Color.fromARGB(255, 24, 24, 207),
-            ),
+            child: getIcon(icon),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Text(
               textContent,
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: SportifindTheme.normalTextBlack.copyWith(fontSize: 16),
             ),
           ),
         ],
@@ -54,5 +79,3 @@ class InformationMenu extends StatelessWidget {
     );
   }
 }
-
-

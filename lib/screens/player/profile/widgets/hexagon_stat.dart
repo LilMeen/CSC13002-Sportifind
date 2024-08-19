@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/screens/player/profile/widgets/rating.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 import 'dart:math';
 
 class Hexagon extends StatelessWidget {
@@ -12,6 +13,7 @@ class Hexagon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(ratings);
     // return SingleChildScrollView(
     //   child: Center(
     //     child: Container(
@@ -35,7 +37,7 @@ class Hexagon extends StatelessWidget {
                       width: diameter,
                       height: diameter,
                       child: ColoredBox(
-                        color: Colors.teal.withOpacity(0.7),
+                        color: SportifindTheme.bluePurple.withOpacity(0.7),
                       ),
                     ),
                   ),
@@ -95,12 +97,7 @@ class Labels extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final center = Offset(diameter / 2 + 50, diameter / 2 + 53);
-    const style = TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      );
-
+    var style = SportifindTheme.normalTextBlack.copyWith(fontSize: 11);
     return Center(
       child: Stack(
         children: [
