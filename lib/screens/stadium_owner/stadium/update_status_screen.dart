@@ -22,7 +22,6 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize dropdown values with the current status of the fields
     for (var field in widget.stadium.fields) {
       _fieldsStatus[field.id] = field.status ? 'active' : 'maintaining';
     }
@@ -72,12 +71,10 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Spacer(),
           Text(
             fieldName,
             style: SportifindTheme.body,
           ),
-          const Spacer(),
           Container(
             width: 160,
             height: 40,
@@ -101,11 +98,11 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
                       value,
                       style: value == 'active'
                           ? (value == dropdownValue
-                              ? SportifindTheme.dropdownGreenBold
-                              : SportifindTheme.dropdownGreen)
+                              ? SportifindTheme.boldStatusDropdown.copyWith(color: Colors.green)
+                              : SportifindTheme.statusDropdown.copyWith(color: Colors.green))
                           : (value == dropdownValue
-                              ? SportifindTheme.dropdownRedBold
-                              : SportifindTheme.dropdownRed),
+                              ? SportifindTheme.boldStatusDropdown.copyWith(color: Colors.red)
+                              : SportifindTheme.statusDropdown.copyWith(color: Colors.red)),
                     ),
                   );
                 }).toList(),
@@ -116,8 +113,8 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
                       child: Text(
                         value,
                         style: value == 'active'
-                            ? SportifindTheme.dropdownGreen
-                            : SportifindTheme.dropdownRed,
+                            ? SportifindTheme.statusDropdown.copyWith(color: Colors.green)
+                            : SportifindTheme.statusDropdown.copyWith(color: Colors.red),
                       ),
                     );
                   }).toList();
@@ -125,7 +122,6 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
               ),
             ),
           ),
-          const Spacer(),
         ],
       ),
     );
@@ -138,7 +134,12 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
             children: [
               Text('$fieldType Field', style: SportifindTheme.bodyTitle),
               const SizedBox(height: 8),
-              ..._buildFieldDropdowns(fieldType),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: _buildFieldDropdowns(fieldType),
+                ),
+              ),
               const SizedBox(height: 20),
             ],
           )
@@ -153,7 +154,7 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
     final bool noFields = num5 == 0 && num7 == 0 && num11 == 0;
 
     return Scaffold(
-      appBar: const FeatureAppBarBluePurple(title: 'Update Status'),
+      appBar: const FeatureAppBarBluePurple(title: 'Update status'),
       backgroundColor: SportifindTheme.backgroundColor,
       body: noFields
           ? Center(
@@ -174,11 +175,11 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
                     _buildFieldSection('5-Player', num5),
                     _buildFieldSection('7-Player', num7),
                     _buildFieldSection('11-Player', num11),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       child: BluePurpleWhiteLoadingButton(
-                        text: 'Update',
+                        text: 'Update status',
                         onPressed: _updateStatus,
                       ),
                     ),

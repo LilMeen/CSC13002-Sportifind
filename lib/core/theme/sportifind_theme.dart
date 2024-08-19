@@ -117,15 +117,15 @@ class SportifindTheme {
     color: lead,
   );
 
-  static TextStyle sportifindFeatureAppBarBluePurple = GoogleFonts.rowdies(
-    fontWeight: FontWeight.normal,
-    fontSize: 30,
-    color: bluePurple,
-  );
-
   static TextStyle sportifindFeatureAppBarBluePurpleSmall = GoogleFonts.rowdies(
     fontWeight: FontWeight.normal,
     fontSize: 25,
+    color: bluePurple,
+  );
+
+  static TextStyle sportifindFeatureAppBarBluePurple = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 30,
     color: bluePurple,
   );
 
@@ -166,42 +166,6 @@ class SportifindTheme {
     fontWeight: FontWeight.normal,
   );
 
-  // static TextStyle normalTextBlack = GoogleFonts.lexend(
-  //   fontWeight: FontWeight.normal,
-  //   fontSize: 20,
-  //   color: Colors.black,
-  // );
-
-  // static TextStyle normalTextWhite = GoogleFonts.lexend(
-  //   fontWeight: FontWeight.normal,
-  //   fontSize: 20,
-  //   color: Colors.white,
-  // );
-
-  // static TextStyle normalTextSmokeScreen = GoogleFonts.lexend(
-  //   fontWeight: FontWeight.normal,
-  //   fontSize: 20,
-  //   color: smokeScreen,
-  // );
-
-  static TextStyle normalTextBlack = GoogleFonts.lexend(
-    fontWeight: FontWeight.normal,
-    fontSize: 16,
-    color: Colors.black,
-  );
-
-  static TextStyle normalTextWhite = GoogleFonts.lexend(
-    fontWeight: FontWeight.normal,
-    fontSize: 16,
-    color: Colors.white,
-  );
-
-  static TextStyle normalTextSmokeScreen = GoogleFonts.lexend(
-    fontWeight: FontWeight.normal,
-    fontSize: 16,
-    color: smokeScreen,
-  );
-
   static TextStyle roleInformationPicked = GoogleFonts.racingSansOne(
     fontWeight: FontWeight.normal,
     fontSize: 20,
@@ -214,6 +178,43 @@ class SportifindTheme {
     color: grey,
   );
 
+  static TextStyle smallTextBluePurple = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 14,
+    color: bluePurple,
+  );
+
+  static TextStyle smallTextBlack = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 14,
+    color: Colors.black,
+  );
+
+  static TextStyle normalTextBlack = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 16,
+    color: Colors.black,
+  );
+
+
+  static TextStyle normalTextWhite = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 16,
+    color: Colors.white,
+  );
+
+  static TextStyle smallTextSmokeScreen = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 14,
+    color: smokeScreen,
+  );
+
+  static TextStyle normalTextSmokeScreen = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 16,
+    color: smokeScreen,
+  );
+
   static TextStyle normalTextButton = GoogleFonts.lexend(
     fontWeight: FontWeight.normal,
     fontSize: 20,
@@ -222,11 +223,11 @@ class SportifindTheme {
 
   static TextStyle smallTextIconButton = GoogleFonts.lexend(
     fontWeight: FontWeight.normal,
-    fontSize: 12,
+    fontSize: 14,
     color: Colors.white,
   );
 
-  static TextStyle averageTextIconButton = GoogleFonts.lexend(
+  static TextStyle normalTextIconButton = GoogleFonts.lexend(
     fontWeight: FontWeight.normal,
     fontSize: 16,
     color: Colors.white,
@@ -283,51 +284,45 @@ class SportifindTheme {
     color: bluePurple,
   );
 
-  static TextStyle titleDeletStadium = GoogleFonts.lexend(
+  static TextStyle titleDeleteStadium = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
     fontSize: 20,
     color: Colors.black,
   );
   
-  static TextStyle contentDeletStadium = GoogleFonts.lexend(
+  static TextStyle textDeleteDialog = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
     fontSize: 16,
     color: Colors.black,
   );
 
-  static TextStyle noDeleteDialog = GoogleFonts.lexend(
+  static TextStyle textForm = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
-    fontSize: 16,
+    fontSize: 14,  ///////phúc đề nghị đổi sang 16 vì này nhỏ quá
     color: Colors.black,
   );
 
-  static TextStyle yesDeleteDialog = GoogleFonts.lexend(
+  static TextStyle largeLabelForm = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
-    fontSize: 16,
-    color: Colors.white,
+    fontSize: 18,
+    color: Colors.black,
   );
 
-  static TextStyle dropdownGreen = GoogleFonts.lexend(
+  static TextStyle errorForm = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
-    fontSize: 14,
-    color: Colors.green,
-  );
-  static TextStyle dropdownGreenBold = GoogleFonts.lexend(
-    fontWeight: FontWeight.w900,
-    fontSize: 14,
-    color: Colors.green,
-  );
-
-  static TextStyle dropdownRed = GoogleFonts.lexend(
-    fontWeight: FontWeight.w400,
-    fontSize: 14,
+    fontSize: 12,
+    height: 0,
     color: Colors.red,
   );
 
-  static TextStyle dropdownRedBold = GoogleFonts.lexend(
+  static TextStyle statusDropdown = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+  );
+
+  static TextStyle boldStatusDropdown = GoogleFonts.lexend(
     fontWeight: FontWeight.w900,
     fontSize: 14,
-    color: Colors.red,
   );
 
   static TextStyle titleChart = GoogleFonts.lexend(

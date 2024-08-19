@@ -80,7 +80,7 @@ void _nextMonth() {
         ),
         Text(
           "${DateFormat('MM/yyyy').format(selectedDate)} - ${DateFormat('MM/yyyy').format(nextMonthDate)}",
-          style: SportifindTheme.titleDeletStadium,
+          style: SportifindTheme.titleDeleteStadium,
         ),
         IconButton(
           icon: Icon(Icons.arrow_forward),

@@ -52,13 +52,13 @@ class _StadiumDeleteDialogState extends State<StadiumDeleteDialog> {
             const SizedBox(height: 16),
             Text(
               "Are you sure?",
-              style: SportifindTheme.titleDeletStadium,
+              style: SportifindTheme.titleDeleteStadium,
             ),
             const SizedBox(height: 16),
             Text(
               widget.content,
               textAlign: TextAlign.center,
-              style: SportifindTheme.contentDeletStadium,
+              style: SportifindTheme.textDeleteDialog,
             ),
             const SizedBox(height: 24),
             Row(
@@ -79,7 +79,7 @@ class _StadiumDeleteDialogState extends State<StadiumDeleteDialog> {
                           color: Colors.grey,
                         )),
                   ),
-                  child: Text("No", style: SportifindTheme.noDeleteDialog),
+                  child: Text("No", style: SportifindTheme.textDeleteDialog),
                 ),
                 TextButton(
                   onPressed: isDeleting ? null : _handleDelete,
@@ -100,7 +100,7 @@ class _StadiumDeleteDialogState extends State<StadiumDeleteDialog> {
                             color: Colors.white,
                           ),
                         )
-                      : Text("Yes", style: SportifindTheme.yesDeleteDialog),
+                      : Text("Yes", style: SportifindTheme.textDeleteDialog.copyWith(color: Colors.white)),
                 ),
               ],
             ),
