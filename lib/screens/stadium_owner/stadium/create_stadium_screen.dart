@@ -134,7 +134,7 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
           //////////for develop
           _location = LocationInfo(
             address: '227 D. Nguyen Van Cu, Phuong 4',
-            district: '5',
+            district: 'District 5',
             city: 'Ho Chi Minh',
             latitude: 10.7628356,
             longitude: 106.6824824,

@@ -37,10 +37,8 @@ class OwnerData {
         location = LocationInfo(
           district: snapshot['district'],
           city: snapshot['city'],
-          latitude: 10.762622,
-          longitude: 106.660172,
+          latitude: snapshot['latitude'],
+          longitude: snapshot['longitude'],
         ),
         phone = snapshot['phone'];
-
-    
 }

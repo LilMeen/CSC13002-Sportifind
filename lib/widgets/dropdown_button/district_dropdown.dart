@@ -48,16 +48,22 @@ class _DistrictDropdownState extends State<DistrictDropdown> {
     'Thanh pho ',
   ];
 
+  // Remove specified prefixes
   for (String type in typesToRemove) {
     input = input.replaceAll(type, '').trim();
   }
 
-  if (input.startsWith('Quan ') && !RegExp(r'^Quan \d+').hasMatch(input)) {
-    input = input.replaceAll('Quan ', '').trim();
+  if (input.startsWith('Quan ')) {
+    if (RegExp(r'^Quan \d+').hasMatch(input)) {
+      input = input.replaceFirst('Quan ', 'District ', 0);
+    } else {
+      input = input.replaceAll('Quan ', '').trim();
+    }
   }
 
   return input.replaceAll(RegExp(r'\s+'), ' ');
 }
+
 
 /////////////////////////////////////////////////////////
 /*
