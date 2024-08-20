@@ -62,7 +62,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
 
     if (userCredential.additionalUserInfo!.isNewUser) {
       _initUser(userCredential.user!.uid.toString());
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
         .collection('users')
         .doc(userCredential.user!.uid)
         .set({
@@ -86,10 +86,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
       );
 
       _initUser(userCredential.user!.uid);
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
         .collection('users')
         .doc(userCredential.user!.uid)
-        .set({
+        .update({
           'email': email,
         });
       return Result.success(null);

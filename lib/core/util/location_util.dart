@@ -43,6 +43,24 @@ Future<Location> getLocation (String searchText) async{
   }
 }
 
+Future<Location?> findLatAndLng(String district, String city) async {
+  String searchText = '$district, $city';
+  Location? searchLocation = await findLocation(searchText);
+
+  if (searchLocation != null) {
+    return Location(
+      name: searchLocation.name,
+      fullAddress: searchLocation.fullAddress,
+      district: district,
+      city: city,
+      latitude: searchLocation.latitude,
+      longitude: searchLocation.longitude,
+    );
+  }
+
+  return null;
+}
+
 Future<Location> findLatAndLngFull(
   String address, String district, String city) async {
   String searchText = '$address, $district, $city';

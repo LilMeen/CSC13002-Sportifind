@@ -35,6 +35,7 @@ class _MatchCardsState extends State<MatchCards> {
   @override
   void initState() {
     super.initState();
+    _loadMatchData();
   }
 
   @override
@@ -73,8 +74,6 @@ class _MatchCardsState extends State<MatchCards> {
         }
       }
     }
-    print(nearbyMatches);
-
     setState(() {
       widget.yourMatch = personalMatches;
       widget.nearByMatch = nearbyMatches;

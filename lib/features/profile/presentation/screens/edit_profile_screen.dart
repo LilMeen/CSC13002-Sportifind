@@ -1,115 +1,140 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
-import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/core/entities/location.dart';
-import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/core/widgets/city_dropdown.dart';
 import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
+import 'package:sportifind/features/profile/presentation/widgets/foot_picker.dart';
+import 'package:sportifind/features/profile/presentation/widgets/number_wheel.dart';
 import 'package:sportifind/home/player_home_screen.dart';
-import 'package:sportifind/home/stadium_owner_home_screen.dart';
+
 final _formKey = GlobalKey<FormState>();
 
-class BasicInfoScreen extends StatefulWidget {
-  static route () =>
-    MaterialPageRoute(builder: (context) => const BasicInfoScreen());
-
-  const BasicInfoScreen({super.key});
+class EditInformationScreen extends StatefulWidget {
+  const EditInformationScreen({super.key});
 
   @override
-  BasicInformationState createState() => BasicInformationState();
+  EditInformationState createState() => EditInformationState();
 }
 
-class BasicInformationState extends State<BasicInfoScreen> {
+class EditInformationState extends State<EditInformationScreen> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _districtController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-
-  late double latitude;
-  late double longitude;
-
-  DateTime? selectedDate;
-  DateTime? dob;
+  final TextEditingController _footController = TextEditingController();
 
   Timer? _delayCityTime;
   Timer? _delayDistrictTime;
+
   final Map<String, String> citiesNameAndId = {};
 
   var _enteredName = '';
   var _enteredPhone = '';
   var _enteredAddress = '';
 
+  late Future<DocumentSnapshot> userDataFuture;
+
   @override
   void dispose() {
     _nameController.dispose();
     _dateController.dispose();
     _phoneController.dispose();
+    _delayCityTime?.cancel();
+    _delayDistrictTime?.cancel();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    _delayCityTime?.cancel();
-    _delayCityTime = Timer(const Duration(seconds: 2), () {
-      setState(() {
-        _cityController.text = '';
-      });
+    _fetchUserData();
+    setState(() {
+      _cityController.text = '';
+      _districtController.text = '';
     });
-    _delayDistrictTime?.cancel();
-    _delayDistrictTime =
-        Timer(const Duration(seconds: 5, milliseconds: 300), () {
-      setState(() {
-        _districtController.text = '';
-      });
-    });
+
+    userDataFuture = getUserData();
   }
 
-  UploadTask? uploadTask;
+  Future<DocumentSnapshot> getUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+    } else {
+      throw Exception('User not logged in');
+    }
+  }
 
-  void _done() async {
+  Future<DocumentSnapshot> _fetchUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      if (userDoc.exists) {
+        final userData = userDoc.data();
+        if (userData != null) {
+          setState(() {
+            _nameController.text = userData['name'] ?? '';
+            _phoneController.text = userData['phone'] ?? '';
+            _addressController.text = userData['address'] ?? '';
+            _dateController.text = userData['dob'] ?? '';
+            _genderController.text = userData['gender'] ?? '';
+
+            _delayCityTime?.cancel();
+            _delayCityTime = Timer(const Duration(seconds: 2), () {
+              setState(() {
+                _cityController.text = userData['city'] ?? '';
+              });
+            });
+            _delayDistrictTime?.cancel();
+            _delayDistrictTime =
+                Timer(const Duration(seconds: 5, milliseconds: 300), () {
+              setState(() {
+                _districtController.text = userData['district'] ?? '';
+              });
+            });
+
+            _addressController.text = userData['address'] ?? '';
+            _weightController.text = userData['weight'] ?? '';
+            _heightController.text = userData['height'] ?? '';
+            stats = Map<String, int>.from(userData['stats'] ?? stats);
+            _footController.text =
+                userData['preferred_foot'] == true ? '1' : '0';
+          });
+        }
+      }
+      return userDoc;
+    } else {
+      throw Exception('User not logged in');
+    }
+  }
+
+  void _done() {
     final isValid = _formKey.currentState!.validate();
 
     if (isValid) {
       _formKey.currentState!.save();
 
+      //print(statConditioner.text);
+      bool isRightPicked = _footController.text == '1';
+
       try {
-        final ByteData byteData =
-            await rootBundle.load('lib/assets/no_avatar.png');
-        final Uint8List bytes = byteData.buffer.asUint8List();
-
-        final userId = FirebaseAuth.instance.currentUser!.uid;
-        Location? locationInfo = await findLatAndLng(
-            _districtController.text, _cityController.text);
-        latitude = locationInfo!.latitude;
-        longitude = locationInfo.longitude;
-
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child('users')
-            .child(userId)
-            .child('avatar')
-            .child('avatar.jpg');
-
-        final uploadTask = storageRef.putData(bytes);
-        await uploadTask;
-
-        final imageUrl = await storageRef.getDownloadURL();
-
-        await FirebaseFirestore.instance
+        FirebaseFirestore.instance
             .collection('users')
-            .doc(userId)
+            .doc(FirebaseAuth.instance.currentUser!.uid)
             .update({
           'name': _enteredName,
           'phone': _enteredPhone,
@@ -118,26 +143,18 @@ class BasicInformationState extends State<BasicInfoScreen> {
           'gender': _genderController.text,
           'city': _cityController.text,
           'district': _districtController.text,
-          'avatarImage': imageUrl,
-          'latitude': latitude,
-          'longitude': longitude,
+          'height': _weightController.text,
+          'weight': _heightController.text,
+          'stats': stats,
+          'preferred_foot': isRightPicked,
         });
 
-        DocumentSnapshot snapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .get();
-        if (snapshot['role'] == 'player') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const PlayerHomeScreen()));
-        } else if (snapshot['role'] == 'stadium_owner') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const StadiumOwnerHomeScreen()));
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PlayerHomeScreen(),
+          ),
+        );
       } catch (error) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -187,7 +204,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
       children: [
         RichText(
           text: TextSpan(
-            style: SportifindTheme.normalTextBlack,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -231,10 +248,11 @@ class BasicInformationState extends State<BasicInfoScreen> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
+                            backgroundColor:
+                                Colors.transparent, // Remove background color
+                            shadowColor: Colors.transparent, // Remove shadow
                             side: const BorderSide(
-                              color: Colors.black,
+                              color: Colors.white, // Match the border color
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             shape: RoundedRectangleBorder(
@@ -247,11 +265,11 @@ class BasicInformationState extends State<BasicInfoScreen> {
                               controller.text.isNotEmpty
                                   ? controller.text
                                   : getHint(type),
-                              style: GoogleFonts.lexend(
+                              style: TextStyle(
                                 color: controller.text.isEmpty
                                     ? Colors.grey
-                                    : Colors.black,
-                                fontSize: 14,
+                                    : Colors.white,
+                                fontSize: 16,
                               ),
                             ),
                           ),
@@ -264,7 +282,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
                         state.errorText ?? '',
-                        style: SportifindTheme.warningText,
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
                       ),
                     ),
                 ],
@@ -284,6 +302,10 @@ class BasicInformationState extends State<BasicInfoScreen> {
   Widget _buildSection(String type, TextEditingController controller) {
     double width = 290; // Default width
 
+    if (type == "Height" || type == "Weight") {
+      width = 137;
+    }
+
     GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
@@ -291,7 +313,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
       children: [
         RichText(
           text: TextSpan(
-            style: SportifindTheme.normalTextBlack,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -300,92 +322,96 @@ class BasicInformationState extends State<BasicInfoScreen> {
         const SizedBox(height: 12),
         SizedBox(
           width: width,
-          child: FormField<String>(
-            key: fieldKey,
-            validator: (value) {
-              if (controller.text.isEmpty) {
-                return 'Please enter a value';
-              }
-              if (type == "Height" || type == "Weight") {
-                if (double.tryParse(controller.text) == null) {
-                  return 'Please enter a valid number';
-                }
-              }
-              return null;
-            },
-            builder: (FormFieldState<String> state) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Stack(
                 children: [
                   TextFormField(
+                    key: fieldKey,
                     controller: controller,
-                    style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
                     decoration: InputDecoration(
                       hintText: controller.text.isEmpty
                           ? getHint(type)
                           : controller.text,
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 12),
-                      hintStyle: const TextStyle(color: Colors.grey),
+                      hintStyle: const TextStyle(color: Colors.white54),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.0),
                         borderSide: const BorderSide(
                           width: 1,
-                          color: Colors.black,
+                          color: Color.fromARGB(255, 255, 255, 255),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.0),
                         borderSide: const BorderSide(
                           width: 1,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.0),
                         borderSide: const BorderSide(
                           width: 1,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.0),
                         borderSide: const BorderSide(
                           width: 1,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
-                      // Remove the default errorStyle
-                      errorStyle: const TextStyle(height: 0),
+                      errorStyle: const TextStyle(
+                          height: 0), // Hide the default error message
                     ),
-                    onChanged: (value) {
-                      state.didChange(value);
+                    style: const TextStyle(color: Colors.white),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a value';
+                      }
+                      if (type == "Height" || type == "Weight") {
+                        if (double.tryParse(value) == null) {
+                          return 'Please enter a valid number';
+                        }
+                      }
+                      // Additional validation logic
+                      return null;
+                    },
+                    onSaved: (value) {
+                      switch (type) {
+                        case 'Name':
+                          _enteredName = value!;
+                          break;
+                        case 'Phone Number':
+                          _enteredPhone = value!;
+                          break;
+                        case 'Address':
+                          _enteredAddress = value!;
+                          break;
+                      }
                     },
                   ),
-                  if (state.hasError)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5.0),
-                      child: Text(
-                        state.errorText ?? '',
-                        style: SportifindTheme.warningText,
-                      ),
+                  Positioned(
+                    bottom: -20,
+                    left: 0,
+                    child: Builder(
+                      builder: (context) {
+                        final formFieldState = fieldKey.currentState;
+                        return Text(
+                          formFieldState?.errorText ?? '',
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
+                        );
+                      },
                     ),
+                  ),
                 ],
-              );
-            },
-            onSaved: (value) {
-              switch (type) {
-                case 'Name':
-                  _enteredName = controller.text;
-                  break;
-                case 'Phone Number':
-                  _enteredPhone = controller.text;
-                  break;
-                case 'Address':
-                  _enteredAddress = controller.text;
-                  break;
-              }
-            },
+              ),
+            ],
           ),
         ),
       ],
@@ -401,7 +427,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
       children: [
         RichText(
           text: TextSpan(
-            style: SportifindTheme.normalTextBlack,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -414,7 +440,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
             key: fieldKey,
             initialValue: controller.text.isNotEmpty ? controller.text : null,
             validator: (value) {
-              if (controller.text.isEmpty) {
+              if (value == null || value.isEmpty) {
                 return 'Please select a value';
               }
               return null;
@@ -437,7 +463,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
                         state.errorText ?? '',
-                        style: SportifindTheme.warningText,
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
                       ),
                     ),
                 ],
@@ -452,9 +478,46 @@ class BasicInformationState extends State<BasicInfoScreen> {
     );
   }
 
+  Map<String, int> stats = {
+    'PACE': 0,
+    'DEF': 0,
+    'SHOOTING': 0,
+    'PASS': 0,
+    'DRIVE': 0,
+    'PHYSIC': 0,
+  };
+
+  void _handleSaved(String stat, int value) {
+    setState(() {
+      stats[stat] = value;
+    });
+  }
+
+  Widget _buildWheelSection(String type) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            children: <TextSpan>[
+              TextSpan(text: type),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: 137,
+          height: 40,
+          child: NumberWheel(onSaved: (value) => _handleSaved(type, value)),
+        ),
+      ],
+    );
+  }
+
   Widget _nextButton(BuildContext context) {
     return SizedBox(
-      width: 100,
+      width: 80,
       height: 40,
       child: ElevatedButton(
         onPressed: () {
@@ -464,15 +527,16 @@ class BasicInformationState extends State<BasicInfoScreen> {
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
-          backgroundColor:
-              WidgetStateProperty.all<Color>(SportifindTheme.bluePurple),
+          backgroundColor: WidgetStateProperty.all<Color>(Colors.tealAccent),
           shadowColor: WidgetStateProperty.all<Color>(
             const Color.fromARGB(255, 213, 211, 211),
           ),
         ),
-        child: Text(
+        child: const Text(
           'Next',
-          style: SportifindTheme.normalTextWhite.copyWith(fontSize: 14)
+          style: TextStyle(
+            color: Colors.black,
+          ),
         ),
       ),
     );
@@ -481,18 +545,18 @@ class BasicInformationState extends State<BasicInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 240, 197, 197),
       body: SingleChildScrollView(
-        child: Center(
-          //padding: const EdgeInsets.symmetric(horizontal: 120.0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 10),
-                Text('Basic Information',
-                    style: SportifindTheme.sportifindFeatureAppBarBluePurple),
+                const Text('Basic Information',
+                    style: TextStyle(color: Colors.white, fontSize: 27)),
                 const SizedBox(height: 27),
                 _buildSection('Name', _nameController),
                 const SizedBox(height: 16),
@@ -502,15 +566,16 @@ class BasicInformationState extends State<BasicInfoScreen> {
                 const SizedBox(height: 16),
                 _buildDobSection('Date Of Birth', _dateController),
                 const SizedBox(height: 16),
+                //_buildDropdownSection('City/Province', _cityController),
                 SizedBox(
                   width: 290,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       RichText(
-                        text: TextSpan(
-                          style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
-                          children: const <TextSpan>[
+                        text: const TextSpan(
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                          children: <TextSpan>[
                             TextSpan(text: 'City'),
                           ],
                         ),
@@ -524,6 +589,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                             _districtController.text = '';
                           });
                         },
+                        //controller: _cityController,
                         citiesNameAndId: citiesNameAndId,
                         fillColor: Colors.transparent,
                       ),
@@ -535,9 +601,9 @@ class BasicInformationState extends State<BasicInfoScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RichText(
-                      text: TextSpan(
-                        style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
-                        children: const <TextSpan>[
+                      text: const TextSpan(
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                        children: <TextSpan>[
                           TextSpan(text: 'District'),
                         ],
                       ),
@@ -561,9 +627,59 @@ class BasicInformationState extends State<BasicInfoScreen> {
                 ),
                 const SizedBox(height: 16),
                 _buildSection('Address', _addressController),
-                const SizedBox(height: 24),
+                const SizedBox(height: 22),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildSection('Height', _heightController),
+                    const SizedBox(width: 15),
+                    _buildSection('Weight', _weightController),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildWheelSection('PACE'),
+                    const SizedBox(width: 15),
+                    _buildWheelSection('DEF'),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildWheelSection('SHOOTING'),
+                    const SizedBox(width: 15),
+                    _buildWheelSection('PASS'),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildWheelSection('DRIVE'),
+                    const SizedBox(width: 15),
+                    _buildWheelSection('PHYSIC'),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Text(
+                        'Preferred Foot',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                      //const SizedBox(width: 10),
+                      FootPicker(controller: _footController),
+                    ]),
+                const SizedBox(height: 30),
                 Padding(
-                  padding: const EdgeInsets.only(left: 192),
+                  padding: const EdgeInsets.only(left: 210),
                   child: _nextButton(context),
                 ),
               ],

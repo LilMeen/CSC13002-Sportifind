@@ -1,4 +1,5 @@
 import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
+import 'package:sportifind/features/profile/presentation/screens/profile_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/player/player_stadium_screen.dart';
 import 'package:sportifind/home/widgets/bottom_navigation.dart';
 import 'package:sportifind/home/widgets/tab_icon.dart';
@@ -22,7 +23,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
 
   Widget tabBody = Container(
-    color: SportifindTheme.background,
+    color: Colors.white,
   );
 
   @override
@@ -214,7 +215,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   }
                   setState(
                     () {
-                      // tabBody = const ProfileScreen();
+                      tabBody = const ProfileScreen();
                     },
                   );
                 },

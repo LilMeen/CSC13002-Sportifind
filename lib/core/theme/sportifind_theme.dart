@@ -402,4 +402,16 @@ class SportifindTheme {
     fontSize: 14,
     color: Colors.red,
   );
+
+  static TextStyle sportifindFeatureAppBarBluePurple = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 30,
+    color: bluePurple,
+  );
+
+  static TextStyle warningText = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    color: Colors.red,
+  );
 }

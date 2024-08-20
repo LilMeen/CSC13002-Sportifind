@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/features/auth/presentations/screens/sign_in_screen.dart';
 import 'package:sportifind/features/auth/presentations/widgets/auth_field.dart';
 import 'package:sportifind/features/auth/presentations/bloc/auth_bloc.dart';
 import 'package:sportifind/features/auth/presentations/widgets/green_white_button.dart';
