@@ -39,6 +39,7 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
   int _num5PlayerFields = 0;
   int _num7PlayerFields = 0;
   int _num11PlayerFields = 0;
+  bool availableField = false;
 
   LocationInfo? _location;
   Timer? _districtDelayTimer;
@@ -261,28 +262,55 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
                 fieldType: '5-Player',
                 fieldCount: _num5PlayerFields,
                 priceController: _controllers['pricePerHour5']!,
-                onIncrement: () => setState(() => _num5PlayerFields++),
+                onIncrement: () => setState(() {
+                  _num5PlayerFields++;
+                  availableField = _num5PlayerFields > 0 ||
+                      _num7PlayerFields > 0 ||
+                      _num11PlayerFields > 0;
+                }),
                 onDecrement: () => setState(() {
                   if (_num5PlayerFields > 0) _num5PlayerFields--;
+                  availableField = _num5PlayerFields > 0 ||
+                      _num7PlayerFields > 0 ||
+                      _num11PlayerFields > 0;
                 }),
+                availableField: availableField,
               ),
               stadiumForm.buildFieldRow(
                 fieldType: '7-Player',
                 fieldCount: _num7PlayerFields,
                 priceController: _controllers['pricePerHour7']!,
-                onIncrement: () => setState(() => _num7PlayerFields++),
+                onIncrement: () => setState(() {
+                  _num7PlayerFields++;
+                  availableField = _num5PlayerFields > 0 ||
+                      _num7PlayerFields > 0 ||
+                      _num11PlayerFields > 0;
+                }),
                 onDecrement: () => setState(() {
                   if (_num7PlayerFields > 0) _num7PlayerFields--;
+                  availableField = _num5PlayerFields > 0 ||
+                      _num7PlayerFields > 0 ||
+                      _num11PlayerFields > 0;
                 }),
+                availableField: availableField,
               ),
               stadiumForm.buildFieldRow(
                 fieldType: '11-Player',
                 fieldCount: _num11PlayerFields,
                 priceController: _controllers['pricePerHour11']!,
-                onIncrement: () => setState(() => _num11PlayerFields++),
+                onIncrement: () => setState(() {
+                  _num11PlayerFields++;
+                  availableField = _num5PlayerFields > 0 ||
+                      _num7PlayerFields > 0 ||
+                      _num11PlayerFields > 0;
+                }),
                 onDecrement: () => setState(() {
                   if (_num11PlayerFields > 0) _num11PlayerFields--;
+                  availableField = _num5PlayerFields > 0 ||
+                      _num7PlayerFields > 0 ||
+                      _num11PlayerFields > 0;
                 }),
+                availableField: availableField,
               ),
               const SizedBox(height: 16),
               SizedBox(

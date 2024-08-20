@@ -167,7 +167,7 @@ class CustomForm {
                     controller: openTimeController,
                     style: SportifindTheme.textForm,
                     decoration: customInputDecoration('07:00').copyWith(
-                      suffixIcon: const Icon(Icons.expand_more),
+                      suffixIcon: const Icon(Icons.expand_more, color: Colors.black),
                     ),
                     onTap: () async {
                       FocusScope.of(context).requestFocus(FocusNode());
@@ -214,7 +214,7 @@ class CustomForm {
                     controller: closeTimeController,
                     style: SportifindTheme.textForm,
                     decoration: customInputDecoration('23:00').copyWith(
-                      suffixIcon: const Icon(Icons.expand_more),
+                      suffixIcon: const Icon(Icons.expand_more, color: Colors.black),
                     ),
                     onTap: () async {
                       FocusScope.of(context).requestFocus(FocusNode());
@@ -434,6 +434,7 @@ class CustomForm {
     required TextEditingController priceController,
     required VoidCallback onIncrement,
     required VoidCallback onDecrement,
+    required bool availableField,
     double spacingLabelBox = spacingLabelBox,
     double spacingSection = spacingSection,
   }) {
@@ -456,7 +457,7 @@ class CustomForm {
                       SizedBox(
                         height: 20,
                         child: IconButton(
-                          icon: const Icon(Icons.arrow_drop_up, size: 24),
+                          icon: const Icon(Icons.arrow_drop_up, size: 24, color: Colors.black),
                           onPressed: onIncrement,
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
@@ -465,7 +466,7 @@ class CustomForm {
                       SizedBox(
                         height: 24,
                         child: IconButton(
-                          icon: const Icon(Icons.arrow_drop_down, size: 24),
+                          icon: const Icon(Icons.arrow_drop_down, size: 24, color: Colors.black),
                           onPressed: onDecrement,
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
@@ -474,6 +475,12 @@ class CustomForm {
                     ],
                   ),
                 ),
+                validator: (value) {
+                  if (fieldType == '5-Player' && !availableField) {
+                    return 'Must have at least 1 field';
+                  }
+                  return null;
+                },
               ),
             ),
             const SizedBox(width: 12),
