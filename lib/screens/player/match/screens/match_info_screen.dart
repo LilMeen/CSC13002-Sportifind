@@ -147,9 +147,9 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     TeamDetails(
-                                                  teamId:
-                                                      widget.matchInfo.team1,
-                                                ),
+                                                        teamId: widget
+                                                            .matchInfo.team1,
+                                                        role: 'teamMember'),
                                               ),
                                             );
                                           },

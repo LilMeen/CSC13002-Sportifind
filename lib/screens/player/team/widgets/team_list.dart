@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
-import 'package:sportifind/screens/player/team/screens/player_details.dart';
+import 'package:sportifind/screens/player/team/screens/team_details.dart';
 import 'package:sportifind/util/location_service.dart';
 import 'package:sportifind/util/search_service.dart';
 import 'package:sportifind/util/user_service.dart';
@@ -19,50 +19,33 @@ import 'package:sportifind/adapter/hex_color.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/screens/player/team/widgets/my_teams_listview.dart';
 import 'package:sportifind/util/team_service.dart';
-import 'package:sportifind/util/object_handling.dart';
 
-class PlayerList extends StatelessWidget {
-  const PlayerList(
-      {super.key,
-      required this.members,
-      required this.type,
-      required this.team});
-  final List<PlayerData> members;
-  final String type;
-  final TeamInformation? team;
+class TeamList extends StatelessWidget {
+  const TeamList({super.key, required this.teams});
+  final List<TeamInformation?> teams;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: members.length, // Assuming team has a list of players
+      itemCount: teams.length, // Assuming team has a list of players
       itemBuilder: (context, index) {
-        return PlayerBox(
-          team: team,
-          player: members[index], // Pass the player data
-          stt: index + 1,
-          type: type, // Pass the index as the serial number
+        return TeamBox(
+          team: teams[index], // Pass the player data
+          stt: index + 1, // Pass the index as the serial number
         );
       },
     );
   }
 }
 
-class PlayerBox extends StatelessWidget {
-  const PlayerBox(
-      {super.key,
-      required this.player,
-      required this.stt,
-      required this.type,
-      required this.team});
-  final PlayerData player;
-  final int stt;
-  final String type;
+class TeamBox extends StatelessWidget {
+  const TeamBox(
+      {super.key, required this.team, required this.stt});
   final TeamInformation? team;
+  final int stt;
 
   @override
   Widget build(BuildContext context) {
-    TeamHandling teamHandling = TeamHandling();
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
       child: SizedBox(
@@ -82,7 +65,7 @@ class PlayerBox extends StatelessWidget {
             const SizedBox(width: 12),
             CircleAvatar(
               radius: 30,
-              backgroundImage: NetworkImage(player.avatarImage),
+              backgroundImage: NetworkImage(team!.avatarImageUrl),
             ),
             const SizedBox(width: 11),
             SizedBox(
@@ -95,7 +78,7 @@ class PlayerBox extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        player.name,
+                        team!.name,
                         style: SportifindTheme.normalTextBlack.copyWith(
                           fontSize: 20,
                         ),
@@ -103,51 +86,24 @@ class PlayerBox extends StatelessWidget {
                       const Spacer(),
                       TextButton(
                         onPressed: () {
-                          if (type == 'view') {
+                        
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PlayerDetails(
-                                  user: player,
-                                  role: 'other',
+                                builder: (context) => TeamDetails(
+                                  teamId: team!.teamId,
+                                  role: 'teamMember',
                                 ),
                               ),
                             );
-                          } else {
-                            // Remove player from team
-                            teamHandling.removePlayerFromTeam(
-                              team!.teamId,
-                              player.id,
-                              'kicked',
-                            );
-                            // dialog informing player has been removed
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('Player  removed'),
-                                  content: Text(
-                                      'Player ${player.name} has been removed from the team'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          }
                         },
                         child: Text(
-                          type == 'view' ? 'View profile' : 'Remove',
+                          'View team' ,
                           style: SportifindTheme.normalTextBlack.copyWith(
                             fontSize: 14,
-                            color: type == 'view'
-                                ? SportifindTheme.bluePurple.withOpacity(0.9)
-                                : Colors.red.withOpacity(0.9),
+                            color: 
+                                SportifindTheme.bluePurple.withOpacity(0.9)
+                                
                           ),
                         ),
                       ),
@@ -156,7 +112,7 @@ class PlayerBox extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        'testlater years',
+                        '${team!.location.district}, ${team!.location.city}',
                         style: SportifindTheme.normalTextBlack.copyWith(
                           fontSize: 15,
                           color: Colors.grey,

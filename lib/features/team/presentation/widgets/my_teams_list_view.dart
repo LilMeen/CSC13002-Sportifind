@@ -108,6 +108,9 @@ class TeamBox extends StatelessWidget {
   int get getMemberCount {
     return teamInformation!.members.length;
   }
+  bool get isCaptain {
+    return teamInformation!.captain == FirebaseAuth.instance.currentUser!.uid;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +131,7 @@ class TeamBox extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return TeamDetails(teamId: teamInformation!.teamId);
+                        return TeamDetails(teamId: teamInformation!.teamId, role: isCaptain ? 'captain' : 'normal',);
                       },
                     ),
                   ),
@@ -235,7 +238,7 @@ class TeamBox extends StatelessWidget {
                                     MaterialPageRoute(
                                       builder: (context) {
                                         return TeamDetails(
-                                            teamId: teamInformation!.teamId);
+                                            teamId: teamInformation!.teamId, role: 'teamMember');
                                       },
                                     ),
                                   );

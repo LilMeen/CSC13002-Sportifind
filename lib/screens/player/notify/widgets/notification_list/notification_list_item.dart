@@ -415,8 +415,8 @@ class _NotificationListItemState extends State<NotificationListItem> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    TeamDetails(teamId: widget.notificationData.sender),
+                builder: (context) => TeamDetails(
+                    teamId: widget.notificationData.sender, role: 'other'),
               ),
             );
           case "match accepted":
@@ -429,7 +429,10 @@ class _NotificationListItemState extends State<NotificationListItem> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MatchInfoScreen(matchInfo: matchInfo!, matchStatus: 2,),
+                builder: (context) => MatchInfoScreen(
+                  matchInfo: matchInfo!,
+                  matchStatus: 2,
+                ),
               ),
             );
         }

@@ -410,7 +410,8 @@ class NotificationService {
       });
 
       await userNoti.add({
-        'type': 'request', // invite request, sent request, evaluate, announce, message, accepted request
+        'type':
+            'request', // invite request, sent request, evaluate, announce, message, accepted request
         'status': 'denied',
         'senderType': 'team', // player, admin, stadium owner, team
         'sender': teamName, // username
@@ -459,6 +460,93 @@ class NotificationService {
         'receiver': teamName,
         'time': Timestamp.now(), // time to sort
         'isRead': false,
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> removePlayerFromTeam(userId, teamId, type) async {
+    try {
+      CollectionReference userNoti = getUserNotificationCollection(userId);
+      List<CollectionReference<Map<String, dynamic>>> teamMembersNoti =
+          await getTeamNotificationCollectionList(teamId);
+
+      DocumentSnapshot<Map<String, dynamic>> userInformation =
+          await getUserDocInformation(userId);
+      DocumentSnapshot<Map<String, dynamic>> teamInformation =
+          await getTeamDocInformation(teamId);
+
+      String userName = userInformation.data()?['name'] ?? 'Unknow';
+      String teamName = teamInformation.data()?['name'] ?? 'Unknow';
+
+      teamMembersNoti.map((memberNoti) async {
+        await memberNoti.add({
+          'type':
+              'announce', // join request, sent request, evaluate, announce, message, accepted request
+          'status': 'delete',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': teamName, // username
+          'receiver': userName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+
+      if (type == 'kicked') {
+        await userNoti.add({
+          'type':
+              'announce', // invite request, sent request, evaluate, announce, message, accepted request
+          'status': 'kicked',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': teamName, // username
+          'receiver': 'you',
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      } else if (type == 'left') {
+        await userNoti.add({
+          'type':
+              'announce', // invite request, sent request, evaluate, announce, message, accepted request
+          'status': 'left',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': teamName, // username
+          'receiver': 'you',
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> deleteTeam(teamId) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> teamInformation =
+          await getTeamDocInformation(teamId);
+
+      List<String>? members =
+          List<String>.from(teamInformation.data()?['members'] ?? []);
+
+      members.forEach((memberId) async {
+        CollectionReference userNoti = getUserNotificationCollection(memberId);
+        DocumentSnapshot<Map<String, dynamic>> userInformation =
+            await getUserDocInformation(memberId);
+        String userName = userInformation.data()?['name'] ?? 'Unknow';
+
+        // hoi thanh cho delete match
+
+        await userNoti.add({
+          'type':
+              'announce', // invite request, sent request, evaluate, announce, message, accepted request
+          'status': 'delete',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': teamInformation.data()?['name'] ?? 'Unknow', // username
+          'receiver': userName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
       });
     } catch (e) {
       print('Error: $e');
