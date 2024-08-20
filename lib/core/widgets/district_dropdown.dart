@@ -42,20 +42,25 @@ class _DistrictDropdownState extends State<DistrictDropdown> {
   }
 
   String eraseType(String input) {
-    final List<String> typesToRemove = [
-      'Huyen ',
-      'Quan ',
-      'Thi xa ',
-      'Thanh pho ',
-    ];
+  final List<String> typesToRemove = [
+    'Huyen ',
+    'Thi xa ',
+    'Thanh pho ',
+  ];
 
-    for (String type in typesToRemove) {
-      input = input.replaceAll(type, '').trim();
-    }
-
-    return input.replaceAll(RegExp(r'\s+'), ' ');
+  for (String type in typesToRemove) {
+    input = input.replaceAll(type, '').trim();
   }
 
+  if (input.startsWith('Quan ') && !RegExp(r'^Quan \d+').hasMatch(input)) {
+    input = input.replaceAll('Quan ', '').trim();
+  }
+
+  return input.replaceAll(RegExp(r'\s+'), ' ');
+}
+
+/////////////////////////////////////////////////////////
+/*
   Future<void> _fetchDistricts(String city) async {
     setState(() {
       _isLoading = true;
@@ -94,6 +99,55 @@ class _DistrictDropdownState extends State<DistrictDropdown> {
       });
     }
   }
+  */
+////////////////////////////////////////////////////////////
+// second option
+Future<void> _fetchDistricts(String city) async {
+  setState(() {
+    _isLoading = true;
+    _districts.clear();
+  });
+
+  if (city.isEmpty) {
+    setState(() {
+      _isLoading = false;
+    });
+    return;
+  }
+
+  try {
+    final String? cityCode = widget.citiesNameAndId[city];
+    final response = await http.get(
+      Uri.parse('https://provinces.open-api.vn/api/p/$cityCode?depth=2'),
+    );
+
+    if (response.statusCode == 200) {
+      final String utf8Body = utf8.decode(response.bodyBytes);
+      final List<dynamic> districts = json.decode(utf8Body)['districts'];
+
+      setState(() {
+        _districts = districts
+            .map((item) =>
+                eraseType(removeDiacritics(item['name'] as String)))
+            .toList();
+
+        _districts.remove(widget.selectedCity);
+      });
+    } else {
+      throw Exception('Failed to fetch districts');
+    }
+  } catch (error) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(error.toString())),
+    );
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+////////////////////////////////////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
