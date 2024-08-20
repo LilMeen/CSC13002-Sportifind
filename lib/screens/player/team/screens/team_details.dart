@@ -102,229 +102,260 @@ class _TeamDetailsState extends State<TeamDetails>
                     : const SizedBox(width: 0, height: 0),
               ],
             ),
-            body: Padding(
-              padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
-                    child: SizedBox(
-                      height: 100,
-                      width: 300,
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundImage:
-                                NetworkImage(teamInformation!.avatarImageUrl),
-                          ),
-                          const SizedBox(width: 10),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
+                child: Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: 8, bottom: 8, right: 8),
+                        child: SizedBox(
+                          height: 100,
+                          width: 300,
+                          child: Row(
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    teamInformation!.name,
-                                    style: SportifindTheme
-                                        .sportifindAppBarForFeature
-                                        .copyWith(
-                                      fontSize: 25,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundImage: NetworkImage(
+                                    teamInformation!.avatarImageUrl),
                               ),
-                              const SizedBox(height: 6),
-                              Row(
+                              const SizedBox(width: 10),
+                              Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Members ',
-                                    style: SportifindTheme.normalTextWhite
-                                        .copyWith(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                    ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        teamInformation!.name,
+                                        style: SportifindTheme
+                                            .sportifindAppBarForFeature
+                                            .copyWith(
+                                          fontSize: 25,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    '${teamService.getTeamMemberCount(teamInformation!)}',
-                                    style: SportifindTheme.normalTextBlack
-                                        .copyWith(
-                                      fontSize: 16,
-                                      color: SportifindTheme.bluePurple,
-                                    ),
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Members ',
+                                        style: SportifindTheme.normalTextWhite
+                                            .copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${teamService.getTeamMemberCount(teamInformation!)}',
+                                        style: SportifindTheme.normalTextBlack
+                                            .copyWith(
+                                          fontSize: 16,
+                                          color: SportifindTheme.bluePurple,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              const SizedBox(height: 3),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Captain   ',
-                                    style: SportifindTheme.normalTextWhite
-                                        .copyWith(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Text(
-                                    captain,
-                                    style: SportifindTheme.normalTextWhite
-                                        .copyWith(
-                                      fontSize: 16,
-                                      color: SportifindTheme.bluePurple,
-                                    ),
+                                  const SizedBox(height: 3),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Captain   ',
+                                        style: SportifindTheme.normalTextWhite
+                                            .copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      Text(
+                                        captain,
+                                        style: SportifindTheme.normalTextWhite
+                                            .copyWith(
+                                          fontSize: 16,
+                                          color: SportifindTheme.bluePurple,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8, bottom: 8, left: 8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Details',
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: 8, bottom: 8, left: 8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Details',
+                              style: SportifindTheme.normalTextBlack.copyWith(
+                                fontSize: 24,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 16,
+                                  backgroundColor: Colors.grey,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${teamInformation!.location.district}, ${teamInformation!.location.city} City',
+                                  style:
+                                      SportifindTheme.normalTextWhite.copyWith(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 16,
+                                  backgroundColor: Colors.grey,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  teamInformation!.foundedDate.toString(),
+                                  style:
+                                      SportifindTheme.normalTextWhite.copyWith(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Images',
+                                  style:
+                                      SportifindTheme.normalTextBlack.copyWith(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                teamInformation!.images.isEmpty
+                                    ? Text(
+                                        '       No image yet',
+                                        style: SportifindTheme.normalTextBlack
+                                            .copyWith(
+                                          color: Colors.grey,
+                                          fontSize: 16,
+                                        ),
+                                      )
+                                    : const SizedBox(
+                                        height: 0,
+                                        width: 0,
+                                      ),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            teamInformation!.images.isNotEmpty
+                                ? SizedBox(
+                                    height:
+                                        200, // Set the desired height for the scrollable area
+                                    child: ListView.builder(
+                                      itemCount: teamInformation!.images
+                                          .length, // Assuming teamInformation has a list of image URLs
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 8.0),
+                                          child: Image.network(
+                                            teamInformation!.images[
+                                                index], // Replace with your image URL
+                                            fit: BoxFit.cover,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : const SizedBox(
+                                    height: 0,
+                                    width: 0,
+                                  )
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Members',
                           style: SportifindTheme.normalTextBlack.copyWith(
                             fontSize: 24,
                             color: Colors.black,
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              radius: 16,
-                              backgroundColor: Colors.grey,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${teamInformation!.location.district}, ${teamInformation!.location.city} City',
-                              style: SportifindTheme.normalTextWhite.copyWith(
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              radius: 16,
-                              backgroundColor: Colors.grey,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              teamInformation!.foundedDate.toString(),
-                              style: SportifindTheme.normalTextWhite.copyWith(
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start, 
-                          children: [
-                            Text(
-                              'Images',
-                              style: SportifindTheme.normalTextBlack.copyWith(
-                                fontSize: 20,
-                                color: Colors.black,
-                              ),
-                            ),
-                            teamInformation!.images.isEmpty
-                                ? Text('       No image yet' , style: SportifindTheme.normalTextBlack.copyWith(
-                                  color: Colors.grey, 
-                                  fontSize: 16, 
-                                ),) : const SizedBox(height: 0, width: 0,),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        teamInformation!.images.isEmpty ? SizedBox(
-                          height:
-                              200, // Set the desired height for the scrollable area
-                          child: ListView.builder(
-                            itemCount: teamInformation!.images
-                                .length, // Assuming teamInformation has a list of image URLs
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: Image.network(
-                                  teamInformation!.images[
-                                      index], // Replace with your image URL
-                                  fit: BoxFit.cover,
-                                ),
-                              );
-                            },
-                          ),
-                        ) : const SizedBox(height: 0, width: 0,)
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Members',
-                      style: SportifindTheme.normalTextBlack.copyWith(
-                        fontSize: 24,
-                        color: Colors.black,
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: PlayerList(
-                      members: teamMembers,
-                      type: 'view',
-                      team: teamInformation,
-                    ),
-                  ),
 
-                  // create a elevated button here
-                  (widget.role == 'captain' || widget.role == 'normal') ? const SizedBox(height: 0, width: 0,) : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: SportifindTheme.bluePurple,
-                          minimumSize: const Size(200, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onPressed: () {
-                          teamHandling.sendUserRequest(FirebaseAuth.instance.currentUser!.uid, teamInformation!.teamId);
-                        },
-                        child: Text(
-                          'Join',
-                          style: SportifindTheme.featureTitleBlack.copyWith(
-                            fontSize: 28,
-                            color: Colors.white,
-                          ),
-                        ),
+                      PlayerList(
+                        members: teamMembers,
+                        type: 'view',
+                        team: teamInformation,
                       ),
+
+                      // create a elevated button here
+                      (widget.role == 'captain' || widget.role == 'normal')
+                          ? const SizedBox(
+                              height: 0,
+                              width: 0,
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: SportifindTheme.bluePurple,
+                                    minimumSize: const Size(200, 50),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    teamHandling.sendUserRequest(
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                        teamInformation!.teamId);
+                                  },
+                                  child: Text(
+                                    'Join',
+                                    style: SportifindTheme.featureTitleBlack
+                                        .copyWith(
+                                      fontSize: 28,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           );
@@ -433,7 +464,7 @@ class _TeamDetailsState extends State<TeamDetails>
                       onTap: () {
                         teamHandling.deleteTeam(teamInformation!.teamId);
                         Navigator.of(context).pop();
-                        Navigator.of(context).pop(); 
+                        Navigator.of(context).pop();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
