@@ -137,37 +137,44 @@ class BarChartComponent extends StatelessWidget {
   }
 
   String formatNumber(double value) {
+  if (value == 0) return '0';
+  if (value < 100) {
+    return value.toStringAsFixed(1);
+  }
   if (value < 1000) {
-    double roundedValue = (value / 100).roundToDouble() * 100;
-    return roundedValue.toInt().toString();
+    return value.toInt().toString();
+  } else if (value < 1000000) {
+    double roundedValue = (value / 1000).roundToDouble();
+    return '${roundedValue.toStringAsFixed(1)}k';
   } else {
-    double roundedValue;
-    if (value < 1000000) {
-      roundedValue = ((value / 1000).ceil() * 1000).toDouble();
-      return '${(roundedValue / 1000).toInt()}k';
-    } else {
-      roundedValue = ((value / 1000000).ceil() * 1000000).toDouble();
-      return '${(roundedValue / 1000000).toInt()}M';
-    }
+    double roundedValue = (value / 1000000).roundToDouble();
+    return '${roundedValue.toStringAsFixed(1)}M';
   }
 }
 
-  Widget getLeftTitles(double value, TitleMeta meta, double maxYValue) {
-    TextStyle style = SportifindTheme.titleChart;
+Widget getLeftTitles(double value, TitleMeta meta, double maxYValue) {
+  TextStyle style = SportifindTheme.titleChart;
 
-    int desiredIntervals = 5;
-    double interval = maxYValue / desiredIntervals;
+  int desiredIntervals = 5;
+  double interval = maxYValue / desiredIntervals;
 
-    double roundedValue = (value / interval).round() * interval;
-
-    if ((value - roundedValue).abs() < 0.1) {
-      return SideTitleWidget(
-        axisSide: meta.axisSide,
-        child: Text(formatNumber(roundedValue), style: style),
-      );
-    }
-    return const SizedBox.shrink();
+  // Handle the case when maxYValue is very small
+  if (maxYValue <= 5) {
+    interval = 1;
+  } else if (maxYValue <= 50) {
+    interval = 10;
   }
+
+  double roundedValue = (value / interval).round() * interval;
+
+  if ((value - roundedValue).abs() < 0.1 * interval) {
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      child: Text(formatNumber(roundedValue), style: style),
+    );
+  }
+  return const SizedBox.shrink();
+}
 
   Widget getBottomTitles(double value, TitleMeta meta) {
     TextStyle style = SportifindTheme.titleChart;
