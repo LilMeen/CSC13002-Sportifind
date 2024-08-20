@@ -3,8 +3,12 @@ import 'package:sportifind/features/team/data/datasources/team_remote_data_sourc
 import 'package:sportifind/features/team/data/repositories/team_repository_impl.dart';
 import 'package:sportifind/features/team/domain/repositories/team_repository.dart';
 import 'package:sportifind/features/team/domain/usecases/create_team.dart';
+import 'package:sportifind/features/team/domain/usecases/delete_team.dart';
+import 'package:sportifind/features/team/domain/usecases/get_nearby_team.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
+import 'package:sportifind/features/team/domain/usecases/kick_player.dart';
+import 'package:sportifind/features/team/domain/usecases/request_to_join_team.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -26,6 +30,10 @@ void initializeTeamDependencies (){
 
   // Use cases
   sl.registerLazySingleton<CreateTeam>(() => CreateTeam(sl()));
+  sl.registerLazySingleton<DeleteTeam>(() => DeleteTeam(sl()));
+  sl.registerLazySingleton<GetNearbyTeam>(() => GetNearbyTeam(sl()));
   sl.registerLazySingleton<GetTeam>(() => GetTeam(sl()));
   sl.registerLazySingleton<GetTeamByPlayer>(() => GetTeamByPlayer(sl()));
+  sl.registerLazySingleton<KickPlayer>(() => KickPlayer(sl(), sl()));
+  sl.registerLazySingleton<RequestToJoinTeam>(() => RequestToJoinTeam(sl()));
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
-import 'package:sportifind/features/team/presentation/widgets/team_list.dart';
+import 'package:sportifind/features/team/presentation/widgets/team/team_information_list.dart';
 
 // ignore: must_be_immutable
 class TeamCards extends StatefulWidget {

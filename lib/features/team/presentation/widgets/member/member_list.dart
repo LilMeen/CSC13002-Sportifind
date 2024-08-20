@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/features/team/presentation/widgets/member_list_item.dart';
+import 'package:sportifind/features/team/presentation/widgets/member/member_list_item.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 

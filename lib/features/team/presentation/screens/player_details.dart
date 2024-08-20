@@ -1,18 +1,16 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
-import 'package:sportifind/core/widgets/app_bar.dart';
+import 'package:sportifind/core/util/team_util.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
-import 'package:sportifind/features/team/presentation/widgets/my_teams_list_view.dart';
-
+import 'package:sportifind/features/team/presentation/widgets/team_list.dart';
 
 class PlayerDetails extends StatefulWidget {
-  const PlayerDetails({super.key, required this.player});
-  final PlayerEntity player;
+  const PlayerDetails({super.key, required this.user, required this.role});
+  final PlayerEntity user;
+  final String role;
 
   @override
   State<PlayerDetails> createState() => _PlayerDetailsState();
@@ -20,9 +18,10 @@ class PlayerDetails extends StatefulWidget {
 
 class _PlayerDetailsState extends State<PlayerDetails>
     with TickerProviderStateMixin {
+  List<TeamEntity?> userTeams = [];
   bool isLoading = true;
   late AnimationController animationController;
-  List<TeamEntity> teamsInformation = [];
+  late Future<void> _initializationFuture;
 
   @override
   void initState() {
@@ -31,7 +30,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    fetchedTeams();
+    _initializationFuture = _initialize();
   }
 
   @override
@@ -40,239 +39,232 @@ class _PlayerDetailsState extends State<PlayerDetails>
     super.dispose();
   }
 
-  Future<void> fetchedTeams() async {
-    try {
-      List<TeamEntity> playerTeams = await UseCaseProvider.getUseCase<GetTeamByPlayer>().call(
-        GetTeamByPlayerParams(
-          playerId: widget.player.id,
-        ),
-      ).then((value) => value.data ?? []);
-
-      setState(() {
-        teamsInformation = playerTeams;
-        isLoading = false; // Update loading state
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('An error occurred while fetching your teams list'),
-        ),
-      );
-    }
+  Future<void> _initialize() async {
+    userTeams = await UseCaseProvider.getUseCase<GetTeamByPlayer>().call(
+      GetTeamByPlayerParams(playerId: widget.user.id),
+    ).then((value) => value.data!);
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(context) {
-    if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              SportifindTheme.whiteSmoke,
-            ],
-          ),
-        ),
-        child: Scaffold(
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).padding.top,
+    return FutureBuilder<void>(
+      future: _initializationFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text("Error loading data"));
+        } else {
+          return Scaffold(
+            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              title: Text(
+                'Player information',
+                style: SportifindTheme.sportifindAppBarForFeature.copyWith(
+                  fontSize: 28,
+                  color: SportifindTheme.bluePurple,
+                ),
+                textAlign: TextAlign.center,
               ),
-              const SportifindAppBar(title: 'Player Details'),
-              Expanded(
-                child: SingleChildScrollView(
+              centerTitle: true,
+            ),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
+                child: Expanded(
                   child: Column(
-                    children: <Widget>[
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Padding(
                         padding:
-                            const EdgeInsets.only(top: 20, left: 20, right: 20),
-                        child: Expanded(
+                            const EdgeInsets.only(top: 8, bottom: 8, right: 8),
+                        child: SizedBox(
+                          height: 100,
+                          width: 300,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              SizedBox(
-                                height: 100,
-                                width: 100,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16.0),
-                                  child: Image.network(
-                                    widget.player.avatar.path,
-                                    fit: BoxFit.cover,
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundImage:
+                                    NetworkImage(widget.user.avatar.path),
+                              ),
+                              const SizedBox(width: 10),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        widget.user.name,
+                                        style: SportifindTheme
+                                            .sportifindAppBarForFeature
+                                            .copyWith(
+                                          fontSize: 25,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Overall Stat ',
+                                        style: SportifindTheme.normalTextWhite
+                                            .copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      Text(
+                                        '80', //  waiting for stat for player
+                                        style: SportifindTheme.normalTextBlack
+                                            .copyWith(
+                                          fontSize: 16,
+                                          color: SportifindTheme.bluePurple,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 3),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Age     ',
+                                        style: SportifindTheme.normalTextWhite
+                                            .copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${getUserAge(widget.user.dob)}',
+                                        style: SportifindTheme.normalTextWhite
+                                            .copyWith(
+                                          fontSize: 16,
+                                          color: SportifindTheme.bluePurple,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: 8, bottom: 8, left: 8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Details',
+                              style: SportifindTheme.normalTextBlack.copyWith(
+                                fontSize: 24,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const CircleAvatar(
+                                  radius: 16,
+                                  backgroundColor: Colors.grey,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${widget.user.location.address}, ${widget.user.location.district}, ${widget.user.location.city}',
+                                  style:
+                                      SportifindTheme.normalTextWhite.copyWith(
+                                    fontSize: 16,
+                                    color: Colors.black,
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        const Text('Player: '),
-                                        Text(
-                                          widget.player.name,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 24,
-                                            letterSpacing: 0.27,
-                                            color: SportifindTheme.darkGrey,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    const Row(
-                                      children: [
-                                        Text('Rating: '),
-                                        Text(
-                                          'Fix this later',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w200,
-                                            fontSize: 18,
-                                            letterSpacing: 0.27,
-                                            color: SportifindTheme.grey,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const CircleAvatar(
+                                  radius: 16,
+                                  backgroundColor: Colors.grey,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ), // avatar and team basic info
-                      ),
-                      const Divider(
-                        height: 20,
-                        thickness: 2,
-                        color: Colors.black,
-                      ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 20, left: 20, right: 20),
-                        child: Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text('DETAILS: '),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const Text('Address: '),
-                                  Text(
-                                      '${widget.player.location.address} ${widget.player.location.district} ${widget.player.location.city}'),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              const Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      'Level: '), // add team evaluation here
-                                  Text('Medium Level'),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Divider(
-                        height: 20,
-                        thickness: 2,
-                        color: Colors.black,
-                      ),
-                      const SizedBox(height: 20),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 20, right: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('Joined Team'),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '180', // height here
+                                  style:
+                                      SportifindTheme.normalTextWhite.copyWith(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Joined Teams',
+                          style: SportifindTheme.normalTextBlack.copyWith(
+                            fontSize: 24,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      TeamList(teams: userTeams),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              minimumSize: const Size(200, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            onPressed: () {},
+                            child: widget.role == 'other'
+                                ? Text(
+                                    'Add',
+                                    style: SportifindTheme.featureTitleBlack
+                                        .copyWith(
+                                      fontSize: 28,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const SizedBox(height: 15),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16, bottom: 16),
-                child: SizedBox(
-                  height: 240,
-                  width: double.infinity,
-                  child: Builder(
-                    builder: (BuildContext context) {
-                      return ListView.builder(
-                        padding: const EdgeInsets.only(
-                            top: 0, bottom: 0, right: 16, left: 16),
-                        itemCount: widget.player.teamsId.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (BuildContext context, int index) {
-                          final int count = widget.player.teamsId.length > 25
-                              ? 25
-                              : widget.player.teamsId.length;
-                          final Animation<double> animation =
-                              Tween<double>(begin: 0.0, end: 1.0).animate(
-                                  CurvedAnimation(
-                                      parent: animationController,
-                                      curve: Interval((1 / count) * index, 1.0,
-                                          curve: Curves.fastOutSlowIn)));
-                          animationController.forward();
-
-                          return TeamBox(
-                            teamInformation: teamsInformation[index],
-                            animation: animation,
-                            animationController: animationController,
-                          ); //////// 1. Add callback function
-                          // );
-                          // } else if (index == Category.categoryList.length) {
-                          //   return AddTeam(
-                          //     animation: animation,
-                          //     animationController: animationController,
-                          //     addTeam: callBack,
-                          //   );
-                          // }
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Divider(
-                height: 20,
-                thickness: 2,
-                color: Colors.black,
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
+            ),
+          );
+        }
+      },
     );
   }
 }

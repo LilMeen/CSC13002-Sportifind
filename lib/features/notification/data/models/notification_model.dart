@@ -1,6 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/features/notification/domain/entities/notification_entity.dart';
 
 class NotificationModel {
+  String? id;
+  bool isRead;
+  final String matchId;
+  final String receiver;
+  final String sender;
+  final String senderType;
+  final String status;
+  final Timestamp time;
+  final String type;
+
   NotificationModel({
     required this.isRead,
     required this.receiver,
@@ -13,7 +24,7 @@ class NotificationModel {
     this.id,
   });
 
-  NotificationModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
+  NotificationModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         isRead = snapshot['isRead'],
         receiver = snapshot['receiver'],
@@ -32,13 +43,45 @@ class NotificationModel {
   String get formattedTime =>
       "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}";
 
-  String? id;
-  bool isRead;
-  final String matchId;
-  final String receiver;
-  final String sender;
-  final String senderType;
-  final String status;
-  final Timestamp time;
-  final String type;
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'isRead': isRead,
+      'receiver': receiver,
+      'sender': sender,
+      'senderType': senderType,
+      'status': status,
+      'time': time,
+      'match': matchId,
+      'type': type,
+    };
+  }
+
+  NotificationEntity toEntity () {
+    return NotificationEntity(
+      id: id,
+      isRead: isRead,
+      matchId: matchId,
+      receiver: receiver,
+      sender: sender,
+      senderType: senderType,
+      status: status,
+      time: time,
+      type: type,
+    );
+  }
+
+  factory NotificationModel.fromEntity(NotificationEntity entity) {
+    return NotificationModel(
+      id: entity.id,
+      isRead: entity.isRead,
+      matchId: entity.matchId,
+      receiver: entity.receiver,
+      sender: entity.sender,
+      senderType: entity.senderType,
+      status: entity.status,
+      time: entity.time,
+      type: entity.type,
+    );
+  }
 }

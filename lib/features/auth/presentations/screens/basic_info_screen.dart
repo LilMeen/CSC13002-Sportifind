@@ -3,18 +3,12 @@
 import 'dart:async';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/core/widgets/city_dropdown.dart';
 import 'package:sportifind/core/widgets/district_dropdown.dart';
+import 'package:sportifind/features/auth/presentations/bloc/auth_bloc.dart';
 import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
-import 'package:sportifind/home/player_home_screen.dart';
-import 'package:sportifind/home/stadium_owner_home_screen.dart';
 final _formKey = GlobalKey<FormState>();
 
 class BasicInfoScreen extends StatefulWidget {
@@ -80,64 +74,18 @@ class BasicInformationState extends State<BasicInfoScreen> {
 
   void _done() async {
     final isValid = _formKey.currentState!.validate();
-
     if (isValid) {
       _formKey.currentState!.save();
-
       try {
-        final ByteData byteData =
-            await rootBundle.load('lib/assets/no_avatar.png');
-        final Uint8List bytes = byteData.buffer.asUint8List();
-
-        final userId = FirebaseAuth.instance.currentUser!.uid;
-        Location? locationInfo = await findLatAndLng(
-            _districtController.text, _cityController.text);
-        latitude = locationInfo!.latitude;
-        longitude = locationInfo.longitude;
-
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child('users')
-            .child(userId)
-            .child('avatar')
-            .child('avatar.jpg');
-
-        final uploadTask = storageRef.putData(bytes);
-        await uploadTask;
-
-        final imageUrl = await storageRef.getDownloadURL();
-
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .update({
-          'name': _enteredName,
-          'phone': _enteredPhone,
-          'dob': _dateController.text,
-          'address': _enteredAddress,
-          'gender': _genderController.text,
-          'city': _cityController.text,
-          'district': _districtController.text,
-          'avatarImage': imageUrl,
-          'latitude': latitude,
-          'longitude': longitude,
-        });
-
-        DocumentSnapshot snapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .get();
-        if (snapshot['role'] == 'player') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const PlayerHomeScreen()));
-        } else if (snapshot['role'] == 'stadium_owner') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const StadiumOwnerHomeScreen()));
-        }
+        await AuthBloc(context).setBasicInfo(
+          name: _enteredName,
+          dob: _dateController.text,
+          phone: _enteredPhone,
+          address: _enteredAddress,
+          gender:  _genderController.text,
+          city: _cityController.text,
+          district: _districtController.text,
+        );
       } catch (error) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -563,7 +511,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                 _buildSection('Address', _addressController),
                 const SizedBox(height: 24),
                 Padding(
-                  padding: const EdgeInsets.only(left: 192),
+                  padding: const EdgeInsets.only(left: 192, bottom: 20),
                   child: _nextButton(context),
                 ),
               ],

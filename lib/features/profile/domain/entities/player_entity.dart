@@ -1,11 +1,11 @@
 import 'package:sportifind/features/user/domain/entities/user_entity.dart';
 
 class PlayerEntity extends UserEntity {
-  final String height;
-  final String weight;
-  final String preferredFoot;
-  final Stats stats;
-  final List<String> teamsId;
+  String height;
+  String weight;
+  String preferredFoot;
+  Stats stats;
+  List<String> teamsId;
 
   PlayerEntity({
     required super.id,
@@ -28,12 +28,12 @@ class PlayerEntity extends UserEntity {
 
 
 class Stats {
-  final int def;
-  final int drive;
-  final int pace;
-  final int pass;
-  final int physic;
-  final int shoot;
+  int def;
+  int drive;
+  int pace;
+  int pass;
+  int physic;
+  int shoot;
 
   Stats({
     required this.def,

@@ -6,7 +6,7 @@ import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/presentation/screens/create_match/select_team_screen.dart';
 import 'package:sportifind/features/match/presentation/screens/match_info/invite_team_screen.dart';
 import 'package:sportifind/features/team/presentation/screens/team_details.dart';
-import 'package:sportifind/features/team/presentation/widgets/member_card.dart';
+import 'package:sportifind/features/team/presentation/widgets/member/member_card.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/profile/domain/usecases/get_player.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
@@ -141,7 +141,8 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                   TeamDetails(
-                                                    team: widget.matchInfo.team1,
+                                                    teamId: widget.matchInfo.team1.id,
+                                                    role: 'teamMember',
                                                 ),
                                               ),
                                             );

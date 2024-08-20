@@ -7,6 +7,7 @@ import 'package:sportifind/features/profile/domain/usecases/get_all_stadium_owne
 import 'package:sportifind/features/profile/domain/usecases/get_current_profile.dart';
 import 'package:sportifind/features/profile/domain/usecases/get_player.dart';
 import 'package:sportifind/features/profile/domain/usecases/get_stadium_owner.dart';
+import 'package:sportifind/features/profile/domain/usecases/update_player.dart';
 
 
 final GetIt sl = GetIt.instance;
@@ -33,6 +34,7 @@ void initializeProfileDependencies (){
   sl.registerLazySingleton<GetCurrentProfile>(() => GetCurrentProfile(sl()));
   sl.registerLazySingleton<GetAllStadiumOwner>(() => GetAllStadiumOwner(sl()));
   sl.registerLazySingleton<GetStadiumOwner>(() => GetStadiumOwner(sl()));
+  sl.registerLazySingleton<UpdatePlayer>(() => UpdatePlayer(sl()));
 }
 
 

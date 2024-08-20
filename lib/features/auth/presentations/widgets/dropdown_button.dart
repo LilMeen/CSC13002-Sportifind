@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 
 class Dropdown extends StatefulWidget {
   final String type;
@@ -64,9 +65,9 @@ class DropdownState extends State<Dropdown> {
 
     return Container(
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 33, 33, 33),
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(6.0),
-        border: Border.all(color: Colors.white),
+        border: Border.all(color: Colors.black),
       ),
       padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),
       child: DropdownButtonHideUnderline(
@@ -81,14 +82,14 @@ class DropdownState extends State<Dropdown> {
                     vertical: 0.0, horizontal: widget.horizontalPadding),
                 child: Text(
                   item,
-                  style: const TextStyle(color: Colors.white),
+                  style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
                   overflow: TextOverflow.ellipsis,
                 ),
               );
             }).toList();
           },
           style: const TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 16,
           ),
           onChanged: (newValue) {
@@ -102,18 +103,15 @@ class DropdownState extends State<Dropdown> {
             padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),
             child: Text(
               hint,
-              style: const TextStyle(
-                color: Colors.white54,
-                fontSize: 16,
-              ),
+              style: SportifindTheme.titleChart.copyWith(fontSize: 14),
               overflow: TextOverflow.ellipsis,
             ),
           ),
           icon: Padding(
             padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),
-            child: const Icon(Icons.arrow_drop_down, color: Colors.white),
+            child: const Icon(Icons.arrow_drop_down, color: Colors.black),
           ),
-          dropdownColor: const Color.fromARGB(255, 33, 33, 33),
+          dropdownColor: Colors.white,
           decoration: const InputDecoration(
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.transparent),
@@ -135,7 +133,7 @@ class DropdownState extends State<Dropdown> {
       value: item,
       child: Text(
         item,
-        style: const TextStyle(color: Colors.white),
+        style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
         overflow: TextOverflow.ellipsis,
       ),
     );

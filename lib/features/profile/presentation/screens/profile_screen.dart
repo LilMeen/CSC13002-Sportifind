@@ -137,7 +137,6 @@ class ProfileScreenState extends State<ProfileScreen> {
 
     if (picture != null) {
       image = picture;
-      setState(() {});
     }
 
     final userId = FirebaseAuth.instance.currentUser!.uid;
@@ -156,6 +155,10 @@ class ProfileScreenState extends State<ProfileScreen> {
     firestore.collection('users').doc(userId).update({
       'avatarImage': imageUrl,
     });
+
+    setState(() {
+      player!.avatar = File(imageUrl);
+    });
   }
 
   Future<void> _pickImageFromCamera() async {
@@ -163,7 +166,6 @@ class ProfileScreenState extends State<ProfileScreen> {
 
     if (picture != null) {
       image = picture;
-      setState(() {});
     }
 
     final userId = FirebaseAuth.instance.currentUser!.uid;
@@ -180,6 +182,9 @@ class ProfileScreenState extends State<ProfileScreen> {
 
     firestore.collection('users').doc(userId).update({
       'avatarImage': imageUrl,
+    });
+    setState(() {
+      player!.avatar = File(imageUrl);
     });
   }
 
@@ -313,7 +318,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              const EditInformationScreen(),
+                              EditInformationScreen(player: player!),
                         ),
                       );
                     },

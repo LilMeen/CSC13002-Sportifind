@@ -21,6 +21,8 @@ class StadiumOwnerModel extends UserModel {
     required super.city,
     required super.district,
     required super.address,
+    required super.longitude,
+    required super.latitude,
   });
 
   // REMOTE DATA SOURCE
@@ -43,6 +45,8 @@ class StadiumOwnerModel extends UserModel {
       city: data['city'] ?? '',
       district: data['district'] ?? '',
       address: data['address'] ?? '',
+      longitude: data['longitude'] ?? 0.0,
+      latitude: data['latitude'] ?? 0.0,
     );
   }
   
@@ -59,6 +63,8 @@ class StadiumOwnerModel extends UserModel {
       'city': city,
       'district': district,
       'address': address,
+      'longitude': longitude,
+      'latitude': latitude,
     };
   }
 
@@ -95,6 +101,8 @@ class StadiumOwnerModel extends UserModel {
       city: entity.location.city,
       district: entity.location.district,
       address: entity.location.address,
+      longitude: entity.location.longitude,
+      latitude: entity.location.latitude,
     );
   }
 }

@@ -1,7 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/models/result.dart';
+import 'package:sportifind/core/util/location_util.dart';
 
 
 abstract interface class AuthRemoteDataSource {
@@ -132,6 +136,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
     String address,
     String phone,
   ) async {
+    Location location = await findLatAndLngFull(address, district, city);
+
+    final ByteData byteData = await rootBundle.load('lib/assets/no_avatar.png');
+    final Uint8List bytes = byteData.buffer.asUint8List();
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child('users')
+        .child(userId)
+        .child('avatar')
+        .child('avatar.jpg');
+
+    final uploadTask = storageRef.putData(bytes);
+    await uploadTask;
+
+    final imageUrl = await storageRef.getDownloadURL();
     await FirebaseFirestore.instance
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -143,6 +163,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
         'gender': gender,
         'city': city,
         'district': district,
+        'latitude': location.latitude,
+        'longitude': location.longitude,
+        'avatarImage': imageUrl,
       });
 
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
@@ -165,6 +188,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
       'district': '',
       'address': '',
       'phone': '',
+      'avatarImage': '',
+      'longtiude': 0.0,
+      'latitude': 0.0,
     });
   }
 }

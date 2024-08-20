@@ -1,6 +1,7 @@
 import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
 import 'package:sportifind/features/profile/presentation/screens/profile_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/player/player_stadium_screen.dart';
+import 'package:sportifind/features/team/presentation/screens/team_main_screen.dart';
 import 'package:sportifind/home/widgets/bottom_navigation.dart';
 import 'package:sportifind/home/widgets/tab_icon.dart';
 import 'package:flutter/material.dart';
@@ -162,7 +163,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
         BottomBarView(
           tabIconsList: tabIconsList,
           addClick: () {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const PlayerHomeScreen()),
             );
@@ -202,7 +203,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                   }
                   setState(
                     () {
-                      // tabBody = const TeamMainScreen();
+                      tabBody = const TeamMainScreen();
                     },
                   );
                 },

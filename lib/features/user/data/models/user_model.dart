@@ -16,6 +16,8 @@ class UserModel {
   final String city;
   final String district;
   final String address;
+  final double longitude;
+  final double latitude;
 
   UserModel({
     required this.id,
@@ -29,6 +31,8 @@ class UserModel {
     required this.city,
     required this.district,
     required this.address,
+    required this.longitude,
+    required this.latitude,
   });
 
   factory UserModel.fromFirestore(DocumentSnapshot userDoc) {
@@ -46,6 +50,8 @@ class UserModel {
       city: data['city'] ?? '',
       district: data['district'] ?? '',
       address: data['address'] ?? '',
+      longitude: data['longitude'] ?? 0.0,
+      latitude: data['latitude'] ?? 0.0,
     );
   }
 
@@ -61,6 +67,8 @@ class UserModel {
       'city': city,
       'district': district,
       'address': address,
+      'longitude': longitude,
+      'latitude': latitude,
     };
   }
 
@@ -91,6 +99,8 @@ class UserModel {
       city: entity.location.city,
       district: entity.location.district,
       address: entity.location.address,
+      longitude: entity.location.longitude,
+      latitude: entity.location.latitude,
     );
   }
 }

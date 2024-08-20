@@ -3,6 +3,7 @@ import 'package:sportifind/features/match/data/datasources/match_remote_data_sou
 import 'package:sportifind/features/match/data/models/match_model.dart';
 import 'package:sportifind/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:sportifind/features/profile/data/models/player_model.dart';
+import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
 import 'package:sportifind/features/team/data/models/team_model.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
@@ -26,6 +27,18 @@ class TeamRepositoryImpl implements TeamRepository {
   Future<Result<void>> createTeam (TeamEntity team) async {
     await teamRemoteDataSource.createTeam(TeamModel.fromEntity(team));
     return Result.success(null);
+  }
+
+  // GET ALL TEAMS
+  // Get all teams
+  @override
+  Future<Result<List<TeamEntity>>> getAllTeams() async {
+    List<TeamModel> teamModelList = await teamRemoteDataSource.getAllTeams();
+    List<TeamEntity> teamEntityList = [];
+    for (var team in teamModelList) {
+      teamEntityList.add(await team.toEntity());
+    }
+    return Result.success(teamEntityList);
   }
 
   // GET TEAM BY ID
@@ -74,6 +87,18 @@ class TeamRepositoryImpl implements TeamRepository {
       await matchRemoteDataSource.deleteMatch(match.id);
     }
     await teamRemoteDataSource.deleteTeam(teamId);
+    return Result.success(null);
+  }
+
+
+  // KICK PLAYER
+  // Kick player from team
+  @override
+  Future<Result<void>> kickPlayer(TeamEntity team, PlayerEntity player, String type) async {
+    team.players.remove(player);
+    player.teamsId.remove(team.id);
+    await teamRemoteDataSource.updateTeam(TeamModel.fromEntity(team));
+    await profileRemoteDataSource.updatePlayer(PlayerModel.fromEntity(player));
     return Result.success(null);
   }
 }

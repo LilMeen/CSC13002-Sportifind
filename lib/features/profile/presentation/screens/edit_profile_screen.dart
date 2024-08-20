@@ -1,23 +1,31 @@
-import 'dart:async';
+// ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/core/widgets/city_dropdown.dart';
 import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
+import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
+import 'package:sportifind/features/profile/domain/usecases/update_player.dart';
 import 'package:sportifind/features/profile/presentation/widgets/foot_picker.dart';
 import 'package:sportifind/features/profile/presentation/widgets/number_wheel.dart';
 import 'package:sportifind/home/player_home_screen.dart';
 
 final _formKey = GlobalKey<FormState>();
 
+// ignore: must_be_immutable
 class EditInformationScreen extends StatefulWidget {
-  const EditInformationScreen({super.key});
+  PlayerEntity player;
 
-  @override
-  EditInformationState createState() => EditInformationState();
-}
+  EditInformationScreen({required this.player, super.key});
+
+    @override
+    EditInformationState createState() => EditInformationState();
+  }
+
 
 class EditInformationState extends State<EditInformationScreen> {
   final TextEditingController _nameController = TextEditingController();
@@ -40,8 +48,6 @@ class EditInformationState extends State<EditInformationScreen> {
   var _enteredPhone = '';
   var _enteredAddress = '';
 
-  late Future<DocumentSnapshot> userDataFuture;
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -60,94 +66,71 @@ class EditInformationState extends State<EditInformationScreen> {
       _cityController.text = '';
       _districtController.text = '';
     });
-
-    userDataFuture = getUserData();
   }
 
-  Future<DocumentSnapshot> getUserData() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      return await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-    } else {
-      throw Exception('User not logged in');
-    }
-  }
 
-  Future<DocumentSnapshot> _fetchUserData() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-      if (userDoc.exists) {
-        final userData = userDoc.data();
-        if (userData != null) {
-          setState(() {
-            _nameController.text = userData['name'] ?? '';
-            _phoneController.text = userData['phone'] ?? '';
-            _addressController.text = userData['address'] ?? '';
-            _dateController.text = userData['dob'] ?? '';
-            _genderController.text = userData['gender'] ?? '';
+  Future<void> _fetchUserData() async {
+    setState(() {
+      _nameController.text = widget.player.name;
+      _phoneController.text = widget.player.phone;
+      _addressController.text = widget.player.location.address;
+      _dateController.text = widget.player.dob;
+      _genderController.text = widget.player.gender;
 
-            _delayCityTime?.cancel();
-            _delayCityTime = Timer(const Duration(seconds: 2), () {
-              setState(() {
-                _cityController.text = userData['city'] ?? '';
-              });
-            });
-            _delayDistrictTime?.cancel();
-            _delayDistrictTime =
-                Timer(const Duration(seconds: 5, milliseconds: 300), () {
-              setState(() {
-                _districtController.text = userData['district'] ?? '';
-              });
-            });
+      _delayCityTime?.cancel();
+      _delayCityTime = Timer(const Duration(seconds: 2), () {
+        setState(() {
+          _cityController.text = widget.player.location.city;
+        });
+      });
+      _delayDistrictTime?.cancel();
+      _delayDistrictTime =
+          Timer(const Duration(seconds: 5, milliseconds: 300), () {
+        setState(() {
+          _districtController.text = widget.player.location.district;
+        });
+      });
 
-            _addressController.text = userData['address'] ?? '';
-            _weightController.text = userData['weight'] ?? '';
-            _heightController.text = userData['height'] ?? '';
-            stats = Map<String, int>.from(userData['stats'] ?? stats);
-            _footController.text =
-                userData['preferred_foot'] == true ? '1' : '0';
-          });
-        }
-      }
-      return userDoc;
-    } else {
-      throw Exception('User not logged in');
-    }
-  }
+      _addressController.text = widget.player.location.address;
+      _weightController.text = widget.player.weight;
+      _heightController.text = widget.player.height;
+      _footController.text = widget.player.preferredFoot == 'true' ? '1' : '0';
+  });
+}
 
-  void _done() {
+
+  Future<void> _done() async{
     final isValid = _formKey.currentState!.validate();
 
     if (isValid) {
       _formKey.currentState!.save();
 
-      //print(statConditioner.text);
       bool isRightPicked = _footController.text == '1';
+      Location newLocation = await findLatAndLngFull(
+        _enteredAddress,
+        _districtController.text,
+        _cityController.text,
+      );
+      widget.player.name = _enteredName;
+      widget.player.phone = _enteredPhone;
+      widget.player.dob = _dateController.text;
+      widget.player.location = newLocation;
+      widget.player.gender = _genderController.text;
+      widget.player.location = newLocation;
+      widget.player.weight = _weightController.text;
+      widget.player.height = _heightController.text;
+      widget.player.preferredFoot = isRightPicked ? 'true' : 'false';
+      widget.player.stats.def = stats['DEF']!;
+      widget.player.stats.drive = stats['DRIVE']!;
+      widget.player.stats.pace = stats['PACE']!;
+      widget.player.stats.pass = stats['PASS']!;
+      widget.player.stats.physic = stats['PHYSIC']!;
+      widget.player.stats.shoot = stats['SHOOTING']!;
 
       try {
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .update({
-          'name': _enteredName,
-          'phone': _enteredPhone,
-          'dob': _dateController.text,
-          'address': _enteredAddress,
-          'gender': _genderController.text,
-          'city': _cityController.text,
-          'district': _districtController.text,
-          'height': _weightController.text,
-          'weight': _heightController.text,
-          'stats': stats,
-          'preferred_foot': isRightPicked,
-        });
+        await UseCaseProvider.getUseCase<UpdatePlayer>().call(
+          UpdatePlayerParams(player: widget.player)
+        );
 
         Navigator.push(
           context,
@@ -674,7 +657,6 @@ class EditInformationState extends State<EditInformationScreen> {
                           fontSize: 14,
                         ),
                       ),
-                      //const SizedBox(width: 10),
                       FootPicker(controller: _footController),
                     ]),
                 const SizedBox(height: 30),

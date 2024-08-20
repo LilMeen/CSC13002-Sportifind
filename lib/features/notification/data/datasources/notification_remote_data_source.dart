@@ -23,6 +23,7 @@ abstract interface class NotificationRemoteDataSource {
   Future<void>                                              requestDeniedFromTeam(userId, teamId);
   Future<void>                                              requestDeniedFromUser(userId, teamId);
 
+  Future<void>                                              removePlayerFromTeam(userId, teamId, type);
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
@@ -50,7 +51,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         .collection('notifications')
         .get();
     final notifications = notificationQuery.docs
-        .map((notification) => NotificationModel.fromSnapshot(notification))
+        .map((notification) => NotificationModel.fromFirestore(notification))
         .toList();
     for (var i = 0; i < notifications.length; ++i) {
       userNotification.add(notifications[i]);
@@ -497,6 +498,62 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         'time': Timestamp.now(), // time to sort
         'isRead': false,
       });
+    } catch (e) {
+      throw('Error: $e');
+    }
+  }
+
+  @override
+  Future<void> removePlayerFromTeam(userId, teamId, type) async {
+    try {
+      CollectionReference userNoti = getUserNotificationCollection(userId);
+      List<CollectionReference<Map<String, dynamic>>> teamMembersNoti =
+          await getTeamNotificationCollectionList(teamId);
+
+      DocumentSnapshot<Map<String, dynamic>> userInformation =
+          await getUserDocInformation(userId);
+      DocumentSnapshot<Map<String, dynamic>> teamInformation =
+          await getTeamDocInformation(teamId);
+
+      String userName = userInformation.data()?['name'] ?? 'Unknow';
+      String teamName = teamInformation.data()?['name'] ?? 'Unknow';
+
+      teamMembersNoti.map((memberNoti) async {
+        await memberNoti.add({
+          'type':
+              'announce', // join request, sent request, evaluate, announce, message, accepted request
+          'status': 'delete',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': teamName, // username
+          'receiver': userName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+
+      if (type == 'kicked') {
+        await userNoti.add({
+          'type':
+              'announce', // invite request, sent request, evaluate, announce, message, accepted request
+          'status': 'kicked',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': teamName, // username
+          'receiver': 'you',
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      } else if (type == 'left') {
+        await userNoti.add({
+          'type':
+              'announce', // invite request, sent request, evaluate, announce, message, accepted request
+          'status': 'left',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': teamName, // username
+          'receiver': 'you',
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      }
     } catch (e) {
       throw('Error: $e');
     }

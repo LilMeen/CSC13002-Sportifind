@@ -9,7 +9,7 @@ import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/custom_search_bar.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
-import 'package:sportifind/features/team/presentation/widgets/team_cards.dart';
+import 'package:sportifind/features/team/presentation/widgets/team/team_cards.dart';
 
 
 class InviteTeamScreen extends StatefulWidget {

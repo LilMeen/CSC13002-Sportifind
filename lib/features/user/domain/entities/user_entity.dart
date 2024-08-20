@@ -3,15 +3,15 @@ import 'dart:io';
 import 'package:sportifind/core/entities/location.dart';
 
 class UserEntity {
-  final String id;
-  final String name;
-  final String email;
-  final File avatar;
-  final String role;
-  final String gender;
-  final String dob;
-  final Location location;
-  final String phone;
+  String id;
+  String name;
+  String email;
+  File avatar;
+  String role;
+  String gender;
+  String dob;
+  Location location;
+  String phone;
 
   UserEntity({
     required this.id,

@@ -409,9 +409,72 @@ class SportifindTheme {
     color: bluePurple,
   );
 
+  static TextStyle sportifindFeatureAppBarBluePurpleSmall = GoogleFonts.rowdies(
+    fontWeight: FontWeight.normal,
+    fontSize: 25,
+    color: bluePurple,
+  );
+
   static TextStyle warningText = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,
     fontSize: 12,
     color: Colors.red,
+  );
+
+  
+  static TextStyle titleChart = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    color: Colors.grey,
+  );
+
+  
+  static TextStyle normalTextButton = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: Colors.white,
+  );
+
+  static TextStyle smallTextIconButton = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 14,
+    color: Colors.white,
+  );
+
+  static TextStyle normalTextIconButton = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 16,
+    color: Colors.white,
+  );
+
+  static TextStyle largeTextIconButton = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 20,
+    color: Colors.white,
+  );
+
+  static TextStyle textForm = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,  ///////phúc đề nghị đổi sang 16 vì này nhỏ quá
+    color: Colors.black,
+  );
+
+  static TextStyle errorForm = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    height: 0,
+    color: Colors.red,
+  );
+
+  static TextStyle largeLabelForm = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 18,
+    color: Colors.black,
+  );
+
+  static TextStyle smallTextBluePurple = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 14,
+    color: bluePurple,
   );
 }

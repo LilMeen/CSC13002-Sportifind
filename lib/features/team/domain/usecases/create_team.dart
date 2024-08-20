@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
@@ -27,10 +26,13 @@ class CreateTeam implements UseCase<void, CreateTeamParams> {
       location: teamLocation,
       captain: captain,
       players: [captain],
-      avatar: params.avatar ?? File('assets/no_avatar.png'),
+      avatar: params.avatar,
       incomingMatch: {},
+      foundedDate: DateTime.now(),
+      matchSendRequest: [],
+      matchInviteRequest: [],
     );
-    repository.createTeam(newTeam);
+    await repository.createTeam(newTeam);
     return Result.success(null);
   }
 }
@@ -40,13 +42,13 @@ class CreateTeamParams {
   final String district;
   final String city;
   final String captain;
-  final File? avatar; 
+  final File avatar; 
 
   CreateTeamParams({
     required this.name,
     required this.district,
     required this.city,
     required this.captain,
-    this.avatar,
+    required this.avatar,
   });
 }
