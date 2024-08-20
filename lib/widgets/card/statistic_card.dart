@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:sportifind/models/sportifind_theme.dart'; 
 
@@ -44,34 +45,18 @@ class StatisticCard extends StatelessWidget {
         );
       }
     } else {
-      if (percentage >= 100) {
-        return Text(
-          '+${percentage.toStringAsFixed(2)}%',
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.green,
-            fontWeight: FontWeight.bold,
-          ),
-        );
-      } else if (percentage < 100) {
-        return Text(
-          '-${percentage.toStringAsFixed(2)}%',
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-          ),
-        );
-      } else {
-        return const Text(
-          '0%',
-          style: TextStyle(
-            fontSize: 12,
-            color: Color.fromARGB(255, 218, 218, 218),
-            fontWeight: FontWeight.bold,
-          ),
-        );
-      }
+    double changePercentage = percentage;
+    String sign = changePercentage >= 0 ? '+' : '-';
+    Color color = changePercentage >= 0 ? Colors.green : Colors.red;
+
+    return Text(
+      '$sign${changePercentage.abs().toStringAsFixed(2)}%',
+      style: TextStyle(
+        fontSize: 12,
+        color: color,
+        fontWeight: FontWeight.bold,
+      ),
+    );
     }
   }
 
@@ -96,11 +81,11 @@ class StatisticCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircleAvatar(
-                backgroundColor: const Color.fromARGB(255, 218, 218, 218),
+                backgroundColor: Color.fromARGB(255, 227, 227, 227),
                 child: Icon(
                   icon,
                   color: SportifindTheme.bluePurple,
-                  size: 24,
+                  size: 26,
                 ),
               ), 
               const SizedBox(height: 2),          

@@ -144,18 +144,18 @@ double calculateMaxY(List<double> dailySummary) {
 }
 
 String formatNumber(double value) {
+  if (value == 0) return '0';
+  if (value < 100) {
+    return value.toStringAsFixed(1);
+  }
   if (value < 1000) {
-    double roundedValue = (value / 100).roundToDouble() * 100;
-    return roundedValue.toInt().toString();
+    return value.toInt().toString();
+  } else if (value < 1000000) {
+    double roundedValue = (value / 1000).roundToDouble();
+    return '${roundedValue.toStringAsFixed(1)}k';
   } else {
-    double roundedValue;
-    if (value < 1000000) {
-      roundedValue = ((value / 1000).ceil() * 1000).toDouble();
-      return '${(roundedValue / 1000).toInt()}k';
-    } else {
-      roundedValue = ((value / 1000000).ceil() * 1000000).toDouble();
-      return '${(roundedValue / 1000000).toInt()}M';
-    }
+    double roundedValue = (value / 1000000).roundToDouble();
+    return '${roundedValue.toStringAsFixed(1)}M';
   }
 }
 
