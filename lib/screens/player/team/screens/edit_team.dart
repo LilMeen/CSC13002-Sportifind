@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sportifind/models/location_info.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/screens/player/team/models/team_information.dart';
+import 'package:sportifind/models/stadium_data.dart';
 import 'package:sportifind/screens/player/team/screens/team_main_screen.dart';
 import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
 import 'package:sportifind/util/team_service.dart';
@@ -14,15 +14,20 @@ import 'package:sportifind/util/image_service.dart';
 import 'package:sportifind/widgets/app_bar/feature_app_bar_blue_purple.dart';
 import 'package:sportifind/widgets/button/blue_purple_white_icon_loading_button.dart';
 import 'package:sportifind/widgets/button/blue_purple_white_loading_buttton.dart';
+import 'package:sportifind/screens/player/team/models/team_information.dart';
+import 'package:sportifind/screens/player/team/widgets/player_list.dart';
+import 'package:sportifind/models/player_data.dart';
 
-class CreateTeamForm extends StatefulWidget {
-  const CreateTeamForm({super.key});
+class EditTeamScreen extends StatefulWidget {
+  const EditTeamScreen({super.key, required this.team});
+  final TeamInformation? team;
+
 
   @override
-  State<CreateTeamForm> createState() => _CreateTeamFormState();
+  State<EditTeamScreen> createState() => _EditTeamScreenState();
 }
 
-class _CreateTeamFormState extends State<CreateTeamForm> {
+class _EditTeamScreenState extends State<EditTeamScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {
     'teamName': TextEditingController(),
@@ -35,59 +40,76 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
   String _selectedDistrict = '';
 
   LocationInfo? _location;
+  Timer? _cityDelayTimer;
   Timer? _districtDelayTimer;
 
   late File _avatar;
-  final List<File> _images = [];
+  List<File> _images = [];
 
   bool _isLoading = true;
-  String _errorMessage = '';
-
+  List<PlayerData> teamMembers = [];
   final CustomForm teamForm = CustomForm();
   final TeamService teamService = TeamService();
   final ImageService imgService = ImageService();
 
-  Future<void> _prepareDefaultAvatar() async {
-    try {
-      final avatar = await imgService.getImageFileFromAssets(
-          'lib/assets/avatar/default_stadium_avatar.jpg');
+  void prepareData() async {
+    _controllers['teamName']!.text = widget.team!.name;
+    _location = widget.team!.location;
+
+    _avatar = await teamService.downloadAvatarFile(widget.team!.teamId);
+    _images = await teamService.downloadImageFiles(
+        widget.team!.teamId, widget.team!.images.length);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    _cityDelayTimer?.cancel();
+    _cityDelayTimer = Timer(const Duration(milliseconds: 200), () {
       setState(() {
-        _avatar = avatar;
-        _isLoading = false;
+        _selectedCity = widget.team!.location.city;
       });
-    } catch (error) {
+    });
+
+    _districtDelayTimer?.cancel();
+    _districtDelayTimer =
+        Timer(const Duration(seconds: 1, milliseconds: 500), () {
       setState(() {
-        _errorMessage = 'Failed to load data: $error';
-        _isLoading = false;
+        _selectedDistrict = widget.team!.location.district;
       });
-    }
+    });
+
+    List<String> teamMems = widget.team!.members;
+    teamMembers = await teamService.getPlayersData(teamMems);
   }
 
   @override
   void initState() {
     super.initState();
-    _prepareDefaultAvatar();
+    prepareData();
   }
 
   @override
   void dispose() {
     _controllers.forEach((key, controller) => controller.dispose());
+    _cityDelayTimer?.cancel();
     _districtDelayTimer?.cancel();
     super.dispose();
   }
 
-  Future<void> _createTeam() async {
+  Future<void> _editTeam() async {
     if (!_formKey.currentState!.validate()) return;
 
     try {
       await teamService.teamProcessing(
-        action: 'create',
+        action: 'edit',
         controllers: _controllers,
         location: _location,
         selectedCity: _selectedCity,
         selectedDistrict: _selectedDistrict,
         avatar: _avatar,
         images: _images,
+        teamInformation: widget.team,
       );
     } catch (e) {
       if (mounted) {
@@ -97,11 +119,9 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
       }
     } finally {
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const TeamMainScreen(),
-          ),
-        );
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const TeamMainScreen(),
+        ));
       }
     }
   }
@@ -115,18 +135,38 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
     });
   }
 
+  Future<void> _addImageInList(bool fromCamera) async {
+    final pickedFile = await imgService.pickImage(fromCamera);
+    setState(() {
+      if (pickedFile != null) {
+        _images.add(pickedFile);
+      }
+    });
+  }
+
+  Future<void> _replaceImageInList(bool fromCamera, int index) async {
+    final pickedFile = await imgService.pickImage(fromCamera);
+    setState(() {
+      if (pickedFile != null) {
+        _images[index] = pickedFile;
+      }
+    });
+  }
+
+  void _deleteImageInList(int index) {
+    setState(() {
+      _images.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_errorMessage.isNotEmpty) {
-      return Center(child: Text(_errorMessage));
-    }
-
     return Scaffold(
-      appBar: const FeatureAppBarBluePurple(title: 'Create team'),
+      appBar: const FeatureAppBarBluePurple(title: 'Edit team'),
       backgroundColor: SportifindTheme.backgroundColor,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -162,17 +202,26 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
               ),
               const SizedBox(height: 8.0),
               teamForm.buildAvatarSection(
-                buttonText: 'Add avatar image',
+                buttonText: 'Change avatar',
                 avatar: _avatar,
                 onPressed: () => imgService.showImagePickerOptions(
                     context, _pickImageForAvatar),
               ),
+              teamForm.buildImageList(
+                label: 'Other images',
+                images: _images,
+                addImage: () =>
+                    imgService.showImagePickerOptions(context, _addImageInList),
+                replaceImage: _replaceImageInList,
+                deleteImage: _deleteImageInList,
+              ),
               const SizedBox(height: 16),
+              PlayerList(members: teamMembers, type: 'kick', team: widget.team),
               SizedBox(
                 width: double.infinity,
                 child: BluePurpleWhiteLoadingButton(
-                  text: 'Create',
-                  onPressed: _createTeam,
+                  text: 'Update',
+                  onPressed: _editTeam,
                 ),
               ),
             ],

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
 import 'package:sportifind/models/location_info.dart';
@@ -15,7 +17,7 @@ class TeamInformation {
     this.matchInviteRequest,
     required this.captain,
     required this.foundedDate,
-
+    required this.images,
   });
 
   TeamInformation.empty()
@@ -23,6 +25,7 @@ class TeamInformation {
         name = '',
         location = LocationInfo(),
         avatarImageUrl = '',
+        images = [],
         incoming = {},
         matchSentRequest = [],
         matchInviteRequest = [],
@@ -60,6 +63,7 @@ class TeamInformation {
       captain: data['captain'],
       teamId: snapshot.id,
       foundedDate: (data['foundedDate'] as Timestamp).toDate(),
+      images: List<String>.from(data['images']),
     );
   }
 
@@ -67,6 +71,7 @@ class TeamInformation {
   String name;
   LocationInfo location;
   String avatarImageUrl;
+  List<String> images; 
   String captain;
   Map<String, bool> incoming;
   List<MatchRequest>? matchSentRequest;

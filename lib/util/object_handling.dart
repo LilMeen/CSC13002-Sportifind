@@ -161,8 +161,7 @@ class MatchHandling extends ObjectHandling {
             'team2': senderId,
             'team2_avatar': senderInformation.data()?['avatarImage'] ?? '',
           });
-        }
-        else {
+        } else {
           print("This match has already contains second team");
         }
       } else if (status == "match join") {
@@ -335,6 +334,63 @@ class TeamHandling extends ObjectHandling {
       });
 
       notification.requestDeniedFromUser(userId, teamId);
+    } catch (e) {
+      print('error: $e');
+    }
+  }
+
+  // team delete user from team
+  Future<void> removePlayerFromTeam(teamId, userId, type) async {
+    try {
+      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
+      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
+
+      await userDoc.update({
+        'joinedTeams': FieldValue.arrayRemove(teamId),
+      });
+
+      await teamDoc.update({
+        'members': FieldValue.arrayRemove(userId),
+      });
+
+      notification.removePlayerFromTeam(userId, teamId, type);
+    } catch (e) {
+      print('error: $e');
+    }
+  }
+
+  Future<void> deleteTeam(teamId) async {
+    try {
+      notification.deleteTeam(teamId);
+      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
+      // delete match of this team
+      QuerySnapshot<Map<String, dynamic>> matchSnapshot1 =
+          await FirebaseFirestore.instance
+              .collection('matches')
+              .where('team1', isEqualTo: teamId)
+              .get();
+      QuerySnapshot<Map<String, dynamic>> matchSnapshot2 =
+          await FirebaseFirestore.instance
+              .collection('matches')
+              .where('team2', isEqualTo: teamId)
+              .get();
+
+      matchSnapshot1.docs.forEach((element) {
+        element.reference.delete();
+      });
+      matchSnapshot2.docs.forEach((element) {
+        element.reference.delete();
+      });
+
+      // delete this team id from joinedTeams of all users
+      QuerySnapshot<Map<String, dynamic>> userSnapshot =
+          await FirebaseFirestore.instance.collection('users').get();
+      userSnapshot.docs.forEach((element) {
+        element.reference.update({
+          'joinedTeams': FieldValue.arrayRemove(teamId),
+        });
+      });
+      await teamDoc.delete();
     } catch (e) {
       print('error: $e');
     }

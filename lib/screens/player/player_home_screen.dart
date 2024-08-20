@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
 import 'package:sportifind/screens/player/profile/profile_screen.dart';
+import 'package:sportifind/screens/message/screens/group_chat_list.dart';
 
 class PlayerHomeScreen extends StatefulWidget {
   const PlayerHomeScreen({super.key});
@@ -97,7 +98,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const Text("hehe"),
+                          builder: (context) => const GroupChatList(),
                         ),
                       );
                     },

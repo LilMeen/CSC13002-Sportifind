@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/main.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/screens/player/team/models/team_information.dart';
+import 'package:sportifind/screens/player/team/screens/edit_team.dart';
 import 'package:sportifind/widgets/dropdown_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,12 +15,16 @@ import 'package:sportifind/screens/player/team/models/team_information.dart';
 import 'package:sportifind/screens/player/team/screens/player_details.dart';
 import 'package:sportifind/util/team_service.dart';
 import 'package:sportifind/models/player_data.dart';
-import 'package:sportifind/util/team_service.dart';
 import 'package:sportifind/screens/player/team/widgets/player_list.dart';
+import 'package:sportifind/util/object_handling.dart';
 
 class TeamDetails extends StatefulWidget {
-  const TeamDetails({super.key, required this.teamId});
+  const TeamDetails(
+      {super.key,
+      required this.teamId,
+      required this.role}); // role: teamMember: normal - captain, other: have been added - have not
   final String teamId;
+  final String role;
 
   @override
   State<TeamDetails> createState() => _TeamDetailsState();
@@ -28,6 +33,7 @@ class TeamDetails extends StatefulWidget {
 class _TeamDetailsState extends State<TeamDetails>
     with SingleTickerProviderStateMixin {
   TeamService teamService = TeamService();
+  TeamHandling teamHandling = TeamHandling();
   TeamInformation? teamInformation;
   List<PlayerData> teamMembers = [];
   String captain = '';
@@ -85,6 +91,16 @@ class _TeamDetailsState extends State<TeamDetails>
                 textAlign: TextAlign.center,
               ),
               centerTitle: true,
+              actions: <Widget>[
+                (widget.role == 'normal' || widget.role == 'captain')
+                    ? IconButton(
+                        icon: const Icon(Icons.settings),
+                        onPressed: () {
+                          _showCustomDialog(context);
+                        },
+                      )
+                    : const SizedBox(width: 0, height: 0),
+              ],
             ),
             body: Padding(
               padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
@@ -226,32 +242,42 @@ class _TeamDetailsState extends State<TeamDetails>
                           ],
                         ),
                         const SizedBox(height: 10),
-                        Text(
-                          'Images',
-                          style: SportifindTheme.normalTextBlack.copyWith(
-                            fontSize: 20,
-                            color: Colors.black,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start, 
+                          children: [
+                            Text(
+                              'Images',
+                              style: SportifindTheme.normalTextBlack.copyWith(
+                                fontSize: 20,
+                                color: Colors.black,
+                              ),
+                            ),
+                            teamInformation!.images.isEmpty
+                                ? Text('       No image yet' , style: SportifindTheme.normalTextBlack.copyWith(
+                                  color: Colors.grey, 
+                                  fontSize: 16, 
+                                ),) : const SizedBox(height: 0, width: 0,),
+                          ],
                         ),
                         const SizedBox(height: 5),
-                        // SizedBox(
-                        //   height:
-                        //       200, // Set the desired height for the scrollable area
-                        //   child: ListView.builder(
-                        //     itemCount: teamInformation!.images
-                        //         .length, // Assuming teamInformation has a list of image URLs
-                        //     itemBuilder: (context, index) {
-                        //       return Padding(
-                        //         padding: const EdgeInsets.only(bottom: 8.0),
-                        //         child: Image.network(
-                        //           teamInformation!.images[
-                        //               index], // Replace with your image URL
-                        //           fit: BoxFit.cover,
-                        //         ),
-                        //       );
-                        //     },
-                        //   ),
-                        // ),
+                        teamInformation!.images.isEmpty ? SizedBox(
+                          height:
+                              200, // Set the desired height for the scrollable area
+                          child: ListView.builder(
+                            itemCount: teamInformation!.images
+                                .length, // Assuming teamInformation has a list of image URLs
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Image.network(
+                                  teamInformation!.images[
+                                      index], // Replace with your image URL
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                            },
+                          ),
+                        ) : const SizedBox(height: 0, width: 0,)
                       ],
                     ),
                   ),
@@ -266,11 +292,15 @@ class _TeamDetailsState extends State<TeamDetails>
                     ),
                   ),
                   Expanded(
-                    child: PlayerList(members: teamMembers),
+                    child: PlayerList(
+                      members: teamMembers,
+                      type: 'view',
+                      team: teamInformation,
+                    ),
                   ),
 
                   // create a elevated button here
-                  Row(
+                  (widget.role == 'captain' || widget.role == 'normal') ? const SizedBox(height: 0, width: 0,) : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
@@ -281,7 +311,9 @@ class _TeamDetailsState extends State<TeamDetails>
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          teamHandling.sendUserRequest(FirebaseAuth.instance.currentUser!.uid, teamInformation!.teamId);
+                        },
                         child: Text(
                           'Join',
                           style: SportifindTheme.featureTitleBlack.copyWith(
@@ -297,6 +329,132 @@ class _TeamDetailsState extends State<TeamDetails>
             ),
           );
         }
+      },
+    );
+  }
+
+  void _showCustomDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+            side: BorderSide(color: SportifindTheme.bluePurple, width: 2.0),
+          ),
+          backgroundColor: Colors.white,
+          title: Center(
+            child: Text(
+              'Choose an Option',
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+                color: SportifindTheme.bluePurple,
+              ),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              widget.role == 'captain'
+                  ? ListTile(
+                      leading:
+                          Icon(Icons.edit, color: SportifindTheme.bluePurple),
+                      title: Text(
+                        'Edit Team',
+                        style: SportifindTheme.normalTextBlack.copyWith(
+                          fontSize: 16,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => EditTeamScreen(
+                              team: teamInformation,
+                            ),
+                          ),
+                        );
+                        // Handle the edit action
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Moving to Edit Team'),
+                          ),
+                        );
+                      },
+                    )
+                  : const SizedBox(
+                      height: 0,
+                      width: 0,
+                    ),
+              widget.role == 'captain'
+                  ? const Divider()
+                  : const SizedBox(
+                      height: 0,
+                      width: 0,
+                    ),
+              ListTile(
+                leading: Icon(Icons.output_outlined,
+                    color: Colors.red.withOpacity(0.9)),
+                title: Text(
+                  'Leave Team',
+                  style: SportifindTheme.normalTextBlack.copyWith(
+                    fontSize: 16,
+                  ),
+                ),
+                onTap: () {
+                  teamHandling.removePlayerFromTeam(
+                    teamInformation!.teamId,
+                    FirebaseAuth.instance.currentUser!.uid,
+                    'left',
+                  );
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('You have left ${teamInformation!.name}'),
+                    ),
+                  );
+                },
+              ),
+              const Divider(),
+              widget.role == 'captain'
+                  ? ListTile(
+                      leading: Icon(
+                        Icons.delete,
+                        color: Colors.red.withOpacity(0.9),
+                      ),
+                      title: Text(
+                        'Delete Team',
+                        style: SportifindTheme.normalTextBlack.copyWith(
+                          fontSize: 16,
+                        ),
+                      ),
+                      onTap: () {
+                        teamHandling.deleteTeam(teamInformation!.teamId);
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(); 
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'You have deleted ${teamInformation!.name}'),
+                          ),
+                        );
+                      },
+                    )
+                  : const SizedBox(
+                      height: 0,
+                      width: 0,
+                    ),
+              widget.role == 'captain'
+                  ? const Divider()
+                  : const SizedBox(
+                      height: 0,
+                      width: 0,
+                    ),
+            ],
+          ),
+        );
       },
     );
   }
