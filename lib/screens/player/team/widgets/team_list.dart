@@ -26,21 +26,22 @@ class TeamList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: teams.length, // Assuming team has a list of players
-      itemBuilder: (context, index) {
-        return TeamBox(
-          team: teams[index], // Pass the player data
-          stt: index + 1, // Pass the index as the serial number
-        );
-      },
+    return SingleChildScrollView(
+      child: Column(
+        children: List.generate(
+          teams.length,
+          (index) => TeamBox(
+            team: teams[index], // Pass the team data
+            stt: index + 1, // Pass the index as the serial number
+          ),
+        ),
+      ),
     );
   }
 }
 
 class TeamBox extends StatelessWidget {
-  const TeamBox(
-      {super.key, required this.team, required this.stt});
+  const TeamBox({super.key, required this.team, required this.stt});
   final TeamInformation? team;
   final int stt;
 
@@ -86,25 +87,22 @@ class TeamBox extends StatelessWidget {
                       const Spacer(),
                       TextButton(
                         onPressed: () {
-                        
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => TeamDetails(
-                                  teamId: team!.teamId,
-                                  role: 'teamMember',
-                                ),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TeamDetails(
+                                teamId: team!.teamId,
+                                role: 'teamMember',
                               ),
-                            );
+                            ),
+                          );
                         },
                         child: Text(
-                          'View team' ,
+                          'View team',
                           style: SportifindTheme.normalTextBlack.copyWith(
-                            fontSize: 14,
-                            color: 
-                                SportifindTheme.bluePurple.withOpacity(0.9)
-                                
-                          ),
+                              fontSize: 14,
+                              color:
+                                  SportifindTheme.bluePurple.withOpacity(0.9)),
                         ),
                       ),
                     ],

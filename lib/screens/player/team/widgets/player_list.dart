@@ -33,16 +33,18 @@ class PlayerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: members.length, // Assuming team has a list of players
-      itemBuilder: (context, index) {
-        return PlayerBox(
-          team: team,
-          player: members[index], // Pass the player data
-          stt: index + 1,
-          type: type, // Pass the index as the serial number
-        );
-      },
+    return SingleChildScrollView(
+      child: Column(
+        children: List.generate(
+          members.length,
+          (index) => PlayerBox(
+            team: team,
+            player: members[index], // Pass the player data
+            stt: index + 1,
+            type: type, // Pass the index as the serial number
+          ),
+        ),
+      ),
     );
   }
 }
