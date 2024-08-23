@@ -29,7 +29,9 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   List<double> dailySummary = [];
   List<double> dummySummary = List.filled(31, 0);
   late int selectedWeek;
+  late int lastSelectedWeek;
   late int selectedMonth;
+  late int lastSelectedMonth;
   int selectedYear = 2024;
   DateFormat dateFormat = DateFormat('EEEE');
   DateFormat dateFornatDate = DateFormat('dd/MM/yyyy');
@@ -62,6 +64,10 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
 
   bool isLoading = true;
   String? errorMessage;
+  bool isWeekSelected = true;
+  bool isMonthSelected = true;
+  int lastSelectedWeekOffset = 0;
+  int lastSelectedMonthOffset = 0;
 
   Future<void>? _loadDataFuture;
 
@@ -69,7 +75,9 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   void initState() {
     super.initState();
     selectedWeek = _getCurrentWeekNumber();
+    lastSelectedWeek = selectedWeek;
     selectedMonth = _getCurrentMonthNumber();
+    lastSelectedMonth = selectedMonth;
     _loadDataFuture = _loadInitialData();
   }
 
@@ -97,6 +105,7 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   void _handleWeekNumberChanged(int weekNumber) {
     setState(() {
       selectedWeek = weekNumber;
+      lastSelectedWeek = weekNumber - 1;
       _loadWeeklySummary(weekNumber);
     });
   }
@@ -104,6 +113,7 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   void _handleMonthNumberChanged(int monthNumber) {
     setState(() {
       selectedMonth = monthNumber;
+      lastSelectedMonth = monthNumber - 1;
       _loadMonthlySummary(monthNumber);
     });
   }
@@ -150,16 +160,12 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
       setState(() {
         getWeekTotalRevenue = currentWeekRevenue;
         weeklyRevenue = currentWeekRevenue;
-
         lastWeekRevenue = previousWeekRevenue;
         weeklyMatch = currentWeekTotalMatch;
-
         lastWeekMatch = previousWeekMatch;
         matchesMap = currentMatchesMap;
-
         stadiumRevenue = currentStadiumRevenue;
         weekHotStadium = currentHotStadium;
-
         weekPeakDate = currentPeakDate;
         lastWeekPeakDate = previousPeakDate;
       });
@@ -223,7 +229,6 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
         matchesMap = currentMatchesMap;
         stadiumRevenue = currentStadiumRevenue;
         monthHotStadium = currentHotStadium;
-
         monthPeakDate = currentPeakDate;
         lastMonthPeakDate = previousPeakDate;
       });
@@ -256,22 +261,21 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      //appBar: SportifindAppBar,
-      body: FutureBuilder(
-        future: _loadDataFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError || errorMessage != null) {
-            return Center(
-                child: Text(
-                    errorMessage ?? 'An error occurred. Please try again.'));
-          } else {
-            return SingleChildScrollView(
-                child: Column(
+Widget build(BuildContext context) {
+  final width = MediaQuery.of(context).size.width;
+  return Scaffold(
+    body: FutureBuilder(
+      future: _loadDataFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError || errorMessage != null) {
+          return Center(
+              child: Text(
+                  errorMessage ?? 'An error occurred. Please try again.'));
+        } else {
+          return SingleChildScrollView(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 10),
@@ -296,10 +300,24 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
                   onToggle: (index) {
                     setState(() {
                       status = index!;
+                      isLoading = true; 
+
                       if (status == 0) {
-                        _loadWeeklySummary(selectedWeek);
+                        isWeekSelected = true;
+                        isMonthSelected = false;
+                        _loadWeeklySummary(selectedWeek).then((_) {
+                          setState(() {
+                            isLoading = false; 
+                          });
+                        });
                       } else {
-                        _loadMonthlySummary(selectedMonth);
+                        isMonthSelected = true;
+                        isWeekSelected = false;
+                        _loadMonthlySummary(selectedMonth).then((_) {
+                          setState(() {
+                            isLoading = false; // Stop loading after data is loaded
+                          });
+                        });
                       }
                     });
                   },
@@ -307,102 +325,115 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
                 const SizedBox(height: 10),
                 status == 0
                     ? WeekNavigator(
-                        selectedWeek: selectedWeek,
-                        onWeekNumberChanged: _handleWeekNumberChanged,
+                        selectedWeek: lastSelectedWeekOffset,
+                        onWeekNumberChanged: (newWeek) {
+                          setState(() {
+                            lastSelectedWeekOffset = newWeek;
+                            _loadWeeklySummary(lastSelectedWeekOffset);
+                          });
+                        },
                       )
                     : MonthNavigator(
                         selectedMonth: selectedMonth,
-                        onMonthNumberChanged: _handleMonthNumberChanged,
+                        onMonthNumberChanged: (newMonth) {
+                          setState(() {
+                            lastSelectedMonthOffset = newMonth;
+                            _loadMonthlySummary(lastSelectedMonthOffset);
+                          });
+                        },
                       ),
                 const SizedBox(height: 10),
-                status == 0
-                    ? BarChartComponent(weeklySummary: weeklySummary)
-                    : LineChartCard(dailySummary: dailySummary),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    isLoading
-                        ? const CircularProgressIndicator()
-                        : Column(
-                            children: [
-                              Row(
-                                children: [
-                                  const Spacer(),
-                                  StatisticCard(
-                                    status: 0,
-                                    icon: Icons.attach_money,
-                                    value: status == 0
-                                        ? formatNumber(weeklyRevenue!)
-                                        : formatNumber(monthlyRevenue!),
-                                    title: 'Revenue',
-                                    percentage: status == 0
-                                        ? ((weeklyRevenue ?? 0) -
-                                                (lastWeekRevenue ?? 0)) /
-                                            (lastWeekRevenue ?? 1) *
-                                            100
-                                        : ((monthlyRevenue ?? 0) -
-                                                (lastMonthRevenue ?? 0)) /
-                                            (lastMonthRevenue ?? 1) *
-                                            100,
-                                    onPressed: () {},
-                                  ),
-                                  const Spacer(),
-                                  StatisticCard(
-                                    status: 1,
-                                    icon: Icons.sports_soccer,
-                                    value: status == 0
-                                        ? weeklyMatch.toString()
-                                        : monthlyMatch.toString(),
-                                    title: 'Matches',
-                                    totalMatches: weeklyMatch! - lastWeekMatch!,
-                                    onPressed: () {},
-                                  ),
-                                  const Spacer(),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  const Spacer(),
-                                  StatisticCard(
-                                    status: 1,
-                                    icon: Icons.calendar_today,
-                                    value: status == 0
-                                        ? dateFormat
-                                            .format(weekPeakDate.keys.last)
-                                        : dateFornatDate
-                                            .format(monthPeakDate.keys.last),
-                                    title: 'Hot Day',
-                                    totalMatches:
-                                        weekPeakDate.values.last - lastWeekPeakDate.values.last,
-                                    onPressed: () {},
-                                  ),
-                                  const Spacer(),
-                                  StatisticCard(
-                                    status: 2,
-                                    icon: Icons.stadium,
-                                    value: status == 0
-                                        ? weekHotStadium.keys.last.toString()
-                                        : monthHotStadium.keys.last.toString(),
-                                    title: 'Hot Stadium',
-                                    stadiumMatches: status == 0
-                                        ? weekHotStadium.values.last
-                                        : monthHotStadium.values.last,
-                                    onPressed: () {},
-                                  ),
-                                  const Spacer(),
-                                ],
-                              ),
-                            ],
+                if (isLoading)
+                  const Center(child: CircularProgressIndicator()) // Show loading spinner for charts and cards
+                else ...[
+                  status == 0
+                      ? BarChartComponent(weeklySummary: weeklySummary)
+                      : LineChartCard(dailySummary: dailySummary),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Spacer(),
+                          StatisticCard(
+                            status: 0,
+                            icon: Icons.attach_money,
+                            value: status == 0
+                                ? formatNumber(weeklyRevenue!)
+                                : formatNumber(monthlyRevenue!),
+                            title: 'Revenue',
+                            percentage: status == 0
+                                ? ((weeklyRevenue ?? 0) -
+                                        (lastWeekRevenue ?? 0)) /
+                                    (lastWeekRevenue ?? 1) *
+                                    100
+                                : ((monthlyRevenue ?? 0) -
+                                        (lastMonthRevenue ?? 0)) /
+                                    (lastMonthRevenue ?? 1) *
+                                    100,
+                            onPressed: () {},
                           ),
-                    const SizedBox(height: 10),
-                  ],
-                ),
+                          const Spacer(),
+                          StatisticCard(
+                            status: 1,
+                            icon: Icons.sports_soccer,
+                            value: status == 0
+                                ? weeklyMatch.toString()
+                                : monthlyMatch.toString(),
+                            title: 'Matches',
+                            totalMatches: status == 0
+                                ? weeklyMatch! - lastWeekMatch!
+                                : monthlyMatch! - lastMonthMatch!,
+                            onPressed: () {},
+                          ),
+                          const Spacer(),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const Spacer(),
+                          StatisticCard(
+                            status: 1,
+                            icon: Icons.calendar_today,
+                            value: status == 0
+                                ? dateFormat.format(weekPeakDate.keys.last)
+                                : dateFornatDate.format(
+                                    monthPeakDate.keys.last),
+                            title: 'Hot Day',
+                            totalMatches: status == 0
+                                ? weekPeakDate.values.last -
+                                    lastWeekPeakDate.values.last
+                                : monthPeakDate.values.last -
+                                    lastMonthPeakDate.values.last,
+                            onPressed: () {},
+                          ),
+                          const Spacer(),
+                          StatisticCard(
+                            status: 2,
+                            icon: Icons.stadium,
+                            value: status == 0
+                                ? weekHotStadium.keys.last.toString()
+                                : monthHotStadium.keys.last.toString(),
+                            title: 'Hot Stadium',
+                            stadiumMatches: status == 0
+                                ? weekHotStadium.values.last
+                                : monthHotStadium.values.last,
+                            onPressed: () {},
+                          ),
+                          const Spacer(),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ],
-            ));
-          }
-        },
-      ),
-    );
-  }
+            ),
+          );
+        }
+      },
+    ),
+  );
+}
+
 }

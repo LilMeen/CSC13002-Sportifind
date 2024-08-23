@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class ReportDialog extends StatefulWidget {
-  final String reportedUserId; // Add this to get the reported user's ID
+  final String reportedUserId;
 
   const ReportDialog({super.key, required this.reportedUserId});
 
@@ -54,12 +55,12 @@ class _ReportDialogState extends State<ReportDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('You are reporting this user'),
+      title: Text('You are reporting this user', style: SportifindTheme.normalTextBlack),
       content: Form(
         key: _formKey,
         child: TextFormField(
           controller: _reasonController,
-          decoration: const InputDecoration(hintText: 'Your reason'),
+          decoration: InputDecoration(hintText: 'Your reason', hintStyle: SportifindTheme.smallTextBlack),
           maxLines: 1,
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
@@ -85,9 +86,9 @@ class _ReportDialogState extends State<ReportDialog> {
                 side: BorderSide.none,
                 shape: const StadiumBorder(),
               ),
-              child: const Text(
+              child: Text(
                 'Close',
-                style: TextStyle(color: Colors.white),)
+                style: SportifindTheme.normalTextWhite.copyWith(fontSize: 14))
             ),
             const Spacer(),
             ElevatedButton(
@@ -99,12 +100,12 @@ class _ReportDialogState extends State<ReportDialog> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.greenAccent,
+                backgroundColor: SportifindTheme.bluePurple,
                 side: BorderSide.none,
                 //shape: const StadiumBorder(),
               ),
-              child: const Text('Send',
-              style: TextStyle(color: Colors.black),)
+              child: Text('Send',
+              style: SportifindTheme.normalTextWhite.copyWith(fontSize: 14))
             ),
             const Spacer(),
           ],
