@@ -4,15 +4,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/core/usecases/usecase_provider.dart';
+//import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
-import 'package:sportifind/features/profile/domain/usecases/get_player.dart';
 import 'package:sportifind/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:sportifind/features/profile/presentation/screens/setting_screen.dart';
-import 'package:sportifind/features/profile/presentation/widgets/hexagon.dart';
 import 'package:sportifind/features/profile/presentation/widgets/information_menu.dart';
 import 'dart:io';
-import 'package:sportifind/features/profile/presentation/widgets/rating.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -28,37 +25,27 @@ class ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    fetchPlayer();
+    fetchStadiumOwner();
   }
 
-  Future<void> fetchPlayer() async {
+  Future<void> fetchStadiumOwner() async {
     try {
-      player = await UseCaseProvider.getUseCase<GetPlayer>()
-          .call(
-            GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid),
-          )
-          .then((value) => value.data!);
+      // player = await UseCaseProvider.getUseCase<>()
+      //     .call(
+      //       GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid),
+      //     )
+      //     .then((value) => value.data!);
 
-      setState(() {
-        isLoading = false;
-      });
+      // setState(() {
+      //   isLoading = false;
+      // });
     } catch (e) {
-      throw ("Error fetching player data");
+      throw ("Error fetching stadium owner data");
     }
   }
 
   String getType(String type, Map<String, dynamic> data) {
     switch (type) {
-      case "height":
-        return data['height'] ?? '';
-      case "weight":
-        return data['weight'] ?? '';
-      case "foot":
-        if (data['preferred_foot'] != null) {
-          return data['preferred_foot'] ? 'Right footed' : 'Left footed';
-        } else {
-          return '';
-        }
       case "address":
         return data['address'] ?? '';
       case "city":
@@ -79,18 +66,6 @@ class ProfileScreenState extends State<ProfileScreen> {
         return data['phone'] ?? '';
       case "role":
         return data['role'] ?? '';
-      case "stat":
-        if (data['stat'] is List) {
-          final statsList = data['stat'] as List;
-          final ratings =
-              statsList.map((stat) => Rating.fromMap(stat)).toList();
-          return ratings
-              .map((rating) => '${rating.name}: ${rating.value}')
-              .join(', ');
-        } else {
-          return '';
-        }
-
       default:
         return "nothing"; // Default text if no match is found
     }
@@ -229,17 +204,6 @@ class ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    // Default ratings with all values set to 0
-    List<Rating> defaultRatings = [
-      Rating('PACE', player!.stats.pace),
-      Rating('SHOOT', player!.stats.shoot),
-      Rating('PASS', player!.stats.pass),
-      Rating('DRI', player!.stats.drive),
-      Rating('DEF', player!.stats.def),
-      Rating('PHY', player!.stats.physic),
-    ];
-    print('HDWJFE: $player!.preferredFoot');
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile',
@@ -351,30 +315,6 @@ class ProfileScreenState extends State<ProfileScreen> {
                         "${player!.location.district}, ${player!.location.city} City",
                     icon: "location"),
                 InformationMenu(textContent: player!.dob, icon: "dob"),
-                const Divider(),
-                InformationMenu(
-                    textContent: player!.height != ''
-                        ? "${player!.height} m"
-                        : "No information",
-                    icon: "height"),
-                InformationMenu(
-                    textContent: player!.weight != ''
-                        ? "${player!.weight} kg"
-                        : "No information",
-                    icon: "weight"),
-                InformationMenu(
-                  textContent: player!.preferredFoot == 'true'
-                      ? "Right footed"
-                      : player!.preferredFoot == 'false'
-                          ? "Left footed"
-                          : "No information",
-                  icon: "foot",
-                ),
-                const SizedBox(height: 50),
-                Hexagon(
-                  screenWidth: MediaQuery.of(context).size.width,
-                  ratings: defaultRatings,
-                ),
               ],
             ),
           ),

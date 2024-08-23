@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 
 class NumberWheel extends StatefulWidget {
   final Function(int) onSaved;
@@ -57,7 +58,7 @@ class _NumberWheelState extends State<NumberWheel> {
               ),
             ),
             CupertinoButton(
-              child: const Text('Done'),
+              child: Text('Done', style: SportifindTheme.normalTextBlack),
               onPressed: () {
                 setState(() {
                   _selectedValue = _tempValue;
@@ -77,15 +78,11 @@ class _NumberWheelState extends State<NumberWheel> {
   Widget build(BuildContext context) {
     return CupertinoButton(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      color: Colors.tealAccent,
+      color: SportifindTheme.bluePurple,
       borderRadius: BorderRadius.circular(30),
       child: Text(
         '$_selectedValue',
-        style: const TextStyle(
-          color: Colors.black,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: SportifindTheme.normalTextWhite,
       ),
       onPressed: () => _showPicker(context),
     );
