@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class NumberWheel extends StatefulWidget {
-  const NumberWheel({super.key});
+  final String stat;
+  const NumberWheel({super.key, required this.stat});
 
   @override
   State<NumberWheel> createState() => _NumberWheelState();

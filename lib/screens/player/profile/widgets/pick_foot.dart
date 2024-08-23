@@ -17,7 +17,10 @@ class _FootPickerState extends State<FootPicker> {
     _initializePickerState();
   }
 
-  void _initializePickerState() {
+  Future<void> _initializePickerState() async {
+    await Future.delayed(Duration(seconds: 1));
+    String kkk = widget.controller.text;
+    print('hehe $kkk');
     if (widget.controller.text == '1') {
       setState(() {
         isRightPicked = true;

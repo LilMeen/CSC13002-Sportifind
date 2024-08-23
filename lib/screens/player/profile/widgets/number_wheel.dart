@@ -1,30 +1,67 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class NumberWheel extends StatefulWidget {
   final Function(int) onSaved;
+  final int stat;
 
-  const NumberWheel({super.key, required this.onSaved});
+  const NumberWheel({super.key, required this.onSaved, required this.stat});
 
   @override
   State<NumberWheel> createState() => _NumberWheelState();
 }
 
 class _NumberWheelState extends State<NumberWheel> {
-  int _selectedValue = 0;
-  int _tempValue = 80;
+  late int _selectedValue;
+  late int _tempValue;
   late FixedExtentScrollController _scrollController;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = FixedExtentScrollController(initialItem: 80);
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    // Giả lập thời gian chờ đợi dữ liệu (hoặc thay bằng hàm fetch dữ liệu thực tế)
+    await Future.delayed(Duration(seconds: 2));
+
+    // Lưu giá trị đã được fetch (sử dụng widget.stat)
+    _selectedValue = widget.stat;
+    _tempValue = _selectedValue;
+
+    print('Initial stat value: $_selectedValue');
+
+    // Khởi tạo FixedExtentScrollController
+    _scrollController = FixedExtentScrollController(initialItem: _selectedValue == 0 ? 80 : _selectedValue);
+
+    setState(() {
+      _isLoading = false; // Dữ liệu đã sẵn sàng
+    });
   }
 
   @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+    
+    return CupertinoButton(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      color: Colors.tealAccent,
+      borderRadius: BorderRadius.circular(30),
+      child: Text(
+        // Hiển thị giá trị đã được fetch (_selectedValue)
+        '$_selectedValue',  
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      onPressed: () => _showPicker(context),
+    );
   }
 
   void _showPicker(BuildContext context) {
@@ -62,32 +99,16 @@ class _NumberWheelState extends State<NumberWheel> {
                 setState(() {
                   _selectedValue = _tempValue;
                   _scrollController = FixedExtentScrollController(initialItem: _selectedValue);
+
+                  // Lưu giá trị được chọn vào onSaved (giữ nguyên nếu không phải 80)
+                  widget.onSaved(_selectedValue == 80 && widget.stat == 0 ? 0 : _selectedValue);
                 });
-                widget.onSaved(_selectedValue);
                 Navigator.of(context, rootNavigator: true).pop();
               },
             ),
           ],
         ),
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoButton(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      color: Colors.tealAccent,
-      borderRadius: BorderRadius.circular(30),
-      child: Text(
-        '$_selectedValue',
-        style: const TextStyle(
-          color: Colors.black,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      onPressed: () => _showPicker(context),
     );
   }
 }
