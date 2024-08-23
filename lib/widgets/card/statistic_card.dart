@@ -1,51 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:sportifind/models/sportifind_theme.dart'; 
+import 'package:sportifind/models/sportifind_theme.dart';
 
 class StatisticCard extends StatelessWidget {
   final IconData icon;
   final String value;
   final String title;
-  final double percentage;
+  final double? percentage;
   final VoidCallback onPressed;
-  final bool isText;
+  final int? stadiumMatches;
+  final int? totalMatches;
+  final int status;
 
   const StatisticCard({
     Key? key,
     required this.icon,
     required this.value,
     required this.title,
-    required this.percentage,
     required this.onPressed,
-    required this.isText,
+    this.percentage,
+    this.stadiumMatches,
+    this.totalMatches,
+    required this.status,
   }) : super(key: key);
 
-  Text trend() {
-    if (isText) {
-      try {
-        DateTime date = DateFormat('dd/MM').parse(value);
-        String dayOfWeek = DateFormat('E').format(date); 
-        return Text(
-          dayOfWeek,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.green,
-            fontWeight: FontWeight.bold,
-          ),
-        );
-      } catch (e) {
-        return const Text(
-          'Invalid date',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-          ),
-        );
-      }
+  Widget buildExtraInformation() {
+    if (status == 0) {
+      return trend();
+    } else if (status == 1) {
+      return totalMatchesTrend();
     } else {
-    double changePercentage = percentage;
+      return matchBooked();
+    }
+  }
+
+  Text totalMatchesTrend() {
+    int changeTotalMatches = totalMatches!;
+    String sign = changeTotalMatches >= 0 ? '+' : '-';
+    Color color = changeTotalMatches >= 0 ? Colors.green : Colors.red;
+
+    return Text(
+      '$sign${changeTotalMatches.abs()} Matches',
+      style: TextStyle(
+        fontSize: 12,
+        color: color,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Text matchBooked() {
+    return Text(
+      "$stadiumMatches Matches",
+      style: const TextStyle(
+        fontSize: 12,
+        color: Colors.green,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Text trend() {
+    double changePercentage = percentage!;
     String sign = changePercentage >= 0 ? '+' : '-';
     Color color = changePercentage >= 0 ? Colors.green : Colors.red;
 
@@ -57,7 +72,6 @@ class StatisticCard extends StatelessWidget {
         fontWeight: FontWeight.bold,
       ),
     );
-    }
   }
 
   @override
@@ -87,17 +101,14 @@ class StatisticCard extends StatelessWidget {
                   color: SportifindTheme.bluePurple,
                   size: 26,
                 ),
-              ), 
-              const SizedBox(height: 2),          
-              Text(
-                title,
-                style: SportifindTheme.normalTextBlack
               ),
+              const SizedBox(height: 2),
+              Text(title, style: SportifindTheme.normalTextBlack),
               Text(
                 value,
                 style: SportifindTheme.normalTextBlack.copyWith(fontSize: 20),
               ),
-              trend(),
+              buildExtraInformation(),
             ],
           ),
         ),

@@ -90,13 +90,6 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                     Container(
                       height: 420,
                       width: double.infinity,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                              'lib/assets/images/matchDetailBackground.png'),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

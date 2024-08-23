@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sportifind/models/match_card.dart';
 import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/screens/player/team/widgets/app_bar.dart';
 import 'package:sportifind/screens/stadium_owner/statistic/month_navigator.dart';
-import 'package:sportifind/screens/stadium_owner/statistic/ranking_screen.dart';
 import 'package:sportifind/screens/stadium_owner/statistic/week_navigator.dart';
 import 'package:sportifind/util/statistic_service.dart';
 import 'package:sportifind/widgets/card/statistic_card.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:sportifind/widgets/card/line_chart_card.dart';
 import 'package:sportifind/widgets/card/bar_chart.dart';
-import 'package:sportifind/widgets/card/rank_card.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class StadiumStatisticScreen extends StatefulWidget {
@@ -50,9 +46,16 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   int? monthlyMatch;
   int? lastMonthMatch;
 
-  late int getTotalMatch;
-  late double getTotalRevenue;
-  late Map<DateTime, int> mostDate;
+  late double getWeekTotalRevenue;
+  late double getMonthTotalRevenue;
+
+  late Map<String, int> weekHotStadium;
+  late Map<String, int> monthHotStadium;
+
+  late Map<DateTime, int> weekPeakDate;
+  late Map<DateTime, int> lastWeekPeakDate;
+  late Map<DateTime, int> monthPeakDate;
+  late Map<DateTime, int> lastMonthPeakDate;
 
   late Map<DateTime, double> dailyRevenue;
   DateTime now = DateTime.now();
@@ -83,7 +86,7 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   }
 
   int _getCurrentWeekNumber() {
-    int dayOfYear = int.parse(DateFormat("D").format(now));
+    int dayOfYear = int.parse(DateFormat("DD").format(now));
     return ((dayOfYear - now.weekday + 10) / 7).floor();
   }
 
@@ -125,6 +128,10 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
           await statisticService.getRevenueOfEachStadium(currentMatchesMap);
       double currentWeekRevenue =
           statisticService.getTotalRevenue(currentStadiumRevenue);
+      Map<String, int> currentHotStadium =
+          await statisticService.getMatchesEachStadium(currentMatchesMap);
+      Map<DateTime, int> currentPeakDate =
+          await statisticService.getMostDate(currentRange);
 
       DateTimeRange previousRange = statisticService
           .getDateTimeRangeFromWeekNumber(weekNumber - 1, now.year);
@@ -133,20 +140,28 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
           await statisticService.getFilteredMatch(previousRange);
       Map<String, double> previousStadiumRevenue =
           await statisticService.getRevenueOfEachStadium(previousMatchesMap);
+      Map<DateTime, int> previousPeakDate =
+          await statisticService.getMostDate(previousRange);
       double previousWeekRevenue =
           statisticService.getTotalRevenue(previousStadiumRevenue);
       int previousWeekMatch =
-          await statisticService.getTotalMatch(previousRange);    
+          await statisticService.getTotalMatch(previousRange);
 
       setState(() {
-        getTotalMatch = currentWeekTotalMatch;
-        getTotalRevenue = currentWeekRevenue;
+        getWeekTotalRevenue = currentWeekRevenue;
         weeklyRevenue = currentWeekRevenue;
+
         lastWeekRevenue = previousWeekRevenue;
         weeklyMatch = currentWeekTotalMatch;
+
         lastWeekMatch = previousWeekMatch;
         matchesMap = currentMatchesMap;
+
         stadiumRevenue = currentStadiumRevenue;
+        weekHotStadium = currentHotStadium;
+
+        weekPeakDate = currentPeakDate;
+        lastWeekPeakDate = previousPeakDate;
       });
     } catch (e) {
       print('Error loading weekly summary: $e');
@@ -180,6 +195,10 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
           await statisticService.getRevenueOfEachStadium(currentMatchesMap);
       double currentMonthRevenue =
           statisticService.getTotalRevenue(currentStadiumRevenue);
+      Map<String, int> currentHotStadium =
+          await statisticService.getMatchesEachStadium(currentMatchesMap);
+      Map<DateTime, int> currentPeakDate =
+          await statisticService.getMostDate(currentRange);
 
       DateTimeRange previousRange = statisticService
           .getDateTimeRangeFromMonthNumber(monthNumber - 1, now.year);
@@ -188,21 +207,25 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
           await statisticService.getFilteredMatch(previousRange);
       Map<String, double> previousStadiumRevenue =
           await statisticService.getRevenueOfEachStadium(previousMatchesMap);
+      Map<DateTime, int> previousPeakDate =
+          await statisticService.getMostDate(previousRange);
       double previousMonthRevenue =
           statisticService.getTotalRevenue(previousStadiumRevenue);
       int previousMonthMatch =
-          await statisticService.getTotalMatch(previousRange);    
-
+          await statisticService.getTotalMatch(previousRange);
 
       setState(() {
-        getTotalMatch = currentMonthTotalMatch;
-        getTotalRevenue = currentMonthRevenue;
+        getMonthTotalRevenue = currentMonthRevenue;
         monthlyRevenue = currentMonthRevenue;
         lastMonthRevenue = previousMonthRevenue;
         monthlyMatch = currentMonthTotalMatch;
         lastMonthMatch = previousMonthMatch;
         matchesMap = currentMatchesMap;
         stadiumRevenue = currentStadiumRevenue;
+        monthHotStadium = currentHotStadium;
+
+        monthPeakDate = currentPeakDate;
+        lastMonthPeakDate = previousPeakDate;
       });
     } catch (e) {
       print('Error loading monthly summary: $e');
@@ -217,20 +240,20 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
   }
 
   String formatNumber(double value) {
-  if (value == 0) return '0';
-  if (value < 100) {
-    return value.toStringAsFixed(1);
+    if (value == 0) return '0';
+    if (value < 100) {
+      return value.toStringAsFixed(1);
+    }
+    if (value < 1000) {
+      return value.toInt().toString();
+    } else if (value < 1000000) {
+      double roundedValue = (value / 1000).roundToDouble();
+      return '${roundedValue.toStringAsFixed(1)}k';
+    } else {
+      double roundedValue = (value / 1000000).roundToDouble();
+      return '${roundedValue.toStringAsFixed(1)}M';
+    }
   }
-  if (value < 1000) {
-    return value.toInt().toString();
-  } else if (value < 1000000) {
-    double roundedValue = (value / 1000).roundToDouble();
-    return '${roundedValue.toStringAsFixed(1)}k';
-  } else {
-    double roundedValue = (value / 1000000).roundToDouble();
-    return '${roundedValue.toStringAsFixed(1)}M';
-  }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -306,8 +329,11 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
                                 children: [
                                   const Spacer(),
                                   StatisticCard(
+                                    status: 0,
                                     icon: Icons.attach_money,
-                                    value: formatNumber(getTotalRevenue),
+                                    value: status == 0
+                                        ? formatNumber(weeklyRevenue!)
+                                        : formatNumber(monthlyRevenue!),
                                     title: 'Revenue',
                                     percentage: status == 0
                                         ? ((weeklyRevenue ?? 0) -
@@ -318,24 +344,17 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
                                                 (lastMonthRevenue ?? 0)) /
                                             (lastMonthRevenue ?? 1) *
                                             100,
-                                    isText: false,
                                     onPressed: () {},
                                   ),
                                   const Spacer(),
                                   StatisticCard(
+                                    status: 1,
                                     icon: Icons.sports_soccer,
-                                    value: getTotalMatch.toString(),
+                                    value: status == 0
+                                        ? weeklyMatch.toString()
+                                        : monthlyMatch.toString(),
                                     title: 'Matches',
-                                    percentage: status == 0
-                                        ? ((weeklyMatch ?? 0) -
-                                                (lastWeekMatch ?? 0)) /
-                                            (lastWeekMatch ?? 1) *
-                                            100
-                                        : ((monthlyMatch ?? 0) -
-                                                (lastMonthRevenue ?? 0)) /
-                                            (lastMonthRevenue ?? 1) *
-                                            100,
-                                    isText: false,
+                                    totalMatches: weeklyMatch! - lastWeekMatch!,
                                     onPressed: () {},
                                   ),
                                   const Spacer(),
@@ -346,30 +365,29 @@ class _StadiumStatisticScreenState extends State<StadiumStatisticScreen> {
                                 children: [
                                   const Spacer(),
                                   StatisticCard(
+                                    status: 1,
                                     icon: Icons.calendar_today,
                                     value: status == 0
-                                        ? weeklyRevenue.toString()
-                                        : monthlyRevenue.toString(),
+                                        ? dateFormat
+                                            .format(weekPeakDate.keys.last)
+                                        : dateFornatDate
+                                            .format(monthPeakDate.keys.last),
                                     title: 'Hot Day',
-                                    percentage: status == 0
-                                        ? ((weeklyRevenue ?? 0) -
-                                                (lastWeekRevenue ?? 0)) /
-                                            (lastWeekRevenue ?? 1) *
-                                            100
-                                        : ((monthlyRevenue ?? 0) -
-                                                (lastMonthRevenue ?? 0)) /
-                                            (lastMonthRevenue ?? 1) *
-                                            100,
-                                    isText: false,
+                                    totalMatches:
+                                        weekPeakDate.values.last - lastWeekPeakDate.values.last,
                                     onPressed: () {},
                                   ),
                                   const Spacer(),
                                   StatisticCard(
+                                    status: 2,
                                     icon: Icons.stadium,
-                                    value: getTotalMatch.toString(),
+                                    value: status == 0
+                                        ? weekHotStadium.keys.last.toString()
+                                        : monthHotStadium.keys.last.toString(),
                                     title: 'Hot Stadium',
-                                    percentage: 0,
-                                    isText: true,
+                                    stadiumMatches: status == 0
+                                        ? weekHotStadium.values.last
+                                        : monthHotStadium.values.last,
                                     onPressed: () {},
                                   ),
                                   const Spacer(),

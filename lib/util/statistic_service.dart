@@ -180,6 +180,7 @@ class StatisticService {
   Future<int> getTotalMatch(DateTimeRange week) async {
     List<MatchCard> filteredMatch = [];
     int count = 0;
+    print(week);
 
     final List<StadiumData> ownerStadium =
         await stadiumService.getOwnerStadiumsData();
@@ -189,16 +190,14 @@ class StatisticService {
       for (var j = 0; j < matchData.length; ++j) {
         DateTime matchDate =
             parseDateTime(matchData[j].date, matchData[j].start);
-        if (matchDate.isBefore(week.end) &&
-            matchDate.isAfter(week.start)) {
+        if (matchDate.isBefore(week.end) && matchDate.isAfter(week.start)) {
           filteredMatch.add(matchData[j]);
         }
       }
     }
 
     for (DateTime date = week.start;
-        date.isBefore(week.end) ||
-            date.isAtSameMomentAs(week.end);
+        date.isBefore(week.end) || date.isAtSameMomentAs(week.end);
         date = date.add(Duration(days: 1))) {
       for (var i = 0; i < filteredMatch.length; ++i) {
         if (date == parseDateTime(filteredMatch[i].date, "00:00")) {
@@ -207,6 +206,48 @@ class StatisticService {
       }
     }
     return count;
+  }
+
+  Future<Map<String, int>> getMatchesEachStadium(
+      Map<String, List<MatchCard>> matchMap) async {
+    Map<String, int> result = {};
+
+    // Get and preprocess owner stadium data
+    final List<StadiumData> ownerStadiums =
+        await stadiumService.getOwnerStadiumsData();
+
+    // Create a map from stadium ID to its data
+    Map<String, StadiumData> stadiumDataMap = {
+      for (var stadium in ownerStadiums) stadium.id: stadium
+    };
+
+    // Create a map from stadium ID to field ID to price map
+    print(matchMap);
+
+    // Iterate over each stadium in matchMap
+    for (var entry in matchMap.entries) {
+      String stadiumKey = entry.key;
+      List<MatchCard> matchCards = entry.value;
+
+      int count = 0;
+
+      // Skip if stadiumKey is not in stadiumDataMap
+      if (!stadiumDataMap.containsKey(stadiumKey)) continue;
+
+      StadiumData stadiumData = stadiumDataMap[stadiumKey]!;
+
+      for (var matchCard in matchCards) {
+        if (stadiumData.id == matchCard.stadium) {
+          count++;
+        }
+      }
+
+      // Store the result
+      result[stadiumData.name] = count;
+    }
+
+    result = sortMap(result);
+    return result;
   }
 
   Future<Map<DateTime, double>> getRevenueForEachDate(
