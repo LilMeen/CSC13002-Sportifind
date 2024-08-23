@@ -190,7 +190,7 @@ class SportifindTheme {
   );
 
   static TextStyle viewProfileDetails = GoogleFonts.lexend(
-    fontWeight: FontWeight.w300,
+    fontWeight: FontWeight.w400,
     fontSize: 16,
     color: bluePurple,
   );
@@ -281,11 +281,11 @@ class SportifindTheme {
   //   color: Colors.black,
   // );
 
-  // static TextStyle normalTextWhite = GoogleFonts.lexend(
-  //   fontWeight: FontWeight.normal,
-  //   fontSize: 20,
-  //   color: Colors.white,
-  // );
+  static TextStyle normalTextWhiteLexend = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: Colors.white,
+  );
 
   static TextStyle hintTextSmokeScreen = GoogleFonts.lexend(
     fontWeight: FontWeight.w400,

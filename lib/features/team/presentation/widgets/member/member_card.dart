@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/team/presentation/widgets/member/member_list.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
@@ -45,7 +46,7 @@ class _MemberCardsState extends State<MemberCards> {
     try {
       _loadMatchData();
     } catch (error) {
-      throw('Failed to load data: $error');
+      throw ('Failed to load data: $error');
     }
   }
 
@@ -70,10 +71,9 @@ class _MemberCardsState extends State<MemberCards> {
   }
 
   Widget buildMatch(TeamEntity team) {
-    final width = MediaQuery.of(context).size.width;
     return SizedBox(
       height: 280,
-      width: width,
+      width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: MemberList(
@@ -99,12 +99,18 @@ class _MemberCardsState extends State<MemberCards> {
         child: buildMatch(awayTeam!),
       );
     } else if (widget.status == 1 && awayTeam == null) {
-      return const Center(
-        child: Text("Please Invite other team first ^_^"),
+      return Center(
+        child: Text(
+          "Please Invite other team first ^_^",
+          style: SportifindTheme.body,
+        ),
       );
     } else if (widget.status == 0 && homeTeam == null) {
-      return const Center(
-        child: Text("Please join this match first ^_^"),
+      return Center(
+        child: Text(
+          "Please join this match first ^_^",
+          style: SportifindTheme.body,
+        ),
       );
     } else {
       return const SizedBox();

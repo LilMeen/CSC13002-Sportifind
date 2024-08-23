@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/core/util/location_util.dart';
@@ -16,7 +17,6 @@ class MatchRepositoryImpl implements MatchRepository {
   final ProfileRemoteDataSource profileRemoteDataSource;
   final TeamRemoteDataSource teamRemoteDataSource;
   final NotificationRemoteDataSource notificationRemoteDataSource;
-
 
   MatchRepositoryImpl({
     required this.matchRemoteDataSource,
@@ -37,7 +37,9 @@ class MatchRepositoryImpl implements MatchRepository {
   // Get match by match id
   @override
   Future<Result<MatchEntity>> getMatch(String id) {
-    return matchRemoteDataSource.getMatch(id).then((match) async => Result.success(await match.toEntity()));
+    return matchRemoteDataSource
+        .getMatch(id)
+        .then((match) async => Result.success(await match.toEntity()));
   }
 
   // GET ALL MATCHES
@@ -46,8 +48,14 @@ class MatchRepositoryImpl implements MatchRepository {
   Future<Result<List<MatchEntity>>> getAllMatches() {
     return matchRemoteDataSource.getAllMatches().then((matches) async {
       List<MatchEntity> matchEntities = [];
+      DateTime now = DateTime.now();
       for (var match in matches) {
-        matchEntities.add(await match.toEntity());
+        var matchDate = DateFormat("MM/DD/yyyy").parse(match.date);
+        if (matchDate.day >= now.day &&
+            matchDate.month >= now.month &&
+            matchDate.year >= now.year) {
+          matchEntities.add(await match.toEntity());
+        }
       }
       return Result.success(matchEntities);
     });
@@ -57,7 +65,9 @@ class MatchRepositoryImpl implements MatchRepository {
   // Get all matches by stadium id
   @override
   Future<Result<List<MatchEntity>>> getMatchesByStadium(String stadiumId) {
-    return matchRemoteDataSource.getMatchesByStadium(stadiumId).then((matches) async {
+    return matchRemoteDataSource
+        .getMatchesByStadium(stadiumId)
+        .then((matches) async {
       List<MatchEntity> matchEntities = [];
       for (var match in matches) {
         matchEntities.add(await match.toEntity());
@@ -83,19 +93,27 @@ class MatchRepositoryImpl implements MatchRepository {
   // Get all matches by player id
   @override
   Future<Result<List<MatchEntity>>> getMatchesByPlayer(String playerId) async {
-    PlayerEntity currentPlayer = await profileRemoteDataSource.getPlayer(playerId).then((value) => value.toEntity());
+    PlayerEntity currentPlayer = await profileRemoteDataSource
+        .getPlayer(playerId)
+        .then((value) => value.toEntity());
+    DateTime now = DateTime.now();
     List<MatchModel> playerMatchesModel = [];
     for (var teamId in currentPlayer.teamsId) {
-      List<MatchModel> teamMatches = await matchRemoteDataSource.getMatchesByTeam(teamId);
+      List<MatchModel> teamMatches =
+          await matchRemoteDataSource.getMatchesByTeam(teamId);
       playerMatchesModel.addAll(teamMatches);
     }
     List<MatchEntity> matchEntities = [];
     for (var match in playerMatchesModel) {
-      matchEntities.add(await match.toEntity());
+      var matchDate = DateFormat("MM/DD/yyyy").parse(match.date);
+      if (matchDate.day >= now.day &&
+          matchDate.month >= now.month &&
+          matchDate.year >= now.year) {
+        matchEntities.add(await match.toEntity());
+      }
     }
     return Result.success(matchEntities);
   }
-
 
   // UPDATE MATCH
   // Update match by match id
@@ -104,7 +122,6 @@ class MatchRepositoryImpl implements MatchRepository {
     await matchRemoteDataSource.updateMatch(MatchModel.fromEntity(match));
     return Result.success(null);
   }
-  
 
   // DELETE MATCH
   // Delete match by match id
@@ -113,7 +130,9 @@ class MatchRepositoryImpl implements MatchRepository {
     MatchEntity match = await getMatch(matchId).then((value) => value.data!);
     match.team1.incomingMatch.remove(matchId);
     teamRemoteDataSource.updateTeam(TeamModel.fromEntity(match.team1));
-    
+
+    print(match.team2);
+
     if (match.team2 != null) {
       match.team2!.incomingMatch.remove(matchId);
       teamRemoteDataSource.updateTeam(TeamModel.fromEntity(match.team2!));
@@ -125,7 +144,8 @@ class MatchRepositoryImpl implements MatchRepository {
   // SORT NEARBY MATCHES
   // Sort matches by distance to marked location
   @override
-  Result<List<MatchEntity>> sortNearbyMatches(List<MatchEntity> matches, Location markedLocation) {
+  Result<List<MatchEntity>> sortNearbyMatches(
+      List<MatchEntity> matches, Location markedLocation) {
     sortByDistance<MatchEntity>(
       matches,
       markedLocation,
@@ -134,23 +154,27 @@ class MatchRepositoryImpl implements MatchRepository {
     return Result.success(matches);
   }
 
-
   // SEND REQUEST TO JOIN MATCH
   // Send request to join a match
   @override
-  Future<Result<void>> sendRequestToJoinMatch(String teamSendId, String teamReceiveId, String matchId) async {
-    matchRemoteDataSource.sendRequestToJoinMatch(teamSendId, teamReceiveId, matchId);
-    notificationRemoteDataSource.inviteMatchRequest(teamSendId, teamReceiveId, matchId);  
+  Future<Result<void>> sendRequestToJoinMatch(
+      String teamSendId, String teamReceiveId, String matchId) async {
+    matchRemoteDataSource.sendRequestToJoinMatch(
+        teamSendId, teamReceiveId, matchId);
+    notificationRemoteDataSource.inviteMatchRequest(
+        teamSendId, teamReceiveId, matchId);
     return Result.success(null);
   }
-
 
   // SEND INVITATION TO MATCH
   // Send invitation to a match
   @override
-  Future<Result<void>> sendInvitationToMatch(String teamSendId, String teamReceiveId, String matchId) async {
-    matchRemoteDataSource.sendInvitationToMatch(teamSendId, teamReceiveId, matchId);
-    notificationRemoteDataSource.inviteMatchRequest(teamSendId, teamReceiveId, matchId);  
+  Future<Result<void>> sendInvitationToMatch(
+      String teamSendId, String teamReceiveId, String matchId) async {
+    matchRemoteDataSource.sendInvitationToMatch(
+        teamSendId, teamReceiveId, matchId);
+    notificationRemoteDataSource.inviteMatchRequest(
+        teamSendId, teamReceiveId, matchId);
     return Result.success(null);
   }
 }

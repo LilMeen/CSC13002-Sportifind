@@ -65,12 +65,10 @@ class _MatchCardsState extends State<MatchCards> {
           user.location,
         ))
         .data!;
-    
     for (var i = 0; i < nearbyMatches.length; ++i) {
       for (var j = 0; j < personalMatches.length; ++j) {
         if (nearbyMatches[i].id == personalMatches[j].id) {
           nearbyMatches.removeAt(i);
-          nearbyMatches.length--;
         }
       }
     }
@@ -107,8 +105,14 @@ class _MatchCardsState extends State<MatchCards> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     if (isLoadingUser) {
-      return const Center(child: CircularProgressIndicator());
+      return SizedBox(
+        height: height-300,
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
 
     return SingleChildScrollView(

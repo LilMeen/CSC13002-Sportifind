@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/features/team/presentation/screens/player_details.dart';
 
 class MemberListItem extends StatefulWidget {
   const MemberListItem({
@@ -29,8 +30,19 @@ class _MemberListItemState extends State<MemberListItem> {
   Map<String, String> teamNames = {};
   Map<String, String> stadiumNames = {};
 
-  Future<void> _initialize() async {
+  @override
+  void initState() {
+    super.initState();
     playerData = widget.member;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initializeImage();
+  }
+
+  Future<void> _initializeImage() async {
     team1ImageProvider = NetworkImage(playerData!.avatar.path);
     await precacheImage(team1ImageProvider!, context);
     setState(() {
@@ -38,45 +50,27 @@ class _MemberListItemState extends State<MemberListItem> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _initialize();
-  }
-
   bool isCaptain() {
-    if (widget.team.captain == widget.member) {
-      return true;
-    } else {
-      return false;
-    }
+    return widget.team.captain.id == widget.member.id;
   }
 
   int calculateAge(String dobString) {
-    // Define the format in which the dob string is stored
-    DateFormat dateFormat = DateFormat('dd/mm/yyyy'); // Adjust format as needed
-
-    // Parse the string into a DateTime object
+    DateFormat dateFormat =
+        DateFormat('dd/MM/yyyy'); // Ensure format is correct
     DateTime dob = dateFormat.parse(dobString);
-
-    // Get the current date
     DateTime currentDate = DateTime.now();
-
-    // Calculate the age
     int age = currentDate.year - dob.year;
-
-    // Adjust if the player's birthday hasn't occurred yet this year
     if (currentDate.month < dob.month ||
         (currentDate.month == dob.month && currentDate.day < dob.day)) {
       age--;
     }
-
     return age;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoadingUser == true) {
+    print(isCaptain());
+    if (isLoadingUser) {
       return const SizedBox();
     } else {
       return Row(
@@ -87,16 +81,18 @@ class _MemberListItemState extends State<MemberListItem> {
             child: Text(
               widget.number.toString(),
               style: const TextStyle(
-                  color: SportifindTheme.smokeScreen, fontSize: 18),
+                  color: SportifindTheme.smokeScreen,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700),
             ),
           ),
-          const SizedBox(
-            width: 20,
-          ),
+          const SizedBox(width: 20),
           Stack(
             children: [
-              isCaptain() == true
-                  ? const Icon(Icons.headphones_battery)
+              isCaptain()
+                  ? const Icon(
+                      Icons.stacked_bar_chart,
+                    )
                   : const SizedBox(),
               CircleAvatar(
                 radius: 35,
@@ -104,9 +100,7 @@ class _MemberListItemState extends State<MemberListItem> {
               ),
             ],
           ),
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -117,7 +111,7 @@ class _MemberListItemState extends State<MemberListItem> {
                   style: SportifindTheme.memberItem,
                 ),
                 Text(
-                  "${calculateAge(playerData!.dob)}y", 
+                  "${calculateAge(playerData!.dob)}y",
                   style: SportifindTheme.yearOld,
                 ),
               ],
@@ -126,7 +120,17 @@ class _MemberListItemState extends State<MemberListItem> {
           Padding(
             padding: const EdgeInsets.only(top: 4.0),
             child: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PlayerDetails(
+                      user: playerData!,
+                      role: "other",
+                    ),
+                  ),
+                );
+              },
               child: Text(
                 "view profile",
                 style: SportifindTheme.viewProfileDetails,

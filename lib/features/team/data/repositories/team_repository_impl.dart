@@ -24,7 +24,7 @@ class TeamRepositoryImpl implements TeamRepository {
   // CREATE TEAM
   // Create a new team
   @override
-  Future<Result<void>> createTeam (TeamEntity team) async {
+  Future<Result<void>> createTeam(TeamEntity team) async {
     await teamRemoteDataSource.createTeam(TeamModel.fromEntity(team));
     return Result.success(null);
   }
@@ -45,23 +45,26 @@ class TeamRepositoryImpl implements TeamRepository {
   // Get team by team id
   @override
   Future<Result<TeamEntity>> getTeam(String id) async {
-    TeamEntity teamEntity = await teamRemoteDataSource.getTeam(id).then((value) => value.toEntity());
+    TeamEntity teamEntity = await teamRemoteDataSource
+        .getTeam(id)
+        .then((value) => value.toEntity());
     return Result.success(teamEntity);
   }
-
 
   // GET TEAM BY PLAYER ID
   // Get team by player id
   @override
   Future<Result<List<TeamEntity>>> getTeamByPlayer(String playerId) async {
-    List<TeamModel> teamModelList = await teamRemoteDataSource.getTeamByPlayer(playerId);
+    List<TeamModel> teamModelList =
+        await teamRemoteDataSource.getTeamByPlayer(playerId);
     List<TeamEntity> teamEntityList = [];
     for (var team in teamModelList) {
-      teamEntityList.add(await team.toEntity());
+      if (team.captain == playerId) {
+        teamEntityList.add(await team.toEntity());
+      }
     }
     return Result.success(teamEntityList);
   }
-
 
   // UPDATE TEAM
   // Update team
@@ -71,30 +74,30 @@ class TeamRepositoryImpl implements TeamRepository {
     return Result.success(null);
   }
 
-
   // DELETE TEAM
   // Delete team
   @override
   Future<Result<void>> deleteTeam(String teamId) async {
     TeamModel team = await teamRemoteDataSource.getTeam(teamId);
-    for (var player in team.players){
+    for (var player in team.players) {
       PlayerModel playerModel = await profileRemoteDataSource.getPlayer(player);
       playerModel.teams.remove(teamId);
       await profileRemoteDataSource.updatePlayer(playerModel);
     }
-    List<MatchModel> matchesrelated = await matchRemoteDataSource.getMatchesByTeam(teamId);
-    for (var match in matchesrelated){
+    List<MatchModel> matchesrelated =
+        await matchRemoteDataSource.getMatchesByTeam(teamId);
+    for (var match in matchesrelated) {
       await matchRemoteDataSource.deleteMatch(match.id);
     }
     await teamRemoteDataSource.deleteTeam(teamId);
     return Result.success(null);
   }
 
-
   // KICK PLAYER
   // Kick player from team
   @override
-  Future<Result<void>> kickPlayer(TeamEntity team, PlayerEntity player, String type) async {
+  Future<Result<void>> kickPlayer(
+      TeamEntity team, PlayerEntity player, String type) async {
     team.players.remove(player);
     player.teamsId.remove(team.id);
     await teamRemoteDataSource.updateTeam(TeamModel.fromEntity(team));

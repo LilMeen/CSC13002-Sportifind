@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/match/domain/usecases/delete_match.dart';
 import 'package:sportifind/features/match/presentation/screens/create_match/select_team_screen.dart';
 import 'package:sportifind/features/match/presentation/screens/match_info/invite_team_screen.dart';
+import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
+import 'package:sportifind/features/team/domain/usecases/get_team.dart';
 import 'package:sportifind/features/team/presentation/screens/team_details.dart';
 import 'package:sportifind/features/team/presentation/widgets/member/member_card.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
@@ -14,7 +17,7 @@ import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class MatchInfoScreen extends StatefulWidget {
-  const MatchInfoScreen({ 
+  const MatchInfoScreen({
     super.key,
     required this.matchInfo,
     required this.matchStatus,
@@ -33,11 +36,53 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
   late ImageProvider team1ImageProvider;
   late ImageProvider team2ImageProvider;
 
+  IconData? dummyIcon;
   StadiumEntity? matchStadium;
   Map<String, String> teamNames = {};
   List<TeamEntity> team = [];
   PlayerEntity? userData;
   int status = 0;
+
+  bool checkCaptain() {
+    var user = FirebaseAuth.instance.currentUser!.uid;
+    return user == widget.matchInfo.team1.captain.id;
+  }
+
+  void _showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirm Delete"),
+          content: const Text(
+              "Are you sure you want to delete this match? This action cannot be undone."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await UseCaseProvider.getUseCase<DeleteMatch>()
+                    .call(DeleteMatchParams(
+                  id: widget.matchInfo.id,
+                ));
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MatchMainScreen(),
+                  ),
+                );
+              },
+              child: const Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -47,21 +92,16 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
 
   Future<void> _initialize() async {
     if (widget.matchStatus != 3) {
-      userData = await UseCaseProvider
-        .getUseCase<GetPlayer>()
-        .call(
-          GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid)
-        ).
-        then((value) => value.data);
+      userData = await UseCaseProvider.getUseCase<GetPlayer>()
+          .call(GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid))
+          .then((value) => value.data);
     }
     matchStadium = widget.matchInfo.stadium;
 
     team1ImageProvider = NetworkImage(widget.matchInfo.team1.avatar.path);
-    team2ImageProvider = NetworkImage(
-      widget.matchInfo.team2 == null
-          ? "https://imgur.com/S1rPE1S.png"
-          : widget.matchInfo.team2!.avatar.path,
-    );
+    widget.matchInfo.team2 != null
+        ? team2ImageProvider = NetworkImage(widget.matchInfo.team2!.avatar.path)
+        : dummyIcon = Icons.question_mark;
   }
 
   @override
@@ -100,25 +140,62 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                             Padding(
                               padding:
                                   const EdgeInsets.only(left: 16.0, top: 16.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(
-                                    context,
-                                  );
-                                },
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.arrow_back_ios,
-                                      size: 14,
-                                      color: Colors.white,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(
+                                        context,
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.arrow_back_ios,
+                                          size: 14,
+                                          color: Colors.white,
+                                        ),
+                                        Text(
+                                          "Back",
+                                          style:
+                                              SportifindTheme.normalTextWhite,
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      "Back",
-                                      style: SportifindTheme.normalTextWhite,
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  checkCaptain() == true
+                                      ? PopupMenuButton(
+                                          constraints: const BoxConstraints(
+                                            maxWidth: 40,
+                                          ),
+                                          color: Colors.white,
+                                          itemBuilder: (context) {
+                                            return [
+                                              const PopupMenuItem(
+                                                value: 'delete',
+                                                height: 30,
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 4, horizontal: 8),
+                                                child: Icon(Icons.delete,
+                                                    size: 25),
+                                              ),
+                                            ];
+                                          },
+                                          onSelected: (value) {
+                                            if (value == 'delete') {
+                                              _showDeleteDialog();
+                                            }
+                                          },
+                                          child: const Icon(
+                                            Icons.more_vert,
+                                            color: Colors.white,
+                                            size: 30,
+                                          ),
+                                        )
+                                      : const SizedBox(),
+                                ],
                               ),
                             ),
                             const SizedBox(
@@ -140,9 +217,10 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                  TeamDetails(
-                                                    teamId: widget.matchInfo.team1.id,
-                                                    role: 'teamMember',
+                                                    TeamDetails(
+                                                  teamId:
+                                                      widget.matchInfo.team1.id,
+                                                  role: 'teamMember',
                                                 ),
                                               ),
                                             );
@@ -173,17 +251,24 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                   Column(
                                     children: [
                                       Center(
-                                        child: CircleAvatar(
-                                          backgroundColor: Colors.black,
-                                          radius: 50,
-                                          backgroundImage: team2ImageProvider,
-                                        ),
+                                        child: widget.matchInfo.team2 != null
+                                            ? CircleAvatar(
+                                                radius: 35,
+                                                backgroundImage:
+                                                    team2ImageProvider,
+                                              )
+                                            : Icon(
+                                                dummyIcon,
+                                                size: 100,
+                                                color: Colors.white,
+                                              ),
                                       ),
                                       const SizedBox(
                                         height: 8,
                                       ),
                                       Text(
-                                        widget.matchInfo.team2?.name ?? "Unknown",
+                                        widget.matchInfo.team2?.name ??
+                                            "Unknown",
                                         style: SportifindTheme.matchCardItem,
                                       ),
                                     ],
@@ -327,39 +412,59 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                 : widget.matchInfo.team2?.name ?? "Unknow",
                             style: SportifindTheme.matchTeamInfo,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8.5,
-                              left: 15,
-                            ),
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "view details",
-                                    style: SportifindTheme.viewTeamDetails,
+                          widget.matchInfo.team2?.name == null && status == 1
+                              ? const SizedBox()
+                              : Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 8.5,
+                                    left: 15,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 4.0, left: 4.0),
-                                    child: Icon(
-                                      Icons.arrow_forward_outlined,
-                                      color: SportifindTheme.bluePurple
-                                          .withAlpha(212),
-                                      size: 16,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => TeamDetails(
+                                            teamId: widget.matchInfo.team1.id,
+                                            role: checkCaptain() == true
+                                                ? "captain"
+                                                : "normal",
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "view details",
+                                          style:
+                                              SportifindTheme.viewTeamDetails,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 4.0, left: 4.0),
+                                          child: Icon(
+                                            Icons.arrow_forward_outlined,
+                                            color: SportifindTheme.bluePurple
+                                                .withAlpha(212),
+                                            size: 16,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
+                                ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 5),
-                    MemberCards(status: status, matchInfo: widget.matchInfo),
-                    if (widget.matchStatus == 0)
+                    SizedBox(
+                        height: 280,
+                        child: MemberCards(
+                            status: status, matchInfo: widget.matchInfo)),
+                    if (widget.matchStatus == 0 &&
+                        checkCaptain() == true &&
+                        status == 1)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: Container(
@@ -381,7 +486,10 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                 ),
                               );
                             },
-                            child: const Text("Invite a team"),
+                            child: Text(
+                              "Invite a team",
+                              style: SportifindTheme.normalTextWhiteLexend,
+                            ),
                           ),
                         ),
                       )
@@ -394,18 +502,20 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(18),
                               color: SportifindTheme.bluePurple),
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const SelectTeamScreen(),
-                                ),
-                              );
-                            },
-                            child: const Text("Join this match"),
-                          ),
+                          child: checkCaptain() == true
+                              ? TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SelectTeamScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text("Join this match"),
+                                )
+                              : const SizedBox(),
                         ),
                       )
                     else
