@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class FootPicker extends StatefulWidget {
-  const FootPicker({required this.controller, super.key});
+  FootPicker({required this.controller, super.key});
     final TextEditingController controller;
   @override
-  FootPickerState createState() => FootPickerState();
+  _FootPickerState createState() => _FootPickerState();
 }
 
-class FootPickerState extends State<FootPicker> {
+class _FootPickerState extends State<FootPicker> {
   bool isLeftPicked = false;
   bool isRightPicked = false;
 
@@ -17,13 +17,16 @@ class FootPickerState extends State<FootPicker> {
     _initializePickerState();
   }
 
-  void _initializePickerState() {
-    if (widget.controller.text == 'right') {
+  Future<void> _initializePickerState() async {
+    await Future.delayed(Duration(seconds: 1));
+    String kkk = widget.controller.text;
+    print('hehe $kkk');
+    if (widget.controller.text == '1') {
       setState(() {
         isRightPicked = true;
         isLeftPicked = false;
       });
-    } else if (widget.controller.text == 'left') {
+    } else if (widget.controller.text == '0') {
       setState(() {
         isLeftPicked = true;
         isRightPicked = false;
@@ -37,9 +40,9 @@ class FootPickerState extends State<FootPicker> {
 
   void _updateController() {
     if (isLeftPicked) {
-      widget.controller.text = 'left';
+      widget.controller.text = '0';
     } else if (isRightPicked) {
-      widget.controller.text = 'right';
+      widget.controller.text = '1';
     } else {
       widget.controller.clear();
     }
