@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
@@ -7,7 +9,6 @@ import 'package:sportifind/features/match/domain/usecases/delete_match.dart';
 import 'package:sportifind/features/match/presentation/screens/create_match/select_team_screen.dart';
 import 'package:sportifind/features/match/presentation/screens/match_info/invite_team_screen.dart';
 import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
-import 'package:sportifind/features/team/domain/usecases/get_team.dart';
 import 'package:sportifind/features/team/presentation/screens/team_details.dart';
 import 'package:sportifind/features/team/presentation/widgets/member/member_card.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';

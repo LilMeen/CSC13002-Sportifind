@@ -86,15 +86,12 @@ Future<Location?> findLocation(String searchText) async {
   if (response.statusCode == 200) {
     final searchRes = json.decode(response.body);
 
-    print(response.body);
-
     if (searchRes['results'].isEmpty) {
       return null;
     }
 
     final searchLocation = searchRes['results'][0]['geometry']['location'];
     Location returnLocation = const Location();
-    print("Am i here?");
     return returnLocation.copyWith(
       name: searchRes['results'][0]['name'],
       fullAddress: searchRes['results'][0]['formatted_address'],
