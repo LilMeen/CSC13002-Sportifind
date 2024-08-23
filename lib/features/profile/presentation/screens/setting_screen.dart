@@ -3,6 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/core/usecases/usecase.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/features/auth/domain/usecases/sign_out.dart';
 import 'package:sportifind/features/auth/presentations/screens/sign_in_screen.dart';
 import 'package:sportifind/features/profile/presentation/widgets/setting_menu.dart';
 
@@ -10,13 +13,6 @@ class SettingScreen extends StatelessWidget {
   SettingScreen({super.key});
 
   final user = FirebaseAuth.instance.currentUser;
-
-  void signOut(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const SignInScreen()),
-    );
-  }
 
 Future<void> deleteUserData() async {
   if (user != null) {
@@ -133,7 +129,9 @@ void deleteAccount(BuildContext context) async {
       await user!.delete();
 
       // Sign out the user
-      signOut(context);
+      await UseCaseProvider.getUseCase<SignOut>().call(NoParams());
+      
+      Navigator.of(context).pushReplacement(SignInScreen.route());
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -171,7 +169,8 @@ void deleteAccount(BuildContext context) async {
     );
 
     if (confirmed) {
-      signOut(context);
+      await UseCaseProvider.getUseCase<SignOut>().call(NoParams());
+      Navigator.of(context).pushReplacement(SignInScreen.route());
     }
   }
 

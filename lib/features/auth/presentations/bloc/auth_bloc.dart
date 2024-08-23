@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/show_snackbar.dart';
@@ -25,7 +26,7 @@ class AuthBloc {
   BuildContext context;
   AuthBloc(this.context);
 
-  void signIn(String email, String password) async {
+  void signIn(String email, String password, {bool rememberMe = false}) async {
     final result = await UseCaseProvider.getUseCase<SignIn>().call(
       SignInParams(
         email: email,
@@ -36,6 +37,12 @@ class AuthBloc {
       showSnackBar(context, result.message);
     }
     else {
+      if (rememberMe) {
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('email', email);
+        prefs.setString('password', password);
+      }
+
       if (result.message == "admin") {
         Navigator.of(context).pushReplacement(AdminHomeScreen.route());
       }
@@ -71,6 +78,17 @@ class AuthBloc {
 
   }
 
+  Future<bool> checkStoredCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedEmail = prefs.getString('email');
+    final storedPassword = prefs.getString('password');
+
+    if (storedEmail != null && storedPassword != null) {
+      signIn(storedEmail, storedPassword);
+      return true;
+    }
+    return false;
+  }
 
   void signUp(String email, String password, String reenterPassword) async {
     if (password != reenterPassword){

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/features/auth/presentations/bloc/auth_bloc.dart';
@@ -155,6 +157,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     AuthBloc(context).signIn(
                                       emailController.text,
                                       passwordController.text,
+                                      rememberMe: _rememberMe,
                                     );
                                   }
                                 },
@@ -177,8 +180,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context)
-                              .pushReplacement(SignUpScreen.route());
+                          Navigator.of(context).pushReplacement(SignUpScreen.route());
                         },
                         child: Text(
                           'Sign up',

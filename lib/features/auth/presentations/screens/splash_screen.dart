@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sportifind/features/auth/presentations/bloc/auth_bloc.dart';
 import 'package:sportifind/features/auth/presentations/screens/sign_in_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -18,7 +21,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () async{
+      final isSignedIn = await AuthBloc(context).checkStoredCredentials();
+      if (isSignedIn) {
+        return;
+      }
       Navigator.of(context).pushReplacement(SignInScreen.route());
     });
   }

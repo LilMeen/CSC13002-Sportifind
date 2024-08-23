@@ -10,9 +10,9 @@ import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/profile/domain/usecases/update_player.dart';
+import 'package:sportifind/features/profile/presentation/screens/profile_screen.dart';
 import 'package:sportifind/features/profile/presentation/widgets/foot_picker.dart';
 import 'package:sportifind/features/profile/presentation/widgets/number_wheel.dart';
-import 'package:sportifind/home/player_home_screen.dart';
 
 final _formKey = GlobalKey<FormState>();
 
@@ -135,7 +135,7 @@ class EditInformationState extends State<EditInformationScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const PlayerHomeScreen(),
+            builder: (context) => const ProfileScreen(),
           ),
         );
       } catch (error) {

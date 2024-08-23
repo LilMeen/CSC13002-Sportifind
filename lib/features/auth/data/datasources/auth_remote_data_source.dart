@@ -54,7 +54,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
 
   @override
   Future<Result<void>> signInWithGoogle() async {
-    await GoogleSignIn().signOut();
     final googleSignIn = GoogleSignIn();
     final googleUser = await googleSignIn.signIn();
     final googleAuth = await googleUser!.authentication;
