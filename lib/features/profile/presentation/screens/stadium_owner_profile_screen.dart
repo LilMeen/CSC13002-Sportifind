@@ -4,7 +4,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-//import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:sportifind/features/profile/presentation/screens/setting_screen.dart';

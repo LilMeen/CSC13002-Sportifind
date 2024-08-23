@@ -238,7 +238,6 @@ class ProfileScreenState extends State<ProfileScreen> {
       Rating('DEF', player!.stats.def),
       Rating('PHY', player!.stats.physic),
     ];
-    print('HDWJFE: $player!.preferredFoot');
 
     return Scaffold(
       appBar: AppBar(
