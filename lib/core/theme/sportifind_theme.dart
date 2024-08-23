@@ -477,4 +477,16 @@ class SportifindTheme {
     fontSize: 14,
     color: bluePurple,
   );
+
+  static TextStyle smallTextSmokeScreen = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 14,
+    color: smokeScreen,
+  );
+
+  static TextStyle smallTextBlack = GoogleFonts.lexend(
+    fontWeight: FontWeight.normal,
+    fontSize: 14,
+    color: Colors.black,
+  );
 }
