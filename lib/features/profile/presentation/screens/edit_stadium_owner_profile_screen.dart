@@ -5,40 +5,33 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/core/usecases/usecase_provider.dart';
+//import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/location_util.dart';
 //import 'package:sportifind/core/widgets/city_dropdown.dart';
 //import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
-import 'package:sportifind/features/profile/domain/usecases/update_player.dart';
-import 'package:sportifind/features/profile/presentation/screens/profile_screen.dart';
-import 'package:sportifind/features/profile/presentation/widgets/foot_picker.dart';
-import 'package:sportifind/features/profile/presentation/widgets/number_wheel.dart';
 
 final _formKey = GlobalKey<FormState>();
 
 // ignore: must_be_immutable
-class EditInformationScreen extends StatefulWidget {
+class EditStadiumInformationScreen extends StatefulWidget {
   PlayerEntity player;
 
-  EditInformationScreen({required this.player, super.key});
+  EditStadiumInformationScreen({required this.player, super.key});
 
   @override
-  EditInformationState createState() => EditInformationState();
+  EditStadiumInformationState createState() => EditStadiumInformationState();
 }
 
-class EditInformationState extends State<EditInformationScreen> {
+class EditStadiumInformationState extends State<EditStadiumInformationScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _heightController = TextEditingController();
-  final TextEditingController _weightController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _districtController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _footController = TextEditingController();
 
   Timer? _delayCityTime;
   Timer? _delayDistrictTime;
@@ -92,9 +85,6 @@ class EditInformationState extends State<EditInformationScreen> {
       });
 
       _addressController.text = widget.player.location.address;
-      _weightController.text = widget.player.weight;
-      _heightController.text = widget.player.height;
-      _footController.text = widget.player.preferredFoot == 'true' ? '1' : '0';
     });
   }
 
@@ -104,7 +94,6 @@ class EditInformationState extends State<EditInformationScreen> {
     if (isValid) {
       _formKey.currentState!.save();
 
-      bool isRightPicked = _footController.text == '1';
       Location newLocation = await findLatAndLngFull(
         _enteredAddress,
         _districtController.text,
@@ -116,26 +105,17 @@ class EditInformationState extends State<EditInformationScreen> {
       widget.player.location = newLocation;
       widget.player.gender = _genderController.text;
       widget.player.location = newLocation;
-      widget.player.weight = _weightController.text;
-      widget.player.height = _heightController.text;
-      widget.player.preferredFoot = isRightPicked ? 'true' : 'false';
-      widget.player.stats.def = stats['DEF']!;
-      widget.player.stats.drive = stats['DRIVE']!;
-      widget.player.stats.pace = stats['PACE']!;
-      widget.player.stats.pass = stats['PASS']!;
-      widget.player.stats.physic = stats['PHYSIC']!;
-      widget.player.stats.shoot = stats['SHOOTING']!;
-
       try {
-        await UseCaseProvider.getUseCase<UpdatePlayer>()
-            .call(UpdatePlayerParams(player: widget.player));
+        // MINH GỌI DÙM NHA, NHỚ BỎ // Ở IMPORT USECASE PROVIDER
+        // await UseCaseProvider.getUseCase<UpdatePlayer>()
+        //     .call(UpdatePlayerParams(player: widget.player));
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProfileScreen(),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => const PlayerHomeScreen(),
+        //   ),
+        // );
       } catch (error) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -158,10 +138,6 @@ class EditInformationState extends State<EditInformationScreen> {
         return 'Enter your phone number';
       case 'Address':
         return 'Enter your Address';
-      case 'Height':
-        return 'meters';
-      case 'Weight':
-        return 'kilogram';
       default:
         return 'Enter';
     }
@@ -451,43 +427,6 @@ class EditInformationState extends State<EditInformationScreen> {
     );
   }
 
-  Map<String, int> stats = {
-    'PACE': 0,
-    'DEF': 0,
-    'SHOOTING': 0,
-    'PASS': 0,
-    'DRIVE': 0,
-    'PHYSIC': 0,
-  };
-
-  void _handleSaved(String stat, int value) {
-    setState(() {
-      stats[stat] = value;
-    });
-  }
-
-  Widget _buildWheelSection(String type) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RichText(
-          text: TextSpan(
-            style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
-            children: <TextSpan>[
-              TextSpan(text: type),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: 137,
-          height: 40,
-          child: NumberWheel(onSaved: (value) => _handleSaved(type, value)),
-        ),
-      ],
-    );
-  }
-
   Widget _nextButton(BuildContext context) {
     return SizedBox(
       width: 100,
@@ -598,57 +537,6 @@ class EditInformationState extends State<EditInformationScreen> {
                 // ),
                 const SizedBox(height: 16),
                 _buildSection('Address', _addressController),
-                const SizedBox(height: 16),
-                _buildSection('Height', _heightController),
-                const SizedBox(height: 16),
-                _buildSection('Weight', _weightController),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildWheelSection('PACE'),
-                    const SizedBox(width: 15),
-                    _buildWheelSection('DEF'),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildWheelSection('SHOOTING'),
-                    const SizedBox(width: 15),
-                    _buildWheelSection('PASS'),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildWheelSection('DRIVE'),
-                    const SizedBox(width: 15),
-                    _buildWheelSection('PHYSIC'),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Text('Preferred Foot', style: SportifindTheme.normalTextBlack),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: FootPicker(controller: _footController),
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.only(left: 190),
