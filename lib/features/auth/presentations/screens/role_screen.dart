@@ -34,8 +34,8 @@ class _RoleScreenState extends State<RoleScreen> {
               height: 100,
               width: 300,
               child: ElevatedButton(
-                onPressed: (){
-                  AuthBloc(context).setRole("player");
+                onPressed: () async{
+                  await AuthBloc(context).setRole("player");
                 },
                 style:  ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(217, 217, 217, 1),
@@ -59,8 +59,8 @@ class _RoleScreenState extends State<RoleScreen> {
               height: 100,
               width: 300,
               child: ElevatedButton(
-                onPressed: (){
-                  AuthBloc(context).setRole('stadium_owner');
+                onPressed: () async {
+                  await AuthBloc(context).setRole('stadium_owner');
                 },
                 style:  ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(217, 217, 217, 1),

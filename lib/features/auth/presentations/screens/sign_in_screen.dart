@@ -154,7 +154,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 text: "Sign in",
                                 onTap: () async {
                                   if (formKey.currentState!.validate()) {
-                                    AuthBloc(context).signIn(
+                                    await AuthBloc(context).signIn(
                                       emailController.text,
                                       passwordController.text,
                                       rememberMe: _rememberMe,
@@ -211,8 +211,8 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   const SizedBox(height: 15),
                   SignInWithGoogleButton(
-                    onPressed: () {
-                      AuthBloc(context).signInWithGoogle();
+                    onPressed: () async {
+                      await AuthBloc(context).signInWithGoogle();
                     },
                   ),
                 ],

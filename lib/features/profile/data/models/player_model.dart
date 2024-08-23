@@ -81,6 +81,8 @@ class PlayerModel extends UserModel {
       'city': city,
       'district': district,
       'address': address,
+      'longitude': longitude,
+      'latitude': latitude,
       'height': height,
       'weight': weight,
       'preferredFoot': preferredFoot,

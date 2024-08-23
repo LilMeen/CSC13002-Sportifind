@@ -64,7 +64,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
     final userCredential = await _firebaseAuth.signInWithCredential(credential);
 
     if (userCredential.additionalUserInfo!.isNewUser) {
-      _initUser(userCredential.user!.uid.toString());
+      await _initUser(userCredential.user!.uid.toString());
       await FirebaseFirestore.instance
         .collection('users')
         .doc(userCredential.user!.uid)
@@ -88,7 +88,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
         password: password,
       );
 
-      _initUser(userCredential.user!.uid);
+      await _initUser(userCredential.user!.uid);
       await FirebaseFirestore.instance
         .collection('users')
         .doc(userCredential.user!.uid)
@@ -176,7 +176,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
   }
 
 
-  void _initUser (String uid) async {
+  Future<void> _initUser (String uid) async {
     final usersData = FirebaseFirestore.instance.collection('users');
     await usersData.doc(uid).set({
       'email': '',
@@ -188,7 +188,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
       'address': '',
       'phone': '',
       'avatarImage': '',
-      'longtiude': 0.0,
+      'longitude': 0.0,
       'latitude': 0.0,
     });
   }

@@ -121,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     text: "Sign up",
                                     onTap: () async {
                                       if (formKey.currentState!.validate()) {
-                                        AuthBloc(context).signUp(
+                                        await AuthBloc(context).signUp(
                                           emailController.text,
                                           passwordController.text,
                                           reenterPasswordController.text,

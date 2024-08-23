@@ -26,7 +26,7 @@ class AuthBloc {
   BuildContext context;
   AuthBloc(this.context);
 
-  void signIn(String email, String password, {bool rememberMe = false}) async {
+  Future<void> signIn(String email, String password, {bool rememberMe = false}) async {
     final result = await UseCaseProvider.getUseCase<SignIn>().call(
       SignInParams(
         email: email,
@@ -56,7 +56,7 @@ class AuthBloc {
   }
   
 
-  void signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     final result = await UseCaseProvider.getUseCase<SignInWithGoogle>().call(
       NoParams()
     );
@@ -90,7 +90,7 @@ class AuthBloc {
     return false;
   }
 
-  void signUp(String email, String password, String reenterPassword) async {
+  Future<void> signUp(String email, String password, String reenterPassword) async {
     if (password != reenterPassword){
       showSnackBar(context, "Re-entered password does not match.");
       return;
@@ -109,14 +109,14 @@ class AuthBloc {
   }
 
 
-  void signOut() async{
+  Future<void> signOut() async{
     await UseCaseProvider.getUseCase<SignOut>().call(
       NoParams()
     );
   }
 
 
-  void forgotPassword(String email) async {
+  Future<void> forgotPassword(String email) async {
     await UseCaseProvider.getUseCase<ForgotPassword>().call(
       ForgotPasswordParams(
         email: email,
@@ -125,7 +125,7 @@ class AuthBloc {
   }
 
 
-  void setRole(String role) async{
+  Future<void> setRole(String role) async{
     await UseCaseProvider.getUseCase<SetRole>().call(
       SetRoleParams(
         role: role,

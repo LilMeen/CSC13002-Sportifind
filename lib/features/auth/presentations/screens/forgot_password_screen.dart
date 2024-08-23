@@ -90,9 +90,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               const SizedBox(height: 20),
                               GreenWhiteButton(
                                 text: "Reset password",
-                                onTap: () {
+                                onTap: () async{
                                   if (_form.currentState!.validate()) {
-                                    AuthBloc(context).forgotPassword(emailController.text);
+                                    await AuthBloc(context).forgotPassword(emailController.text);
                                   }
                                 },
                                 height: 50,

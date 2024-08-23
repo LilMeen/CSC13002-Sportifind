@@ -26,29 +26,25 @@ Future<Location> getLocation (String searchText) async{
     }
 
     final searchLocation = searchRes['results'][0]['geometry']['location'];
-
-    return Location(
+    
+    Location returnLocation = const Location();
+    return returnLocation.copyWith(
       name: searchRes['results'][0]['name'],
       fullAddress: searchRes['results'][0]['formatted_address'],
       latitude: searchLocation['lat'],
       longitude: searchLocation['lng'],
     );
   } else {
-    return const Location(
-      name: '',
-      fullAddress: '',
-      latitude: 0.0,
-      longitude: 0.0,
-    );
+    return const Location();
   }
 }
 
 Future<Location?> findLatAndLng(String district, String city) async {
   String searchText = '$district, $city';
   Location? searchLocation = await findLocation(searchText);
-
   if (searchLocation != null) {
-    return Location(
+    Location returnLocation = const Location();
+    returnLocation.copyWith(
       name: searchLocation.name,
       fullAddress: searchLocation.fullAddress,
       district: district,
@@ -56,8 +52,8 @@ Future<Location?> findLatAndLng(String district, String city) async {
       latitude: searchLocation.latitude,
       longitude: searchLocation.longitude,
     );
+    return returnLocation;
   }
-
   return null;
 }
 
@@ -67,7 +63,8 @@ Future<Location> findLatAndLngFull(
   Location? searchLocation = await findLocation(searchText);
 
   if (searchLocation != null) {
-    return Location(
+    Location returnLocation = const Location();
+    return returnLocation.copyWith(
       name: searchLocation.name,
       fullAddress: searchLocation.fullAddress,
       address: address,
@@ -77,12 +74,7 @@ Future<Location> findLatAndLngFull(
       longitude: searchLocation.longitude,
     );
   }
-  return const Location(
-    name: '',
-    fullAddress: '',
-    latitude: 0.0,
-    longitude: 0.0,
-  );
+  return const Location();
 }
 
 
@@ -91,17 +83,19 @@ Future<Location?> findLocation(String searchText) async {
     Uri.parse(
         'https://maps.googleapis.com/maps/api/place/textsearch/json?query=$searchText&key=$apiKey'),
   );
-
   if (response.statusCode == 200) {
     final searchRes = json.decode(response.body);
+
+    print(response.body);
 
     if (searchRes['results'].isEmpty) {
       return null;
     }
 
     final searchLocation = searchRes['results'][0]['geometry']['location'];
-
-    return Location(
+    Location returnLocation = const Location();
+    print("Am i here?");
+    return returnLocation.copyWith(
       name: searchRes['results'][0]['name'],
       fullAddress: searchRes['results'][0]['formatted_address'],
       latitude: searchLocation['lat'],
@@ -166,7 +160,8 @@ Future<Location?> getCurrentLocation() async {
           address = address.substring(0, address.length - 2);
         }
 
-        return Location(
+        Location returnLocation = const Location();
+        return returnLocation.copyWith(
           fullAddress: geocodeRes['results'][0]['formatted_address'],
           address: address,
           district: district,

@@ -7,10 +7,11 @@ import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/location_util.dart';
+import 'package:sportifind/core/widgets/city_dropdown.dart';
+import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/profile/domain/usecases/update_player.dart';
-import 'package:sportifind/features/profile/presentation/screens/profile_screen.dart';
 import 'package:sportifind/features/profile/presentation/widgets/foot_picker.dart';
 import 'package:sportifind/features/profile/presentation/widgets/number_wheel.dart';
 
@@ -45,7 +46,6 @@ class EditInformationState extends State<EditInformationScreen> {
 
   var _enteredName = '';
   var _enteredPhone = '';
-  var _enteredAddress = '';
 
   @override
   void dispose() {
@@ -92,7 +92,7 @@ class EditInformationState extends State<EditInformationScreen> {
       _addressController.text = widget.player.location.address;
       _weightController.text = widget.player.weight;
       _heightController.text = widget.player.height;
-      _footController.text = widget.player.preferredFoot == 'true' ? '1' : '0';
+      _footController.text = widget.player.preferredFoot;
     });
   }
 
@@ -102,38 +102,34 @@ class EditInformationState extends State<EditInformationScreen> {
     if (isValid) {
       _formKey.currentState!.save();
 
-      bool isRightPicked = _footController.text == '1';
-      Location newLocation = await findLatAndLngFull(
-        _enteredAddress,
+      Location newLocation = await findLatAndLng(
         _districtController.text,
         _cityController.text,
+      ) ?? const Location();
+
+      newLocation = newLocation.copyWith(
+        address: _addressController.text,
+        district: _districtController.text,
+        city: _cityController.text,
       );
+      
       widget.player.name = _enteredName;
       widget.player.phone = _enteredPhone;
       widget.player.dob = _dateController.text;
       widget.player.location = newLocation;
       widget.player.gender = _genderController.text;
-      widget.player.location = newLocation;
       widget.player.weight = _weightController.text;
       widget.player.height = _heightController.text;
-      widget.player.preferredFoot = isRightPicked ? 'true' : 'false';
+      widget.player.preferredFoot = _footController.text;
       widget.player.stats.def = stats['DEF']!;
       widget.player.stats.drive = stats['DRIVE']!;
       widget.player.stats.pace = stats['PACE']!;
       widget.player.stats.pass = stats['PASS']!;
       widget.player.stats.physic = stats['PHYSIC']!;
       widget.player.stats.shoot = stats['SHOOTING']!;
-
       try {
-        await UseCaseProvider.getUseCase<UpdatePlayer>()
-            .call(UpdatePlayerParams(player: widget.player));
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProfileScreen(),
-          ),
-        );
+        await UseCaseProvider.getUseCase<UpdatePlayer>().call(UpdatePlayerParams(player: widget.player));
+        Navigator.of(context).pop();
       } catch (error) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -378,9 +374,6 @@ class EditInformationState extends State<EditInformationScreen> {
                 case 'Phone Number':
                   _enteredPhone = controller.text;
                   break;
-                case 'Address':
-                  _enteredAddress = controller.text;
-                  break;
               }
             },
           ),
@@ -535,65 +528,63 @@ class EditInformationState extends State<EditInformationScreen> {
                 const SizedBox(height: 16),
                 _buildDobSection('Date Of Birth', _dateController),
                 const SizedBox(height: 16),
-                //_buildDropdownSection('City/Province', _cityController),
-                // SizedBox(
-                //   width: 290,
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     children: [
-                //       RichText(
-                //         text: const TextSpan(
-                //           style: TextStyle(color: Colors.white, fontSize: 14),
-                //           children: <TextSpan>[
-                //             TextSpan(text: 'City'),
-                //           ],
-                //         ),
-                //       ),
-                //       const SizedBox(height: 12),
-                //       CityDropdown(
-                //         selectedCity: _cityController.text,
-                //         onChanged: (value) {
-                //           setState(() {
-                //             _cityController.text = value ?? '';
-                //             _districtController.text = '';
-                //           });
-                //         },
-                //         //controller: _cityController,
-                //         citiesNameAndId: citiesNameAndId,
-                //         fillColor: Colors.transparent,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // const SizedBox(height: 16),
-                // Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: [
-                //     RichText(
-                //       text: const TextSpan(
-                //         style: TextStyle(color: Colors.white, fontSize: 14),
-                //         children: <TextSpan>[
-                //           TextSpan(text: 'District'),
-                //         ],
-                //       ),
-                //     ),
-                //     const SizedBox(height: 12),
-                //     SizedBox(
-                //       width: 290,
-                //       child: DistrictDropdown(
-                //         selectedCity: _cityController.text,
-                //         selectedDistrict: _districtController.text,
-                //         onChanged: (value) {
-                //           setState(() {
-                //             _districtController.text = value ?? '';
-                //           });
-                //         },
-                //         citiesNameAndId: citiesNameAndId,
-                //         fillColor: Colors.transparent,
-                //       ),
-                //     ),
-                //   ],
-                // ),
+                 SizedBox(
+                   width: 290,
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       RichText(
+                         text: TextSpan(
+                           style: SportifindTheme.normalTextBlack,
+                           children: const <TextSpan>[
+                             TextSpan(text: 'City'),
+                           ],
+                         ),
+                       ),
+                       const SizedBox(height: 12),
+                       CityDropdown(
+                         selectedCity: _cityController.text,
+                         onChanged: (value) {
+                           setState(() {
+                             _cityController.text = value ?? '';
+                             _districtController.text = '';
+                           });
+                         },
+                         citiesNameAndId: citiesNameAndId,
+                         fillColor: Colors.transparent,
+                       ),
+                     ],
+                   ),
+                 ),
+                 const SizedBox(height: 16),
+                 Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children: [
+                     RichText(
+                       text: TextSpan(
+                         style: SportifindTheme.normalTextBlack,
+                         children: const <TextSpan>[
+                           TextSpan(text: 'District'),
+                         ],
+                       ),
+                     ),
+                     const SizedBox(height: 12),
+                     SizedBox(
+                       width: 290,
+                       child: DistrictDropdown(
+                         selectedCity: _cityController.text,
+                         selectedDistrict: _districtController.text,
+                         onChanged: (value) {
+                           setState(() {
+                             _districtController.text = value ?? '';
+                           });
+                         },
+                         citiesNameAndId: citiesNameAndId,
+                         fillColor: Colors.transparent,
+                       ),
+                     ),
+                   ],
+                 ),
                 const SizedBox(height: 16),
                 _buildSection('Address', _addressController),
                 const SizedBox(height: 16),

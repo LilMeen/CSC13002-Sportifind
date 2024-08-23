@@ -362,9 +362,9 @@ class ProfileScreenState extends State<ProfileScreen> {
                         : "No information",
                     icon: "weight"),
                 InformationMenu(
-                  textContent: player!.preferredFoot == 'true'
+                  textContent: player!.preferredFoot == 'right'
                       ? "Right footed"
-                      : player!.preferredFoot == 'false'
+                      : player!.preferredFoot == 'left'
                           ? "Left footed"
                           : "No information",
                   icon: "foot",

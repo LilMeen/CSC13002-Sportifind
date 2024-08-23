@@ -5,23 +5,27 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/location_util.dart';
+import 'package:sportifind/core/widgets/city_dropdown.dart';
+import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
-import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
+import 'package:sportifind/features/profile/domain/usecases/update_stadium_owner.dart';
 
 final _formKey = GlobalKey<FormState>();
 
 // ignore: must_be_immutable
-class EditStadiumInformationScreen extends StatefulWidget {
-  PlayerEntity player;
+class EditStadiumOwnerInformationScreen extends StatefulWidget {
+  StadiumOwnerEntity stadiumOwner;
 
-  EditStadiumInformationScreen({required this.player, super.key});
+  EditStadiumOwnerInformationScreen({required this.stadiumOwner, super.key});
 
   @override
-  EditStadiumInformationState createState() => EditStadiumInformationState();
+  EditStadiumOwnerInformationState createState() => EditStadiumOwnerInformationState();
 }
 
-class EditStadiumInformationState extends State<EditStadiumInformationScreen> {
+class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformationScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -61,27 +65,27 @@ class EditStadiumInformationState extends State<EditStadiumInformationScreen> {
 
   Future<void> _fetchUserData() async {
     setState(() {
-      _nameController.text = widget.player.name;
-      _phoneController.text = widget.player.phone;
-      _addressController.text = widget.player.location.address;
-      _dateController.text = widget.player.dob;
-      _genderController.text = widget.player.gender;
+      _nameController.text = widget.stadiumOwner.name;
+      _phoneController.text = widget.stadiumOwner.phone;
+      _addressController.text = widget.stadiumOwner.location.address;
+      _dateController.text = widget.stadiumOwner.dob;
+      _genderController.text = widget.stadiumOwner.gender;
 
       _delayCityTime?.cancel();
       _delayCityTime = Timer(const Duration(seconds: 2), () {
         setState(() {
-          _cityController.text = widget.player.location.city;
+          _cityController.text = widget.stadiumOwner.location.city;
         });
       });
       _delayDistrictTime?.cancel();
       _delayDistrictTime =
           Timer(const Duration(seconds: 5, milliseconds: 300), () {
         setState(() {
-          _districtController.text = widget.player.location.district;
+          _districtController.text = widget.stadiumOwner.location.district;
         });
       });
 
-      _addressController.text = widget.player.location.address;
+      _addressController.text = widget.stadiumOwner.location.address;
     });
   }
 
@@ -96,23 +100,16 @@ class EditStadiumInformationState extends State<EditStadiumInformationScreen> {
         _districtController.text,
         _cityController.text,
       );
-      widget.player.name = _enteredName;
-      widget.player.phone = _enteredPhone;
-      widget.player.dob = _dateController.text;
-      widget.player.location = newLocation;
-      widget.player.gender = _genderController.text;
-      widget.player.location = newLocation;
+      widget.stadiumOwner.name = _enteredName;
+      widget.stadiumOwner.phone = _enteredPhone;
+      widget.stadiumOwner.dob = _dateController.text;
+      widget.stadiumOwner.location = newLocation;
+      widget.stadiumOwner.gender = _genderController.text;
+      widget.stadiumOwner.location = newLocation;
       try {
-        // MINH GỌI DÙM NHA, NHỚ BỎ // Ở IMPORT USECASE PROVIDER
-        // await UseCaseProvider.getUseCase<UpdatePlayer>()
-        //     .call(UpdatePlayerParams(player: widget.player));
-
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => const PlayerHomeScreen(),
-        //   ),
-        // );
+        await UseCaseProvider.getUseCase<UpdateStadiumOwner>()
+            .call(UpdateStadiumOwnerParams(stadiumOwner: widget.stadiumOwner));
+        Navigator.of(context).pop();
       } catch (error) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -473,65 +470,63 @@ class EditStadiumInformationState extends State<EditStadiumInformationScreen> {
                 const SizedBox(height: 16),
                 _buildDobSection('Date Of Birth', _dateController),
                 const SizedBox(height: 16),
-                //_buildDropdownSection('City/Province', _cityController),
-                // SizedBox(
-                //   width: 290,
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     children: [
-                //       RichText(
-                //         text: const TextSpan(
-                //           style: TextStyle(color: Colors.white, fontSize: 14),
-                //           children: <TextSpan>[
-                //             TextSpan(text: 'City'),
-                //           ],
-                //         ),
-                //       ),
-                //       const SizedBox(height: 12),
-                //       CityDropdown(
-                //         selectedCity: _cityController.text,
-                //         onChanged: (value) {
-                //           setState(() {
-                //             _cityController.text = value ?? '';
-                //             _districtController.text = '';
-                //           });
-                //         },
-                //         //controller: _cityController,
-                //         citiesNameAndId: citiesNameAndId,
-                //         fillColor: Colors.transparent,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // const SizedBox(height: 16),
-                // Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: [
-                //     RichText(
-                //       text: const TextSpan(
-                //         style: TextStyle(color: Colors.white, fontSize: 14),
-                //         children: <TextSpan>[
-                //           TextSpan(text: 'District'),
-                //         ],
-                //       ),
-                //     ),
-                //     const SizedBox(height: 12),
-                //     SizedBox(
-                //       width: 290,
-                //       child: DistrictDropdown(
-                //         selectedCity: _cityController.text,
-                //         selectedDistrict: _districtController.text,
-                //         onChanged: (value) {
-                //           setState(() {
-                //             _districtController.text = value ?? '';
-                //           });
-                //         },
-                //         citiesNameAndId: citiesNameAndId,
-                //         fillColor: Colors.transparent,
-                //       ),
-                //     ),
-                //   ],
-                // ),
+                SizedBox(
+                  width: 290,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: const TextSpan(
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                          children: <TextSpan>[
+                            TextSpan(text: 'City'),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      CityDropdown(
+                        selectedCity: _cityController.text,
+                        onChanged: (value) {
+                          setState(() {
+                            _cityController.text = value ?? '';
+                            _districtController.text = '';
+                          });
+                        },
+                        citiesNameAndId: citiesNameAndId,
+                        fillColor: Colors.transparent,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: const TextSpan(
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                        children: <TextSpan>[
+                          TextSpan(text: 'District'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: 290,
+                      child: DistrictDropdown(
+                        selectedCity: _cityController.text,
+                        selectedDistrict: _districtController.text,
+                        onChanged: (value) {
+                          setState(() {
+                            _districtController.text = value ?? '';
+                          });
+                        },
+                        citiesNameAndId: citiesNameAndId,
+                        fillColor: Colors.transparent,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 _buildSection('Address', _addressController),
                 const SizedBox(height: 40),

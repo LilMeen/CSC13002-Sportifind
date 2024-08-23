@@ -4,21 +4,23 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
-import 'package:sportifind/features/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
+import 'package:sportifind/features/profile/domain/usecases/get_stadium_owner.dart';
+import 'package:sportifind/features/profile/presentation/screens/edit_stadium_owner_profile_screen.dart';
 import 'package:sportifind/features/profile/presentation/screens/setting_screen.dart';
 import 'package:sportifind/features/profile/presentation/widgets/information_menu.dart';
 import 'dart:io';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class StadiumOwnerProfileScreen extends StatefulWidget {
+  const StadiumOwnerProfileScreen({super.key});
 
   @override
-  ProfileScreenState createState() => ProfileScreenState();
+  StadiumOwnerProfileScreenState createState() => StadiumOwnerProfileScreenState();
 }
 
-class ProfileScreenState extends State<ProfileScreen> {
-  PlayerEntity? player;
+class StadiumOwnerProfileScreenState extends State<StadiumOwnerProfileScreen> {
+  StadiumOwnerEntity? stadiumOwner;
   bool isLoading = true;
 
   @override
@@ -29,15 +31,14 @@ class ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> fetchStadiumOwner() async {
     try {
-      // player = await UseCaseProvider.getUseCase<>()
-      //     .call(
-      //       GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid),
-      //     )
-      //     .then((value) => value.data!);
-
-      // setState(() {
-      //   isLoading = false;
-      // });
+      stadiumOwner = await UseCaseProvider.getUseCase<GetStadiumOwner>()
+          .call(
+            GetStadiumOwnerParams(id: FirebaseAuth.instance.currentUser!.uid),
+          )
+          .then((value) => value.data!);
+      setState(() {
+        isLoading = false;
+      });
     } catch (e) {
       throw ("Error fetching stadium owner data");
     }
@@ -132,7 +133,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     });
 
     setState(() {
-      player!.avatar = File(imageUrl);
+      stadiumOwner!.avatar = File(imageUrl);
     });
   }
 
@@ -159,7 +160,7 @@ class ProfileScreenState extends State<ProfileScreen> {
       'avatarImage': imageUrl,
     });
     setState(() {
-      player!.avatar = File(imageUrl);
+      stadiumOwner!.avatar = File(imageUrl);
     });
   }
 
@@ -239,7 +240,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                       height: 120,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: player!.avatar.path == ''
+                        child: stadiumOwner!.avatar.path == ''
                             ? const Image(
                                 image: AssetImage("lib/assets/no_avatar.png"),
                                 fit: BoxFit.cover,
@@ -247,7 +248,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 height: 200,
                               )
                             : Image.network(
-                                player!.avatar.path,
+                                stadiumOwner!.avatar.path,
                                 fit: BoxFit.cover,
                                 width: 200,
                                 height: 200,
@@ -277,10 +278,10 @@ class ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
                 const SizedBox(height: 15),
-                Text(player!.name,
+                Text(stadiumOwner!.name,
                     style:
                         SportifindTheme.normalTextBlack.copyWith(fontSize: 16)),
-                Text(player!.email,
+                Text(stadiumOwner!.email,
                     style:
                         SportifindTheme.normalTextBlack.copyWith(fontSize: 16)),
                 const SizedBox(height: 15),
@@ -292,8 +293,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              EditInformationScreen(player: player!),
+                          builder: (context) => EditStadiumOwnerInformationScreen
+                              (stadiumOwner: stadiumOwner!),
                         ),
                       );
                     },
@@ -308,12 +309,12 @@ class ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 5),
-                InformationMenu(textContent: player!.phone, icon: "phone"),
+                InformationMenu(textContent: stadiumOwner!.phone, icon: "phone"),
                 InformationMenu(
                     textContent:
-                        "${player!.location.district}, ${player!.location.city} City",
+                        "${stadiumOwner!.location.district}, ${stadiumOwner!.location.city} City",
                     icon: "location"),
-                InformationMenu(textContent: player!.dob, icon: "dob"),
+                InformationMenu(textContent: stadiumOwner!.dob, icon: "dob"),
               ],
             ),
           ),

@@ -18,12 +18,12 @@ class FootPickerState extends State<FootPicker> {
   }
 
   void _initializePickerState() {
-    if (widget.controller.text == '1') {
+    if (widget.controller.text == 'right') {
       setState(() {
         isRightPicked = true;
         isLeftPicked = false;
       });
-    } else if (widget.controller.text == '0') {
+    } else if (widget.controller.text == 'left') {
       setState(() {
         isLeftPicked = true;
         isRightPicked = false;
@@ -37,9 +37,9 @@ class FootPickerState extends State<FootPicker> {
 
   void _updateController() {
     if (isLeftPicked) {
-      widget.controller.text = '0';
+      widget.controller.text = 'left';
     } else if (isRightPicked) {
-      widget.controller.text = '1';
+      widget.controller.text = 'right';
     } else {
       widget.controller.clear();
     }
