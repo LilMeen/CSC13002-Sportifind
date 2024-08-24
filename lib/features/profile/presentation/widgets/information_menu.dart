@@ -25,14 +25,16 @@ class InformationMenu extends StatelessWidget {
           color: SportifindTheme.bluePurple,
         );
       case "height":
-        return Icon(
-          Icons.height_rounded,
-          color: SportifindTheme.bluePurple,
+        return Image.asset(
+          'lib/assets/height.png',
+          width: 24,
+          height: 24,
         );
       case "weight":
-        return Icon(
-          Icons.create_outlined,
-          color: SportifindTheme.bluePurple,
+        return Image.asset(
+          'lib/assets/weight.png',
+          width: 24,
+          height: 24,
         );
       case "foot":
         // Handle foot with custom images

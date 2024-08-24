@@ -47,6 +47,15 @@ class EditInformationState extends State<EditInformationScreen> {
   var _enteredName = '';
   var _enteredPhone = '';
 
+  Map<String, int> stats = {
+    'PACE': 0,
+    'DEF': 0,
+    'SHOOTING': 0,
+    'PASS': 0,
+    'DRIVE': 0,
+    'PHYSIC': 0,
+  };
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -74,6 +83,12 @@ class EditInformationState extends State<EditInformationScreen> {
       _addressController.text = widget.player.location.address;
       _dateController.text = widget.player.dob;
       _genderController.text = widget.player.gender;
+      stats['DEF'] = widget.player.stats.def;
+      stats['DRIVE'] = widget.player.stats.drive;
+      stats['PACE'] = widget.player.stats.pace;
+      stats['PASS'] = widget.player.stats.pass;
+      stats['PHYSIC'] = widget.player.stats.physic;
+      stats['SHOOTING'] = widget.player.stats.shoot;
 
       _delayCityTime?.cancel();
       _delayCityTime = Timer(const Duration(seconds: 2), () {
@@ -442,22 +457,13 @@ class EditInformationState extends State<EditInformationScreen> {
     );
   }
 
-  Map<String, int> stats = {
-    'PACE': 0,
-    'DEF': 0,
-    'SHOOTING': 0,
-    'PASS': 0,
-    'DRIVE': 0,
-    'PHYSIC': 0,
-  };
-
   void _handleSaved(String stat, int value) {
     setState(() {
       stats[stat] = value;
     });
   }
 
-  Widget _buildWheelSection(String type) {
+  Widget _buildWheelSection(String type, int stat) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -473,7 +479,8 @@ class EditInformationState extends State<EditInformationScreen> {
         SizedBox(
           width: 137,
           height: 40,
-          child: NumberWheel(onSaved: (value) => _handleSaved(type, value)),
+          child: NumberWheel(
+              onSaved: (value) => _handleSaved(type, value), stat: stat),
         ),
       ],
     );
@@ -491,7 +498,8 @@ class EditInformationState extends State<EditInformationScreen> {
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
-          backgroundColor: WidgetStateProperty.all<Color>(SportifindTheme.bluePurple),
+          backgroundColor:
+              WidgetStateProperty.all<Color>(SportifindTheme.bluePurple),
           shadowColor: WidgetStateProperty.all<Color>(
             SportifindTheme.bluePurple,
           ),
@@ -514,11 +522,11 @@ class EditInformationState extends State<EditInformationScreen> {
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 20),
-                 Text('Edit Information', style: SportifindTheme.sportifindFeatureAppBarBluePurple),
+                Text('Edit Information',
+                    style: SportifindTheme.sportifindFeatureAppBarBluePurple),
                 const SizedBox(height: 20),
                 _buildSection('Name', _nameController),
                 const SizedBox(height: 16),
@@ -595,47 +603,39 @@ class EditInformationState extends State<EditInformationScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildWheelSection('PACE'),
+                    _buildWheelSection('PACE', widget.player.stats.pace),
                     const SizedBox(width: 15),
-                    _buildWheelSection('DEF'),
+                    _buildWheelSection('DEF', widget.player.stats.def),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildWheelSection('SHOOTING'),
+                    _buildWheelSection('SHOOTING', widget.player.stats.shoot),
                     const SizedBox(width: 15),
-                    _buildWheelSection('PASS'),
+                    _buildWheelSection('PASS', widget.player.stats.pass),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildWheelSection('DRIVE'),
+                    _buildWheelSection('DRIVE', widget.player.stats.drive),
                     const SizedBox(width: 15),
-                    _buildWheelSection('PHYSIC'),
+                    _buildWheelSection('PHYSIC', widget.player.stats.physic),
                   ],
                 ),
                 const SizedBox(height: 20),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Text('Preferred Foot', style: SportifindTheme.normalTextBlack),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: FootPicker(controller: _footController),
-                    ),
+                    const Spacer(),
+                    Text('Preferred Foot',
+                        style: SportifindTheme.normalTextBlack),
+                    const Spacer(),
+                    FootPicker(controller: _footController),
+                    const Spacer(),
                   ],
                 ),
                 const SizedBox(height: 40),

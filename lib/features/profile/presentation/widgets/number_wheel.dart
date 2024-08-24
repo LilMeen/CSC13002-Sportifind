@@ -1,31 +1,58 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 
 class NumberWheel extends StatefulWidget {
   final Function(int) onSaved;
+  final int stat;
 
-  const NumberWheel({super.key, required this.onSaved});
+  const NumberWheel({super.key, required this.onSaved, required this.stat});
 
   @override
   State<NumberWheel> createState() => _NumberWheelState();
 }
 
 class _NumberWheelState extends State<NumberWheel> {
-  int _selectedValue = 0;
-  int _tempValue = 80;
+  late int _selectedValue;
+  late int _tempValue;
   late FixedExtentScrollController _scrollController;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = FixedExtentScrollController(initialItem: 80);
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    _selectedValue = widget.stat;
+    _tempValue = _selectedValue;
+
+    _scrollController = FixedExtentScrollController(initialItem: _selectedValue == 0 ? 80 : _selectedValue);
+
+    setState(() {
+      _isLoading = false; 
+    });
   }
 
   @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator(color: SportifindTheme.bluePurple));
+    }
+    
+    return CupertinoButton(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      color: SportifindTheme.bluePurple,
+      borderRadius: BorderRadius.circular(30),
+      child: Text(
+        '$_selectedValue',  
+        style: SportifindTheme.normalTextWhite
+      ),
+      onPressed: () => _showPicker(context),
+    );
   }
 
   void _showPicker(BuildContext context) {
@@ -46,7 +73,7 @@ class _NumberWheelState extends State<NumberWheel> {
                   return Center(
                     child: Text(
                       '$index',
-                      style: const TextStyle(fontSize: 20),
+                      style: SportifindTheme.normalTextBlack,
                     ),
                   );
                 }),
@@ -63,28 +90,14 @@ class _NumberWheelState extends State<NumberWheel> {
                 setState(() {
                   _selectedValue = _tempValue;
                   _scrollController = FixedExtentScrollController(initialItem: _selectedValue);
+                  widget.onSaved(_selectedValue == 80 && widget.stat == 0 ? 0 : _selectedValue);
                 });
-                widget.onSaved(_selectedValue);
                 Navigator.of(context, rootNavigator: true).pop();
               },
             ),
           ],
         ),
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoButton(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      color: SportifindTheme.bluePurple,
-      borderRadius: BorderRadius.circular(30),
-      child: Text(
-        '$_selectedValue',
-        style: SportifindTheme.normalTextWhite,
-      ),
-      onPressed: () => _showPicker(context),
     );
   }
 }
