@@ -197,23 +197,20 @@ void deleteAccount(BuildContext context) async {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          SettingMenu(
+          const SettingMenu(
             title: "Help & Feedback",
-            onPress: () {},
             endIcon: true,
             textColor: Colors.black,
           ),
           const SizedBox(height: 10),
-          SettingMenu(
+          const SettingMenu(
             title: "Policy",
-            onPress: () {},
             endIcon: true,
             textColor: Colors.black,
           ),
           const SizedBox(height: 10),
-          SettingMenu(
+          const SettingMenu(
             title: "About us",
-            onPress: () {},
             endIcon: true,
             textColor: Colors.black,
           ),
