@@ -1,4 +1,5 @@
 import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
+import 'package:sportifind/features/notification/presentation/screens/notification_screen.dart';
 import 'package:sportifind/features/profile/presentation/screens/profile_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/player/player_stadium_screen.dart';
 import 'package:sportifind/features/team/presentation/screens/team_main_screen.dart';
@@ -64,7 +65,12 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
               Stack(children: <Widget>[
                 IconButton(
                   onPressed: () {
-                    // Notification Screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationScreen(),
+                      ),
+                    );
                   },
                   icon: Icon(
                     Icons.notifications_none,
