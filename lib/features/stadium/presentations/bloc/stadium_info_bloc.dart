@@ -56,6 +56,7 @@ class StadiumInfoBloc {
   }
 
   String formatPrice(double price) {
+    price = price / 1000;
     final priceString = price.toStringAsFixed(0);
     final buffer = StringBuffer();
     for (int i = 0; i < priceString.length; i++) {
@@ -64,7 +65,7 @@ class StadiumInfoBloc {
       }
       buffer.write(priceString[i]);
     }
-    return buffer.toString();
+    return '${buffer.toString()}k/h';
   }
 
   Future<void> deleteStadium() async {

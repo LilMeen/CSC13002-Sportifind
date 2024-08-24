@@ -15,6 +15,7 @@ abstract interface class StadiumRemoteDataSource {
   Future<FieldModel> getFieldByNumberId(String stadiumId, int numberId);
   Future<List<MatchModel>> getFieldScedule(String fieldId, String date);
   Future<void> updateStadium(StadiumModel stadium);
+  Future<void> updateFields(StadiumModel stadium);
   Future<void> deleteStadium(String id);
 }
 
@@ -183,6 +184,17 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
       'avatar': avatarUrl,
       'images': imageUrls,
     });
+  }
+
+
+  /// UPDATE FIELD
+  /// Update a field
+  @override
+  Future<void> updateFields(StadiumModel stadium) async {
+    for (FieldModel field in stadium.fields) {
+      final fieldRef = FirebaseFirestore.instance.collection('stadiums').doc(stadium.id).collection('fields').doc(field.id);
+      await fieldRef.update(field.toFirestore());
+    }
   }
 
 

@@ -489,4 +489,44 @@ class SportifindTheme {
     fontSize: 14,
     color: Colors.black,
   );
+
+  static TextStyle fieldNumberStadiumInfo = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 24,
+    color: bluePurple,
+  );
+
+  static TextStyle titleDeleteStadium = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: Colors.black,
+  );
+  
+  static TextStyle textDeleteDialog = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: Colors.black,
+  );
+  
+  static TextStyle stadiumNameStadiumInfo = GoogleFonts.rowdies(
+    fontWeight: FontWeight.w400,
+    fontSize: 32,
+    color: Colors.white,
+  );
+
+  static TextStyle stadiumTimeStadiumInfo = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: Colors.white,
+  );
+
+  static TextStyle statusDropdown = GoogleFonts.lexend(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+  );
+
+  static TextStyle boldStatusDropdown = GoogleFonts.lexend(
+    fontWeight: FontWeight.w900,
+    fontSize: 14,
+  );
 }

@@ -1,6 +1,5 @@
 import 'package:sportifind/core/models/result.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
-import 'package:sportifind/core/util/team_util.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 import 'package:sportifind/features/team/domain/repositories/team_repository.dart';
@@ -19,7 +18,7 @@ class GetNearbyTeam implements UseCase<List<TeamEntity>, GetNearbyTeamParams> {
       nearbyTeams.remove(nearbyTeams.firstWhere((element) => element.id == team.id));
     }
     
-    nearbyTeams = sortTeamByLocation(nearbyTeams, params.player.location);
+    // nearbyTeams = sortTeamByLocation(nearbyTeams, params.player.location);
     return Result.success(nearbyTeams);
   }
 }

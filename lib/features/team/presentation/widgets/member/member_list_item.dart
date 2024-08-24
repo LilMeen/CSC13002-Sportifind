@@ -69,7 +69,6 @@ class _MemberListItemState extends State<MemberListItem> {
 
   @override
   Widget build(BuildContext context) {
-    print(isCaptain());
     if (isLoadingUser) {
       return const SizedBox();
     } else {

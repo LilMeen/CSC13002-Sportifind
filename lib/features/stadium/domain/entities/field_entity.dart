@@ -12,4 +12,20 @@ class FieldEntity {
     required this.price,
     required this.status,
   });
+
+  FieldEntity copyWith({
+    String? id,
+    int? numberId,
+    String? type,
+    double? price,
+    bool? status,
+  }) {
+    return FieldEntity(
+      id: id ?? this.id,
+      numberId: numberId ?? this.numberId,
+      type: type ?? this.type,
+      price: price ?? this.price,
+      status: status ?? this.status,
+    );
+  }
 }

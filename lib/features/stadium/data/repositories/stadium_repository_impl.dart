@@ -96,6 +96,14 @@ class StadiumRepositoryImpl implements StadiumRepository {
   }
 
 
+  // UPDATE FIELD 
+  // Update a field
+  @override
+  Future<Result<void>> updateField(StadiumEntity stadium) async {
+    await stadiumRemoteDataSource.updateFields(StadiumModel.fromEntity(stadium));
+    return Result.success(null);
+  }
+
   // DELETE STADIUM
   // Delete a stadium by its id
   @override

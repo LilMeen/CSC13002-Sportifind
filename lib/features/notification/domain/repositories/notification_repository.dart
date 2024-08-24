@@ -7,7 +7,7 @@ abstract interface class NotificationRepository {
 
   Future<Result<void>>                      inviteMatchRequest(senderId, receiverId, matchId);
   Future<Result<void>>                      joinMatchRequest(senderId, receiverId, matchId);
-  Future<Result<void>>                      matchRequestAccepted(senderId, receiverId, matchId);
+  Future<Result<void>>                      matchRequestAccepted(senderId, receiverId, matchId, status);
   Future<Result<void>>                      matchRequestDenied(senderId, receiverId, matchId);
 
   Future<Result<void>>                      sendUserRequest(userId, teamId);

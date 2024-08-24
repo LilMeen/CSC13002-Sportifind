@@ -19,6 +19,8 @@ abstract interface class StadiumRepository {
   Future<Result<List<MatchEntity>>> getFieldScedule(FieldEntity field, String date);
 
   Future<Result<void>> updateStadium(StadiumEntity stadium);
+  Future<Result<void>> updateField(StadiumEntity stadium);
+
   Future<Result<void>> deleteStadium(String id);
 
   Result<List<StadiumEntity>> sortNearbyStadiums(List<StadiumEntity> stadiums, Location markedLocation);

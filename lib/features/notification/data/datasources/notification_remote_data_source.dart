@@ -5,6 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/features/notification/data/models/notification_model.dart';
 
 abstract interface class NotificationRemoteDataSource {
+  DocumentReference<Map<String, dynamic>>                   getMatchDoc(matchId);
+  DocumentReference<Map<String, dynamic>>                   getUserDoc(userId);
+  DocumentReference<Map<String, dynamic>>                   getTeamDoc(teamId);
+
   Future<void>                                              updateNotificationAsRead(NotificationModel notificationData);
   Future<List<NotificationModel>>                           getNotificationData();
   Future<List<CollectionReference<Map<String, dynamic>>>>   getTeamNotificationCollectionList(String teamId);
@@ -14,7 +18,7 @@ abstract interface class NotificationRemoteDataSource {
 
   Future<void>                                              inviteMatchRequest(senderId, receiverId, matchId);
   Future<void>                                              joinMatchRequest(senderId, receiverId, matchId);
-  Future<void>                                              matchRequestAccepted(senderId, receiverId, matchId);
+  Future<void>                                              matchRequestAccepted(senderId, receiverId, matchId, status);
   Future<void>                                              matchRequestDenied(senderId, receiverId, matchId);
   
   Future<void>                                              sendUserRequest(userId, teamId);
@@ -28,6 +32,21 @@ abstract interface class NotificationRemoteDataSource {
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   final user = FirebaseAuth.instance.currentUser!;
+
+  @override
+  DocumentReference<Map<String, dynamic>> getUserDoc(userId) {
+    return FirebaseFirestore.instance.collection('users').doc(userId);
+  }
+
+  @override
+  DocumentReference<Map<String, dynamic>> getTeamDoc(teamId) {
+    return FirebaseFirestore.instance.collection('teams').doc(teamId);
+  }
+
+  @override
+  DocumentReference<Map<String, dynamic>> getMatchDoc(matchId) {
+    return FirebaseFirestore.instance.collection('matches').doc(matchId);
+  }
 
   @override
   Future<void> updateNotificationAsRead(
@@ -200,18 +219,90 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   }
 
   @override
-  Future<void> matchRequestAccepted(senderId, receiverId, matchId) async {
+  Future<void> matchRequestAccepted(senderId, receiverId, matchId, status) async {
     try {
-      List<CollectionReference<Map<String, dynamic>>> senderTeamMembersNoti =
-          await getTeamNotificationCollectionList(senderId);
-
-      List<CollectionReference<Map<String, dynamic>>> receiverTeamMembersNoti =
-          await getTeamNotificationCollectionList(receiverId);
+      DocumentReference<Map<String, dynamic>> senderDoc = getTeamDoc(senderId);
+      DocumentReference<Map<String, dynamic>> receiverDoc = getTeamDoc(receiverId);
+      DocumentReference<Map<String, dynamic>> matchDoc = getMatchDoc(matchId);
 
       DocumentSnapshot<Map<String, dynamic>> senderInformation =
           await getTeamDocInformation(senderId);
       DocumentSnapshot<Map<String, dynamic>> receiverInformation =
           await getTeamDocInformation(receiverId);
+
+      Map<String, String> matchInfo = {
+        'matchId': matchId,
+        'senderId': receiverId,
+        'receiverId': senderId,
+      };
+
+      if (status == 'match invite') {
+        Map<String, dynamic> incomingMatchMap =
+            receiverInformation.get('incomingMatch');
+        if (incomingMatchMap.containsKey(matchId)) {
+          incomingMatchMap[matchId] = true;
+        }
+        await receiverDoc.update({
+          'matchSentRequest': FieldValue.arrayRemove([matchInfo]),
+          'matchJoinRequest': FieldValue.arrayRemove([matchInfo]),
+          'incomingMatch': incomingMatchMap,
+        });
+
+        final Map<String, bool> newMatch = {matchId: true};
+
+        await senderDoc.update({
+          'matchInviteRequest': FieldValue.arrayRemove([matchInfo]),
+          'joinMatchRequest': FieldValue.arrayRemove([matchInfo]),
+          'incomingMatch': newMatch,
+        });
+
+        DocumentSnapshot<Map<String, dynamic>> matchSnapshot =
+            await matchDoc.get();
+        Map<String, dynamic>? matchData = matchSnapshot.data();
+        if (matchData!['team2'].isEmpty) {
+          await matchDoc.update({
+            'team2': senderId,
+          });
+        } else {
+          throw("This match has already contains second team");
+        }
+      } else if (status == "match join") {
+        Map<String, dynamic> incomingMatchMap =
+            senderInformation.get('incomingMatch');
+        if (incomingMatchMap.containsKey(matchId)) {
+          incomingMatchMap[matchId] = true;
+        }
+        final Map<String, bool> newMatch = {matchId: true};
+        await receiverDoc.update({
+          'matchSentRequest': FieldValue.arrayRemove([matchInfo]),
+          'matchJoinRequest': FieldValue.arrayRemove([matchInfo]),
+          'incomingMatch': newMatch,
+        });
+
+        await senderDoc.update({
+          'matchInviteRequest': FieldValue.arrayRemove([matchInfo]),
+          'joinMatchRequest': FieldValue.arrayRemove([matchInfo]),
+          'incomingMatch': incomingMatchMap,
+        });
+
+        DocumentSnapshot<Map<String, dynamic>> matchSnapshot =
+            await matchDoc.get();
+        Map<String, dynamic>? matchData = matchSnapshot.data();
+        if (matchData!['team2'].isEmpty) {
+          await matchDoc.update({
+            'team2': senderId,
+          });
+        } else {
+          throw("This match has already contains second team");
+        }
+      }
+
+      // NOTIFICATION PART
+      List<CollectionReference<Map<String, dynamic>>> senderTeamMembersNoti =
+          await getTeamNotificationCollectionList(senderId);
+
+      List<CollectionReference<Map<String, dynamic>>> receiverTeamMembersNoti =
+          await getTeamNotificationCollectionList(receiverId);
 
       String senderName = senderInformation.data()?['name'] ?? 'Unknow';
       String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
@@ -242,7 +333,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         });
       });
     } catch (e) {
-      throw('Error here: $e');
+      throw('error: $e');
     }
   }
 

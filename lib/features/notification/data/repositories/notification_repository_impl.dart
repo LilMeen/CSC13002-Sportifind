@@ -34,8 +34,8 @@ class NotificationRepositoryImpl implements NotificationRepository {
   }
 
   @override
-  Future<Result<void>> matchRequestAccepted(senderId, receiverId, matchId) async {
-    await notificationRemoteDataSource.matchRequestAccepted(senderId, receiverId, matchId);
+  Future<Result<void>> matchRequestAccepted(senderId, receiverId, matchId, status) async {
+    await notificationRemoteDataSource.matchRequestAccepted(senderId, receiverId, matchId, status);
     return Result.success(null);
   }
 

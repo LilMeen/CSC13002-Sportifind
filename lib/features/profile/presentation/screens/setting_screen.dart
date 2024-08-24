@@ -170,6 +170,7 @@ void deleteAccount(BuildContext context) async {
 
     if (confirmed) {
       await UseCaseProvider.getUseCase<SignOut>().call(NoParams());
+      
       Navigator.of(context).pushReplacement(SignInScreen.route());
     }
   }
