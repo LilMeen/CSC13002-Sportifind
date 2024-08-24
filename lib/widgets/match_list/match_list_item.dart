@@ -22,8 +22,6 @@ class _MatchListItemState extends State<MatchListItem> {
   MatchService matchService = MatchService();
   TeamService teamService = TeamService();
   StadiumService stadiumService = StadiumService();
-  ImageProvider? team1ImageProvider;
-  ImageProvider? team2ImageProvider;
   bool isLoadingUser = true;
   Map<String, String> teamNames = {};
   Map<String, String> stadiumNames = {};
@@ -32,8 +30,6 @@ class _MatchListItemState extends State<MatchListItem> {
     teamNames = await teamService.generateTeamNameMap();
     stadiumNames = await stadiumService.generateStadiumMap();
 
-    await precacheImage(team1ImageProvider!, context);
-    await precacheImage(team2ImageProvider!, context);
     setState(() {
       isLoadingUser = false;
     });
@@ -141,7 +137,6 @@ class _MatchListItemState extends State<MatchListItem> {
                           Center(
                             child: CircleAvatar(
                               radius: 35,
-                              backgroundImage: team1ImageProvider,
                             ),
                           ),
                         ],
@@ -168,7 +163,6 @@ class _MatchListItemState extends State<MatchListItem> {
                           Center(
                             child: CircleAvatar(
                               radius: 35,
-                              backgroundImage: team2ImageProvider,
                             ),
                           ),
                         ],

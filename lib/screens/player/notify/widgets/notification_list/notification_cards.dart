@@ -36,9 +36,6 @@ class _NotificationCardsState extends State<NotificationCards> {
     }
 
     for (var i = 0; i < userNoti.length; ++i) {
-      if (userNoti[i].status == "match sent") {
-        continue;
-      }
       widget.userNotification.add(userNoti[i]);
     }
     print(widget.userNotification);

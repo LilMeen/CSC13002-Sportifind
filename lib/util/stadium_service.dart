@@ -68,7 +68,7 @@ class StadiumService {
           .toList();
       return await Future.wait(stadiumsFutures);
     } catch (error) {
-      throw Exception('Failed to load stadiums data: $error');
+      throw Exception('Failed to load hehe stadiums data: $error');
     }
   }
 
@@ -83,7 +83,7 @@ class StadiumService {
           .toList();
       return await Future.wait(stadiumsFutures);
     } catch (error) {
-      throw Exception('Failed to load stadiums data: $error');
+      throw Exception('Failed to load owner stadiums data: $error');
     }
   }
 

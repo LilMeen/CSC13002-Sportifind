@@ -208,6 +208,8 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
                         ),
                       );
                     } else if (widget.forJoinRequest == true) {
+                      print(team.teamId);
+                      print(widget.hostId);
                       matchHandling.joinMatchRequest(
                           team.teamId, widget.hostId, widget.matchId);
                     }

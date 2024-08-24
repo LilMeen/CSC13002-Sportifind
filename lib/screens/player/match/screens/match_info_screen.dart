@@ -33,8 +33,6 @@ class MatchInfoScreen extends StatefulWidget {
 class _MatchInfoScreenState extends State<MatchInfoScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   late Future<void> initializationFuture;
-  late ImageProvider team1ImageProvider;
-  late ImageProvider team2ImageProvider;
   MatchService matchService = MatchService();
   UserService userService = UserService();
   TeamService teamService = TeamService();
@@ -65,9 +63,6 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
     }
     matchStadium =
         await stadiumService.getSpecificStadiumsData(widget.matchInfo.stadium);
-
-    await precacheImage(team1ImageProvider, context);
-    await precacheImage(team2ImageProvider, context);
   }
 
   @override
@@ -150,7 +145,6 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                             backgroundColor:
                                                 Colors.greenAccent[400],
                                             radius: 50,
-                                            backgroundImage: team1ImageProvider,
                                           ),
                                         ),
                                       ),
@@ -176,7 +170,6 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                         child: CircleAvatar(
                                           backgroundColor: Colors.black,
                                           radius: 50,
-                                          backgroundImage: team2ImageProvider,
                                         ),
                                       ),
                                       const SizedBox(
@@ -405,8 +398,12 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      const SelectTeamScreen(),
+                                  builder: (context) => SelectTeamScreen(
+                                    forJoinRequest: true,
+                                    forMatchCreate: false,
+                                    hostId: widget.matchInfo.team1,
+                                    matchId: widget.matchInfo.id,
+                                  ),
                                 ),
                               );
                             },

@@ -507,6 +507,7 @@ class EditInformationState extends State<EditInformationScreen> {
   }
 
   Widget _buildWheelSection(String type) {
+    int stat = stats[type] ?? 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -522,7 +523,10 @@ class EditInformationState extends State<EditInformationScreen> {
         SizedBox(
           width: 137,
           height: 40,
-          child: NumberWheel(onSaved: (value) => _handleSaved(type, value)),
+          child: NumberWheel(
+            onSaved: (value) => _handleSaved(type, value),
+            stat: stat,
+          ),
         ),
       ],
     );

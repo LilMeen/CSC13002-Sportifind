@@ -435,6 +435,13 @@ class _NotificationListItemState extends State<NotificationListItem> {
                 ),
               ),
             );
+          case "match sent":
+            await notificationService
+                .updateNotificationAsRead(widget.notificationData);
+            setState(() {
+              actionTaken = true;
+              widget.notificationData.isRead = true;
+            });
         }
       },
       child: Container(

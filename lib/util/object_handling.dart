@@ -156,10 +156,9 @@ class MatchHandling extends ObjectHandling {
         DocumentSnapshot<Map<String, dynamic>> matchSnapshot =
             await matchDoc.get();
         Map<String, dynamic>? matchData = matchSnapshot.data();
-        if (matchData!['team2'].isEmpty && matchData['team2_avatar'].isEmpty) {
+        if (matchData!['team2'].isEmpty) {
           await matchDoc.update({
             'team2': senderId,
-            'team2_avatar': senderInformation.data()?['avatarImage'] ?? '',
           });
         } else {
           print("This match has already contains second team");
@@ -183,10 +182,16 @@ class MatchHandling extends ObjectHandling {
           'incomingMatch': incomingMatchMap,
         });
 
-        await matchDoc.update({
-          'team2': receiverId,
-          'team2_avatar': receiverInformation.data()?['avatarImage'] ?? '',
-        });
+        DocumentSnapshot<Map<String, dynamic>> matchSnapshot =
+            await matchDoc.get();
+        Map<String, dynamic>? matchData = matchSnapshot.data();
+        if (matchData!['team2'].isEmpty) {
+          await matchDoc.update({
+            'team2': senderId,
+          });
+        } else {
+          print("This match has already contains second team");
+        }
       }
 
       notification.matchRequestAccepted(senderId, receiverId, matchId);

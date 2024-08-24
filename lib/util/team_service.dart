@@ -59,7 +59,7 @@ class TeamService {
 
       return teamFutures;
     } catch (error) {
-      throw Exception('Failed to load stadiums data: $error');
+      throw Exception('Failed to load teams data: $error');
     }
   }
 
