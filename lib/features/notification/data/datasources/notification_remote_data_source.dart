@@ -31,8 +31,6 @@ abstract interface class NotificationRemoteDataSource {
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
-  final user = FirebaseAuth.instance.currentUser!;
-
   @override
   DocumentReference<Map<String, dynamic>> getUserDoc(userId) {
     return FirebaseFirestore.instance.collection('users').doc(userId);
@@ -54,7 +52,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     final firestoreInstance = FirebaseFirestore.instance;
     await firestoreInstance
         .collection('users')
-        .doc(user.uid)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('notifications')
         .doc(notificationData
             .id) // Assuming your NotificationData has an 'id' field
@@ -66,7 +64,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     List<NotificationModel> userNotification = [];
     final notificationQuery = await FirebaseFirestore.instance
         .collection('users')
-        .doc(user.uid)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('notifications')
         .get();
     final notifications = notificationQuery.docs
