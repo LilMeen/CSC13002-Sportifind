@@ -121,5 +121,18 @@ class StadiumModel {
       fields: entity.fields.map((e) => FieldModel.fromEntity(e)).toList(),
     );
   }
+
+  int getNumberOfTypeField(String type) {
+    return fields.where((field) => field.type == type).length;
+  }
+
+  double getPriceOfTypeField(String type) {
+    for (var field in fields) {
+      if (field.type == type) {
+        return field.price;
+      }
+    }
+    return 0;
+  }
 }
 

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:sportifind/features/match/data/datasources/match_remote_data_source.dart';
 import 'package:sportifind/features/match/data/models/match_model.dart';
 import 'package:sportifind/features/stadium/data/models/field_model.dart';
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
@@ -14,7 +15,7 @@ abstract interface class StadiumRemoteDataSource {
   Future<List<StadiumModel>> getStadiumsByOwner(String ownerId);
   Future<FieldModel> getFieldByNumberId(String stadiumId, int numberId);
   Future<List<MatchModel>> getFieldScedule(String fieldId, String date);
-  Future<void> updateStadium(StadiumModel stadium);
+  Future<void> updateStadium(StadiumModel oldStadium, StadiumModel newStadium);
   Future<void> updateFields(StadiumModel stadium);
   Future<void> deleteStadium(String id);
 }
@@ -141,67 +142,87 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
   /// UPDATE STADIUM
   /// Update a stadium
   @override
-  Future<void> updateStadium(StadiumModel stadium) async {
-    final stadiumRef = FirebaseFirestore.instance.collection('stadiums').doc(stadium.id);
-    await stadiumRef.update(stadium.toFirestore());
+  Future<void> updateStadium(StadiumModel oldStadium, StadiumModel newStadium) async {
+    final matchRemoteDataSource = MatchRemoteDataSourceImpl();
+    final stadiumRef = FirebaseFirestore.instance.collection('stadiums').doc(newStadium.id);
+    await stadiumRef.update(newStadium.toFirestore());
 
-    await stadiumRef.collection('fields').get().then((fieldDocs) {
-      for (final fieldDoc in fieldDocs.docs) {
-        fieldDoc.reference.delete();
-      }
-    });
-    for (FieldModel field in stadium.fields) {
-      await stadiumRef.collection('fields').add(field.toFirestore());
-    }
-
-    for (int i = stadium.images.length; i < stadium.images.length; ++i) {
+    await _uploadAvatar(File(newStadium.avatar), newStadium.id);
+    await _uploadImages(newStadium.images.map((e) => File(e)).toList(), newStadium.id);
+    for (int i = newStadium.images.length; i < oldStadium.images.length; ++i) {
       await FirebaseStorage.instance
           .ref()
           .child('stadiums')
-          .child(stadium.id)
+          .child(newStadium.id)
           .child('images')
           .child('image_$i.jpg')
           .delete();
     }
 
-    final storageRef = FirebaseStorage.instance
-      .ref()
-      .child('stadiums')
-      .child(stadium.id);
-    
-    if (!stadium.avatar.contains('http')) {
-      await storageRef
-        .child('avatar')
-        .child('avatar.jpg')
-        .putFile(File(stadium.avatar));
-    } 
+    List<MatchModel> matches = await matchRemoteDataSource.getMatchesByStadium(newStadium.id);
 
-    for (int i = 0; i < stadium.images.length; i++) {
-      if (stadium.images[i].contains('http')) {
-        continue;
+    final sortedFields = oldStadium.fields
+      ..sort((a, b) => a.numberId.compareTo(b.numberId));
+
+    int numberId = 1;
+    int oldfFieldIndex = 0;
+    Future<void> editFields(
+        int oldCount, int newCount, String type, double price) async {
+      for (int i = 0; i < oldCount; i++) {
+        await stadiumRef
+            .collection('fields')
+            .doc(sortedFields[oldfFieldIndex++].id)
+            .update({
+          'numberId': numberId++,
+          'price_per_hour': price,
+        });
+        if (i >= newCount - 1) {
+          break;
+        }
       }
-      await storageRef
-        .child('images')
-        .child('image_$i.jpg')
-        .putFile(File(stadium.images[i]));
+
+      for (int i = oldCount; i < newCount; i++) {
+        await stadiumRef.collection('fields').add({
+          'numberId': numberId++,
+          'status': true,
+          'type': type,
+          'price_per_hour': price,
+        });
+      }
+
+      for (int i = newCount; i < oldCount; i++) {
+        final fieldMatches = matches
+            .where((match) => match.fieldId == sortedFields[oldfFieldIndex].id)
+            .toList();
+        for (var match in fieldMatches) {
+          await matchRemoteDataSource.deleteMatch(match.id);
+        }
+
+        await stadiumRef
+            .collection('fields')
+            .doc(sortedFields[oldfFieldIndex++].id)
+            .delete();
+      }
     }
 
-    final avatarUrl = await storageRef
-      .child('avatar')
-      .child('avatar.jpg')
-      .getDownloadURL();
-    final imageUrls = <String>[];
-    for(int i = 0; i < stadium.images.length; i++) {
-      final imageUrl = await storageRef
-        .child('images')
-        .child('image_$i.jpg')
-        .getDownloadURL();
-      imageUrls.add(imageUrl);
-    }
-    await stadiumRef.update({
-      'avatar': avatarUrl,
-      'images': imageUrls,
-    });
+    await editFields(
+      oldStadium.getNumberOfTypeField('5-player'), 
+      newStadium.getNumberOfTypeField('5-player'), 
+      '5-player', 
+      newStadium.getPriceOfTypeField('5-player')
+    );
+    await editFields(
+      oldStadium.getNumberOfTypeField('7-player'), 
+      newStadium.getNumberOfTypeField('7-player'), 
+      '7-player', 
+      newStadium.getPriceOfTypeField('7-player')
+    );
+    await editFields(
+      oldStadium.getNumberOfTypeField('11-player'), 
+      newStadium.getNumberOfTypeField('11-player'), 
+      '11-player', 
+      newStadium.getPriceOfTypeField('11-player')
+    );
   }
 
 
@@ -243,6 +264,51 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
       await _deleteAllFilesInDirectory(subDirRef);
     }
   }
+
+    Future<void> _uploadAvatar(File avatar, String stadiumId) async {
+    try {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('stadiums')
+          .child(stadiumId)
+          .child('avatar')
+          .child('avatar.jpg');
+
+      await storageRef.putFile(avatar);
+      final imageUrl = await storageRef.getDownloadURL();
+      await FirebaseFirestore.instance
+          .collection('stadiums')
+          .doc(stadiumId)
+          .update({'avatar': imageUrl});
+    } catch (e) {
+      throw Exception('Failed to upload avatar: $e');
+    }
+  }
+
+  Future<void> _uploadImages(List<File> images, String stadiumId) async {
+    try {
+      List<String> imageUrls = [];
+      for (int i = 0; i < images.length; i++) {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('stadiums')
+            .child(stadiumId)
+            .child('images')
+            .child('image_$i.jpg');
+
+        await storageRef.putFile(images[i]);
+        final imageUrl = await storageRef.getDownloadURL();
+        imageUrls.add(imageUrl);
+      }
+      await FirebaseFirestore.instance
+          .collection('stadiums')
+          .doc(stadiumId)
+          .update({'images': imageUrls});
+    } catch (e) {
+      throw Exception('Failed to upload images: $e');
+    }
+  }
+
 }
 
 

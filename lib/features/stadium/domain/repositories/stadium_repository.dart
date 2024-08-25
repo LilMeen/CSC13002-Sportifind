@@ -18,7 +18,7 @@ abstract interface class StadiumRepository {
   // GET SCHEDULE
   Future<Result<List<MatchEntity>>> getFieldScedule(FieldEntity field, String date);
 
-  Future<Result<void>> updateStadium(StadiumEntity stadium);
+  Future<Result<void>> updateStadium(StadiumEntity oldStadium, StadiumEntity newStadium);
   Future<Result<void>> updateField(StadiumEntity stadium);
 
   Future<Result<void>> deleteStadium(String id);

@@ -31,7 +31,7 @@ class EditStadium implements UseCase<void, EditStadiumParams> {
     addFields(params.num7PlayerFields, params.pricePerHour7, '7-player');
     addFields(params.num11PlayerFields, params.pricePerHour11, '11-player');
 
-    StadiumEntity stadium = StadiumEntity(
+    StadiumEntity newStadium = StadiumEntity(
       id: params.id,
       name: params.name,
       ownerId: FirebaseAuth.instance.currentUser!.uid,
@@ -43,11 +43,12 @@ class EditStadium implements UseCase<void, EditStadiumParams> {
       phone: params.phoneNumber,
       fields: fields,
     );
-    return await repository.updateStadium(stadium);
+    return await repository.updateStadium(params.stadium, newStadium);
   }
 }
 
 class EditStadiumParams {
+  final StadiumEntity stadium;
   final String id;
   final String name;
   final Location location;
@@ -66,6 +67,7 @@ class EditStadiumParams {
 
 
   EditStadiumParams({
+    required this.stadium,
     required this.id,
     required this.name,
     required this.location,

@@ -2,7 +2,9 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/location_util.dart';
@@ -104,6 +106,9 @@ class EditStadiumBloc {
     'pricePerHour11': TextEditingController(),
   };
   final Map<String, String> citiesNameAndId = {};
+  late int num5PlayerFields;
+  late int num7PlayerFields;
+  late int num11PlayerFields;
 
   Timer? _cityDelayTimer;
   Timer? _districtDelayTimer;
@@ -137,33 +142,49 @@ class EditStadiumBloc {
       controllers['openTime']!.text = stadium.openTime;
       controllers['closeTime']!.text = stadium.closeTime;
 
-      double price5 = stadium.getPriceOfTypeField('5-Player');
-      double price7 = stadium.getPriceOfTypeField('7-Player');
-      double price11 = stadium.getPriceOfTypeField('11-Player');
+      double price5 = stadium.getPriceOfTypeField('5-player');
+      double price7 = stadium.getPriceOfTypeField('7-player');
+      double price11 = stadium.getPriceOfTypeField('11-player');
       controllers['pricePerHour5']!.text = price5.toStringAsFixed(price5 == price5.toInt() ? 0 : 2);
       controllers['pricePerHour7']!.text = price7.toStringAsFixed(price7 == price7.toInt() ? 0 : 2);
       controllers['pricePerHour11']!.text = price11.toStringAsFixed(price11 == price11.toInt() ? 0 : 2);
 
+      final avatar = await _downloadAvatarFile(stadium.id);
+      final images = await _downloadImageFiles(stadium.id, stadium.images.length);
+
       _updateState((state) => state.copyWith(
-        num5PlayerFields: stadium.getNumberOfTypeField('5-Player'),
-        num7PlayerFields: stadium.getNumberOfTypeField('7-Player'),
-        num11PlayerFields: stadium.getNumberOfTypeField('11-Player'),
+        num5PlayerFields: stadium.getNumberOfTypeField('5-player'),
+        num7PlayerFields: stadium.getNumberOfTypeField('7-player'),
+        num11PlayerFields: stadium.getNumberOfTypeField('11-player'),
         location: stadium.location,
-        avatar: stadium.avatar,
-        images: stadium.images,
+        avatar: avatar,
+        images: images,
         isLoading: false,
       ));
-
-      _cityDelayTimer?.cancel();
-      _cityDelayTimer = Timer(const Duration(seconds: 1, milliseconds: 300), () {
-        _updateState((state) => state.copyWith(selectedCity: stadium.location.city, selectedDistrict: ''));
-      });
     } catch (error) {
       _updateState((state) => state.copyWith(
         errorMessage: 'Failed to load data: $error',
         isLoading: false,
       ));
     }
+  }
+
+  Future<void> cityInit() async {
+    _cityDelayTimer?.cancel();
+    _cityDelayTimer = Timer(const Duration(milliseconds: 200), () {
+      _updateState((state) => state.copyWith(selectedCity: stadium.location.city, selectedDistrict: ''));
+    });
+  }
+
+  Future<void> districtInit() async {
+    _districtDelayTimer?.cancel();
+    _districtDelayTimer =
+      Timer(const Duration(milliseconds: 200), () {
+      _updateState((state) => state.copyWith(
+        selectedCity: stadium.location.city, 
+        selectedDistrict: stadium.location.district
+      ));
+    }); 
   }
 
   Future<void> editStadium() async {
@@ -178,6 +199,7 @@ class EditStadiumBloc {
       );
       await UseCaseProvider.getUseCase<EditStadium>().call(
         EditStadiumParams(
+          stadium: stadium,
           id: stadium.id,
           name: controllers['stadiumName']!.text,
           location: _state.location,
@@ -294,5 +316,52 @@ class EditStadiumBloc {
     _updateState((state) => state.copyWith(
       selectedDistrict: value ?? '',
     ));
+  }
+
+  Future<File> _downloadAvatarFile(String stadiumId) async {
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('stadiums')
+        .child(stadiumId)
+        .child('avatar')
+        .child('avatar.jpg');
+
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final avatar = File('${tempDir.path}/avatar.jpg');
+
+      await ref.writeToFile(avatar);
+
+      return avatar;
+    } catch (e) {
+      throw Exception('Failed to download avatar file: $e');
+    }
+  }
+
+  Future<List<File>> _downloadImageFiles(
+      String stadiumId, int imageslength) async {
+    List<File> files = [];
+
+    for (int i = 0; i < imageslength; i++) {
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('stadiums')
+          .child(stadiumId)
+          .child('images')
+          .child('image_$i.jpg');
+
+      try {
+        final tempDir = await getTemporaryDirectory();
+        final file = File('${tempDir.path}/image_$i.jpg');
+
+        await ref.writeToFile(file);
+
+        files.add(file);
+      } catch (e) {
+        throw Exception('Failed to download image files: $e');
+      }
+    }
+
+    return files;
   }
 }
