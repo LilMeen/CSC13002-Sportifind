@@ -26,6 +26,7 @@ void initializeProfileDependencies (){
       profileRemoteDataSource: sl(),
       teamRemoteDataSource: sl(),
       stadiumRemoteDataSource: sl(),
+      matchRemoteDataSource: sl(),
     )
   );
 

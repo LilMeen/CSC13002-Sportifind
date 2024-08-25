@@ -1,4 +1,5 @@
 import 'package:sportifind/core/models/result.dart';
+import 'package:sportifind/features/match/data/datasources/match_remote_data_source.dart';
 import 'package:sportifind/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:sportifind/features/profile/data/models/player_model.dart';
 import 'package:sportifind/features/profile/data/models/stadium_owner_model.dart';
@@ -9,6 +10,7 @@ import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
 import 'package:sportifind/features/team/data/datasources/team_remote_data_source.dart';
 import 'package:sportifind/features/team/data/models/team_model.dart';
+import 'package:sportifind/features/team/data/repositories/team_repository_impl.dart';
 import 'package:sportifind/features/user/domain/entities/user_entity.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
@@ -16,13 +18,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   final TeamRemoteDataSource teamRemoteDataSource;
   final StadiumRemoteDataSource stadiumRemoteDataSource;
+  final MatchRemoteDataSource matchRemoteDataSource;
 
 
   ProfileRepositoryImpl({
     required this.profileRemoteDataSource,
     required this.teamRemoteDataSource,
     required this.stadiumRemoteDataSource,
-
+    required this.matchRemoteDataSource,
   });
 
   // GET CURRENT USER
@@ -63,10 +66,15 @@ class ProfileRepositoryImpl implements ProfileRepository {
   // Delete a player by its id
   @override
   Future<Result<void>> deletePlayer(String playerId) async{
+    TeamRepositoryImpl teamRepository = TeamRepositoryImpl(
+      teamRemoteDataSource: teamRemoteDataSource,
+      profileRemoteDataSource: profileRemoteDataSource,
+      matchRemoteDataSource: matchRemoteDataSource,
+    );
     List<TeamModel> teamsRelatedModel = await teamRemoteDataSource.getTeamByPlayer(playerId);
     for (var team in teamsRelatedModel) {
       if (team.captain == playerId) {
-        await teamRemoteDataSource.deleteTeam(team.id);
+        await teamRepository.deleteTeam(team.id);
       } else {
         team.players.removeWhere((player) => player == playerId);
         await teamRemoteDataSource.updateTeam(team);
