@@ -11,6 +11,7 @@ import 'package:sportifind/features/stadium/domain/usecases/get_field_schedule.d
 import 'package:sportifind/features/stadium/domain/usecases/get_nearby_stadium.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_stadiums_by_owner.dart';
 import 'package:sportifind/features/stadium/domain/usecases/search_stadium.dart';
+import 'package:sportifind/features/stadium/domain/usecases/update_field_status.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -39,4 +40,5 @@ void initializeStadiumDependencies (){
   sl.registerLazySingleton<GetNearbyStadium>(() => GetNearbyStadium(sl()));
   sl.registerLazySingleton<GetStadiumsByOwner>(() => GetStadiumsByOwner(sl()));
   sl.registerLazySingleton<SearchStadium>(() => SearchStadium(sl()));
+  sl.registerLazySingleton<UpdateFieldStatus>(() => UpdateFieldStatus(sl()));
 }

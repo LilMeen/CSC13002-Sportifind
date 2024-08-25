@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_info_screen.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
@@ -48,58 +50,67 @@ class _StadiumCardState extends State<StadiumCard> {
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
+          side: BorderSide(
+            color: SportifindTheme.bluePurple,
+            width: 2.0,
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AspectRatio(
-              aspectRatio: widget.imageRatio,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(8.0),
-                ),
-                child: Image.network(
-                  widget.stadium.avatar.path,
-                  width: double.infinity,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AspectRatio(
+                aspectRatio: widget.imageRatio,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.stadium.avatar.path,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+              const SizedBox(height: 6.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        widget.stadium.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(height: 4.0),
-                    Expanded(
-                      child: Text(
-                        '${widget.stadium.location.district}, ${widget.stadium.location.city}',
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        widget.stadium.location.address,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                    _buildDetailRow(Icons.stadium, widget.stadium.name),
+                    _buildDetailRow(Icons.place_outlined,
+                        '${widget.stadium.location.address}, ${widget.stadium.location.district}, ${widget.stadium.location.city}'),
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Row(
+        children: [
+          Icon(icon, color: SportifindTheme.bluePurple, size: 25),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              value,
+              style: SportifindTheme.stadiumCard,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }

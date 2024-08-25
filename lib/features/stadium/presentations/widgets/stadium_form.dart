@@ -179,8 +179,19 @@ class StadiumForm {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(15),
-          child: Image.network(
+          child: avatar.path.contains('http')
+          ?
+          Image.network(
             avatar.path,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 200.0,
+            errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.broken_image, size: 250, color: Colors.grey),
+          )
+          :
+          Image.file(
+            avatar,
             fit: BoxFit.cover,
             width: double.infinity,
             height: 200.0,
@@ -256,8 +267,15 @@ class StadiumForm {
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     height: 250,
-                    child: Image.network(
+                    child: image.path.contains('http')
+                    ?
+                    Image.network(
                       image.path,
+                      fit: BoxFit.cover,
+                    )
+                    :
+                    Image.file(
+                      image,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -269,8 +287,21 @@ class StadiumForm {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.network(
+              child: image.path.contains('http')
+              ?
+              Image.network(
                 image.path,
+                fit: BoxFit.cover,
+                width: 150,
+                height: 100,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.broken_image,
+                      size: 100, color: Colors.grey);
+                },
+              )
+              :
+              Image.file(
+                image,
                 fit: BoxFit.cover,
                 width: 150,
                 height: 100,

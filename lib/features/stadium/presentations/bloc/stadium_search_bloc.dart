@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/location_util.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/usecases/search_stadium.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_nearby_stadium.dart';
+import 'package:sportifind/features/stadium/presentations/widgets/stadium_card.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 class StadiumSearchState {
   final bool isLoadingLocation;
@@ -30,7 +33,7 @@ class StadiumSearchState {
     this.selectedCity = '',
     this.selectedDistrict = '',
     this.currentLocation = const Location(),
-    this.textResult = '-Nearby stadiums-',
+    this.textResult = 'Nearby stadiums',
   });
 
   StadiumSearchState copyWith({
@@ -65,6 +68,9 @@ class StadiumSearchBloc {
   final Location userLocation;
   final List<StadiumEntity> stadiums;
   final List<StadiumOwnerEntity> owners;
+  final bool isStadiumOwnerUser;
+  final bool forMatchCreate;
+  final TeamEntity? selectedTeam;
 
   final BuildContext context;
   final _stateController = StreamController<StadiumSearchState>.broadcast();
@@ -77,7 +83,15 @@ class StadiumSearchBloc {
   final TextEditingController searchController = TextEditingController();
   final Map<String, String> citiesNameAndId = {};
 
-  StadiumSearchBloc(this.context, this.userLocation, this.stadiums, this.owners) : _state = StadiumSearchState() {
+  StadiumSearchBloc({
+    required this.context, 
+    required this.userLocation, 
+    required this.stadiums, 
+    required this.owners,
+    required this.isStadiumOwnerUser,
+    required this.forMatchCreate,
+    this.selectedTeam,
+  }) : _state = StadiumSearchState() {
     _stateController.add(_state);
   }
 
@@ -116,7 +130,7 @@ class StadiumSearchBloc {
     _debounce = Timer(const Duration(milliseconds: 500), () {
       _updateState((state) => state.copyWith(
         searchText: searchController.text,
-        textResult: '-Searching results-',
+        textResult: 'Searching results',
       ));
       _performSearch();
     });
@@ -143,7 +157,7 @@ class StadiumSearchBloc {
       if (location != null) {
         _updateState((state) => state.copyWith(
           currentLocation: location,
-          textResult: '-Nearby stadiums-',
+          textResult: 'Nearby stadiums',
         ));
         _performSearch();
       } else {
@@ -176,8 +190,38 @@ class StadiumSearchBloc {
     _updateState((state) => state.copyWith(
       searchedStadiums: sortedStadiums,
       textResult: state.searchText.isEmpty && state.selectedCity.isEmpty && state.selectedDistrict.isEmpty
-          ? '-Nearby stadiums-'
-          : '-Searching results-',
+          ? 'Nearby stadiums'
+          : 'Searching results',
     ));
+  }
+
+  Widget buildStadiumSection() {
+    return _state.searchedStadiums.isEmpty
+      ? Padding(
+        padding: const EdgeInsets.only(top: 80.0),
+        child: Center(child: Text('No stadiums found.', style: SportifindTheme.normalTextSmokeScreen)),
+      )
+      : Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: buildStadiumCards(),
+        );
+  }
+
+  List<Widget> buildStadiumCards() {
+    return _state.searchedStadiums.map((stadium) {
+      final ownerName = _state.ownerMap[stadium.ownerId] ?? 'Unknown';
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+        child: StadiumCard(
+          stadium: stadium,
+          ownerName: ownerName,
+          imageRatio: 2.475,
+          isStadiumOwnerUser: isStadiumOwnerUser,
+          forMatchCreate: forMatchCreate,
+          selectedTeam: selectedTeam,
+        ),
+      );
+    }).toList();
   }
 }

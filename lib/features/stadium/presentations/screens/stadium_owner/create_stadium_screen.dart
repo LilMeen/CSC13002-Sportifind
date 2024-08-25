@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/util/image_service.dart';
+import 'package:sportifind/core/widgets/app_bar/flutter_app_bar_blue_purple.dart';
+import 'package:sportifind/core/widgets/button/blue_purple_white_icon_loading_button.dart';
+import 'package:sportifind/core/widgets/button/blue_purple_white_loading_buttton.dart';
+import 'package:sportifind/core/widgets/form/custom_form.dart';
 import 'package:sportifind/features/stadium/presentations/bloc/create_stadium_bloc.dart';
-import 'package:sportifind/features/stadium/presentations/widgets/current_location_button.dart';
-import 'package:sportifind/features/stadium/presentations/widgets/stadium_form.dart';
 
 class CreateStadiumScreen extends StatefulWidget {
   static route() =>
@@ -43,111 +47,143 @@ class _CreateStadiumScreenState extends State<CreateStadiumScreen> {
         if (state.errorMessage.isNotEmpty) {
           return Center(child: Text(state.errorMessage));
         }
-
+        final stadiumForm = CustomForm();
         return Scaffold(
-          appBar: AppBar(title: const Text('Upload Stadium')),
+          appBar: const FeatureAppBarBluePurple(title: 'Create stadium'),
+          backgroundColor: SportifindTheme.backgroundColor,
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(30),
+            padding: const EdgeInsets.all(16),
             child: Form(
               key: _bloc.formKey,
               child: Column(
                 children: [
-                  _bloc.buildAvatarSection(),
-                  const SizedBox(height: 25),
-                  _bloc.buildImageList(),
-                  const SizedBox(height: 25),
-                  StadiumForm().buildTextFormField(
-                    _bloc.controllers['stadiumName']!,
-                    'Stadium name',
-                    'Please enter the stadium name',
+                  stadiumForm.buildTextFormField(
+                    controller: _bloc.controllers['stadiumName']!,
+                    label: 'Name',
+                    hint: 'Enter your stadium\'s name',
+                    validatorText: 'Please enter the stadium name',
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: [
-                          StadiumForm().buildCityDropdown(
-                            state.selectedCity,
-                            _bloc.citiesNameAndId,
-                            _bloc.onCityChanged,
-                          ),
-                          StadiumForm().buildDistrictDropdown(
-                            state.selectedCity,
-                            state.selectedDistrict,
-                            _bloc.citiesNameAndId,
-                            _bloc.onDistrictChanged,
-                          ),
-                        ],
-                      ),
-                      CurrentLocationButton(
-                        width: 56,
-                        height: 56,
-                        isLoading: state.isLoadingLocation,
-                        onPressed: _bloc.getUserCurrentLocation,
-                      ),
-                    ],
+                  stadiumForm.buildCityDropdown(
+                    selectedCity: state.selectedCity,
+                    citiesNameAndId: _bloc.citiesNameAndId,
+                    onChanged: _bloc.onCityChanged,
                   ),
-                  const SizedBox(height: 8),
-                  StadiumForm().buildTextFormField(
-                    _bloc.controllers['stadiumAddress']!,
-                    'Address',
-                    'Please enter the address',
+                  stadiumForm.buildDistrictDropdown(
+                    selectedCity: state.selectedCity,
+                    selectedDistrict: state.selectedDistrict,
+                    citiesNameAndId: _bloc.citiesNameAndId,
+                    onChanged: _bloc.onDistrictChanged,
                   ),
-                  const SizedBox(height: 10),
-                  StadiumForm().buildTextFormField(
-                    _bloc.controllers['phoneNumber']!,
-                    'Phone number',
-                    'Please enter the phone number',
-                    TextInputType.phone,
+                  stadiumForm.buildTextFormField(
+                    controller: _bloc.controllers['stadiumAddress']!,
+                    label: 'Address details',
+                    hint: 'Enter your stadium\'s address',
+                    validatorText: 'Please enter the address',
+                    spacingSection: 8.0,
                   ),
-                  const SizedBox(height: 10),
-                  StadiumForm().buildTimeFields(
-                    _bloc.controllers['openTime']!,
-                    _bloc.controllers['closeTime']!,
-                    context,
-                    () => setState(() {}),
+                  Center(
+                    child: Text('or', style: SportifindTheme.normalTextSmokeScreen),
                   ),
-                  const SizedBox(height: 25),
-                  StadiumForm().buildFieldRow(
-                    '5-Player',
-                    state.num5PlayerFields,
-                    _bloc.controllers['pricePerHour5']!,
-                    () => setState(() => state.num5PlayerFields++),
-                    () => setState(() {
+                  const SizedBox(height: 8.0),
+                  SizedBox(
+                    width: double.infinity,
+                    child: BluePurpleWhiteIconLoadingButton(
+                      icon: Icons.place,
+                      text: 'Set curent location as address',
+                      onPressed: _bloc.getUserCurrentLocation,
+                      type: 'round square',
+                      size: 'small',
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  stadiumForm.buildTextFormField(
+                    controller: _bloc.controllers['phoneNumber']!,
+                    label: 'Phone number',
+                    hint: 'Example: 0848182847',
+                    validatorText: 'Please enter the phone number',
+                    inputType: TextInputType.phone,
+                  ),
+                  stadiumForm.buildTimeFields(
+                    openTimeController: _bloc.controllers['openTime']!,
+                    closeTimeController: _bloc.controllers['closeTime']!,
+                    context: context,
+                    setState: () => setState(() {}),
+                  ),
+                  const SizedBox(height: 8.0),
+                  stadiumForm.buildAvatarSection(
+                    buttonText: 'Add avatar image',
+                    avatar: state.avatar,
+                    onPressed: () => ImageService().showImagePickerOptions(
+                        context, _bloc.pickImageForAvatar),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Center(
+                    child: Text(
+                      'Fields information',
+                      style: SportifindTheme.sportifindFeatureAppBarBluePurpleSmall,
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
+                  stadiumForm.buildFieldRow(
+                    fieldType: '5-Player',
+                    fieldCount: state.num5PlayerFields,
+                    priceController: _bloc.controllers['pricePerHour5']!,
+                    onIncrement: () => setState(() {
+                      state.num5PlayerFields++;
+                      state.availableField = state.num5PlayerFields > 0 ||
+                          state.num7PlayerFields > 0 ||
+                          state.num11PlayerFields > 0;
+                    }),
+                    onDecrement: () => setState(() {
                       if (state.num5PlayerFields > 0) state.num5PlayerFields--;
+                      state.availableField = state.num5PlayerFields > 0 ||
+                          state.num7PlayerFields > 0 ||
+                          state.num11PlayerFields > 0;
                     }),
+                    availableField: state.availableField,
                   ),
-                  StadiumForm().buildFieldRow(
-                    '7-Player',
-                    state.num7PlayerFields,
-                    _bloc.controllers['pricePerHour7']!,
-                    () => setState(() => state.num7PlayerFields++),
-                    () => setState(() {
+                  stadiumForm.buildFieldRow(
+                    fieldType: '7-Player',
+                    fieldCount: state.num7PlayerFields,
+                    priceController: _bloc.controllers['pricePerHour7']!,
+                    onIncrement: () => setState(() {
+                      state.num7PlayerFields++;
+                      state.availableField = state.num5PlayerFields > 0 ||
+                          state.num7PlayerFields > 0 ||
+                          state.num11PlayerFields > 0;
+                    }),
+                    onDecrement: () => setState(() {
                       if (state.num7PlayerFields > 0) state.num7PlayerFields--;
+                      state.availableField = state.num5PlayerFields > 0 ||
+                          state.num7PlayerFields > 0 ||
+                          state.num11PlayerFields > 0;
                     }),
+                    availableField: state.availableField,
                   ),
-                  StadiumForm().buildFieldRow(
-                    '11-Player',
-                    state.num11PlayerFields,
-                    _bloc.controllers['pricePerHour11']!,
-                    () => setState(() => state.num11PlayerFields++),
-                    () => setState(() {
+                  stadiumForm.buildFieldRow(
+                    fieldType: '11-Player',
+                    fieldCount: state.num11PlayerFields,
+                    priceController: _bloc.controllers['pricePerHour11']!,
+                    onIncrement: () => setState(() {
+                      state.num11PlayerFields++;
+                      state.availableField = state.num5PlayerFields > 0 ||
+                          state.num7PlayerFields > 0 ||
+                          state.num11PlayerFields > 0;
+                    }),
+                    onDecrement: () => setState(() {
                       if (state.num11PlayerFields > 0) state.num11PlayerFields--;
+                      state.availableField = state.num5PlayerFields > 0 ||
+                          state.num7PlayerFields > 0 ||
+                          state.num11PlayerFields > 0;
                     }),
+                    availableField: state.availableField,
                   ),
-                  const SizedBox(height: 30),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: ElevatedButton(
-                      onPressed: state.isSubmitting ? null : _bloc.creatingStadium,
-                      child: state.isSubmitting
-                          ? const SizedBox(
-                              width: 40,
-                              height: 30,
-                              child: CircularProgressIndicator(),
-                            )
-                          : const Text('Submit'),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: BluePurpleWhiteLoadingButton(
+                      text: 'Create',
+                      onPressed: _bloc.creatingStadium,
                     ),
                   ),
                 ],

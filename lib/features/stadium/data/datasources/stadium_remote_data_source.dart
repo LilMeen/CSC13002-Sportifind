@@ -144,6 +144,7 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
   Future<void> updateStadium(StadiumModel stadium) async {
     final stadiumRef = FirebaseFirestore.instance.collection('stadiums').doc(stadium.id);
     await stadiumRef.update(stadium.toFirestore());
+
     await stadiumRef.collection('fields').get().then((fieldDocs) {
       for (final fieldDoc in fieldDocs.docs) {
         fieldDoc.reference.delete();
@@ -153,15 +154,32 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
       await stadiumRef.collection('fields').add(field.toFirestore());
     }
 
+    for (int i = stadium.images.length; i < stadium.images.length; ++i) {
+      await FirebaseStorage.instance
+          .ref()
+          .child('stadiums')
+          .child(stadium.id)
+          .child('images')
+          .child('image_$i.jpg')
+          .delete();
+    }
+
     final storageRef = FirebaseStorage.instance
       .ref()
       .child('stadiums')
       .child(stadium.id);
-    await storageRef
-      .child('avatar')
-      .child('avatar.jpg')
-      .putFile(File(stadium.avatar));
+    
+    if (!stadium.avatar.contains('http')) {
+      await storageRef
+        .child('avatar')
+        .child('avatar.jpg')
+        .putFile(File(stadium.avatar));
+    } 
+
     for (int i = 0; i < stadium.images.length; i++) {
+      if (stadium.images[i].contains('http')) {
+        continue;
+      }
       await storageRef
         .child('images')
         .child('image_$i.jpg')

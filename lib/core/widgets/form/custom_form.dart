@@ -10,7 +10,6 @@ import 'package:sportifind/core/widgets/district_dropdown.dart';
 class CustomForm {
   static const double spacingLabelBox = 6.0;
   static const double spacingSection = 16.0;
-  ImageService imgService = ImageService();
 
   InputDecoration customInputDecoration(String hint) {
     return InputDecoration(
@@ -281,7 +280,16 @@ class CustomForm {
           aspectRatio: 1.85,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.file(
+            child: avatar.path.contains('http')
+            ?
+            Image.network(
+              avatar.path,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.broken_image, size: 250, color: Colors.grey),
+            )
+            :
+            Image.file(
               avatar,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) =>
@@ -339,7 +347,14 @@ class CustomForm {
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     height: 250,
-                    child: Image.file(
+                    child: image.path.contains('http')
+                    ?
+                    Image.network(
+                      image.path,
+                      fit: BoxFit.cover,
+                    )
+                    :
+                    Image.file(
                       image,
                       fit: BoxFit.cover,
                     ),
@@ -352,7 +367,19 @@ class CustomForm {
             padding: const EdgeInsets.only(right: 16.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.file(
+              child: image.path.contains('http')
+              ?
+              Image.network(
+                image.path,
+                fit: BoxFit.cover,
+                width: 150,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.broken_image,
+                      size: 100, color: Colors.grey);
+                },
+              )
+              :
+              Image.file(
                 image,
                 fit: BoxFit.cover,
                 width: 150,
@@ -390,7 +417,7 @@ class CustomForm {
             },
             onSelected: (value) {
               if (value == 'replace') {
-                imgService.showImagePickerOptionsForReplace(
+                ImageService().showImagePickerOptionsForReplace(
                     context, replaceImage, index);
               } else if (value == 'delete') {
                 deleteImage(index);

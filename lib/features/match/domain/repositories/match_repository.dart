@@ -7,6 +7,7 @@ abstract interface class MatchRepository {
   Future<Result<MatchEntity>> getMatch(String id);
   Future<Result<List<MatchEntity>>> getAllMatches();
   Future<Result<List<MatchEntity>>> getMatchesByStadium(String stadiumId);
+  Future<Result<List<MatchEntity>>> getMatchesByField(String fieldId);
   Future<Result<List<MatchEntity>>> getMatchesByTeam(String teamId);
   Future<Result<List<MatchEntity>>> getMatchesByPlayer(String playerId);
   Future<Result<void>> updateMatch(MatchEntity match);

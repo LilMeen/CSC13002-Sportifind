@@ -20,9 +20,12 @@ class EditStadiumState {
 
   final String selectedCity;
   final String selectedDistrict;
+
   int num5PlayerFields;
   int num7PlayerFields;
   int num11PlayerFields;
+  bool availableField;
+
   late File avatar;
   final List<File> images;
   Location location;
@@ -35,9 +38,12 @@ class EditStadiumState {
 
     this.selectedCity = '',
     this.selectedDistrict = '',
+
     this.num5PlayerFields = 0,
     this.num7PlayerFields = 0,
     this.num11PlayerFields = 0,
+    this.availableField = false,
+
     required this.avatar,
     this.images = const [],
     this.location = const Location(),
@@ -53,6 +59,7 @@ class EditStadiumState {
     int? num5PlayerFields,
     int? num7PlayerFields,
     int? num11PlayerFields,
+    bool? availableField,
     File? avatar,
     List<File>? images,
     Location? location,
@@ -67,6 +74,7 @@ class EditStadiumState {
       num5PlayerFields: num5PlayerFields ?? this.num5PlayerFields,
       num7PlayerFields: num7PlayerFields ?? this.num7PlayerFields,
       num11PlayerFields: num11PlayerFields ?? this.num11PlayerFields,
+      availableField: availableField ?? this.availableField,
       avatar: avatar ?? this.avatar,
       images: images ?? this.images,
       location: location ?? this.location,
@@ -121,7 +129,7 @@ class EditStadiumBloc {
     _stateController.add(_state);
   }
 
-  void _prepareData() {
+  Future<void> _prepareData() async {
     try {
       controllers['stadiumName']!.text = stadium.name;
       controllers['stadiumAddress']!.text = stadium.location.address;
@@ -143,8 +151,6 @@ class EditStadiumBloc {
         location: stadium.location,
         avatar: stadium.avatar,
         images: stadium.images,
-        //selectedCity: stadium.location.city,
-        //selectedDistrict: '',
         isLoading: false,
       ));
 
@@ -152,7 +158,6 @@ class EditStadiumBloc {
       _cityDelayTimer = Timer(const Duration(seconds: 1, milliseconds: 300), () {
         _updateState((state) => state.copyWith(selectedCity: stadium.location.city, selectedDistrict: ''));
       });
-
     } catch (error) {
       _updateState((state) => state.copyWith(
         errorMessage: 'Failed to load data: $error',
@@ -166,6 +171,11 @@ class EditStadiumBloc {
 
     _updateState((state) => state.copyWith(isSubmitting: true));
     try {
+      _state.location = await findLatAndLngFull(
+        controllers['stadiumAddress']!.text,
+        _state.selectedDistrict,
+        _state.selectedCity,
+      );
       await UseCaseProvider.getUseCase<EditStadium>().call(
         EditStadiumParams(
           id: stadium.id,
@@ -184,7 +194,6 @@ class EditStadiumBloc {
           images: _state.images,
         )
       );
-
       _updateState((state) => state.copyWith(isSubmitting: false));
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(

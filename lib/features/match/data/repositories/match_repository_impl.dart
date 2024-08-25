@@ -76,6 +76,19 @@ class MatchRepositoryImpl implements MatchRepository {
     });
   }
 
+  // GET MATCHES BY FIELD
+  // Get all matches by field id
+  @override
+  Future<Result<List<MatchEntity>>> getMatchesByField(String fieldId) {
+    return matchRemoteDataSource.getMatchesByField(fieldId).then((matches) async {
+      List<MatchEntity> matchEntities = [];
+      for (var match in matches) {
+        matchEntities.add(await match.toEntity());
+      }
+      return Result.success(matchEntities);
+    });
+  }
+
   // GET MATCHES BY TEAM
   // Get all matches by team id
   @override

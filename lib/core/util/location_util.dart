@@ -54,7 +54,10 @@ Future<Location?> findLatAndLng(String district, String city) async {
     );
     return returnLocation;
   }
-  return null;
+  return Location(
+    district: district,
+    city: city,
+  );
 }
 
 Future<Location> findLatAndLngFull(
@@ -74,7 +77,11 @@ Future<Location> findLatAndLngFull(
       longitude: searchLocation.longitude,
     );
   }
-  return const Location();
+  return Location(
+    address: address,
+    district: district,
+    city: city,
+  );
 }
 
 

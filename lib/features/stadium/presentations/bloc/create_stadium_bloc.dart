@@ -22,6 +22,8 @@ class CreateStadiumState {
   int num5PlayerFields;
   int num7PlayerFields;
   int num11PlayerFields;
+  bool availableField;
+
   late File avatar;
   final List<File> images;
   Location location;
@@ -37,6 +39,8 @@ class CreateStadiumState {
     this.num5PlayerFields = 0,
     this.num7PlayerFields = 0,
     this.num11PlayerFields = 0,
+    this.availableField = false,
+
     required this.avatar,
     this.images = const [],
     this.location = const Location(),
@@ -53,6 +57,8 @@ class CreateStadiumState {
     int? num5PlayerFields,
     int? num7PlayerFields,
     int? num11PlayerFields,
+    bool? availableField,
+    
     File? avatar,
     List<File>? images,
     Location? location,
@@ -68,6 +74,8 @@ class CreateStadiumState {
       num5PlayerFields: num5PlayerFields ?? this.num5PlayerFields,
       num7PlayerFields: num7PlayerFields ?? this.num7PlayerFields,
       num11PlayerFields: num11PlayerFields ?? this.num11PlayerFields,
+      availableField: availableField ?? this.availableField,
+
       avatar: avatar ?? this.avatar,
       images: images ?? this.images,
       location: location ?? this.location,
