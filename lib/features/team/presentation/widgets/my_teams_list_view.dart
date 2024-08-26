@@ -236,8 +236,7 @@ class TeamBox extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return TeamDetails(
-                                            teamId: teamInformation!.id, role: 'teamMember');
+                                        return TeamDetails(teamId: teamInformation!.id, role: isCaptain ? 'captain' : 'normal');
                                       },
                                     ),
                                   );

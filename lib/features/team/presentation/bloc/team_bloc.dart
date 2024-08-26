@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
@@ -70,5 +72,50 @@ class TeamBloc {
         team: team,
       ),
     );
+  }
+
+  Future<File> downloadAvatarFile(String teamId) async {
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('teams')
+        .child(teamId)
+        .child('avatar')
+        .child('avatar.jpg');
+
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final avatar = File('${tempDir.path}/avatar.jpg');
+
+      await ref.writeToFile(avatar);
+
+      return avatar;
+    } catch (e) {
+      throw Exception('Failed to download avatar file: $e');
+    }
+  }
+
+  Future<List<File>> downloadImageFiles(String teamId, int imageslength) async {
+    List<File> files = [];
+
+    for (int i = 0; i < imageslength; i++) {
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('teams')
+          .child(teamId)
+          .child('images')
+          .child('image_$i.jpg');
+
+      try {
+        final tempDir = await getTemporaryDirectory();
+        final file = File('${tempDir.path}/image_$i.jpg');
+
+        await ref.writeToFile(file);
+
+        files.add(file);
+      } catch (e) {
+        throw Exception('Failed to download image files: $e');
+      }
+    }
+    return files;
   }
 }

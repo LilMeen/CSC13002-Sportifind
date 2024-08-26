@@ -52,8 +52,12 @@ class _EditTeamScreenState extends State<EditTeamScreen> {
     _controllers['teamName']!.text = widget.team!.name;
     _location = widget.team!.location;
 
-    _avatar = widget.team!.avatar;
-    _images = widget.team!.images ?? [];
+    //_avatar = widget.team!.avatar;
+    //_images = widget.team!.images ?? [];
+    _avatar = await _bloc.downloadAvatarFile(widget.team!.id);
+    if (widget.team!.images != null){
+      _images = await _bloc.downloadImageFiles( widget.team!.id, widget.team!.images!.length);
+    }
 
     setState(() {
       _isLoading = false;

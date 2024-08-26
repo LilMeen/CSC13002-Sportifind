@@ -256,7 +256,7 @@ class _TeamDetailsState extends State<TeamDetails>
                                     color: Colors.black,
                                   ),
                                 ),
-                                teamInformation!.images == null
+                                teamInformation!.images == []
                                     ? Text(
                                         '       No image yet',
                                         style: SportifindTheme.normalTextBlack
@@ -409,7 +409,7 @@ class _TeamDetailsState extends State<TeamDetails>
                           ),
                         );
                         // Handle the edit action
-                        Navigator.of(context).pop();
+                        //Navigator.of(context).pop();
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Moving to Edit Team'),

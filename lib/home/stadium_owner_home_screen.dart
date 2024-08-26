@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
+import 'package:sportifind/features/profile/presentation/screens/stadium_owner_profile_screen.dart'; 
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/owner_stadium_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/schedule_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/statistic/statistic_screen.dart';
@@ -16,25 +17,12 @@ class StadiumOwnerHomeScreen extends StatefulWidget {
 
 class _StadiumOwnerHomeScreenState extends State<StadiumOwnerHomeScreen> {
 
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  int _selectedIndex = 2;
   static const List<Widget> _widgetOptions = <Widget>[
     StadiumStatisticScreen(),
     ScheduleScreen(),
-    Text(
-      'Index 2: Home',
-      style: optionStyle,
-    ),
     OwnerStadiumScreen(),
-    /*Text(
-      'Index 3: Stadium',
-      style: optionStyle,
-    ), */
-    Text(
-      'Index 4: Personal',
-      style: optionStyle,
-    ),
+    StadiumOwnerProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -59,10 +47,6 @@ class _StadiumOwnerHomeScreenState extends State<StadiumOwnerHomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_month_outlined),
             label: 'Schedule',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home'       
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.stadium_outlined),

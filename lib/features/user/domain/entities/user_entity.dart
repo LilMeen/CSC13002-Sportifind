@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:sportifind/core/entities/location.dart';
 
 class UserEntity {
@@ -24,6 +23,4 @@ class UserEntity {
     required this.location,
     required this.phone,
   });
-
-
 }

@@ -4,6 +4,7 @@ import 'package:sportifind/core/di/comp/notification_injection_container.dart';
 import 'package:sportifind/core/di/comp/profile_injection_containder.dart';
 import 'package:sportifind/core/di/comp/stadium_injection_container.dart';
 import 'package:sportifind/core/di/comp/team_injection_container.dart';
+import 'package:sportifind/core/di/comp/user_injection_container.dart';
 
 void initializeDependencies () {
   initializeAuthDependencies();
@@ -12,4 +13,5 @@ void initializeDependencies () {
   initializeProfileDependencies();
   initializeStadiumDependencies();
   initializeTeamDependencies();
+  initializeUserDependencies();
 }
