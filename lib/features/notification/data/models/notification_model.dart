@@ -4,7 +4,7 @@ import 'package:sportifind/features/notification/domain/entities/notification_en
 class NotificationModel {
   String? id;
   bool isRead;
-  final String matchId;
+  String matchId = "";
   final String receiver;
   final String sender;
   final String senderType;
@@ -29,7 +29,7 @@ class NotificationModel {
         isRead = snapshot['isRead'],
         receiver = snapshot['receiver'],
         sender = snapshot['sender'],
-        matchId = snapshot['match'],
+        matchId = snapshot['match'] ?? "",
         senderType = snapshot['senderType'],
         status = snapshot['status'],
         time = snapshot['time'],
