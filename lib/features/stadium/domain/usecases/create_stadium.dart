@@ -27,9 +27,9 @@ class CreateStadium implements UseCase<void, CreateStadiumParams> {
         ));
       }
     }
-    addFields(params.num5PlayerFields, params.pricePerHour5, '5-player');
-    addFields(params.num7PlayerFields, params.pricePerHour7, '7-player');
-    addFields(params.num11PlayerFields, params.pricePerHour11, '11-player');
+    addFields(params.num5PlayerFields, params.pricePerHour5, '5-Player');
+    addFields(params.num7PlayerFields, params.pricePerHour7, '7-Player');
+    addFields(params.num11PlayerFields, params.pricePerHour11, '11-Player');
 
     StadiumEntity stadium = StadiumEntity(
       id: '',

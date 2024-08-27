@@ -142,9 +142,9 @@ class EditStadiumBloc {
       controllers['openTime']!.text = stadium.openTime;
       controllers['closeTime']!.text = stadium.closeTime;
 
-      double price5 = stadium.getPriceOfTypeField('5-player');
-      double price7 = stadium.getPriceOfTypeField('7-player');
-      double price11 = stadium.getPriceOfTypeField('11-player');
+      double price5 = stadium.getPriceOfTypeField('5-Player');
+      double price7 = stadium.getPriceOfTypeField('7-Player');
+      double price11 = stadium.getPriceOfTypeField('11-Player');
       controllers['pricePerHour5']!.text = price5.toStringAsFixed(price5 == price5.toInt() ? 0 : 2);
       controllers['pricePerHour7']!.text = price7.toStringAsFixed(price7 == price7.toInt() ? 0 : 2);
       controllers['pricePerHour11']!.text = price11.toStringAsFixed(price11 == price11.toInt() ? 0 : 2);
@@ -153,9 +153,9 @@ class EditStadiumBloc {
       final images = await _downloadImageFiles(stadium.id, stadium.images.length);
 
       _updateState((state) => state.copyWith(
-        num5PlayerFields: stadium.getNumberOfTypeField('5-player'),
-        num7PlayerFields: stadium.getNumberOfTypeField('7-player'),
-        num11PlayerFields: stadium.getNumberOfTypeField('11-player'),
+        num5PlayerFields: stadium.getNumberOfTypeField('5-Player'),
+        num7PlayerFields: stadium.getNumberOfTypeField('7-Player'),
+        num11PlayerFields: stadium.getNumberOfTypeField('11-Player'),
         location: stadium.location,
         avatar: avatar,
         images: images,

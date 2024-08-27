@@ -206,22 +206,22 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
     }
 
     await editFields(
-      oldStadium.getNumberOfTypeField('5-player'), 
-      newStadium.getNumberOfTypeField('5-player'), 
-      '5-player', 
-      newStadium.getPriceOfTypeField('5-player')
+      oldStadium.getNumberOfTypeField('5-Player'), 
+      newStadium.getNumberOfTypeField('5-Player'), 
+      '5-Player', 
+      newStadium.getPriceOfTypeField('5-Player')
     );
     await editFields(
-      oldStadium.getNumberOfTypeField('7-player'), 
-      newStadium.getNumberOfTypeField('7-player'), 
-      '7-player', 
-      newStadium.getPriceOfTypeField('7-player')
+      oldStadium.getNumberOfTypeField('7-Player'), 
+      newStadium.getNumberOfTypeField('7-Player'), 
+      '7-Player', 
+      newStadium.getPriceOfTypeField('7-Player')
     );
     await editFields(
-      oldStadium.getNumberOfTypeField('11-player'), 
-      newStadium.getNumberOfTypeField('11-player'), 
-      '11-player', 
-      newStadium.getPriceOfTypeField('11-player')
+      oldStadium.getNumberOfTypeField('11-Player'), 
+      newStadium.getNumberOfTypeField('11-Player'), 
+      '11-Player', 
+      newStadium.getPriceOfTypeField('11-Player')
     );
   }
 

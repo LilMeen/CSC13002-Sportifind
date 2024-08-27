@@ -27,9 +27,9 @@ class EditStadium implements UseCase<void, EditStadiumParams> {
         ));
       }
     }
-    addFields(params.num5PlayerFields, params.pricePerHour5, '5-player');
-    addFields(params.num7PlayerFields, params.pricePerHour7, '7-player');
-    addFields(params.num11PlayerFields, params.pricePerHour11, '11-player');
+    addFields(params.num5PlayerFields, params.pricePerHour5, '5-Player');
+    addFields(params.num7PlayerFields, params.pricePerHour7, '7-Player');
+    addFields(params.num11PlayerFields, params.pricePerHour11, '11-Player');
 
     StadiumEntity newStadium = StadiumEntity(
       id: params.id,
