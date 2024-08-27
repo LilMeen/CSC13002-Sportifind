@@ -12,7 +12,7 @@ import 'package:sportifind/core/util/image_service.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/usecases/edit_stadium.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/stadium_form.dart';
-import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/owner_stadium_screen.dart';
+import 'package:sportifind/home/stadium_owner_home_screen.dart';
 
 class EditStadiumState {
   final bool isLoading;
@@ -106,9 +106,7 @@ class EditStadiumBloc {
     'pricePerHour11': TextEditingController(),
   };
   final Map<String, String> citiesNameAndId = {};
-  late int num5PlayerFields;
-  late int num7PlayerFields;
-  late int num11PlayerFields;
+
 
   Timer? _cityDelayTimer;
   Timer? _districtDelayTimer;
@@ -156,6 +154,7 @@ class EditStadiumBloc {
         num5PlayerFields: stadium.getNumberOfTypeField('5-Player'),
         num7PlayerFields: stadium.getNumberOfTypeField('7-Player'),
         num11PlayerFields: stadium.getNumberOfTypeField('11-Player'),
+        availableField: true,
         location: stadium.location,
         avatar: avatar,
         images: images,
@@ -219,7 +218,7 @@ class EditStadiumBloc {
       _updateState((state) => state.copyWith(isSubmitting: false));
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const OwnerStadiumScreen(),
+          builder: (context) => const StadiumOwnerHomeScreen(),
         ),
       );
     } catch (e) {

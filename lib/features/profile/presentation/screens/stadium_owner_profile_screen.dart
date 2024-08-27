@@ -293,8 +293,7 @@ class StadiumOwnerProfileScreenState extends State<StadiumOwnerProfileScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EditStadiumOwnerInformationScreen
-                              (stadiumOwner: stadiumOwner!),
+                          builder: (context) => EditStadiumOwnerInformationScreen(stadiumOwner: stadiumOwner!),
                         ),
                       );
                     },

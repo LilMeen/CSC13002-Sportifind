@@ -527,7 +527,7 @@ class CustomForm {
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
-                  if (fieldCount > 0 && (value == null || value.isEmpty)) {
+                  if (fieldCount > 0 && (value == null || value.isEmpty || value == '0')) {
                     return 'Please enter a price';
                   }
 

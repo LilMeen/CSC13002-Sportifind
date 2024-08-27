@@ -14,6 +14,7 @@ import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/profile/domain/usecases/update_player.dart';
 import 'package:sportifind/features/profile/presentation/widgets/foot_picker.dart';
 import 'package:sportifind/features/profile/presentation/widgets/number_wheel.dart';
+import 'package:sportifind/home/player_home_screen.dart';
 
 final _formKey = GlobalKey<FormState>();
 
@@ -39,14 +40,6 @@ class EditInformationState extends State<EditInformationScreen> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _footController = TextEditingController();
 
-  Timer? _delayCityTime;
-  Timer? _delayDistrictTime;
-
-  final Map<String, String> citiesNameAndId = {};
-
-  var _enteredName = '';
-  var _enteredPhone = '';
-
   Map<String, int> stats = {
     'PACE': 0,
     'DEF': 0,
@@ -55,6 +48,14 @@ class EditInformationState extends State<EditInformationScreen> {
     'DRIVE': 0,
     'PHYSIC': 0,
   };
+
+  Timer? _delayCityTime;
+  Timer? _delayDistrictTime;
+
+  final Map<String, String> citiesNameAndId = {};
+
+  var _enteredName = '';
+  var _enteredPhone = '';
 
   @override
   void dispose() {
@@ -83,22 +84,16 @@ class EditInformationState extends State<EditInformationScreen> {
       _addressController.text = widget.player.location.address;
       _dateController.text = widget.player.dob;
       _genderController.text = widget.player.gender;
-      stats['DEF'] = widget.player.stats.def;
-      stats['DRIVE'] = widget.player.stats.drive;
-      stats['PACE'] = widget.player.stats.pace;
-      stats['PASS'] = widget.player.stats.pass;
-      stats['PHYSIC'] = widget.player.stats.physic;
-      stats['SHOOTING'] = widget.player.stats.shoot;
 
       _delayCityTime?.cancel();
-      _delayCityTime = Timer(const Duration(seconds: 2), () {
+      _delayCityTime = Timer(const Duration(milliseconds: 300), () {
         setState(() {
           _cityController.text = widget.player.location.city;
         });
       });
       _delayDistrictTime?.cancel();
       _delayDistrictTime =
-          Timer(const Duration(seconds: 5, milliseconds: 300), () {
+          Timer(const Duration(milliseconds: 900), () {
         setState(() {
           _districtController.text = widget.player.location.district;
         });
@@ -108,6 +103,14 @@ class EditInformationState extends State<EditInformationScreen> {
       _weightController.text = widget.player.weight;
       _heightController.text = widget.player.height;
       _footController.text = widget.player.preferredFoot;
+
+                
+      stats['DEF'] = widget.player.stats.def;
+      stats['DRIVE'] = widget.player.stats.drive;
+      stats['PACE'] = widget.player.stats.pace;
+      stats['PASS'] = widget.player.stats.pass;
+      stats['PHYSIC'] = widget.player.stats.physic;
+      stats['SHOOTING'] = widget.player.stats.shoot;
     });
   }
 
@@ -116,6 +119,16 @@ class EditInformationState extends State<EditInformationScreen> {
 
     if (isValid) {
       _formKey.currentState!.save();
+
+      if (_districtController.text.isEmpty || _cityController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select a city and district'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
 
       Location newLocation = await findLatAndLng(
         _districtController.text,
@@ -144,7 +157,11 @@ class EditInformationState extends State<EditInformationScreen> {
       widget.player.stats.shoot = stats['SHOOTING']!;
       try {
         await UseCaseProvider.getUseCase<UpdatePlayer>().call(UpdatePlayerParams(player: widget.player));
-        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const PlayerHomeScreen(),
+          ),
+        );
       } catch (error) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -457,13 +474,14 @@ class EditInformationState extends State<EditInformationScreen> {
     );
   }
 
+
   void _handleSaved(String stat, int value) {
     setState(() {
       stats[stat] = value;
     });
   }
 
-  Widget _buildWheelSection(String type, int stat) {
+  Widget _buildWheelSection(String type) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -480,7 +498,9 @@ class EditInformationState extends State<EditInformationScreen> {
           width: 137,
           height: 40,
           child: NumberWheel(
-              onSaved: (value) => _handleSaved(type, value), stat: stat),
+            onSaved: (value) => _handleSaved(type, value),
+            initValue: stats[type] ?? 80,
+          ),
         ),
       ],
     );
@@ -498,8 +518,7 @@ class EditInformationState extends State<EditInformationScreen> {
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
-          backgroundColor:
-              WidgetStateProperty.all<Color>(SportifindTheme.bluePurple),
+          backgroundColor: WidgetStateProperty.all<Color>(SportifindTheme.bluePurple),
           shadowColor: WidgetStateProperty.all<Color>(
             SportifindTheme.bluePurple,
           ),
@@ -515,6 +534,19 @@ class EditInformationState extends State<EditInformationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: SportifindTheme.bluePurple),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: Text(
+          'Edit Information',
+          style: SportifindTheme.sportifindFeatureAppBarBluePurple,
+        ),
+      ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
@@ -522,11 +554,9 @@ class EditInformationState extends State<EditInformationScreen> {
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 20),
-                Text('Edit Information',
-                    style: SportifindTheme.sportifindFeatureAppBarBluePurple),
                 const SizedBox(height: 20),
                 _buildSection('Name', _nameController),
                 const SizedBox(height: 16),
@@ -559,7 +589,7 @@ class EditInformationState extends State<EditInformationScreen> {
                            });
                          },
                          citiesNameAndId: citiesNameAndId,
-                         fillColor: Colors.transparent,
+                         fillColor: Colors.white,
                        ),
                      ],
                    ),
@@ -588,7 +618,7 @@ class EditInformationState extends State<EditInformationScreen> {
                            });
                          },
                          citiesNameAndId: citiesNameAndId,
-                         fillColor: Colors.transparent,
+                         fillColor: Colors.white,
                        ),
                      ),
                    ],
@@ -603,39 +633,47 @@ class EditInformationState extends State<EditInformationScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildWheelSection('PACE', widget.player.stats.pace),
+                    _buildWheelSection('PACE'),
                     const SizedBox(width: 15),
-                    _buildWheelSection('DEF', widget.player.stats.def),
+                    _buildWheelSection('DEF'),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildWheelSection('SHOOTING', widget.player.stats.shoot),
+                    _buildWheelSection('SHOOTING'),
                     const SizedBox(width: 15),
-                    _buildWheelSection('PASS', widget.player.stats.pass),
+                    _buildWheelSection('PASS'),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildWheelSection('DRIVE', widget.player.stats.drive),
+                    _buildWheelSection('DRIVE'),
                     const SizedBox(width: 15),
-                    _buildWheelSection('PHYSIC', widget.player.stats.physic),
+                    _buildWheelSection('PHYSIC'),
                   ],
                 ),
                 const SizedBox(height: 20),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Spacer(),
-                    Text('Preferred Foot',
-                        style: SportifindTheme.normalTextBlack),
-                    const Spacer(),
-                    FootPicker(controller: _footController),
-                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text('Preferred Foot', style: SportifindTheme.normalTextBlack),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: FootPicker(controller: _footController),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 40),

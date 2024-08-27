@@ -473,7 +473,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                           });
                         },
                         citiesNameAndId: citiesNameAndId,
-                        fillColor: Colors.transparent,
+                        fillColor: Colors.white,
                       ),
                     ],
                   ),
@@ -502,7 +502,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                           });
                         },
                         citiesNameAndId: citiesNameAndId,
-                        fillColor: Colors.transparent,
+                        fillColor: Colors.white,
                       ),
                     ),
                   ],

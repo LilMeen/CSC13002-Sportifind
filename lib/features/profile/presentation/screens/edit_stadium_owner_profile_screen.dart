@@ -12,6 +12,7 @@ import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
 import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/features/profile/domain/usecases/update_stadium_owner.dart';
+import 'package:sportifind/home/stadium_owner_home_screen.dart';
 
 final _formKey = GlobalKey<FormState>();
 
@@ -72,14 +73,14 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
       _genderController.text = widget.stadiumOwner.gender;
 
       _delayCityTime?.cancel();
-      _delayCityTime = Timer(const Duration(seconds: 2), () {
+      _delayCityTime = Timer(const Duration(milliseconds: 300), () {
         setState(() {
           _cityController.text = widget.stadiumOwner.location.city;
         });
       });
       _delayDistrictTime?.cancel();
       _delayDistrictTime =
-          Timer(const Duration(seconds: 5, milliseconds: 300), () {
+          Timer(const Duration(milliseconds: 900), () {
         setState(() {
           _districtController.text = widget.stadiumOwner.location.district;
         });
@@ -109,7 +110,12 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
       try {
         await UseCaseProvider.getUseCase<UpdateStadiumOwner>()
             .call(UpdateStadiumOwnerParams(stadiumOwner: widget.stadiumOwner));
-        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const StadiumOwnerHomeScreen()
+          ),
+        );
+        
       } catch (error) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -448,7 +454,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold( 
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
@@ -456,8 +462,8 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 const SizedBox(height: 20),
                  Text('Edit Information', style: SportifindTheme.sportifindFeatureAppBarBluePurple),
@@ -476,9 +482,9 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       RichText(
-                        text: const TextSpan(
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                          children: <TextSpan>[
+                        text: TextSpan(
+                          style: SportifindTheme.normalTextBlack,
+                          children: const <TextSpan>[
                             TextSpan(text: 'City'),
                           ],
                         ),
@@ -493,7 +499,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
                           });
                         },
                         citiesNameAndId: citiesNameAndId,
-                        fillColor: Colors.transparent,
+                        fillColor: Colors.white,
                       ),
                     ],
                   ),
@@ -503,9 +509,9 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RichText(
-                      text: const TextSpan(
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                        children: <TextSpan>[
+                      text: TextSpan(
+                        style: SportifindTheme.normalTextBlack,
+                        children: const <TextSpan>[
                           TextSpan(text: 'District'),
                         ],
                       ),
@@ -522,7 +528,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
                           });
                         },
                         citiesNameAndId: citiesNameAndId,
-                        fillColor: Colors.transparent,
+                        fillColor: Colors.white,
                       ),
                     ),
                   ],

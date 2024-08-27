@@ -118,6 +118,9 @@ class CreateStadiumBloc {
 
   void init() async {
     await _prepareDefaultAvatar();
+    controllers['pricePerHour5']!.text = '0';
+    controllers['pricePerHour7']!.text = '0';
+    controllers['pricePerHour11']!.text = '0';
   }
 
   void dispose() {
