@@ -10,7 +10,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<List<MessageModel>> getMessagesByTeam(String teamId) async {
     final messages = await FirebaseFirestore.instance
-        .collection('chats')
+        .collection('teams')
         .doc(teamId)
         .collection('messages')
         .orderBy('time')

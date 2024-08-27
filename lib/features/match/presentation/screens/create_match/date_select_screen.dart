@@ -307,7 +307,6 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     fields = List.from(widget.stadiumData.fields)
       ..sort((a, b) => a.numberId.compareTo(b.numberId));
     for (var i = 0; i < fields.length; ++i) {
-      print(fields[i].type == selectedFieldType && fields[i].status == true);
       if (fields[i].type == selectedFieldType) {
         numberId.add(fields[i].numberId);
       }

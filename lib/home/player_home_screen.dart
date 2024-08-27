@@ -53,7 +53,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
     getNoti();
 
     // Set up the timer to refresh notifications every 10 seconds
-    _timer = Timer.periodic(Duration(seconds: 10), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       getNoti();
     });
   }

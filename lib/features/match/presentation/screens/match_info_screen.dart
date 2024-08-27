@@ -109,7 +109,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                             senderId: widget.matchInfo.team2!.id,
                             matchId: widget.matchInfo.id),
                       )
-                    : print("No team existed");
+                    : null;
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(

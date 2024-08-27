@@ -37,8 +37,9 @@ class _MatchListItemState extends State<MatchListItem> {
       await precacheImage(team2ImageProvider!, context);
     }
 
-    if (!mounted)
+    if (!mounted) {
       return; // Ensure the widget is still mounted before calling setState
+    }
     setState(() {
       isLoadingUser = false;
     });
