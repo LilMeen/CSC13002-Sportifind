@@ -57,7 +57,7 @@ class _NotificationCardsState extends State<NotificationCards> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    return Container(
+    return SizedBox(
       height: height-200,
       child: FutureBuilder(
         future: initializationFuture,

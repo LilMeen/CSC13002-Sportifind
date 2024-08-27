@@ -4,9 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sportifind/features/match/data/datasources/match_remote_data_source.dart';
 import 'package:sportifind/features/match/data/models/match_model.dart';
+import 'package:sportifind/features/notification/data/datasources/notification_remote_data_source.dart';
 import 'package:sportifind/features/stadium/data/models/field_model.dart';
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
-
 
 abstract interface class StadiumRemoteDataSource {
   Future<void> createStadium(StadiumModel stadium);
@@ -20,45 +20,40 @@ abstract interface class StadiumRemoteDataSource {
   Future<void> deleteStadium(String id);
 }
 
-
-
 class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
   /// CREATE STADIUM
   /// Create a new stadium
   @override
   Future<void> createStadium(StadiumModel stadium) async {
-    final stadiumRef = await FirebaseFirestore.instance.collection('stadiums').add(
-      stadium.toFirestore(),
-    );
+    final stadiumRef =
+        await FirebaseFirestore.instance.collection('stadiums').add(
+              stadium.toFirestore(),
+            );
     for (FieldModel field in stadium.fields) {
       await stadiumRef.collection('fields').add(field.toFirestore());
     }
-    
-    final storageRef = FirebaseStorage.instance
-      .ref()
-      .child('stadiums')
-      .child(stadiumRef.id);
+
+    final storageRef =
+        FirebaseStorage.instance.ref().child('stadiums').child(stadiumRef.id);
     await storageRef
-      .child('avatar')
-      .child('avatar.jpg')
-      .putFile(File(stadium.avatar));
+        .child('avatar')
+        .child('avatar.jpg')
+        .putFile(File(stadium.avatar));
     for (int i = 0; i < stadium.images.length; i++) {
       await storageRef
-        .child('images')
-        .child('image_$i.jpg')
-        .putFile(File(stadium.images[i]));
+          .child('images')
+          .child('image_$i.jpg')
+          .putFile(File(stadium.images[i]));
     }
 
-    final avatarUrl = await storageRef
-      .child('avatar')
-      .child('avatar.jpg')
-      .getDownloadURL();
+    final avatarUrl =
+        await storageRef.child('avatar').child('avatar.jpg').getDownloadURL();
     final imageUrls = <String>[];
-    for(int i = 0; i < stadium.images.length; i++) {
+    for (int i = 0; i < stadium.images.length; i++) {
       final imageUrl = await storageRef
-        .child('images')
-        .child('image_$i.jpg')
-        .getDownloadURL();
+          .child('images')
+          .child('image_$i.jpg')
+          .getDownloadURL();
       imageUrls.add(imageUrl);
     }
     await stadiumRef.update({
@@ -67,23 +62,23 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
     });
   }
 
-
   /// GET STADIUM
   /// Get a stadium by its id
   @override
   Future<StadiumModel> getStadium(String id) async {
-    final stadiumDoc = await FirebaseFirestore.instance.collection('stadiums').doc(id).get();
+    final stadiumDoc =
+        await FirebaseFirestore.instance.collection('stadiums').doc(id).get();
     final fieldDocs = await stadiumDoc.reference.collection('fields').get();
     final stadium = StadiumModel.fromFirestore(stadiumDoc, fieldDocs.docs);
     return stadium;
   }
 
-
   /// GET ALL STADIUMS
   /// Get all stadiums
-  @override 
+  @override
   Future<List<StadiumModel>> getAllStadiums() async {
-    final stadiumDocs = await FirebaseFirestore.instance.collection('stadiums').get();
+    final stadiumDocs =
+        await FirebaseFirestore.instance.collection('stadiums').get();
     final stadiums = <StadiumModel>[];
     for (final stadiumDoc in stadiumDocs.docs) {
       final fieldDocs = await stadiumDoc.reference.collection('fields').get();
@@ -91,13 +86,15 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
     }
     return stadiums;
   }
-
 
   /// GET STADIUMS BY OWNER
   /// Get all stadiums by owner
   @override
   Future<List<StadiumModel>> getStadiumsByOwner(String ownerId) async {
-    final stadiumDocs = await FirebaseFirestore.instance.collection('stadiums').where('owner', isEqualTo: ownerId).get();
+    final stadiumDocs = await FirebaseFirestore.instance
+        .collection('stadiums')
+        .where('owner', isEqualTo: ownerId)
+        .get();
     final stadiums = <StadiumModel>[];
     for (final stadiumDoc in stadiumDocs.docs) {
       final fieldDocs = await stadiumDoc.reference.collection('fields').get();
@@ -105,32 +102,30 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
     }
     return stadiums;
   }
-
 
   /// GET FIELD BY NUMBER ID
   /// Get a field by its number id
   @override
   Future<FieldModel> getFieldByNumberId(String stadiumId, int numberId) async {
     final fieldDocs = await FirebaseFirestore.instance
-      .collection('stadiums')
-      .doc(stadiumId)
-      .collection('fields')
-      .where('numberId', isEqualTo: numberId)
-      .get();
+        .collection('stadiums')
+        .doc(stadiumId)
+        .collection('fields')
+        .where('numberId', isEqualTo: numberId)
+        .get();
     final fieldDoc = fieldDocs.docs.first;
     return FieldModel.fromFirestore(fieldDoc);
   }
-
 
   /// GET SCHEDULE
   /// Get a field's schedule of the stadium
   @override
   Future<List<MatchModel>> getFieldScedule(String fieldId, String date) async {
     final matchDocs = await FirebaseFirestore.instance
-      .collection('matches')
-      .where('field', isEqualTo: fieldId)
-      .where('date', isEqualTo: date)
-      .get();
+        .collection('matches')
+        .where('field', isEqualTo: fieldId)
+        .where('date', isEqualTo: date)
+        .get();
     List<MatchModel> matches = [];
     for (final matchDoc in matchDocs.docs) {
       matches.add(MatchModel.fromFirestore(matchDoc));
@@ -138,17 +133,20 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
     return matches;
   }
 
-
   /// UPDATE STADIUM
   /// Update a stadium
   @override
-  Future<void> updateStadium(StadiumModel oldStadium, StadiumModel newStadium) async {
+  Future<void> updateStadium(
+      StadiumModel oldStadium, StadiumModel newStadium) async {
     final matchRemoteDataSource = MatchRemoteDataSourceImpl();
-    final stadiumRef = FirebaseFirestore.instance.collection('stadiums').doc(newStadium.id);
+    final notificationRemoteDataSource = NotificationRemoteDataSourceImpl();
+    final stadiumRef =
+        FirebaseFirestore.instance.collection('stadiums').doc(newStadium.id);
     await stadiumRef.update(newStadium.toFirestore());
 
     await _uploadAvatar(File(newStadium.avatar), newStadium.id);
-    await _uploadImages(newStadium.images.map((e) => File(e)).toList(), newStadium.id);
+    await _uploadImages(
+        newStadium.images.map((e) => File(e)).toList(), newStadium.id);
     for (int i = newStadium.images.length; i < oldStadium.images.length; ++i) {
       await FirebaseStorage.instance
           .ref()
@@ -159,7 +157,8 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
           .delete();
     }
 
-    List<MatchModel> matches = await matchRemoteDataSource.getMatchesByStadium(newStadium.id);
+    List<MatchModel> matches =
+        await matchRemoteDataSource.getMatchesByStadium(newStadium.id);
 
     final sortedFields = oldStadium.fields
       ..sort((a, b) => a.numberId.compareTo(b.numberId));
@@ -196,6 +195,12 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
             .toList();
         for (var match in fieldMatches) {
           await matchRemoteDataSource.deleteMatch(match.id);
+          await notificationRemoteDataSource.deleteMatch(
+              match.team1Id, match.id);
+          if (match.team2Id != "") {
+            await notificationRemoteDataSource.deleteMatch(
+                match.team2Id, match.id);
+          }
         }
 
         await stadiumRef
@@ -206,44 +211,45 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
     }
 
     await editFields(
-      oldStadium.getNumberOfTypeField('5-Player'), 
-      newStadium.getNumberOfTypeField('5-Player'), 
-      '5-Player', 
-      newStadium.getPriceOfTypeField('5-Player')
-    );
+        oldStadium.getNumberOfTypeField('5-Player'),
+        newStadium.getNumberOfTypeField('5-Player'),
+        '5-Player',
+        newStadium.getPriceOfTypeField('5-Player'));
     await editFields(
-      oldStadium.getNumberOfTypeField('7-Player'), 
-      newStadium.getNumberOfTypeField('7-Player'), 
-      '7-Player', 
-      newStadium.getPriceOfTypeField('7-Player')
-    );
+        oldStadium.getNumberOfTypeField('7-Player'),
+        newStadium.getNumberOfTypeField('7-Player'),
+        '7-Player',
+        newStadium.getPriceOfTypeField('7-Player'));
     await editFields(
-      oldStadium.getNumberOfTypeField('11-Player'), 
-      newStadium.getNumberOfTypeField('11-Player'), 
-      '11-Player', 
-      newStadium.getPriceOfTypeField('11-Player')
-    );
+        oldStadium.getNumberOfTypeField('11-Player'),
+        newStadium.getNumberOfTypeField('11-Player'),
+        '11-Player',
+        newStadium.getPriceOfTypeField('11-Player'));
   }
-
 
   /// UPDATE FIELD
   /// Update a field
   @override
   Future<void> updateFields(StadiumModel stadium) async {
     for (FieldModel field in stadium.fields) {
-      final fieldRef = FirebaseFirestore.instance.collection('stadiums').doc(stadium.id).collection('fields').doc(field.id);
+      final fieldRef = FirebaseFirestore.instance
+          .collection('stadiums')
+          .doc(stadium.id)
+          .collection('fields')
+          .doc(field.id);
       await fieldRef.update(field.toFirestore());
     }
   }
-
 
   /// DELETE STADIUM
   /// Delete a stadium by its id
   @override
   Future<void> deleteStadium(String id) async {
-    final stadiumRef = FirebaseFirestore.instance.collection('stadiums').doc(id);
-    final stadiumStorageRef = FirebaseStorage.instance.ref().child('stadiums').child(id);
-    
+    final stadiumRef =
+        FirebaseFirestore.instance.collection('stadiums').doc(id);
+    final stadiumStorageRef =
+        FirebaseStorage.instance.ref().child('stadiums').child(id);
+
     await _deleteAllFilesInDirectory(stadiumStorageRef);
     await stadiumRef.collection('fields').get().then((fieldDocs) {
       for (final fieldDoc in fieldDocs.docs) {
@@ -251,7 +257,8 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
       }
     });
     await stadiumRef.delete();
-    final storageRef = FirebaseStorage.instance.ref().child('stadiums').child(id);
+    final storageRef =
+        FirebaseStorage.instance.ref().child('stadiums').child(id);
     await storageRef.delete();
   }
 
@@ -265,7 +272,7 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
     }
   }
 
-    Future<void> _uploadAvatar(File avatar, String stadiumId) async {
+  Future<void> _uploadAvatar(File avatar, String stadiumId) async {
     try {
       final storageRef = FirebaseStorage.instance
           .ref()
@@ -308,7 +315,4 @@ class StadiumRemoteDataSourceImpl implements StadiumRemoteDataSource {
       throw Exception('Failed to upload images: $e');
     }
   }
-
 }
-
-

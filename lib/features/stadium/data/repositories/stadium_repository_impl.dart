@@ -117,9 +117,9 @@ class StadiumRepositoryImpl implements StadiumRepository {
         await matchRemoteDataSource.getMatchesByStadium(id);
     for (var match in relatedMatches) {
       await matchRemoteDataSource.deleteMatch(match.id);
-      await notificationRemoteDataSource.deleteMatch(match.stadiumId, match.id);
+      await notificationRemoteDataSource.deleteMatch(match.team1Id, match.id);
       if (match.team2Id != "") {
-        await notificationRemoteDataSource.deleteMatch(match.stadiumId, match.id);
+        await notificationRemoteDataSource.deleteMatch(match.team2Id, match.id);
       }
     }
     await stadiumRemoteDataSource.deleteStadium(id);
