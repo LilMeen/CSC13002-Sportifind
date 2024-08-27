@@ -1,4 +1,5 @@
 import 'package:sportifind/core/di/comp/auth_injection_container.dart';
+import 'package:sportifind/core/di/comp/chat_injection_container.dart';
 import 'package:sportifind/core/di/comp/match_injection_container.dart';
 import 'package:sportifind/core/di/comp/notification_injection_container.dart';
 import 'package:sportifind/core/di/comp/profile_injection_containder.dart';
@@ -14,4 +15,5 @@ void initializeDependencies () {
   initializeStadiumDependencies();
   initializeTeamDependencies();
   initializeUserDependencies();
+  initializeChatDependencies();
 }

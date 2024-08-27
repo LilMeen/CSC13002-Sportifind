@@ -1,3 +1,4 @@
+import 'package:sportifind/features/chat/presentation/screens/chat_main_screen.dart';
 import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
 import 'package:sportifind/features/notification/presentation/screens/notification_screen.dart';
 import 'package:sportifind/features/profile/presentation/screens/profile_screen.dart';
@@ -100,7 +101,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen>
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const Text("hehe"),
+                          builder: (context) => const ChatMainScreen(),
                         ),
                       );
                     },
