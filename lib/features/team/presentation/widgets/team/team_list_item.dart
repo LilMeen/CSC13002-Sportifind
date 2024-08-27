@@ -26,11 +26,10 @@ class _TeamListItemState extends State<TeamListItem> {
   late ImageProvider teamImageProvider;
   bool isLoading = true;
 
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
+
     // Ensure the image is loaded and the team data is updated
     preloadImage();
   }
@@ -127,7 +126,7 @@ class _TeamListItemState extends State<TeamListItem> {
               ],
             ),
             SizedBox(
-              width:  width - 70,
+              width: width - 70,
               child: const Divider(
                 thickness: 1,
                 color: SportifindTheme.smokeScreen,

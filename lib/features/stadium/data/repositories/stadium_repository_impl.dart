@@ -5,6 +5,7 @@ import 'package:sportifind/core/util/search_util.dart';
 import 'package:sportifind/features/match/data/datasources/match_remote_data_source.dart';
 import 'package:sportifind/features/match/data/models/match_model.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/notification/data/datasources/notification_remote_data_source.dart';
 import 'package:sportifind/features/stadium/data/datasources/stadium_remote_data_source.dart';
 import 'package:sportifind/features/stadium/data/models/stadium_model.dart';
 import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
@@ -15,20 +16,22 @@ class StadiumRepositoryImpl implements StadiumRepository {
   final StadiumRemoteDataSource stadiumRemoteDataSource;
 
   final MatchRemoteDataSource matchRemoteDataSource;
+  final NotificationRemoteDataSource notificationRemoteDataSource;
 
   StadiumRepositoryImpl({
     required this.stadiumRemoteDataSource,
     required this.matchRemoteDataSource,
+    required this.notificationRemoteDataSource,
   });
 
   // CREATE STADIUM
   // Create a new stadium
   @override
-  Future<Result<void>> createStadium(StadiumEntity stadium) async { 
-    await stadiumRemoteDataSource.createStadium(StadiumModel.fromEntity(stadium));
+  Future<Result<void>> createStadium(StadiumEntity stadium) async {
+    await stadiumRemoteDataSource
+        .createStadium(StadiumModel.fromEntity(stadium));
     return Result.success(null);
   }
-
 
   // GET STADIUM
   // Get a stadium by its id
@@ -37,7 +40,6 @@ class StadiumRepositoryImpl implements StadiumRepository {
     final stadium = await stadiumRemoteDataSource.getStadium(id);
     return Result.success(await stadium.toEntity());
   }
-
 
   // GET ALL STADIUMS
   // Get all stadiums
@@ -51,7 +53,6 @@ class StadiumRepositoryImpl implements StadiumRepository {
     return Result.success(stadiumEntities);
   }
 
-
   // GET STADIUMS BY OWNER
   // Get all stadiums by owner
   @override
@@ -64,43 +65,47 @@ class StadiumRepositoryImpl implements StadiumRepository {
     return Result.success(stadiumEntities);
   }
 
-
   // GET FIELD BY NUMBER ID
   // Get a field by its number id
   @override
-  Future<Result<FieldEntity>> getFieldByNumberId(StadiumEntity stadium, int numberId) async {
-    final field = await stadiumRemoteDataSource.getFieldByNumberId(stadium.id, numberId);
+  Future<Result<FieldEntity>> getFieldByNumberId(
+      StadiumEntity stadium, int numberId) async {
+    final field =
+        await stadiumRemoteDataSource.getFieldByNumberId(stadium.id, numberId);
     return Result.success(field.toEntity());
   }
-
 
   // GET SCHEDULE
   // Get a field's schedule of the stadium
   @override
-  Future<Result<List<MatchEntity>>> getFieldScedule(FieldEntity field, String date) async {
-    final matches = await stadiumRemoteDataSource.getFieldScedule(field.id, date);
+  Future<Result<List<MatchEntity>>> getFieldScedule(
+      FieldEntity field, String date) async {
+    final matches =
+        await stadiumRemoteDataSource.getFieldScedule(field.id, date);
     List<MatchEntity> matchEntities = [];
     for (MatchModel match in matches) {
       matchEntities.add(await match.toEntity());
     }
     return Result.success(matchEntities);
   }
-  
 
   // UPDATE STADIUM
   // Update a stadium
   @override
-  Future<Result<void>> updateStadium(StadiumEntity oldStadium, StadiumEntity newStadium) async {
-    await stadiumRemoteDataSource.updateStadium(StadiumModel.fromEntity(oldStadium), StadiumModel.fromEntity(newStadium));
+  Future<Result<void>> updateStadium(
+      StadiumEntity oldStadium, StadiumEntity newStadium) async {
+    await stadiumRemoteDataSource.updateStadium(
+        StadiumModel.fromEntity(oldStadium),
+        StadiumModel.fromEntity(newStadium));
     return Result.success(null);
   }
 
-
-  // UPDATE FIELD 
+  // UPDATE FIELD
   // Update a field
   @override
   Future<Result<void>> updateField(StadiumEntity stadium) async {
-    await stadiumRemoteDataSource.updateFields(StadiumModel.fromEntity(stadium));
+    await stadiumRemoteDataSource
+        .updateFields(StadiumModel.fromEntity(stadium));
     return Result.success(null);
   }
 
@@ -108,14 +113,18 @@ class StadiumRepositoryImpl implements StadiumRepository {
   // Delete a stadium by its id
   @override
   Future<Result<void>> deleteStadium(String id) async {
-    List<MatchModel> relatedMatches = await matchRemoteDataSource.getMatchesByStadium(id);
+    List<MatchModel> relatedMatches =
+        await matchRemoteDataSource.getMatchesByStadium(id);
     for (var match in relatedMatches) {
       await matchRemoteDataSource.deleteMatch(match.id);
+      await notificationRemoteDataSource.deleteMatch(match.stadiumId, match.id);
+      if (match.team2Id != "") {
+        await notificationRemoteDataSource.deleteMatch(match.stadiumId, match.id);
+      }
     }
     await stadiumRemoteDataSource.deleteStadium(id);
     return Result.success(null);
   }
-
 
   ////////////////////////
   // NON FUTURE METHODS //
@@ -124,15 +133,15 @@ class StadiumRepositoryImpl implements StadiumRepository {
   // SORT NEARBY STADIUMS
   // Sort stadiums by distance to a location
   @override
-  Result<List<StadiumEntity>> sortNearbyStadiums(List<StadiumEntity> stadiums, Location markedLocation) {
+  Result<List<StadiumEntity>> sortNearbyStadiums(
+      List<StadiumEntity> stadiums, Location markedLocation) {
     sortByDistance<StadiumEntity>(
       stadiums,
       markedLocation,
       (stadium) => stadium.location,
     );
     return Result.success(stadiums);
-}
-
+  }
 
   // PERFORM STADIUM SEARCH
   // Search stadiums by name and location

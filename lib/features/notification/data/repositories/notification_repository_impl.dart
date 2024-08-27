@@ -80,4 +80,10 @@ class NotificationRepositoryImpl implements NotificationRepository {
     await notificationRemoteDataSource.removePlayerFromTeam(userId, teamId, type);
     return Result.success(null);
   }
+
+  @override
+  Future<Result<void>> deleteMatch(senderId, receiverId, matchId) async {
+    await notificationRemoteDataSource.deleteMatch(senderId, matchId);
+    return Result.success(null);
+  }
 }

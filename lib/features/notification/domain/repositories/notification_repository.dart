@@ -17,4 +17,6 @@ abstract interface class NotificationRepository {
   Future<Result<void>>                      requestDeniedFromUser(userId, teamId);
 
   Future<Result<void>>                      removePlayerFromTeam(userId, teamId, type);
+
+  Future<Result<void>>                      deleteMatch(senderId, receiverId, matchId);
 }

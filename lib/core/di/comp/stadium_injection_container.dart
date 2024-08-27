@@ -27,6 +27,7 @@ void initializeStadiumDependencies (){
     () => StadiumRepositoryImpl(
       stadiumRemoteDataSource: sl(), 
       matchRemoteDataSource: sl(),
+      notificationRemoteDataSource: sl(),
     )
   );
 

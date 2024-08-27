@@ -32,15 +32,15 @@ class DateSelectScreen extends StatefulWidget {
 class _DateSelectScreenState extends State<DateSelectScreen> {
   DateTime? selectedDate;
   List<DateTimeRange> bookedSlot = [];
-  String selectedPlayTime = '1h00';
+  String selectedPlayTime = '1:00';
   String selectedFieldType = '5-Player';
   int? selectedField;
   List<String> typeOfField = [];
 
   var playTime = [
-    '1h00',
-    '1h30',
-    '2h00',
+    '1:00',
+    '1:30',
+    '2:00',
   ];
 
   @override
@@ -153,7 +153,8 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   }
 
   // Function to build duration dropdown button
-  Widget durationPicker(double height, double width) {
+  Widget durationPicker() {
+    final width = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -167,7 +168,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
         Container(
           padding: const EdgeInsets.only(left: 10.0),
           height: 50,
-          width: 180,
+          width: width-265,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: SportifindTheme.bluePurple,
@@ -204,7 +205,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     );
   }
 
-  Widget fieldTypePicker(double height, double width) {
+  Widget fieldTypePicker() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -306,6 +307,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
     fields = List.from(widget.stadiumData.fields)
       ..sort((a, b) => a.numberId.compareTo(b.numberId));
     for (var i = 0; i < fields.length; ++i) {
+      print(fields[i].type == selectedFieldType && fields[i].status == true);
       if (fields[i].type == selectedFieldType) {
         numberId.add(fields[i].numberId);
       }
@@ -399,14 +401,14 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                   const SizedBox(
                     height: 30,
                   ),
-                  fieldTypePicker(40, 75),
+                  fieldTypePicker(),
                   const SizedBox(
                     height: 30,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      durationPicker(40, 75),
+                      durationPicker(),
                       const SizedBox(
                         width: 40,
                       ),
@@ -416,16 +418,12 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                         selectedField: getFirstFields(widget.stadiumData.fields,
                             selectedFieldType, selectedField!),
                         selectedFieldType: selectedFieldType,
-                        height: 50,
-                        width: 125,
                       ),
                     ],
                   ),
                   const SizedBox(height: 30),
                   DatePicker(
                     func: refreshByDate,
-                    height: 40,
-                    width: 175,
                     selectedDate: selectedDate,
                   ),
                   const SizedBox(height: 30),

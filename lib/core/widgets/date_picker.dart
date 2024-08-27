@@ -7,12 +7,8 @@ class DatePicker extends StatefulWidget {
   DatePicker({
     super.key,
     this.func,
-    required this.height,
-    required this.width,
     required this.selectedDate,
   });
-  final double height;
-  final double width;
   DateTime? selectedDate;
   final dynamic func;
 

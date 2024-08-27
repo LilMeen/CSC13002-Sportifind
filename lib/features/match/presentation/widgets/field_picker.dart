@@ -7,16 +7,12 @@ import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
 class FieldPicker extends StatefulWidget {
   FieldPicker({
     super.key,
-    required this.height,
-    required this.width,
     required this.selectedField,
     required this.fields,
     required this.selectedFieldType,
     required this.func,
   });
 
-  final double height;
-  final double width;
   int? selectedField;
   String selectedFieldType;
   List<FieldEntity> fields;
@@ -61,6 +57,7 @@ class _FieldPickerState extends State<FieldPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -72,7 +69,7 @@ class _FieldPickerState extends State<FieldPicker> {
         Container(
           padding: const EdgeInsets.only(left: 10.0),
           height: 50,
-          width: 180,
+          width: width-265,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: SportifindTheme.bluePurple,

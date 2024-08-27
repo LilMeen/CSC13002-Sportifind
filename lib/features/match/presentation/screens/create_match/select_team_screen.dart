@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/match/domain/usecases/send_request_to_join_match.dart';
+import 'package:sportifind/features/match/presentation/screens/match_info_screen.dart';
+import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/player/player_stadium_screen.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
@@ -30,11 +32,17 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
 
   Future<void> fetchingData() async {
     if (widget.forMatchCreate == true || widget.forJoinRequest == true) {
-      userTeams = await UseCaseProvider.getUseCase<GetTeamByPlayer>().call(
-        GetTeamByPlayerParams(
-          playerId: FirebaseAuth.instance.currentUser!.uid
-        ),
-      ).then((value) => value.data ?? []);
+      userTeams = await UseCaseProvider.getUseCase<GetTeamByPlayer>()
+          .call(
+            GetTeamByPlayerParams(
+                playerId: FirebaseAuth.instance.currentUser!.uid),
+          )
+          .then((value) => value.data ?? []);
+    }
+    for (var i = 0; i < userTeams.length; ++i) {
+      if (userTeams[i].captain.id != FirebaseAuth.instance.currentUser!.uid) {
+        userTeams.remove(userTeams[i]);
+      }
     }
   }
 
@@ -115,6 +123,12 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
               teamSendId: team.id,
               teamReceiveId: widget.hostId!,
               matchId: widget.matchId!,
+            ),
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MatchMainScreen(),
             ),
           );
         }
@@ -213,16 +227,23 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
                               selectedTeam: team,
                             ),
                           ),
-                        );            
+                        );
                       } else if (widget.forJoinRequest == true) {
-                        UseCaseProvider.getUseCase<SendRequestToJoinMatch>().call(
+                        UseCaseProvider.getUseCase<SendRequestToJoinMatch>()
+                            .call(
                           SendRequestToJoinMatchParams(
                             teamSendId: team.id,
                             teamReceiveId: widget.hostId!,
                             matchId: widget.matchId!,
                           ),
-                        );      
-                      }   
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MatchMainScreen(),
+                          ),
+                        );
+                      }
                     },
                     child: const Text(
                       "Pick this team",

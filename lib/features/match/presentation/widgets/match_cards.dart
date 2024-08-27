@@ -65,13 +65,16 @@ class _MatchCardsState extends State<MatchCards> {
           user.location,
         ))
         .data!;
-    for (var i = 0; i < nearbyMatches.length; ++i) {
+    for (var i = nearbyMatches.length - 1; i >= 0; --i) {
       for (var j = 0; j < personalMatches.length; ++j) {
-        if (nearbyMatches[i].id == personalMatches[j].id) {
-          nearbyMatches.removeAt(i);
+        if (nearbyMatches[i].team2 != null ||
+            nearbyMatches[i].id == personalMatches[j].id) {
+          nearbyMatches.remove(nearbyMatches[i]);
+          break;
         }
       }
     }
+
     setState(() {
       widget.yourMatch = personalMatches;
       widget.nearByMatch = nearbyMatches;
@@ -108,7 +111,7 @@ class _MatchCardsState extends State<MatchCards> {
     final height = MediaQuery.of(context).size.height;
     if (isLoadingUser) {
       return SizedBox(
-        height: height-300,
+        height: height - 300,
         child: const Center(
           child: CircularProgressIndicator(),
         ),

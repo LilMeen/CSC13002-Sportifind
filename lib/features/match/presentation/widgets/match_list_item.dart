@@ -8,7 +8,8 @@ import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/presentation/screens/match_info_screen.dart';
 
 class MatchListItem extends StatefulWidget {
-  const MatchListItem({super.key, required this.matchCard, required this.status});
+  const MatchListItem(
+      {super.key, required this.matchCard, required this.status});
 
   final MatchEntity matchCard;
   final int status;
@@ -36,7 +37,8 @@ class _MatchListItemState extends State<MatchListItem> {
       await precacheImage(team2ImageProvider!, context);
     }
 
-    if (!mounted) return; // Ensure the widget is still mounted before calling setState
+    if (!mounted)
+      return; // Ensure the widget is still mounted before calling setState
     setState(() {
       isLoadingUser = false;
     });
@@ -55,9 +57,18 @@ class _MatchListItemState extends State<MatchListItem> {
   Widget build(BuildContext context) {
     DateTime date = parseDate(widget.matchCard.date);
     Map<int, String> month = {
-      1: "JAN", 2: "FEB", 3: "MAR", 4: "APR",
-      5: "MAY", 6: "JUNE", 7: "JULY", 8: "AUG",
-      9: "SEP", 10: "OCT", 11: "NOV", 12: "DEC"
+      1: "JAN",
+      2: "FEB",
+      3: "MAR",
+      4: "APR",
+      5: "MAY",
+      6: "JUNE",
+      7: "JULY",
+      8: "AUG",
+      9: "SEP",
+      10: "OCT",
+      11: "NOV",
+      12: "DEC"
     };
 
     return GestureDetector(
@@ -188,7 +199,8 @@ class _MatchListItemState extends State<MatchListItem> {
                         style: SportifindTheme.matchCardItem,
                       ),
                       const SizedBox(width: 40),
-                      const Icon(Icons.hourglass_top_rounded, color: Colors.white),
+                      const Icon(Icons.hourglass_top_rounded,
+                          color: Colors.white),
                       const SizedBox(width: 5),
                       Text(
                         widget.matchCard.playTime,

@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/team_util.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
@@ -88,55 +89,37 @@ class _NotificationListItemState extends State<NotificationListItem> {
   }
 
   Widget buildInviteMessage(String senderName) {
-    double textSize = 18;
     return RichText(
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
       text: TextSpan(
         text: "$senderName ",
-        style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: textSize),
-        children: const [
+        style: SportifindTheme.bigSpanBlack,
+        children: [
           TextSpan(
-            text: "has invited your team to join ",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-          TextSpan(
-            text: "their match",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          ),
+              text: "has invited your team to join ",
+              style: SportifindTheme.smallSpanBlack),
+          TextSpan(text: "their match", style: SportifindTheme.bigSpanBlack),
         ],
       ),
     );
   }
 
   Widget buildAskToJoinMessage(String senderName) {
-    double textSize = 18;
     return RichText(
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
       text: TextSpan(
         text: "$senderName ",
-        style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: textSize),
-        children: const [
+        style: SportifindTheme.bigSpanBlack,
+        children: [
           TextSpan(
             text: "has asked to join your team's ",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.normal,
-            ),
+            style: SportifindTheme.smallSpanBlack,
           ),
           TextSpan(
             text: "match",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            style: SportifindTheme.bigSpanBlack,
           ),
         ],
       ),
@@ -144,33 +127,24 @@ class _NotificationListItemState extends State<NotificationListItem> {
   }
 
   Widget buildInviteAcceptMessage(String receiverName, String senderName) {
-    double textSize = 18;
     return RichText(
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
       text: TextSpan(
         text: "$senderName ",
-        style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: textSize),
+        style: SportifindTheme.bigSpanBlack,
         children: [
-          const TextSpan(
+          TextSpan(
             text: "has accepted ",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.normal,
-            ),
+            style: SportifindTheme.smallSpanBlack,
           ),
           TextSpan(
             text: "$receiverName's ",
-            style: const TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold),
+            style: SportifindTheme.bigSpanBlack,
           ),
-          const TextSpan(
+          TextSpan(
             text: "invitation",
-            style:
-                TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+            style: SportifindTheme.smallSpanBlack,
           ),
         ],
       ),
@@ -178,33 +152,24 @@ class _NotificationListItemState extends State<NotificationListItem> {
   }
 
   Widget buildInviteDeclineMessage(String receiverName, String senderName) {
-    double textSize = 18;
     return RichText(
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
       text: TextSpan(
         text: "$senderName ",
-        style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: textSize),
+        style: SportifindTheme.bigSpanBlack,
         children: [
-          const TextSpan(
+          TextSpan(
             text: "has declined ",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.normal,
-            ),
+            style: SportifindTheme.smallSpanBlack,
           ),
           TextSpan(
             text: "$receiverName's ",
-            style: const TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold),
+            style: SportifindTheme.bigSpanBlack,
           ),
-          const TextSpan(
+          TextSpan(
             text: "invitation",
-            style:
-                TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+            style: SportifindTheme.smallSpanBlack,
           ),
         ],
       ),
@@ -212,28 +177,20 @@ class _NotificationListItemState extends State<NotificationListItem> {
   }
 
   Widget buildInviteSentMessage(String receiverName, String senderName) {
-    double textSize = 18;
     return RichText(
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
       text: TextSpan(
         text: "$senderName ",
-        style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: textSize),
+        style: SportifindTheme.bigSpanBlack,
         children: [
-          const TextSpan(
+          TextSpan(
             text: "invitation has been sent to ",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.normal,
-            ),
+            style: SportifindTheme.smallSpanBlack,
           ),
           TextSpan(
             text: receiverName,
-            style: const TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold),
+            style: SportifindTheme.bigSpanBlack,
           ),
         ],
       ),
@@ -241,28 +198,37 @@ class _NotificationListItemState extends State<NotificationListItem> {
   }
 
   Widget buildInviteRejectMessage(String receiverName, String senderName) {
-    double textSize = 18;
     return RichText(
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
       text: TextSpan(
         text: "$receiverName ",
-        style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: textSize),
+        style: SportifindTheme.bigSpanBlack,
         children: [
-          const TextSpan(
+          TextSpan(
             text: "'s invitation has been rejected by ",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.normal,
-            ),
+            style: SportifindTheme.smallSpanBlack,
           ),
           TextSpan(
             text: senderName,
-            style: const TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold),
+            style: SportifindTheme.bigSpanBlack,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildDeletedMessage(String receiverName, String senderName) {
+    return RichText(
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        text: "One of yours match has been deleted by ",
+        style: SportifindTheme.smallSpanBlack,
+        children: [
+          TextSpan(
+            text: senderName,
+            style: SportifindTheme.bigSpanBlack,
           ),
         ],
       ),
@@ -275,7 +241,7 @@ class _NotificationListItemState extends State<NotificationListItem> {
       child: Text(
         timeAgo(notificationData.formattedDate, notificationData.formattedTime),
         style: const TextStyle(
-          fontSize: 12,
+          fontSize: 14,
           fontWeight: FontWeight.bold,
           color: Colors.grey,
           decoration: TextDecoration.none,
@@ -315,13 +281,13 @@ class _NotificationListItemState extends State<NotificationListItem> {
             child: TextButton(
               onPressed: () async {
                 await UseCaseProvider.getUseCase<MatchRequestAccept>().call(
-                  MatchRequestAcceptParams(
-                    sender: await convertNameToTeamId(widget.notificationData.receiver), 
-                    receiver: await convertNameToTeamId(widget.notificationData.sender), 
-                    matchId: matchId, 
-                    status: widget.notificationData.status
-                  )
-                );
+                    MatchRequestAcceptParams(
+                        sender: await convertNameToTeamId(
+                            widget.notificationData.receiver),
+                        receiver: await convertNameToTeamId(
+                            widget.notificationData.sender),
+                        matchId: widget.notificationData.matchId,
+                        status: widget.notificationData.status));
                 await UseCaseProvider.getUseCase<MarkAsRead>()(
                   MarkAsReadParams(notification: widget.notificationData),
                 );
@@ -352,12 +318,12 @@ class _NotificationListItemState extends State<NotificationListItem> {
             child: TextButton(
               onPressed: () async {
                 await UseCaseProvider.getUseCase<MatchRequestDeny>().call(
-                  MatchRequestDenyParams(
-                    senderId: await convertNameToTeamId(widget.notificationData.receiver), 
-                    receiverId: await convertNameToTeamId(widget.notificationData.sender), 
-                    matchId: matchId
-                  )
-                );
+                    MatchRequestDenyParams(
+                        senderId: await convertNameToTeamId(
+                            widget.notificationData.receiver),
+                        receiverId: await convertNameToTeamId(
+                            widget.notificationData.sender),
+                        matchId: widget.notificationData.matchId));
                 await UseCaseProvider.getUseCase<MarkAsRead>()(
                   MarkAsReadParams(notification: widget.notificationData),
                 );
@@ -399,6 +365,9 @@ class _NotificationListItemState extends State<NotificationListItem> {
             widget.notificationData.receiver, widget.notificationData.sender);
       case "match rejected":
         return buildInviteRejectMessage(
+            widget.notificationData.receiver, widget.notificationData.sender);
+      case "match deleted":
+        return buildDeletedMessage(
             widget.notificationData.receiver, widget.notificationData.sender);
       // Add more cases here for different notification types
       default:
@@ -445,7 +414,7 @@ class _NotificationListItemState extends State<NotificationListItem> {
                 ),
               ),
             );
-          case "match sent":
+          case "match sent": case "match deleted": case "match rejected": case "match denied":
             await UseCaseProvider.getUseCase<MarkAsRead>()(
               MarkAsReadParams(notification: widget.notificationData),
             );

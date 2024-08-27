@@ -6,9 +6,11 @@ import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/domain/usecases/delete_match.dart';
+import 'package:sportifind/features/match/domain/usecases/delete_match_annouce.dart';
 import 'package:sportifind/features/match/presentation/screens/create_match/select_team_screen.dart';
 import 'package:sportifind/features/match/presentation/screens/match_info/invite_team_screen.dart';
 import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
+import 'package:sportifind/features/team/domain/usecases/get_team.dart';
 import 'package:sportifind/features/team/presentation/screens/team_details.dart';
 import 'package:sportifind/features/team/presentation/widgets/member/member_card.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
@@ -42,11 +44,36 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
   Map<String, String> teamNames = {};
   List<TeamEntity> team = [];
   PlayerEntity? userData;
+  bool isCaptain = false;
   int status = 0;
 
-  bool checkCaptain() {
-    var user = FirebaseAuth.instance.currentUser!.uid;
-    return user == widget.matchInfo.team1.captain.id;
+  get userTeamData => null;
+
+  // bool checkCaptain() {
+  //   var user = FirebaseAuth.instance.currentUser!.uid;
+  //   return user == widget.matchInfo.team1.captain.id;
+  // }
+
+  Future<void> checkCaptain() async {
+    userData = await UseCaseProvider.getUseCase<GetPlayer>()
+        .call(
+          GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid),
+        )
+        .then((value) => value.data);
+
+    for (var i = 0; i < userData!.teamsId.length; ++i) {
+      var userTeamData = await UseCaseProvider.getUseCase<GetTeam>()
+          .call(
+            GetTeamParams(id: userData!.teamsId[i]),
+          )
+          .then((value) => value.data);
+      if (userTeamData!.captain.id == userData!.id) {
+        setState(() {
+          isCaptain = true;
+        });
+        break;
+      }
+    }
   }
 
   void _showDeleteDialog() {
@@ -70,6 +97,19 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                     .call(DeleteMatchParams(
                   id: widget.matchInfo.id,
                 ));
+                await UseCaseProvider.getUseCase<DeleteMatchAnnouce>().call(
+                  DeleteMatchAnnouceParams(
+                      senderId: widget.matchInfo.team1.id,
+                      matchId: widget.matchInfo.id),
+                );
+                widget.matchInfo.team2 != null
+                    ? await UseCaseProvider.getUseCase<DeleteMatchAnnouce>()
+                        .call(
+                        DeleteMatchAnnouceParams(
+                            senderId: widget.matchInfo.team2!.id,
+                            matchId: widget.matchInfo.id),
+                      )
+                    : print("No team existed");
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -89,6 +129,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
   void initState() {
     super.initState();
     initializationFuture = _initialize();
+    checkCaptain();
   }
 
   Future<void> _initialize() async {
@@ -166,7 +207,9 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                       ],
                                     ),
                                   ),
-                                  checkCaptain() == true
+                                  isCaptain == true &&
+                                          widget.matchInfo.team1.captain.id ==
+                                              user.uid
                                       ? PopupMenuButton(
                                           constraints: const BoxConstraints(
                                             maxWidth: 40,
@@ -254,7 +297,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                       Center(
                                         child: widget.matchInfo.team2 != null
                                             ? CircleAvatar(
-                                                radius: 35,
+                                                radius: 50,
                                                 backgroundImage:
                                                     team2ImageProvider,
                                               )
@@ -427,7 +470,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                         MaterialPageRoute(
                                           builder: (context) => TeamDetails(
                                             teamId: widget.matchInfo.team1.id,
-                                            role: checkCaptain() == true
+                                            role: isCaptain == true
                                                 ? "captain"
                                                 : "normal",
                                           ),
@@ -464,8 +507,9 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                         child: MemberCards(
                             status: status, matchInfo: widget.matchInfo)),
                     if (widget.matchStatus == 0 &&
-                        checkCaptain() == true &&
-                        status == 1)
+                        isCaptain == true &&
+                        status == 1 &&
+                        widget.matchInfo.team2 == null)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: Container(
@@ -494,7 +538,10 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                           ),
                         ),
                       )
-                    else if (widget.matchStatus == 1)
+                    else if (widget.matchStatus == 1 &&
+                        isCaptain == true &&
+                        status == 1 &&
+                        widget.matchInfo.team2 == null)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: Container(
@@ -503,20 +550,25 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(18),
                               color: SportifindTheme.bluePurple),
-                          child: checkCaptain() == true
-                              ? TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const SelectTeamScreen(),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text("Join this match"),
-                                )
-                              : const SizedBox(),
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SelectTeamScreen(
+                                    forMatchCreate: false,
+                                    forJoinRequest: true,
+                                    hostId: widget.matchInfo.team1.id,
+                                    matchId: widget.matchInfo.id,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "Join this match",
+                              style: SportifindTheme.normalTextWhiteLexend,
+                            ),
+                          ),
                         ),
                       )
                     else

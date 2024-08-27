@@ -172,7 +172,7 @@ class MatchRepositoryImpl implements MatchRepository {
       String teamSendId, String teamReceiveId, String matchId) async {
     matchRemoteDataSource.sendRequestToJoinMatch(
         teamSendId, teamReceiveId, matchId);
-    notificationRemoteDataSource.inviteMatchRequest(
+    notificationRemoteDataSource.joinMatchRequest(
         teamSendId, teamReceiveId, matchId);
     return Result.success(null);
   }
@@ -186,6 +186,14 @@ class MatchRepositoryImpl implements MatchRepository {
         teamSendId, teamReceiveId, matchId);
     notificationRemoteDataSource.inviteMatchRequest(
         teamSendId, teamReceiveId, matchId);
+    return Result.success(null);
+  }
+
+  // SEND DELETE MATCH ANNOUNCEMENT
+  // Send delete match annoucement
+  @override
+  Future<Result<void>> deleteMatchAnnouce(String senderId, String matchId) async {
+    notificationRemoteDataSource.deleteMatch(senderId, matchId);
     return Result.success(null);
   }
 }

@@ -35,7 +35,7 @@
   }
 
   int convertDurationStringToInt(String durationString) {
-    final parts = durationString.split('h');
+    final parts = durationString.split(':');
     final hours = int.parse(parts[0]);
     final minutes =
         int.parse(parts.length > 1 ? parts[1].substring(0, 2) : '00');

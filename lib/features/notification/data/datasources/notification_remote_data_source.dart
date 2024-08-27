@@ -5,29 +5,31 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/features/notification/data/models/notification_model.dart';
 
 abstract interface class NotificationRemoteDataSource {
-  DocumentReference<Map<String, dynamic>>                   getMatchDoc(matchId);
-  DocumentReference<Map<String, dynamic>>                   getUserDoc(userId);
-  DocumentReference<Map<String, dynamic>>                   getTeamDoc(teamId);
+  DocumentReference<Map<String, dynamic>> getMatchDoc(matchId);
+  DocumentReference<Map<String, dynamic>> getUserDoc(userId);
+  DocumentReference<Map<String, dynamic>> getTeamDoc(teamId);
 
-  Future<void>                                              updateNotificationAsRead(NotificationModel notificationData);
-  Future<List<NotificationModel>>                           getNotificationData();
-  Future<List<CollectionReference<Map<String, dynamic>>>>   getTeamNotificationCollectionList(String teamId);
-  CollectionReference                                       getUserNotificationCollection(userId);
-  Future<DocumentSnapshot<Map<String, dynamic>>>            getUserDocInformation(userId);
-  Future<DocumentSnapshot<Map<String, dynamic>>>            getTeamDocInformation(teamId);
+  Future<void> updateNotificationAsRead(NotificationModel notificationData);
+  Future<List<NotificationModel>> getNotificationData();
+  Future<List<CollectionReference<Map<String, dynamic>>>>
+      getTeamNotificationCollectionList(String teamId);
+  CollectionReference getUserNotificationCollection(userId);
+  Future<DocumentSnapshot<Map<String, dynamic>>> getUserDocInformation(userId);
+  Future<DocumentSnapshot<Map<String, dynamic>>> getTeamDocInformation(teamId);
 
-  Future<void>                                              inviteMatchRequest(senderId, receiverId, matchId);
-  Future<void>                                              joinMatchRequest(senderId, receiverId, matchId);
-  Future<void>                                              matchRequestAccepted(senderId, receiverId, matchId, status);
-  Future<void>                                              matchRequestDenied(senderId, receiverId, matchId);
-  
-  Future<void>                                              sendUserRequest(userId, teamId);
-  Future<void>                                              sendTeamRequest(userId, teamId);
-  Future<void>                                              requestAccepted(userId, teamId);
-  Future<void>                                              requestDeniedFromTeam(userId, teamId);
-  Future<void>                                              requestDeniedFromUser(userId, teamId);
+  Future<void> inviteMatchRequest(senderId, receiverId, matchId);
+  Future<void> joinMatchRequest(senderId, receiverId, matchId);
+  Future<void> matchRequestAccepted(senderId, receiverId, matchId, status);
+  Future<void> matchRequestDenied(senderId, receiverId, matchId);
 
-  Future<void>                                              removePlayerFromTeam(userId, teamId, type);
+  Future<void> sendUserRequest(userId, teamId);
+  Future<void> sendTeamRequest(userId, teamId);
+  Future<void> requestAccepted(userId, teamId);
+  Future<void> requestDeniedFromTeam(userId, teamId);
+  Future<void> requestDeniedFromUser(userId, teamId);
+
+  Future<void> removePlayerFromTeam(userId, teamId, type);
+  Future<void> deleteMatch(senderId, matchId);
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
@@ -99,7 +101,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
 
       return notificationsCollections;
     } catch (e) {
-      throw('Error: $e');
+      throw ('Error: $e');
     }
   }
 
@@ -165,7 +167,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         });
       });
     } catch (e) {
-      throw('Error: $e');
+      throw ('Error: $e');
     }
   }
 
@@ -212,15 +214,17 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         });
       });
     } catch (e) {
-      throw('Error: $e');
+      throw ('Error: $e');
     }
   }
 
   @override
-  Future<void> matchRequestAccepted(senderId, receiverId, matchId, status) async {
+  Future<void> matchRequestAccepted(
+      senderId, receiverId, matchId, status) async {
     try {
       DocumentReference<Map<String, dynamic>> senderDoc = getTeamDoc(senderId);
-      DocumentReference<Map<String, dynamic>> receiverDoc = getTeamDoc(receiverId);
+      DocumentReference<Map<String, dynamic>> receiverDoc =
+          getTeamDoc(receiverId);
       DocumentReference<Map<String, dynamic>> matchDoc = getMatchDoc(matchId);
 
       DocumentSnapshot<Map<String, dynamic>> senderInformation =
@@ -262,7 +266,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
             'team2': senderId,
           });
         } else {
-          throw("This match has already contains second team");
+          throw ("This match has already contains second team");
         }
       } else if (status == "match join") {
         Map<String, dynamic> incomingMatchMap =
@@ -288,10 +292,10 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         Map<String, dynamic>? matchData = matchSnapshot.data();
         if (matchData!['team2'].isEmpty) {
           await matchDoc.update({
-            'team2': senderId,
+            'team2': receiverId,
           });
         } else {
-          throw("This match has already contains second team");
+          throw ("This match has already contains second team");
         }
       }
 
@@ -331,7 +335,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         });
       });
     } catch (e) {
-      throw('error: $e');
+      throw ('error: $e');
     }
   }
 
@@ -377,7 +381,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         });
       });
     } catch (e) {
-      throw('Error: $e');
+      throw ('Error: $e');
     }
   }
 
@@ -420,7 +424,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         'isRead': false,
       });
     } catch (e) {
-      throw('Error: $e');
+      throw ('Error: $e');
     }
   }
 
@@ -461,7 +465,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         'isRead': false,
       });
     } catch (e) {
-      throw('Error: $e');
+      throw ('Error: $e');
     }
   }
 
@@ -503,7 +507,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         'isRead': false,
       });
     } catch (e) {
-      throw('Error: $e');
+      throw ('Error: $e');
     }
   }
 
@@ -536,7 +540,8 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       });
 
       await userNoti.add({
-        'type': 'request', // invite request, sent request, evaluate, announce, message, accepted request
+        'type':
+            'request', // invite request, sent request, evaluate, announce, message, accepted request
         'status': 'denied',
         'senderType': 'team', // player, admin, stadium owner, team
         'sender': teamName, // username
@@ -545,7 +550,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         'isRead': false,
       });
     } catch (e) {
-      throw('Error: $e');
+      throw ('Error: $e');
     }
   }
 
@@ -588,7 +593,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         'isRead': false,
       });
     } catch (e) {
-      throw('Error: $e');
+      throw ('Error: $e');
     }
   }
 
@@ -644,7 +649,35 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         });
       }
     } catch (e) {
-      throw('Error: $e');
+      throw ('Error: $e');
+    }
+  }
+
+  @override
+  Future<void> deleteMatch(senderId, matchId) async {
+    try {
+      List<CollectionReference<Map<String, dynamic>>> senderTeamMembersNoti =
+          await getTeamNotificationCollectionList(senderId);
+
+      DocumentSnapshot<Map<String, dynamic>> senderInformation =
+          await getTeamDocInformation(senderId);
+
+      String senderName = senderInformation.data()?['name'] ?? 'Unknow';
+
+      senderTeamMembersNoti.forEach((memberNoti) async {
+        await memberNoti.add({
+          'type': 'annouce', // request, evaluate, announce, message
+          'status': 'match deleted',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': senderName, // username
+          'receiver': 'you',
+          'match': matchId,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+    } catch (e) {
+      throw ('Error: $e');
     }
   }
 }

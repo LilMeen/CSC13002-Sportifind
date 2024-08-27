@@ -323,6 +323,12 @@ class SportifindTheme {
   static TextStyle bigSpan = GoogleFonts.inter(
       fontWeight: FontWeight.w700, fontSize: 16, color: Colors.white);
 
+  static TextStyle smallSpanBlack = GoogleFonts.lexend(
+      fontWeight: FontWeight.w400, fontSize: 14, color: Colors.black);
+
+  static TextStyle bigSpanBlack = GoogleFonts.lexend(
+      fontWeight: FontWeight.w700, fontSize: 14, color: Colors.black);
+
   static TextStyle normalTextBlack = GoogleFonts.lexend(
     fontWeight: FontWeight.normal,
     fontSize: 16,
