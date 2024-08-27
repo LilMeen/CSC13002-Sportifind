@@ -19,11 +19,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 50,
+        centerTitle: true,
         title: Text(
           "Notifications",
-          style: SportifindTheme.sportifindAppBar,
+          style: SportifindTheme.sportifindAppBarForFeature,
         ),
         backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: SportifindTheme.bluePurple,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(20.0),
           child: SizedBox(

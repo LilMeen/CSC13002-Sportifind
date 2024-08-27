@@ -88,7 +88,7 @@ class StatisticCard extends StatelessWidget {
         ),
         child: Container(
           padding: const EdgeInsets.all(18),
-          width: 150,
+          width: 152,
           height: 150,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

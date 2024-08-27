@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/match/domain/usecases/send_request_to_join_match.dart';
-import 'package:sportifind/features/match/presentation/screens/match_info_screen.dart';
 import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/player/player_stadium_screen.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
@@ -49,9 +48,6 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Select Team"),
-      ),
       body: Stack(
         children: <Widget>[
           Container(

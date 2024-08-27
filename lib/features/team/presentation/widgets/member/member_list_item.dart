@@ -87,16 +87,22 @@ class _MemberListItemState extends State<MemberListItem> {
           ),
           const SizedBox(width: 20),
           Stack(
+            clipBehavior: Clip
+                .none, // Prevent clipping of children outside the stack's bounds
             children: [
-              isCaptain()
-                  ? const Icon(
-                      Icons.stacked_bar_chart,
-                    )
-                  : const SizedBox(),
               CircleAvatar(
                 radius: 35,
                 backgroundImage: team1ImageProvider,
               ),
+              if (isCaptain())
+                Positioned(
+                  top: -15, // Adjust these values to move the crown
+                  right: -5, // outside the CircleAvatar's bounds
+                  child: Image.asset(
+                    'lib/assets/crown.png',
+                    scale: 15,
+                  ),
+                ),
             ],
           ),
           const SizedBox(width: 10),

@@ -360,9 +360,10 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
       home: SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: SportifindTheme.whiteSmoke,
-            leading: BackButton(
-              color: SportifindTheme.grey,
+            backgroundColor: SportifindTheme.white,
+            leading: IconButton(
+              color: SportifindTheme.bluePurple,
+              icon: const Icon(Icons.arrow_back_ios),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
