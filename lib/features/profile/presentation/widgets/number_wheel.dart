@@ -23,7 +23,7 @@ class _NumberWheelState extends State<NumberWheel> {
   @override
   void initState() {
     super.initState();
-    _scrollController = FixedExtentScrollController(initialItem: widget.initValue);
+    _scrollController = FixedExtentScrollController(initialItem: widget.initValue != 0 ? widget.initValue : 80);
     _selectedValue = widget.initValue;
   }
 

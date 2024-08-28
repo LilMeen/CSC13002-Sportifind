@@ -371,11 +371,12 @@ class ProfileScreenState extends State<ProfileScreen> {
                             : "No information",
                     icon: "foot",
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   Hexagon(
                     screenWidth: MediaQuery.of(context).size.width,
                     ratings: defaultRatings,
                   ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),

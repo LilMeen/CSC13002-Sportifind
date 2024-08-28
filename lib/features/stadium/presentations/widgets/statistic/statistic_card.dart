@@ -78,6 +78,7 @@ class StatisticCard extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Card(
+        color: Colors.white,
         elevation: 3,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
