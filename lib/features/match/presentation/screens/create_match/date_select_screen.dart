@@ -414,7 +414,8 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                       ),
                       FieldPicker(
                         func: refreshByField,
-                        fields: widget.stadiumData.fields,
+                        fields: widget.stadiumData.fields
+                          .where((element) => element.status == true).toList(),
                         selectedField: getFirstFields(widget.stadiumData.fields,
                             selectedFieldType, selectedField!),
                         selectedFieldType: selectedFieldType,

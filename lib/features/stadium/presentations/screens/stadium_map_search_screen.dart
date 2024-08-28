@@ -116,7 +116,7 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                             child: StadiumCard(
                               stadium: stadium,
                               ownerName: ownerName,
-                              imageRatio: 1,
+                              imageRatio: 1.15,
                               isStadiumOwnerUser: widget.isStadiumOwnerUser,
                               forMatchCreate: widget.forMatchCreate,
                               selectedTeam: widget.selectedTeam,

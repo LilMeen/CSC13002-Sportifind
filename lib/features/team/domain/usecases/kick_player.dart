@@ -14,7 +14,7 @@ class KickPlayer implements UseCase<void, KickPlayerParams> {
   @override
   Future<Result<void>> call(KickPlayerParams params) async {
     await notificationRepository.removePlayerFromTeam(params.player.id, params.team.id, params.type);
-    return await repository.kickPlayer(params.team, params.player, params.type);
+    return await repository.kickPlayer(params.team, params.player);
   }
 }
 

@@ -462,7 +462,7 @@ class _NotificationListItemState extends State<NotificationListItem> {
           case "delete":
           case "rejected":
           case "denied":
-          case "accepted":
+          case "accepted": 
           case "invite":
             await UseCaseProvider.getUseCase<MarkAsRead>()(
               MarkAsReadParams(notification: widget.notificationData),

@@ -8,7 +8,6 @@ import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart
 import 'package:sportifind/features/team/presentation/widgets/team/team_add_dialog.dart';
 import 'package:sportifind/features/team/presentation/widgets/team_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sportifind/features/team/presentation/widgets/team/teamm_add_dialog.dart';
 
 class PlayerDetails extends StatefulWidget {
   const PlayerDetails({super.key, required this.user});

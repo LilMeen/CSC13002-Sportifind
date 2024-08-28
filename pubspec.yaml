@@ -67,6 +67,7 @@ dependencies:
   navigation_view: ^1.0.6
   flutter_animate: ^4.5.0
   flutter_dotenv: ^5.1.0
+  flutter_config: ^2.0.2
   
 dev_dependencies:
   flutter_test:

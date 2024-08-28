@@ -136,7 +136,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                                             owners: widget.owners,
                                             isStadiumOwnerUser: widget.isStadiumOwnerUser,
                                             forMatchCreate: widget.forMatchCreate,
-                                            selectedTeam: widget.selectedTeam!,
+                                            selectedTeam: widget.selectedTeam,
                                           ),
                                         ),
                                       );
@@ -160,6 +160,7 @@ class StadiumSearchScreenState extends State<StadiumSearchScreen> {
                         ),
                       ),
                       _bloc.buildStadiumSection(),
+                      const SizedBox(height: 75),
                     ],
                   ),
                 ),
