@@ -23,6 +23,7 @@ class GroupChatTile extends StatefulWidget {
 class _GroupChatTileState extends State<GroupChatTile> {
   List<MessageEntity> _messages = [];
   MessageEntity? _latestMessage;
+  bool isLoading = true;
 
   Future<List<MessageEntity>> getTeamMessages() async {
     return await UseCaseProvider.getUseCase<GetMessageByTeam>()
@@ -37,7 +38,9 @@ class _GroupChatTileState extends State<GroupChatTile> {
   Future<void> _initialize() async {
     _messages = await getTeamMessages();
     _latestMessage = await getLatestMessage();
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
   }
 
   String get getFirstCharacters {
@@ -52,6 +55,11 @@ class _GroupChatTileState extends State<GroupChatTile> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return GestureDetector(
       onTap: () async {
         _latestMessage = await Navigator.push(
