@@ -9,6 +9,5 @@ abstract interface class TeamRepository {
   Future<Result<List<TeamEntity>>> getTeamByPlayer(String playerId);
   Future<Result<void>> updateTeam(TeamEntity team);
   Future<Result<void>> deleteTeam(String teamId);
-
   Future<Result<void>> kickPlayer(TeamEntity team, PlayerEntity playerId, String type);
 }
