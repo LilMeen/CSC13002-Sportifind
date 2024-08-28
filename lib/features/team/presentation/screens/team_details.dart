@@ -53,7 +53,7 @@ class _TeamDetailsState extends State<TeamDetails>
 
     teamMembers = teamInformation.players;
     captain = teamInformation.captain.name;
-    whoIsViewing(); 
+    whoIsViewing();
     setState(() {
       this.teamInformation = teamInformation;
       isLoading = false;
@@ -301,15 +301,22 @@ class _TeamDetailsState extends State<TeamDetails>
                                   ? 0
                                   : 200, // Set the desired height for the scrollable area
                               child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
                                 itemCount: teamInformation!.images
                                     ?.length, // Assuming teamInformation has a list of image URLs
                                 itemBuilder: (context, index) {
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: Image.network(
-                                      teamInformation!.images![index]
-                                          .path, // Replace with your image URL
-                                      fit: BoxFit.cover,
+                                    child: Card(
+                                      shadowColor: Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: Image.network(
+                                        teamInformation!.images![index]
+                                            .path, // Replace with your image URL
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   );
                                 },
@@ -331,7 +338,7 @@ class _TeamDetailsState extends State<TeamDetails>
 
                       PlayerList(
                         members: teamMembers,
-                        role: role, 
+                        role: role,
                         team: teamInformation,
                       ),
 

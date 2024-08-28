@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
-import 'package:sportifind/core/util/team_util.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
@@ -172,7 +171,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
                                         ),
                                       ),
                                       Text(
-                                        '80', //  waiting for stat for player
+                                        overallStat.toStringAsFixed(2),
                                         style: SportifindTheme.normalTextBlack
                                             .copyWith(
                                           fontSize: 16,
@@ -194,7 +193,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
                                         ),
                                       ),
                                       Text(
-                                        '${getUserAge(widget.user.dob)}',
+                                        '$age',
                                         style: SportifindTheme.normalTextWhite
                                             .copyWith(
                                           fontSize: 16,
@@ -228,9 +227,37 @@ class _PlayerDetailsState extends State<PlayerDetails>
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const CircleAvatar(
+                                CircleAvatar(
+                                  backgroundColor: Colors.white,
                                   radius: 16,
-                                  backgroundColor: Colors.grey,
+                                  child: Icon(
+                                    Icons.directions_run_sharp,
+                                    color: SportifindTheme.bluePurple,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  widget.user.preferredFoot, // height here
+                                  style:
+                                      SportifindTheme.normalTextWhite.copyWith(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 16,
+                                  child: Icon(
+                                    Icons.location_on,
+                                    color: SportifindTheme.bluePurple,
+                                  ),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
@@ -248,13 +275,41 @@ class _PlayerDetailsState extends State<PlayerDetails>
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const CircleAvatar(
+                                CircleAvatar(
+                                  backgroundColor: Colors.white,
                                   radius: 16,
-                                  backgroundColor: Colors.grey,
+                                  child: Icon(
+                                    Icons.height,
+                                    color: SportifindTheme.bluePurple,
+                                  ),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  '180', // height here
+                                  widget.user.height, // height here
+                                  style:
+                                      SportifindTheme.normalTextWhite.copyWith(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 16,
+                                  child: Icon(
+                                    Icons.scale,
+                                    color: SportifindTheme.bluePurple,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  widget.user.height, // height here
                                   style:
                                       SportifindTheme.normalTextWhite.copyWith(
                                     fontSize: 16,
@@ -280,7 +335,8 @@ class _PlayerDetailsState extends State<PlayerDetails>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          TeamListDialog(viewerTeams: viewerTeams, player: widget.user),
+                          TeamListDialog(
+                              viewerTeams: viewerTeams, player: widget.user),
                         ],
                       ),
                     ],
