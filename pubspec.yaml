@@ -122,6 +122,8 @@ flutter:
      - 'lib/assets/weight.png'
      - 'lib/assets/height.png'
      - 'lib/assets/crown.png'
+     - 'lib/assets/player_unpicked.png'
+     - 'lib/assets/player_picked.png'
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
