@@ -12,7 +12,7 @@ class PlayerModel extends UserModel {
   final String preferredFoot;
   final Map<String, int> stats;
   final List<String> teams;
-
+  
   PlayerModel({
     required super.id,
     required super.email,

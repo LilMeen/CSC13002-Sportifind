@@ -5,13 +5,14 @@ import 'package:sportifind/core/util/team_util.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
+import 'package:sportifind/features/team/presentation/widgets/team/team_add_dialog.dart';
 import 'package:sportifind/features/team/presentation/widgets/team_list.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sportifind/features/team/presentation/widgets/team/teamm_add_dialog.dart';
 
 class PlayerDetails extends StatefulWidget {
-  const PlayerDetails({super.key, required this.user, required this.role});
+  const PlayerDetails({super.key, required this.user});
   final PlayerEntity user;
-  final String role;
-
   @override
   State<PlayerDetails> createState() => _PlayerDetailsState();
 }
@@ -19,7 +20,9 @@ class PlayerDetails extends StatefulWidget {
 class _PlayerDetailsState extends State<PlayerDetails>
     with TickerProviderStateMixin {
   List<TeamEntity?> userTeams = [];
+  List<TeamEntity?> viewerTeams = [];
   bool isLoading = true;
+  String role = '';
   late AnimationController animationController;
   late Future<void> _initializationFuture;
 
@@ -39,13 +42,56 @@ class _PlayerDetailsState extends State<PlayerDetails>
     super.dispose();
   }
 
+  void whoIsViewing() {
+    String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    if (currentUserId == widget.user.id) {
+      role = 'myself';
+    } else {
+      role = 'other';
+    }
+  }
+
   Future<void> _initialize() async {
-    userTeams = await UseCaseProvider.getUseCase<GetTeamByPlayer>().call(
-      GetTeamByPlayerParams(playerId: widget.user.id),
-    ).then((value) => value.data!);
+    whoIsViewing();
+    userTeams = await UseCaseProvider.getUseCase<GetTeamByPlayer>()
+        .call(
+          GetTeamByPlayerParams(playerId: widget.user.id),
+        )
+        .then((value) => value.data!);
+    viewerTeams = await UseCaseProvider.getUseCase<GetTeamByPlayer>()
+        .call(
+          GetTeamByPlayerParams(
+              playerId: FirebaseAuth.instance.currentUser!.uid),
+        )
+        .then((value) => value.data!);
     setState(() {
       isLoading = false;
     });
+  }
+
+  int get age {
+    String dob = widget.user.dob;
+    // dd/mm/yyyy get month,day, year and calculate age
+    int year = int.parse(dob.substring(6, 10));
+    int month = int.parse(dob.substring(3, 5));
+    int day = int.parse(dob.substring(0, 2));
+    DateTime now = DateTime.now();
+    int age = now.year - year;
+    if (now.month < month || (now.month == month && now.day < day)) {
+      age--;
+    }
+    return age;
+  }
+
+  double get overallStat {
+    double overall = (widget.user.stats.def +
+            widget.user.stats.pace +
+            widget.user.stats.pass +
+            widget.user.stats.physic +
+            widget.user.stats.shoot +
+            widget.user.stats.drive) /
+        6;
+    return overall;
   }
 
   @override
@@ -235,26 +281,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              minimumSize: const Size(200, 50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            onPressed: () {},
-                            child: widget.role == 'other'
-                                ? Text(
-                                    'Add',
-                                    style: SportifindTheme.featureTitleBlack
-                                        .copyWith(
-                                      fontSize: 28,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const SizedBox(height: 15),
-                          ),
+                          TeamListDialog(viewerTeams: viewerTeams, player: widget.user),
                         ],
                       ),
                     ],

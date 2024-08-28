@@ -131,7 +131,6 @@ class _MemberListItemState extends State<MemberListItem> {
                   MaterialPageRoute(
                     builder: (context) => PlayerDetails(
                       user: playerData!,
-                      role: "other",
                     ),
                   ),
                 );

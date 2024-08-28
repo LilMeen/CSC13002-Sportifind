@@ -265,7 +265,6 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                                     TeamDetails(
                                                   teamId:
                                                       widget.matchInfo.team1.id,
-                                                  role: 'teamMember',
                                                 ),
                                               ),
                                             );
@@ -471,9 +470,6 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                                         MaterialPageRoute(
                                           builder: (context) => TeamDetails(
                                             teamId: widget.matchInfo.team1.id,
-                                            role: isCaptain == true
-                                                ? "captain"
-                                                : "normal",
                                           ),
                                         ),
                                       );

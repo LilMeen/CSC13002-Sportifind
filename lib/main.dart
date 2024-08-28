@@ -4,6 +4,9 @@ import 'package:sportifind/features/auth/presentations/screens/splash_screen.dar
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sportifind/firebase_options.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:sportifind/features/chat/presentation/screens/chat_main_screen.dart';
+import 'package:sportifind/home/player_home_screen.dart';
+import 'package:sportifind/features/team/presentation/screens/team_main_screen.dart'; 
 
 Future <void> main() async{
   initializeDateFormatting();
@@ -21,7 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(context) {
     return const MaterialApp(
-      home: SplashScreen(),
+      home: TeamMainScreen(),
     );
   }
 }  

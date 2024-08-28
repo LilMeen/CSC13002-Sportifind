@@ -75,7 +75,6 @@ class TeamBox extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) => TeamDetails(
                                 teamId: team!.id,
-                                role: 'teamMember',
                               ),
                             ),
                           );
