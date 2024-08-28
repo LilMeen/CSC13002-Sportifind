@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/features/chat/domain/entities/message_entity.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 
 class MessageTile extends StatelessWidget {
   const MessageTile({super.key, required this.message});
@@ -35,24 +36,25 @@ class MessageTile extends StatelessWidget {
                   topLeft: Radius.circular(23),
                   topRight: Radius.circular(23),
                   bottomRight: Radius.circular(23)),
-          color:
-              message.sender.id == userId ? Colors.blueAccent : Colors.grey[700],
+          color: message.sender.id == userId
+              ? const Color.fromARGB(255, 102, 155, 248)
+              : Colors.grey[700],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(message.sender.name.toUpperCase(),
-                textAlign: TextAlign.start,
-                style: const TextStyle(
-                    fontSize: 13.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    letterSpacing: -0.5)),
+            Text(
+              message.sender.name.toUpperCase(),
+              textAlign: TextAlign.start,
+              style: SportifindTheme.featureTitleBlack
+                  .copyWith(fontSize: 13.0, letterSpacing: -0.5),
+            ),
             const SizedBox(height: 7.0),
             Text(
               message.message,
               textAlign: TextAlign.start,
-              style: const TextStyle(fontSize: 15.0, color: Colors.white),
+              style: SportifindTheme.normalText
+                  .copyWith(fontSize: 15.0, color: Colors.white),
             ),
           ],
         ),

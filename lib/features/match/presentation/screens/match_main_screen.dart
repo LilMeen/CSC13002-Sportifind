@@ -9,7 +9,6 @@ import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/profile/domain/usecases/get_player.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team.dart';
-import 'package:sportifind/home/widgets/tab_icon.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class MatchMainScreen extends StatefulWidget {
@@ -34,12 +33,6 @@ class _MatchMainScreenState extends State<MatchMainScreen>
 
   String errorMessage = '';
 
-  List<TabIconData> tabIconsList = TabIconData.tabIconsList;
-
-  Widget tabBody = Container(
-    color: Colors.white,
-  );
-
   Future<void> checkCaptain() async {
     userData = await UseCaseProvider.getUseCase<GetPlayer>().call(
       GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid),
@@ -62,12 +55,6 @@ class _MatchMainScreenState extends State<MatchMainScreen>
   void initState() {
     super.initState();
     checkCaptain();
-
-    for (var tab in tabIconsList) {
-      tab.isSelected = false;
-    }
-    tabIconsList[0].isSelected = true;
-
     animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,

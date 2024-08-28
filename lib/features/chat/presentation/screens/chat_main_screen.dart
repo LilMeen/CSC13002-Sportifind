@@ -7,6 +7,7 @@ import 'package:sportifind/features/profile/domain/usecases/get_current_profile.
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
 import 'package:sportifind/features/user/domain/entities/user_entity.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 
 class ChatMainScreen extends StatefulWidget {
   const ChatMainScreen({super.key});
@@ -68,8 +69,7 @@ class _ChatMainScreenState extends State<ChatMainScreen>
       itemBuilder: (context, index) {
         final team = myTeams[index];
         return GroupChatTile(
-            teamId: team.id,
-            teamName: team.name,
+            team: team, 
             currentUser: user);
       },
     );
@@ -78,29 +78,27 @@ class _ChatMainScreenState extends State<ChatMainScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Your Teams Messages', style: TextStyle(color: Colors.white, fontSize: 27.0, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.black87,
-        elevation: 0.0,
-        actions: <Widget>[
-          IconButton(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            icon: const Icon(Icons.search, color: Colors.white, size: 25.0), 
-            onPressed: () {
-              //Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchPage()));
-            }
-          )
-        ],
-      ),
+              backgroundColor: Colors.white,
+              title: Text(
+                'Messages',
+                style: SportifindTheme.sportifindAppBarForFeature.copyWith(
+                  fontSize: 32,
+                  color: SportifindTheme.bluePurple,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              centerTitle: true,
+              shadowColor: Colors.black.withOpacity(0.8),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
       body: teamList(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //_popupDialog(context);
-        },
-        backgroundColor: Colors.grey[700],
-        elevation: 0.0,
-        child: const Icon(Icons.add, color: Colors.white, size: 30.0),
-      ),
     );
   }
 }
