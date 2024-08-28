@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-import 'package:sportifind/core/usecases/usecase_provider.dart';
-import 'package:sportifind/core/util/team_util.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
-import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
-import 'package:sportifind/features/team/presentation/widgets/team_list.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class TeamListDialog extends StatefulWidget {
   const TeamListDialog(
@@ -151,7 +146,7 @@ class _TeamListDialogState extends State<TeamListDialog> {
               Text('${widget.viewerTeams[index]!.players.length} members'),
           trailing: ElevatedButton(
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
+              backgroundColor: WidgetStateProperty.all(
                 _getButtonColor(
                     _buttonStates[index]), // Set the color based on the state
               ),
