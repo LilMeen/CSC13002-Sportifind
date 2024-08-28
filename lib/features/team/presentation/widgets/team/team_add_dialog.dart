@@ -15,19 +15,7 @@ class TeamListDialog extends StatefulWidget {
 
 class _TeamListDialogState extends State<TeamListDialog> {
   // Initialize a list to track the button states for each team
-  late List<int> _buttonStates;
-
-  void buttonStateInit() {
-    for (int i = 0; i < widget.viewerTeams.length; i++) {
-      if (_isJoined(widget.player, widget.viewerTeams[i]!)) {
-        _buttonStates[i] = 0; // joined
-      } else if (_hasSentInvitation(widget.player, widget.viewerTeams[i]!)) {
-        _buttonStates[i] = 1; // sent invited request
-      } else {
-        _buttonStates[i] = 2; // not joined
-      }
-    }
-  }
+  final List<int> _buttonStates = [];
 
   bool _isJoined(PlayerEntity player, TeamEntity team) {
     return team.players.contains(player);
@@ -42,7 +30,15 @@ class _TeamListDialogState extends State<TeamListDialog> {
 
   @override
   void initState() {
-    buttonStateInit(); 
+    for (int i = 0; i < widget.viewerTeams.length; i++) {
+      if (_isJoined(widget.player, widget.viewerTeams[i]!)) {
+        _buttonStates.add(0); // joined
+      } else if (_hasSentInvitation(widget.player, widget.viewerTeams[i]!)) {
+        _buttonStates.add(1); // sent invited request
+      } else {
+        _buttonStates.add(2); // not joined
+      }
+    }
     super.initState();
     // Initialize the button states to false (not joined) for all teams
   }
@@ -153,6 +149,7 @@ class _TeamListDialogState extends State<TeamListDialog> {
             ),
             onPressed: _buttonStates[index] == 2
                 ? () {
+                  // Add player here 
                     setState(() {
                       // Toggle the state of the button when tapped
                       _buttonStates[index] = 1;

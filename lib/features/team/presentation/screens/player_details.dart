@@ -40,17 +40,13 @@ class _PlayerDetailsState extends State<PlayerDetails>
     super.dispose();
   }
 
-  void whoIsViewing() {
+  Future<void> _initialize() async {
     String currentUserId = FirebaseAuth.instance.currentUser!.uid;
     if (currentUserId == widget.user.id) {
       role = 'myself';
     } else {
       role = 'other';
     }
-  }
-
-  Future<void> _initialize() async {
-    whoIsViewing();
     userTeams = await UseCaseProvider.getUseCase<GetTeamByPlayer>()
         .call(
           GetTeamByPlayerParams(playerId: widget.user.id),
@@ -69,7 +65,6 @@ class _PlayerDetailsState extends State<PlayerDetails>
 
   int get age {
     String dob = widget.user.dob;
-    // dd/mm/yyyy get month,day, year and calculate age
     int year = int.parse(dob.substring(6, 10));
     int month = int.parse(dob.substring(3, 5));
     int day = int.parse(dob.substring(0, 2));

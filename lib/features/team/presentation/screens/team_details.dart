@@ -53,7 +53,15 @@ class _TeamDetailsState extends State<TeamDetails>
 
     teamMembers = teamInformation.players;
     captain = teamInformation.captain.name;
-    whoIsViewing();
+    String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    if (teamInformation.captain.id == currentUserId) {
+      role = 'captain';
+    } else if (teamInformation.players
+        .any((element) => element.id == currentUserId)) {
+      role = 'member';
+    } else {
+      role = 'other';
+    }
     setState(() {
       this.teamInformation = teamInformation;
       isLoading = false;
@@ -62,18 +70,6 @@ class _TeamDetailsState extends State<TeamDetails>
 
   String get foundedDate {
     return '${teamInformation!.foundedDate.day}/${teamInformation!.foundedDate.month}/${teamInformation!.foundedDate.year}';
-  }
-
-  void whoIsViewing() {
-    String currentUserId = FirebaseAuth.instance.currentUser!.uid;
-    if (teamInformation!.captain.id == currentUserId) {
-      role = 'captain';
-    } else if (teamInformation!.players
-        .any((element) => element.id == currentUserId)) {
-      role = 'member';
-    } else {
-      role = 'other';
-    }
   }
 
   @override
@@ -343,7 +339,7 @@ class _TeamDetailsState extends State<TeamDetails>
                       ),
 
                       // create a elevated button here
-                      (role == 'captain' || role == 'normal')
+                      (role == 'captain' || role == 'member')
                           ? const SizedBox(
                               height: 0,
                               width: 0,

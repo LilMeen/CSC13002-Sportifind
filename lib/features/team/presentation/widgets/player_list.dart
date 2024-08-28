@@ -88,7 +88,7 @@ class PlayerBox extends StatelessWidget {
             ),
             const SizedBox(width: 11),
             SizedBox(
-              width: 296,
+              width: 290,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.end,
