@@ -12,6 +12,7 @@ import 'package:sportifind/features/team/domain/usecases/kick_player.dart';
 import 'package:sportifind/features/team/domain/usecases/request_to_join_team.dart';
 import 'package:sportifind/features/team/presentation/screens/edit_team_screen.dart';
 import 'package:sportifind/features/team/presentation/widgets/player_list.dart';
+import 'package:sportifind/features/team/presentation/screens/user_search_screen.dart';
 
 class TeamDetails extends StatefulWidget {
   const TeamDetails({
@@ -416,6 +417,45 @@ class _TeamDetailsState extends State<TeamDetails>
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              role == 'captain' || role == 'member'
+                  ? Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey.withOpacity(0.5),
+                            width: 1.0,
+                          ),
+                        ),
+                      ),
+                      child: ListTile(
+                        leading:
+                            Icon(Icons.edit, color: SportifindTheme.bluePurple),
+                        title: Text(
+                          'Find Players',
+                          style: SportifindTheme.normalTextBlack.copyWith(
+                            fontSize: 16,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => const UserSearchScreen(),
+                            ),
+                          );
+                          // Handle the edit action
+                          //Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Moving to Edit Team'),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : const SizedBox(
+                      height: 0,
+                      width: 0,
+                    ),
               role == 'captain'
                   ? Container(
                       decoration: BoxDecoration(

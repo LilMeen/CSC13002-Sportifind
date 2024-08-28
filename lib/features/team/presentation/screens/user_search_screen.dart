@@ -6,14 +6,14 @@ import 'package:sportifind/features/profile/domain/usecases/get_all_player.dart'
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/features/team/presentation/screens/player_details.dart';
 
-class TeamSearchScreen extends StatefulWidget {
-  const TeamSearchScreen({super.key});
+class UserSearchScreen extends StatefulWidget {
+  const UserSearchScreen({super.key});
 
   @override
-  State<TeamSearchScreen> createState() => _TeamSearchScreenState();
+  State<UserSearchScreen> createState() => _UserSearchScreenState();
 }
 
-class _TeamSearchScreenState extends State<TeamSearchScreen> {
+class _UserSearchScreenState extends State<UserSearchScreen> {
   List<PlayerEntity> playersInformation = [];
   List<PlayerEntity> _foundedPlayers = [];
   bool isLoading = true;
