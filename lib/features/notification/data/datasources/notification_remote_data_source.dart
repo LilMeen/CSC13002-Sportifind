@@ -415,7 +415,8 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       });
 
       await userNoti.add({
-        'type': 'request', // invite request, sent request, evaluate, announce, message, accepted request
+        'type':
+            'request', // invite request, sent request, evaluate, announce, message, accepted request
         'status': 'sent',
         'senderType': 'player', // player, admin, stadium owner, team
         'sender': userName, // username
@@ -448,6 +449,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
           'status': 'sent',
+          'match': '',
           'senderType': 'team', // player, admin, stadium owner, team
           'sender': teamName, // username
           'receiver': userName,
@@ -459,6 +461,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       await userNoti.add({
         'type': 'request', // request, evaluate, announce, message
         'status': 'invite',
+        'match': '',
         'senderType': 'team', // player, admin, stadium owner,
         'sender': teamName, // username
         'receiver': userName,
@@ -489,6 +492,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
           'type':
               'request', // join request, sent request, evaluate, announce, message
           'status': 'accepted',
+          'match': '',
           'senderType': 'team', // player, admin, stadium owner, team
           'sender': teamName, // username
           'receiver': userName,
@@ -501,6 +505,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         'type':
             'request', // invite request, sent request, evaluate, announce, message
         'status': 'accepted',
+        'match': '',
         'senderType': 'player', // player, admin, stadium owner, team
         'sender': teamName, // username
         'receiver': userName,
@@ -531,7 +536,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         await memberNoti.add({
           'type':
               'request', // join request, sent request, evaluate, announce, message, accepted request
-          'status': 'eject',
+          'status': 'rejected',
           'senderType': 'team', // player, admin, stadium owner, team
           'sender': teamName, // username
           'receiver': userName,
@@ -575,6 +580,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
           'type':
               'request', // join request, sent request, evaluate, announce, message, accepted request
           'status': 'denied',
+          'match': '',
           'senderType': 'user', // player, admin, stadium owner, team
           'sender': userName, // username
           'receiver': teamName,
@@ -586,7 +592,8 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       await userNoti.add({
         'type':
             'request', // invite request, sent request, evaluate, announce, message, accepted request
-        'status': 'eject',
+        'status': 'rejected',
+        'match': '',
         'senderType': 'user', // player, admin, stadium owner, team
         'sender': userName, // username
         'receiver': teamName,
@@ -618,6 +625,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
           'type':
               'announce', // join request, sent request, evaluate, announce, message, accepted request
           'status': 'delete',
+          'match': '',
           'senderType': 'team', // player, admin, stadium owner, team
           'sender': teamName, // username
           'receiver': userName,
@@ -631,6 +639,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
           'type':
               'announce', // invite request, sent request, evaluate, announce, message, accepted request
           'status': 'kicked',
+          'match': '',
           'senderType': 'team', // player, admin, stadium owner, team
           'sender': teamName, // username
           'receiver': 'you',
@@ -642,6 +651,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
           'type':
               'announce', // invite request, sent request, evaluate, announce, message, accepted request
           'status': 'left',
+          'match': '',
           'senderType': 'team', // player, admin, stadium owner, team
           'sender': teamName, // username
           'receiver': 'you',

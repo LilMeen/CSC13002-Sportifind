@@ -167,6 +167,7 @@ class _MatchInfoScreenState extends State<MatchInfoScreen> {
                       height: 420,
                       width: double.infinity,
                       decoration: const BoxDecoration(
+                        color: Colors.white,
                         image: DecorationImage(
                           image: AssetImage(
                               'lib/assets/images/matchDetailBackground.png'),

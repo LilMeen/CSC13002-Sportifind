@@ -139,7 +139,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen> {
   AppBar _appBar(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      toolbarHeight: 100,
+      toolbarHeight: 80,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
