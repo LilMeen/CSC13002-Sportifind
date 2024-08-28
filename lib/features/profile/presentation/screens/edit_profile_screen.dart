@@ -130,11 +130,12 @@ class EditInformationState extends State<EditInformationScreen> {
         return;
       }
 
-      Location newLocation = await findLatAndLng(
+      Location newLocation = await findLatAndLngFull(
+        _addressController.text,
         _districtController.text,
         _cityController.text,
-      ) ?? const Location();
-
+      );
+      
       newLocation = newLocation.copyWith(
         address: _addressController.text,
         district: _districtController.text,

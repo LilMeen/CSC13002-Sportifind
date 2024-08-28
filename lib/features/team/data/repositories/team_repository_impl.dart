@@ -94,10 +94,21 @@ class TeamRepositoryImpl implements TeamRepository {
   // KICK PLAYER
   // Kick player from team
   @override
-  Future<Result<void>> kickPlayer(
-      TeamEntity team, PlayerEntity player, String type) async {
+  Future<Result<void>> kickPlayer(TeamEntity team, PlayerEntity player) async {
     team.players.remove(player);
     player.teamsId.remove(team.id);
+    await teamRemoteDataSource.updateTeam(TeamModel.fromEntity(team));
+    await profileRemoteDataSource.updatePlayer(PlayerModel.fromEntity(player));
+    return Result.success(null);
+  }
+
+
+  // ADD PLAYER
+  // Add player to team
+  @override
+  Future<Result<void>> addPlayer(TeamEntity team, PlayerEntity player) async {
+    team.players.add(player);
+    player.teamsId.add(team.id);
     await teamRemoteDataSource.updateTeam(TeamModel.fromEntity(team));
     await profileRemoteDataSource.updatePlayer(PlayerModel.fromEntity(player));
     return Result.success(null);

@@ -1,11 +1,12 @@
 import 'dart:math';
 
 import 'package:http/http.dart' as http;
+import 'package:sportifind/api_key.dart';
 import 'dart:convert';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:location/location.dart' as loc;
 
-const String apiKey = 'AIzaSyByB64x8WOemsLdnmypzU-sKNBTJeLS3Nw';
+const String apiKey = GOOGLE_MAPS_API_KEY;
 
 Future<Location> getLocation (String searchText) async{
   http.Response response = http.Response('', 200);
@@ -26,7 +27,7 @@ Future<Location> getLocation (String searchText) async{
     }
 
     final searchLocation = searchRes['results'][0]['geometry']['location'];
-    
+
     Location returnLocation = const Location();
     return returnLocation.copyWith(
       name: searchRes['results'][0]['name'],
@@ -42,9 +43,10 @@ Future<Location> getLocation (String searchText) async{
 Future<Location?> findLatAndLng(String district, String city) async {
   String searchText = '$district, $city';
   Location? searchLocation = await findLocation(searchText);
+
   if (searchLocation != null) {
     Location returnLocation = const Location();
-    returnLocation.copyWith(
+    returnLocation = returnLocation.copyWith(
       name: searchLocation.name,
       fullAddress: searchLocation.fullAddress,
       district: district,
@@ -67,7 +69,7 @@ Future<Location> findLatAndLngFull(
 
   if (searchLocation != null) {
     Location returnLocation = const Location();
-    return returnLocation.copyWith(
+    returnLocation = returnLocation.copyWith(
       name: searchLocation.name,
       fullAddress: searchLocation.fullAddress,
       address: address,
@@ -76,6 +78,7 @@ Future<Location> findLatAndLngFull(
       latitude: searchLocation.latitude,
       longitude: searchLocation.longitude,
     );
+    return returnLocation;
   }
   return Location(
     address: address,
@@ -90,6 +93,7 @@ Future<Location?> findLocation(String searchText) async {
     Uri.parse(
         'https://maps.googleapis.com/maps/api/place/textsearch/json?query=$searchText&key=$apiKey'),
   );
+
   if (response.statusCode == 200) {
     final searchRes = json.decode(response.body);
 
@@ -99,12 +103,13 @@ Future<Location?> findLocation(String searchText) async {
 
     final searchLocation = searchRes['results'][0]['geometry']['location'];
     Location returnLocation = const Location();
-    return returnLocation.copyWith(
+    returnLocation = returnLocation.copyWith(
       name: searchRes['results'][0]['name'],
       fullAddress: searchRes['results'][0]['formatted_address'],
       latitude: searchLocation['lat'],
       longitude: searchLocation['lng'],
     );
+    return returnLocation;
   } else {
     return null;
   }
@@ -165,7 +170,7 @@ Future<Location?> getCurrentLocation() async {
         }
 
         Location returnLocation = const Location();
-        return returnLocation.copyWith(
+        returnLocation = returnLocation.copyWith(
           fullAddress: geocodeRes['results'][0]['formatted_address'],
           address: address,
           district: district,
@@ -173,6 +178,7 @@ Future<Location?> getCurrentLocation() async {
           latitude: currentLocation.latitude!,
           longitude: currentLocation.longitude!,
         );
+        return returnLocation;
       }
     } else {
       return Location(

@@ -7,9 +7,9 @@ import 'package:sportifind/core/util/booking_util.dart';
 import 'package:sportifind/features/match/domain/entities/booking_entity.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/domain/usecases/create_match.dart';
-import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/home/player_home_screen.dart';
 
 
 class BookingBloc extends ChangeNotifier {
@@ -259,7 +259,7 @@ class BookingBloc extends ChangeNotifier {
   void returnToMainScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const MatchMainScreen()),
+      MaterialPageRoute(builder: (context) => const PlayerHomeScreen()),
     );
   }
 }

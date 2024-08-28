@@ -29,11 +29,9 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
 
   Future<void> _updateStatus() async {
     try {
-      for (var field in widget.stadium.fields) {
-        field.copyWith(status: _fieldsStatus[field.id] == 'active');
-      }
-      for (var field in _fieldsStatus.entries) {
-        print('${field.key}: ${field.value}');
+      for (var i = 0; i < widget.stadium.fields.length; i++) {
+        widget.stadium.fields[i] = 
+          widget.stadium.fields[i].copyWith(status: _fieldsStatus[widget.stadium.fields[i].id] == 'active');
       }
       await UseCaseProvider.getUseCase<UpdateFieldStatus>().call(
         UpdateFieldStatusParams(widget.stadium),

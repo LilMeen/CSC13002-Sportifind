@@ -66,7 +66,6 @@ class _TeamDetailsState extends State<TeamDetails>
 
   @override
   Widget build(context) {
-    print(widget.role);
     return FutureBuilder<void>(
       future: _initializationFuture,
       builder: (context, snapshot) {
