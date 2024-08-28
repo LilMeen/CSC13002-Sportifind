@@ -6,7 +6,6 @@ import 'package:sportifind/core/util/datetime_util.dart';
 import 'package:sportifind/core/widgets/date_picker.dart';
 import 'package:sportifind/features/match/domain/entities/booking_entity.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
-import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
 import 'package:sportifind/features/match/presentation/widgets/booking_calendar.dart';
 import 'package:sportifind/features/match/presentation/widgets/field_picker.dart';
 import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
@@ -14,6 +13,7 @@ import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart'
 import 'package:sportifind/features/stadium/domain/usecases/get_field_by_numberid.dart';
 import 'package:sportifind/features/stadium/domain/usecases/get_field_schedule.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/home/player_home_screen.dart';
 
 class DateSelectScreen extends StatefulWidget {
   const DateSelectScreen({
@@ -367,7 +367,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MatchMainScreen(),
+                    builder: (context) => const PlayerHomeScreen(),
                   ),
                 );
               },

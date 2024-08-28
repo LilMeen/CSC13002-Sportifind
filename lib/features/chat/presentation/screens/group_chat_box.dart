@@ -46,7 +46,7 @@ class _GroupChatBoxState extends State<GroupChatBox> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
-          );
+          ); 
         } else if (snapshot.hasError) {
           return const Center(
             child: Text('Error loading messages'),

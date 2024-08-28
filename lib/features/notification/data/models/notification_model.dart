@@ -4,7 +4,7 @@ import 'package:sportifind/features/notification/domain/entities/notification_en
 class NotificationModel {
   String? id;
   bool isRead;
-  String matchId = "";
+  String matchId;
   final String receiver;
   final String sender;
   final String senderType;

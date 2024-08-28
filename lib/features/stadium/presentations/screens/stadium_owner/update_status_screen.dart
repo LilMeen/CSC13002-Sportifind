@@ -5,7 +5,7 @@ import 'package:sportifind/core/widgets/app_bar/flutter_app_bar_blue_purple.dart
 import 'package:sportifind/core/widgets/button/blue_purple_white_loading_buttton.dart';
 import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'package:sportifind/features/stadium/domain/usecases/update_field_status.dart';
-import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/owner_stadium_screen.dart';
+import 'package:sportifind/home/stadium_owner_home_screen.dart';
 
 class UpdateStatusScreen extends StatefulWidget {
   final StadiumEntity stadium;
@@ -32,13 +32,16 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
       for (var field in widget.stadium.fields) {
         field.copyWith(status: _fieldsStatus[field.id] == 'active');
       }
+      for (var field in _fieldsStatus.entries) {
+        print('${field.key}: ${field.value}');
+      }
       await UseCaseProvider.getUseCase<UpdateFieldStatus>().call(
         UpdateFieldStatusParams(widget.stadium),
       );
 
       if (mounted) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const OwnerStadiumScreen(),
+          builder: (context) => const StadiumOwnerHomeScreen(),
         ));
       }
     } catch (e) {

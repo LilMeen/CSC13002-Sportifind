@@ -51,7 +51,7 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: SizedBox(
-        height: 403,
+        height: teamsInformation.isEmpty? 100 : 405,
         width: double.infinity,
         child: FutureBuilder<void>(
           future: initializationFuture,
@@ -60,7 +60,16 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return const Center(child: Text("Error loading data"));
-            } else {
+            } else if (teamsInformation.isEmpty) {
+              return const SizedBox(
+                height: 100,
+                child: Center(
+                  child: Text("No teams found, lets create one!")
+                )
+              );
+            }
+            
+            else {
               return ListView.builder(
                 padding: const EdgeInsets.only(top: 0, bottom: 0, left: 8),
                 itemCount: teamsInformation.length,

@@ -8,7 +8,7 @@ import 'package:sportifind/core/widgets/app_bar/flutter_app_bar_blue_purple.dart
 import 'package:sportifind/core/widgets/button/blue_purple_white_loading_buttton.dart';
 import 'package:sportifind/core/widgets/form/custom_form.dart';
 import 'package:sportifind/features/team/presentation/bloc/team_bloc.dart';
-import 'package:sportifind/features/team/presentation/screens/team_main_screen.dart';
+import 'package:sportifind/home/player_home_screen.dart';
 
 class CreateTeamScreen extends StatefulWidget {
   const CreateTeamScreen({super.key});
@@ -95,7 +95,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const TeamMainScreen(),
+            builder: (context) => const PlayerHomeScreen(),
           ),
         );
       }

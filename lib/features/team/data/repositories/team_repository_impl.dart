@@ -59,9 +59,7 @@ class TeamRepositoryImpl implements TeamRepository {
         await teamRemoteDataSource.getTeamByPlayer(playerId);
     List<TeamEntity> teamEntityList = [];
     for (var team in teamModelList) {
-      if (team.captain == playerId) {
-        teamEntityList.add(await team.toEntity());
-      }
+      teamEntityList.add(await team.toEntity());
     }
     return Result.success(teamEntityList);
   }

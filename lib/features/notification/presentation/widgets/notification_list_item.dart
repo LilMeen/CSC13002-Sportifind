@@ -52,9 +52,11 @@ class _NotificationListItemState extends State<NotificationListItem> {
     actionTaken = widget.notificationData.isRead;
     senderId = await convertNameToTeamId(senderTeamName);
     receiverId = await convertNameToTeamId(receiverTeamName);
-    matchInfo = await UseCaseProvider.getUseCase<GetMatch>()(
-      GetMatchParams(matchId: widget.notificationData.matchId),
-    ).then((value) => value.data);
+    if (widget.notificationData.type == 'match') {
+      matchInfo = await UseCaseProvider.getUseCase<GetMatch>()(
+        GetMatchParams(matchId: widget.notificationData.matchId),
+      ).then((value) => value.data);
+    }
 
     setState(() {}); // Update the state after initialization
   }
@@ -357,7 +359,7 @@ class _NotificationListItemState extends State<NotificationListItem> {
       case "match accepted":
         return buildInviteAcceptMessage(
             widget.notificationData.receiver, widget.notificationData.sender);
-      case "match sent":
+      case "match sent": case "sent":
         return buildInviteSentMessage(
             widget.notificationData.receiver, widget.notificationData.sender);
       case "match denied":
@@ -415,6 +417,7 @@ class _NotificationListItemState extends State<NotificationListItem> {
               ),
             );
           case "match sent": case "match deleted": case "match rejected": case "match denied":
+          case "sent":
             await UseCaseProvider.getUseCase<MarkAsRead>()(
               MarkAsReadParams(notification: widget.notificationData),
             );

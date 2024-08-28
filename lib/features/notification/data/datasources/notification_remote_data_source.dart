@@ -410,18 +410,19 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
           'receiver': teamName,
           'time': Timestamp.now(), // time to sort
           'isRead': false,
+          'match': '',
         });
       });
 
       await userNoti.add({
-        'type':
-            'request', // invite request, sent request, evaluate, announce, message, accepted request
+        'type': 'request', // invite request, sent request, evaluate, announce, message, accepted request
         'status': 'sent',
         'senderType': 'player', // player, admin, stadium owner, team
         'sender': userName, // username
         'receiver': teamName,
         'time': Timestamp.now(), // time to sort
         'isRead': false,
+        'match': '',
       });
     } catch (e) {
       throw ('Error: $e');
