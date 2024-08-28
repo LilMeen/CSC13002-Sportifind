@@ -224,6 +224,7 @@ class StadiumOwnerProfileScreenState extends State<StadiumOwnerProfileScreen> {
             icon: Icon(Icons.settings, color: SportifindTheme.bluePurple),
           ),
         ],
+        automaticallyImplyLeading: false,
       ),
       backgroundColor: SportifindTheme.backgroundColor,
       body: Padding(

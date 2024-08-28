@@ -37,3 +37,33 @@ class FeatureAppBarBluePurple extends StatelessWidget
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
+
+
+class MainFeatureAppBarBluePurple extends StatelessWidget
+    implements PreferredSizeWidget {
+  final String title;
+  final String size;
+
+  const MainFeatureAppBarBluePurple(
+      {super.key, required this.title, this.size = 'large'});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: Text(
+        title,
+        style: size == 'large'
+            ? SportifindTheme.sportifindFeatureAppBarBluePurple
+            : SportifindTheme.sportifindFeatureAppBarBluePurpleSmall,
+      ),
+      centerTitle: true,
+      backgroundColor: SportifindTheme.backgroundColor,
+      elevation: 0,
+      surfaceTintColor: SportifindTheme.backgroundColor, 
+      automaticallyImplyLeading: false,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}

@@ -261,120 +261,122 @@ class ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
       backgroundColor: SportifindTheme.backgroundColor,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              children: [
-                Stack(
-                  children: [
-                    SizedBox(
-                      width: 120,
-                      height: 120,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: player!.avatar.path == ''
-                            ? const Image(
-                                image: AssetImage("lib/assets/no_avatar.png"),
-                                fit: BoxFit.cover,
-                                width: 200,
-                                height: 200,
-                              )
-                            : Image.network(
-                                player!.avatar.path,
-                                fit: BoxFit.cover,
-                                width: 200,
-                                height: 200,
-                              ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        width: 35,
-                        height: 35,
-                        decoration: BoxDecoration(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      SizedBox(
+                        width: 120,
+                        height: 120,
+                        child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
-                          color: SportifindTheme.bluePurple,
+                          child: player!.avatar.path == ''
+                              ? const Image(
+                                  image: AssetImage("lib/assets/no_avatar.png"),
+                                  fit: BoxFit.cover,
+                                  width: 200,
+                                  height: 200,
+                                )
+                              : Image.network(
+                                  player!.avatar.path,
+                                  fit: BoxFit.cover,
+                                  width: 200,
+                                  height: 200,
+                                ),
                         ),
-                        child: IconButton(
-                          onPressed: () => _showImagePickerOptions(context),
-                          icon: const Icon(
-                            Icons.camera_alt_outlined,
-                            color: SportifindTheme.backgroundColor,
-                            size: 20,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          width: 35,
+                          height: 35,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: SportifindTheme.bluePurple,
+                          ),
+                          child: IconButton(
+                            onPressed: () => _showImagePickerOptions(context),
+                            icon: const Icon(
+                              Icons.camera_alt_outlined,
+                              color: SportifindTheme.backgroundColor,
+                              size: 20,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 15),
-                Text(player!.name,
-                    style:
-                        SportifindTheme.normalTextBlack.copyWith(fontSize: 16)),
-                Text(player!.email,
-                    style:
-                        SportifindTheme.normalTextBlack.copyWith(fontSize: 16)),
-                const SizedBox(height: 15),
-                SizedBox(
-                  width: 120,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              EditInformationScreen(player: player!),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: SportifindTheme.bluePurple,
-                      side: BorderSide.none,
-                      shape: const StadiumBorder(),
-                    ),
-                    child: Text('Edit',
-                        style: SportifindTheme.normalTextWhite
-                            .copyWith(fontSize: 16)),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 5),
-                InformationMenu(textContent: player!.phone, icon: "phone"),
-                InformationMenu(
-                    textContent:
-                        "${player!.location.district}, ${player!.location.city} City",
-                    icon: "location"),
-                InformationMenu(textContent: player!.dob, icon: "dob"),
-                const Divider(),
-                InformationMenu(
-                    textContent: player!.height != ''
-                        ? "${player!.height} m"
-                        : "No information",
-                    icon: "height"),
-                InformationMenu(
-                    textContent: player!.weight != ''
-                        ? "${player!.weight} kg"
-                        : "No information",
-                    icon: "weight"),
-                InformationMenu(
-                  textContent: player!.preferredFoot == 'right'
-                      ? "Right footed"
-                      : player!.preferredFoot == 'left'
-                          ? "Left footed"
+                  const SizedBox(height: 15),
+                  Text(player!.name,
+                      style:
+                          SportifindTheme.normalTextBlack.copyWith(fontSize: 16)),
+                  Text(player!.email,
+                      style:
+                          SportifindTheme.normalTextBlack.copyWith(fontSize: 16)),
+                  const SizedBox(height: 15),
+                  SizedBox(
+                    width: 120,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EditInformationScreen(player: player!),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: SportifindTheme.bluePurple,
+                        side: BorderSide.none,
+                        shape: const StadiumBorder(),
+                      ),
+                      child: Text('Edit',
+                          style: SportifindTheme.normalTextWhite
+                              .copyWith(fontSize: 16)),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  InformationMenu(textContent: player!.phone, icon: "phone"),
+                  InformationMenu(
+                      textContent:
+                          "${player!.location.district}, ${player!.location.city} City",
+                      icon: "location"),
+                  InformationMenu(textContent: player!.dob, icon: "dob"),
+                  const Divider(),
+                  InformationMenu(
+                      textContent: player!.height != ''
+                          ? "${player!.height} m"
                           : "No information",
-                  icon: "foot",
-                ),
-                const SizedBox(height: 50),
-                Hexagon(
-                  screenWidth: MediaQuery.of(context).size.width,
-                  ratings: defaultRatings,
-                ),
-              ],
+                      icon: "height"),
+                  InformationMenu(
+                      textContent: player!.weight != ''
+                          ? "${player!.weight} kg"
+                          : "No information",
+                      icon: "weight"),
+                  InformationMenu(
+                    textContent: player!.preferredFoot == 'right'
+                        ? "Right footed"
+                        : player!.preferredFoot == 'left'
+                            ? "Left footed"
+                            : "No information",
+                    icon: "foot",
+                  ),
+                  const SizedBox(height: 30),
+                  Hexagon(
+                    screenWidth: MediaQuery.of(context).size.width,
+                    ratings: defaultRatings,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

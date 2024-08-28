@@ -7,6 +7,7 @@ import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/location_util.dart';
+import 'package:sportifind/core/widgets/app_bar/flutter_app_bar_blue_purple.dart';
 import 'package:sportifind/core/widgets/city_dropdown.dart';
 import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
@@ -73,7 +74,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
       _genderController.text = widget.stadiumOwner.gender;
 
       _delayCityTime?.cancel();
-      _delayCityTime = Timer(const Duration(milliseconds: 300), () {
+      _delayCityTime = Timer(const Duration(milliseconds: 100), () {
         setState(() {
           _cityController.text = widget.stadiumOwner.location.city;
         });
@@ -455,93 +456,94 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
   @override
   Widget build(BuildContext context) {
     return Scaffold( 
+      appBar: const FeatureAppBarBluePurple(title: 'Edit Profile'),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const SizedBox(height: 20),
-                 Text('Edit Information', style: SportifindTheme.sportifindFeatureAppBarBluePurple),
-                const SizedBox(height: 20),
-                _buildSection('Name', _nameController),
-                const SizedBox(height: 16),
-                _buildSection('Phone Number', _phoneController),
-                const SizedBox(height: 16),
-                _buildDropdownSection('Gender', _genderController),
-                const SizedBox(height: 16),
-                _buildDobSection('Date Of Birth', _dateController),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: 290,
-                  child: Column(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const SizedBox(height: 20),
+                  _buildSection('Name', _nameController),
+                  const SizedBox(height: 16),
+                  _buildSection('Phone Number', _phoneController),
+                  const SizedBox(height: 16),
+                  _buildDropdownSection('Gender', _genderController),
+                  const SizedBox(height: 16),
+                  _buildDobSection('Date Of Birth', _dateController),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: 290,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            style: SportifindTheme.normalTextBlack,
+                            children: const <TextSpan>[
+                              TextSpan(text: 'City'),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        CityDropdown(
+                          selectedCity: _cityController.text,
+                          onChanged: (value) {
+                            setState(() {
+                              _cityController.text = value ?? '';
+                              _districtController.text = '';
+                            });
+                          },
+                          citiesNameAndId: citiesNameAndId,
+                          fillColor: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       RichText(
                         text: TextSpan(
                           style: SportifindTheme.normalTextBlack,
                           children: const <TextSpan>[
-                            TextSpan(text: 'City'),
+                            TextSpan(text: 'District'),
                           ],
                         ),
                       ),
                       const SizedBox(height: 12),
-                      CityDropdown(
-                        selectedCity: _cityController.text,
-                        onChanged: (value) {
-                          setState(() {
-                            _cityController.text = value ?? '';
-                            _districtController.text = '';
-                          });
-                        },
-                        citiesNameAndId: citiesNameAndId,
-                        fillColor: Colors.white,
+                      SizedBox(
+                        width: 290,
+                        child: DistrictDropdown(
+                          selectedCity: _cityController.text,
+                          selectedDistrict: _districtController.text,
+                          onChanged: (value) {
+                            setState(() {
+                              _districtController.text = value ?? '';
+                            });
+                          },
+                          citiesNameAndId: citiesNameAndId,
+                          fillColor: Colors.white,
+                        ),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        style: SportifindTheme.normalTextBlack,
-                        children: const <TextSpan>[
-                          TextSpan(text: 'District'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: 290,
-                      child: DistrictDropdown(
-                        selectedCity: _cityController.text,
-                        selectedDistrict: _districtController.text,
-                        onChanged: (value) {
-                          setState(() {
-                            _districtController.text = value ?? '';
-                          });
-                        },
-                        citiesNameAndId: citiesNameAndId,
-                        fillColor: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildSection('Address', _addressController),
-                const SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.only(left: 190),
-                  child: _nextButton(context),
-                ),
-                const SizedBox(height: 20),
-              ],
+                  const SizedBox(height: 16),
+                  _buildSection('Address', _addressController),
+                  const SizedBox(height: 40),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 190),
+                    child: _nextButton(context),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),

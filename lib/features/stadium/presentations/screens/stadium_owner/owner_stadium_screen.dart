@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/core/widgets/app_bar/flutter_app_bar_blue_purple.dart';
 import 'package:sportifind/features/stadium/presentations/bloc/owner_stadium_bloc.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_search_screen.dart';
 
@@ -49,11 +50,14 @@ class _OwnerStadiumScreenState extends State<OwnerStadiumScreen> {
 
         return RefreshIndicator(
           onRefresh: _bloc.refreshStadiums,
-          child: StadiumSearchScreen(
-            userLocation: state.user!.location,
-            stadiums: state.stadiums,
-            owners: [state.user!],
-            isStadiumOwnerUser: true,
+          child: Scaffold(
+            appBar: const MainFeatureAppBarBluePurple(title: 'Stadium'),
+            body: StadiumSearchScreen(
+              userLocation: state.user!.location,
+              stadiums: state.stadiums,
+              owners: [state.user!],
+              isStadiumOwnerUser: true,
+            ),
           ),
         );
       },

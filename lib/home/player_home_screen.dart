@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sportifind/home/widgets/app_fader_effect.dart';
 import 'package:sportifind/home/widgets/bottom_navigation.dart';
 import 'package:sportifind/features/chat/presentation/screens/chat_main_screen.dart';
@@ -14,8 +13,6 @@ import 'package:sportifind/features/notification/presentation/screens/notificati
 import 'package:sportifind/features/profile/presentation/screens/profile_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/player/player_stadium_screen.dart';
 import 'package:sportifind/features/team/presentation/screens/team_main_screen.dart';
-import 'package:sportifind/home/widgets/bottom_navigation.dart';
-import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 
 class PlayerHomeScreen extends StatefulWidget {

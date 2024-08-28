@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/features/profile/presentation/screens/stadium_owner_profile_screen.dart'; 
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/owner_stadium_screen.dart';
 import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/schedule_screen.dart';
@@ -43,23 +44,27 @@ class _StadiumOwnerHomeScreenState extends State<StadiumOwnerHomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart_outlined),
             label: 'Data',
+            backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_month_outlined),
             label: 'Schedule',
+            backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.stadium_outlined),
             label: 'Stadium',
+            backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Personal',
+            backgroundColor: Colors.white,
           ),
         ],
         unselectedItemColor: Colors.grey[600],  
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: SportifindTheme.bluePurple,
         onTap: _onItemTapped,
       ),
     );

@@ -240,7 +240,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     return RefreshIndicator(
       onRefresh: _refreshStadiums,
       child: Scaffold(
-        appBar: const FeatureAppBarBluePurple(title: 'Schedule'),
+        appBar: const MainFeatureAppBarBluePurple(title: 'Schedule'),
         backgroundColor: Colors.white,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
