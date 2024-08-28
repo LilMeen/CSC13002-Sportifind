@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sportifind/core/entities/location.dart';
@@ -21,6 +20,8 @@ class TeamModel {
   final Map<String, bool> incomingMatch;
   final List<String> matchSendRequest;
   final List<String> matchInviteRequest;
+  final List<String> invitedPlayers;
+  final List<String> joinRequestsFromPlayers;
 
   TeamModel({
     required this.id,
@@ -35,12 +36,15 @@ class TeamModel {
     required this.incomingMatch,
     required this.matchSendRequest,
     required this.matchInviteRequest,
+    required this.invitedPlayers,
+    required this.joinRequestsFromPlayers,
   });
 
   // REMOTE DATA SOURCE
-  ProfileRemoteDataSource profileRemoteDataSource = GetIt.instance<ProfileRemoteDataSource>();
-  MatchRemoteDataSource matchRemoteDataSource = GetIt.instance<MatchRemoteDataSource>();
-
+  ProfileRemoteDataSource profileRemoteDataSource =
+      GetIt.instance<ProfileRemoteDataSource>();
+  MatchRemoteDataSource matchRemoteDataSource =
+      GetIt.instance<MatchRemoteDataSource>();
 
   // DATA CONVERSION
   factory TeamModel.fromFirestore(DocumentSnapshot teamDoc) {
@@ -59,6 +63,8 @@ class TeamModel {
       incomingMatch: Map<String, bool>.from(data['incomingMatch'] ?? {}),
       matchSendRequest: List<String>.from(data['matchSendRequest'] ?? []),
       matchInviteRequest: List<String>.from(data['matchInviteRequest'] ?? []),
+      invitedPlayers: List<String>.from(data['invitedPlayers'] ?? []),
+      joinRequestsFromPlayers: List<String>.from(data['joinRequestsFromPlayers'] ?? []),
     );
   }
 
@@ -75,17 +81,33 @@ class TeamModel {
       'incomingMatch': incomingMatch,
       'matchSendRequest': matchSendRequest,
       'matchInviteRequest': matchInviteRequest,
+      'invitedPlayers': invitedPlayers,
+      'joinRequestsFromPlayers': joinRequestsFromPlayers,
     };
   }
 
-  Future<TeamEntity> toEntity() async{
-    PlayerEntity captainEntity = await profileRemoteDataSource.getPlayer(captain).then((value) => value.toEntity());
+  Future<TeamEntity> toEntity() async {
+    PlayerEntity captainEntity = await profileRemoteDataSource
+        .getPlayer(captain)
+        .then((value) => value.toEntity());
     List<PlayerEntity> playersEntity = [];
     for (var playerId in players) {
       final player = await profileRemoteDataSource.getPlayer(playerId);
       playersEntity.add(await player.toEntity());
     }
     Location teamLocation = Location(city: city, district: district);
+
+    List<PlayerEntity> invitedPlayersEntity = [];
+    for (var playerId in invitedPlayers) {
+      final player = await profileRemoteDataSource.getPlayer(playerId);
+      invitedPlayersEntity.add(await player.toEntity());
+    }
+
+    List<PlayerEntity> joinRequestsFromPlayersEntity = [];
+    for (var playerId in joinRequestsFromPlayers) {
+      final player = await profileRemoteDataSource.getPlayer(playerId);
+      joinRequestsFromPlayersEntity.add(await player.toEntity());
+    }
 
     return TeamEntity(
       id: id,
@@ -97,6 +119,8 @@ class TeamModel {
       name: name,
       players: playersEntity,
       incomingMatch: incomingMatch,
+      invitedPlayers: invitedPlayersEntity,
+      joinRequestsFromPlayers: joinRequestsFromPlayersEntity,
     );
   }
 
@@ -112,9 +136,14 @@ class TeamModel {
       name: team.name,
       players: team.players.map((e) => e.id).toList(),
       incomingMatch: team.incomingMatch,
-      matchSendRequest: team.matchSendRequest?.map((e) => e.matchId).toList() ?? [],
-      matchInviteRequest: team.matchInviteRequest?.map((e) => e.matchId).toList() ?? [],
+      matchSendRequest:
+          team.matchSendRequest?.map((e) => e.matchId).toList() ?? [],
+      matchInviteRequest:
+          team.matchInviteRequest?.map((e) => e.matchId).toList() ?? [],
+      invitedPlayers: 
+          team.invitedPlayers?.map((e) => e.id).toList() ?? [],
+      joinRequestsFromPlayers:
+          team.joinRequestsFromPlayers?.map((e) => e.id).toList() ?? [],
     );
   }
 }
-

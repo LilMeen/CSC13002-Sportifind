@@ -15,8 +15,10 @@ class TeamEntity {
   List<File>? images;
   List<MatchRequest>? matchSendRequest;
   List<MatchRequest>? matchInviteRequest;
+  List<PlayerEntity>? invitedPlayers;
+  List<PlayerEntity>? joinRequestsFromPlayers; 
 
-  TeamEntity ({
+  TeamEntity({
     required this.id,
     required this.name,
     required this.avatar,
@@ -28,10 +30,12 @@ class TeamEntity {
     this.images,
     this.matchSendRequest,
     this.matchInviteRequest,
+    this.invitedPlayers,
+    this.joinRequestsFromPlayers, 
   });
 }
 
-class MatchRequest{
+class MatchRequest {
   String matchId;
   String receiverId;
   String senderId;

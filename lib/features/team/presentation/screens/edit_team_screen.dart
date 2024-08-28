@@ -214,7 +214,7 @@ class _EditTeamScreenState extends State<EditTeamScreen> {
                 deleteImage: _deleteImageInList,
               ),
               const SizedBox(height: 16),
-              PlayerList(members: teamMembers, type: 'kick', team: widget.team),
+              PlayerList(members: teamMembers, team: widget.team, role: 'captain'),
               SizedBox(
                 width: double.infinity,
                 child: BluePurpleWhiteLoadingButton(

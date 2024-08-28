@@ -14,12 +14,11 @@ import 'package:sportifind/features/team/presentation/screens/edit_team_screen.d
 import 'package:sportifind/features/team/presentation/widgets/player_list.dart';
 
 class TeamDetails extends StatefulWidget {
-  const TeamDetails(
-      {super.key,
-      required this.teamId,
-      required this.role}); // role: teamMember: normal - captain, other: have been added - have not
+  const TeamDetails({
+    super.key,
+    required this.teamId,
+  }); // role: teamMember: normal - captain, other: have been added - have not
   final String teamId;
-  final String role;
 
   @override
   State<TeamDetails> createState() => _TeamDetailsState();
@@ -31,6 +30,7 @@ class _TeamDetailsState extends State<TeamDetails>
   List<PlayerEntity> teamMembers = [];
   String captain = '';
   bool isLoading = true;
+  String role = '';
   late AnimationController animationController;
   late Future<void> _initializationFuture;
 
@@ -45,17 +45,35 @@ class _TeamDetailsState extends State<TeamDetails>
   }
 
   Future<void> _initialize() async {
-    final teamInformation = await UseCaseProvider.getUseCase<GetTeam>().call(
-      GetTeamParams(id: widget.teamId),
-    ).then((value) => value.data!);
+    final teamInformation = await UseCaseProvider.getUseCase<GetTeam>()
+        .call(
+          GetTeamParams(id: widget.teamId),
+        )
+        .then((value) => value.data!);
 
     teamMembers = teamInformation.players;
     captain = teamInformation.captain.name;
-
+    whoIsViewing(); 
     setState(() {
       this.teamInformation = teamInformation;
       isLoading = false;
     });
+  }
+
+  String get foundedDate {
+    return '${teamInformation!.foundedDate.day}/${teamInformation!.foundedDate.month}/${teamInformation!.foundedDate.year}';
+  }
+
+  void whoIsViewing() {
+    String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    if (teamInformation!.captain.id == currentUserId) {
+      role = 'captain';
+    } else if (teamInformation!.players
+        .any((element) => element.id == currentUserId)) {
+      role = 'member';
+    } else {
+      role = 'other';
+    }
   }
 
   @override
@@ -66,7 +84,6 @@ class _TeamDetailsState extends State<TeamDetails>
 
   @override
   Widget build(context) {
-    print(widget.role);
     return FutureBuilder<void>(
       future: _initializationFuture,
       builder: (context, snapshot) {
@@ -89,14 +106,12 @@ class _TeamDetailsState extends State<TeamDetails>
               ),
               centerTitle: true,
               actions: <Widget>[
-                (widget.role == 'normal' || widget.role == 'captain')
-                    ? IconButton(
-                        icon: const Icon(Icons.settings),
-                        onPressed: () {
-                          _showCustomDialog(context);
-                        },
-                      )
-                    : const SizedBox(width: 0, height: 0),
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    _showCustomDialog(context);
+                  },
+                )
               ],
             ),
             body: SingleChildScrollView(
@@ -117,8 +132,8 @@ class _TeamDetailsState extends State<TeamDetails>
                             children: [
                               CircleAvatar(
                                 radius: 50,
-                                backgroundImage: NetworkImage(
-                                    teamInformation!.avatar.path),
+                                backgroundImage:
+                                    NetworkImage(teamInformation!.avatar.path),
                               ),
                               const SizedBox(width: 10),
                               Column(
@@ -146,7 +161,7 @@ class _TeamDetailsState extends State<TeamDetails>
                                         CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Members ',
+                                        'Members   ',
                                         style: SportifindTheme.normalTextWhite
                                             .copyWith(
                                           fontSize: 16,
@@ -168,7 +183,7 @@ class _TeamDetailsState extends State<TeamDetails>
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Captain   ',
+                                        'Captain     ',
                                         style: SportifindTheme.normalTextWhite
                                             .copyWith(
                                           fontSize: 16,
@@ -200,7 +215,7 @@ class _TeamDetailsState extends State<TeamDetails>
                           children: [
                             Text(
                               'Details',
-                              style: SportifindTheme.normalTextBlack.copyWith(
+                              style: SportifindTheme.featureTitleBlack.copyWith(
                                 fontSize: 24,
                                 color: Colors.black,
                               ),
@@ -210,9 +225,13 @@ class _TeamDetailsState extends State<TeamDetails>
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const CircleAvatar(
+                                CircleAvatar(
+                                  backgroundColor: Colors.white,
                                   radius: 16,
-                                  backgroundColor: Colors.grey,
+                                  child: Icon(
+                                    Icons.location_on,
+                                    color: SportifindTheme.bluePurple,
+                                  ),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
@@ -230,13 +249,17 @@ class _TeamDetailsState extends State<TeamDetails>
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const CircleAvatar(
+                                CircleAvatar(
+                                  backgroundColor: Colors.white,
                                   radius: 16,
-                                  backgroundColor: Colors.grey,
+                                  child: Icon(
+                                    Icons.date_range,
+                                    color: SportifindTheme.bluePurple,
+                                  ),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  teamInformation!.foundedDate.toString(),
+                                  foundedDate,
                                   style:
                                       SportifindTheme.normalTextWhite.copyWith(
                                     fontSize: 16,
@@ -245,21 +268,21 @@ class _TeamDetailsState extends State<TeamDetails>
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 15),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
                                   'Images',
-                                  style:
-                                      SportifindTheme.normalTextBlack.copyWith(
-                                    fontSize: 20,
+                                  style: SportifindTheme.featureTitleBlack
+                                      .copyWith(
+                                    fontSize: 24,
                                     color: Colors.black,
                                   ),
                                 ),
-                                teamInformation!.images == []
+                                teamInformation!.images?.isEmpty ?? true
                                     ? Text(
-                                        '       No image yet',
+                                        ' (No images)',
                                         style: SportifindTheme.normalTextBlack
                                             .copyWith(
                                           color: Colors.grey,
@@ -272,29 +295,26 @@ class _TeamDetailsState extends State<TeamDetails>
                                       ),
                               ],
                             ),
-                            const SizedBox(height: 5),
-                            teamInformation!.images != null
-                                ? SizedBox(
-                                    height:
-                                        200, // Set the desired height for the scrollable area
-                                    child: ListView.builder(
-                                      itemCount: teamInformation!.images?.length, // Assuming teamInformation has a list of image URLs
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 8.0),
-                                          child: Image.network(
-                                            teamInformation!.images![index].path, // Replace with your image URL
-                                            fit: BoxFit.cover,
-                                          ),
-                                        );
-                                      },
+                            const SizedBox(height: 7),
+                            SizedBox(
+                              height: teamInformation!.images?.isEmpty ?? true
+                                  ? 0
+                                  : 200, // Set the desired height for the scrollable area
+                              child: ListView.builder(
+                                itemCount: teamInformation!.images
+                                    ?.length, // Assuming teamInformation has a list of image URLs
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Image.network(
+                                      teamInformation!.images![index]
+                                          .path, // Replace with your image URL
+                                      fit: BoxFit.cover,
                                     ),
-                                  )
-                                : const SizedBox(
-                                    height: 0,
-                                    width: 0,
-                                  )
+                                  );
+                                },
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -302,7 +322,7 @@ class _TeamDetailsState extends State<TeamDetails>
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Members',
-                          style: SportifindTheme.normalTextBlack.copyWith(
+                          style: SportifindTheme.featureTitleBlack.copyWith(
                             fontSize: 24,
                             color: Colors.black,
                           ),
@@ -311,12 +331,12 @@ class _TeamDetailsState extends State<TeamDetails>
 
                       PlayerList(
                         members: teamMembers,
-                        type: 'view',
+                        role: role, 
                         team: teamInformation,
                       ),
 
                       // create a elevated button here
-                      (widget.role == 'captain' || widget.role == 'normal')
+                      (role == 'captain' || role == 'normal')
                           ? const SizedBox(
                               height: 0,
                               width: 0,
@@ -333,10 +353,12 @@ class _TeamDetailsState extends State<TeamDetails>
                                     ),
                                   ),
                                   onPressed: () {
-                                    UseCaseProvider.getUseCase<RequestToJoinTeam>()
+                                    UseCaseProvider.getUseCase<
+                                            RequestToJoinTeam>()
                                         .call(
                                       RequestToJoinTeamParams(
-                                        userId: FirebaseAuth.instance.currentUser!.uid,
+                                        userId: FirebaseAuth
+                                            .instance.currentUser!.uid,
                                         teamId: teamInformation!.id,
                                       ),
                                     );
@@ -391,104 +413,129 @@ class _TeamDetailsState extends State<TeamDetails>
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              widget.role == 'captain'
-                  ? ListTile(
-                      leading:
-                          Icon(Icons.edit, color: SportifindTheme.bluePurple),
-                      title: Text(
-                        'Edit Team',
-                        style: SportifindTheme.normalTextBlack.copyWith(
-                          fontSize: 16,
+              role == 'captain'
+                  ? Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey.withOpacity(0.5),
+                            width: 1.0,
+                          ),
                         ),
                       ),
-                      onTap: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => EditTeamScreen(
-                              team: teamInformation,
+                      child: ListTile(
+                        leading:
+                            Icon(Icons.edit, color: SportifindTheme.bluePurple),
+                        title: Text(
+                          'Edit Team',
+                          style: SportifindTheme.normalTextBlack.copyWith(
+                            fontSize: 16,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => EditTeamScreen(
+                                team: teamInformation,
+                              ),
                             ),
-                          ),
-                        );
-                        // Handle the edit action
-                        //Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Moving to Edit Team'),
-                          ),
-                        );
-                      },
+                          );
+                          // Handle the edit action
+                          //Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Moving to Edit Team'),
+                            ),
+                          );
+                        },
+                      ),
                     )
                   : const SizedBox(
                       height: 0,
                       width: 0,
                     ),
-              widget.role == 'captain'
-                  ? const Divider()
-                  : const SizedBox(
-                      height: 0,
-                      width: 0,
-                    ),
-              ListTile(
-                leading: Icon(Icons.output_outlined,
-                    color: Colors.red.withOpacity(0.9)),
-                title: Text(
-                  'Leave Team',
-                  style: SportifindTheme.normalTextBlack.copyWith(
-                    fontSize: 16,
-                  ),
-                ),
-                onTap: () {
-                  UseCaseProvider.getUseCase<KickPlayer>().call(
-                    KickPlayerParams(
-                      team: teamInformation!,
-                      player: teamInformation!.players.firstWhere(
-                        (element) => element.id == FirebaseAuth.instance.currentUser!.uid,
-                      ),
-                      type: 'leave',
-                    ),
-                  );
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('You have left ${teamInformation!.name}'),
-                    ),
-                  );
-                },
-              ),
-              const Divider(),
-              widget.role == 'captain'
-                  ? ListTile(
-                      leading: Icon(
-                        Icons.delete,
-                        color: Colors.red.withOpacity(0.9),
-                      ),
-                      title: Text(
-                        'Delete Team',
-                        style: SportifindTheme.normalTextBlack.copyWith(
-                          fontSize: 16,
+              role == 'captain' || role == 'member'
+                  ? Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey.withOpacity(0.5),
+                            width: 1.0,
+                          ),
                         ),
                       ),
-                      onTap: () async {
-                        await UseCaseProvider.getUseCase<DeleteTeam>().call(
-                          DeleteTeamParams(teamId: teamInformation!.id),
-                        );
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                'You have deleted ${teamInformation!.name}'),
+                      child: ListTile(
+                        leading: Icon(Icons.output_outlined,
+                            color: Colors.red.withOpacity(0.9)),
+                        title: Text(
+                          'Leave Team',
+                          style: SportifindTheme.normalTextBlack.copyWith(
+                            fontSize: 16,
                           ),
-                        );
-                      },
+                        ),
+                        onTap: () {
+                          UseCaseProvider.getUseCase<KickPlayer>().call(
+                            KickPlayerParams(
+                              team: teamInformation!,
+                              player: teamInformation!.players.firstWhere(
+                                (element) =>
+                                    element.id ==
+                                    FirebaseAuth.instance.currentUser!.uid,
+                              ),
+                              type: 'leave',
+                            ),
+                          );
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'You have left ${teamInformation!.name}'),
+                            ),
+                          );
+                        },
+                      ),
                     )
                   : const SizedBox(
                       height: 0,
                       width: 0,
                     ),
-              widget.role == 'captain'
-                  ? const Divider()
+              role == 'captain'
+                  ? Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey.withOpacity(0.5),
+                            width: 1.0,
+                          ),
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.delete,
+                          color: Colors.red.withOpacity(0.9),
+                        ),
+                        title: Text(
+                          'Delete Team',
+                          style: SportifindTheme.normalTextBlack.copyWith(
+                            fontSize: 16,
+                          ),
+                        ),
+                        onTap: () async {
+                          await UseCaseProvider.getUseCase<DeleteTeam>().call(
+                            DeleteTeamParams(teamId: teamInformation!.id),
+                          );
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'You have deleted ${teamInformation!.name}'),
+                            ),
+                          );
+                        },
+                      ),
+                    )
                   : const SizedBox(
                       height: 0,
                       width: 0,

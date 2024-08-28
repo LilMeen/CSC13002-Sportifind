@@ -396,7 +396,7 @@ class _NotificationListItemState extends State<NotificationListItem> {
               context,
               MaterialPageRoute(
                 builder: (context) => TeamDetails(
-                    teamId: widget.notificationData.sender, role: 'other'),
+                    teamId: widget.notificationData.sender),
               ),
             );
           case "match accepted":

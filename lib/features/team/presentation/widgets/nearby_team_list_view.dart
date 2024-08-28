@@ -137,7 +137,7 @@ class TeamBox2 extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return TeamDetails(teamId: teamInformation!.id, role: 'other');
+                        return TeamDetails(teamId: teamInformation!.id);
                       },
                     ),
                   );
@@ -248,7 +248,7 @@ class TeamBox2 extends StatelessWidget {
                                     MaterialPageRoute(
                                       builder: (context) {
                                         return TeamDetails(
-                                            teamId: teamInformation!.id, role: 'other');
+                                            teamId: teamInformation!.id);
                                       },
                                     ),
                                   );
