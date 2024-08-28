@@ -147,6 +147,7 @@ class MatchRepositoryImpl implements MatchRepository {
     if (match.team2 != null) {
       match.team2!.incomingMatch.remove(matchId);
       teamRemoteDataSource.updateTeam(TeamModel.fromEntity(match.team2!));
+
     }
     await matchRemoteDataSource.deleteMatch(matchId);
     return Result.success(null);

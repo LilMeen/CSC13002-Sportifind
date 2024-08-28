@@ -63,10 +63,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   const SizedBox(
                     height: 30,
                   ),
-                  ClipRRect(
+                  ClipRRect(                  
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      height: 405,
                       color: SportifindTheme.nearlyWhite,
                       child: Padding(
                         padding: const EdgeInsets.all(18.0),

@@ -259,6 +259,7 @@ class ProfileScreenState extends State<ProfileScreen> {
             icon: Icon(Icons.settings, color: SportifindTheme.bluePurple),
           ),
         ],
+        automaticallyImplyLeading: false,
       ),
       backgroundColor: SportifindTheme.backgroundColor,
       body: SafeArea(
