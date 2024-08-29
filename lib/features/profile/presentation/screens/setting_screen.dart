@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_out.dart';
@@ -100,21 +101,29 @@ void deleteAccount(BuildContext context) async {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('Confirm Delete Account'),
-        content: const Text(
-            'Are you sure you want to delete your account? This action cannot be undone.'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: const Text('Delete'),
+        title: Center(
+          child: Text('Confirm Deletion', style: SportifindTheme.normalTextBlack),),
+        content: Text('Are you sure you want to delete this account?', style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14)),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false); // Dismiss the dialog and return false
+                },
+                child: Text('Cancel', style: SportifindTheme.smallTextBluePurple),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true); // Dismiss the dialog and return true
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, 
+                ),
+                child: Text('Delete', style: SportifindTheme.normalTextWhite.copyWith(fontSize: 14)),
+              ),
+            ],
           ),
         ],
       );
@@ -148,23 +157,32 @@ void deleteAccount(BuildContext context) async {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirm Sign Out'),
-          content: const Text('Are you sure you want to sign out?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false); 
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              child: const Text('Sign Out'),
-            ),
-          ],
-        );
+        title: Center(
+          child: Text('Confirm Sign Out', style: SportifindTheme.normalTextBlack),),
+        content: Text('Are you sure you want to sign out?', style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14)),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false); // Dismiss the dialog and return false
+                },
+                child: Text('Cancel', style: SportifindTheme.smallTextBluePurple),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true); // Dismiss the dialog and return true
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: SportifindTheme.bluePurple, 
+                ),
+                child: Text('Sign out', style: SportifindTheme.normalTextWhite.copyWith(fontSize: 14)),
+              ),
+            ],
+          ),
+        ],
+      );
       },
     );
 
@@ -187,9 +205,9 @@ void deleteAccount(BuildContext context) async {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: Icon(Icons.arrow_back_ios, color: SportifindTheme.bluePurple),
         ),
-        title: const Text('Setting'),
+        title: Text('Setting', style: SportifindTheme.sportifindFeatureAppBarBluePurple,),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0.0,

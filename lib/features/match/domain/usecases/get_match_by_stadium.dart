@@ -9,8 +9,8 @@ class GetMatchByStadium implements UseCase<List<MatchEntity>, GetMatchByStadiumP
   GetMatchByStadium(this.matchRepository);
 
   @override
-  Future<Result<List<MatchEntity>>> call(GetMatchByStadiumParams params) {
-    return matchRepository.getMatchesByStadium(params.stadiumId);
+  Future<Result<List<MatchEntity>>> call(GetMatchByStadiumParams params) async {
+    return await matchRepository.getMatchesByStadium(params.stadiumId);
   }
 }
 

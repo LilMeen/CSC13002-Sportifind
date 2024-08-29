@@ -357,9 +357,6 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
                 case 'Phone Number':
                   _enteredPhone = controller.text;
                   break;
-                case 'Address':
-                  _enteredAddress = controller.text;
-                  break;
               }
             },
           ),
@@ -377,7 +374,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
       children: [
         RichText(
           text: TextSpan(
-            style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
+            style: SportifindTheme.normalTextBlack,
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -456,7 +453,19 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
   @override
   Widget build(BuildContext context) {
     return Scaffold( 
-      appBar: const FeatureAppBarBluePurple(title: 'Edit Profile'),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: SportifindTheme.bluePurple),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: Text(
+          'Edit Information',
+          style: SportifindTheme.sportifindFeatureAppBarBluePurple,
+        ),
+      ),
       backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
@@ -492,6 +501,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
                         ),
                         const SizedBox(height: 12),
                         CityDropdown(
+                          type: 'custom_form',
                           selectedCity: _cityController.text,
                           onChanged: (value) {
                             setState(() {
@@ -521,6 +531,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
                       SizedBox(
                         width: 290,
                         child: DistrictDropdown(
+                          type: 'custom_form',
                           selectedCity: _cityController.text,
                           selectedDistrict: _districtController.text,
                           onChanged: (value) {

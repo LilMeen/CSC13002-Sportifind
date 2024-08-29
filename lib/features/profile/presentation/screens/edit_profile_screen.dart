@@ -424,7 +424,7 @@ class EditInformationState extends State<EditInformationScreen> {
       children: [
         RichText(
           text: TextSpan(
-            style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
+            style: SportifindTheme.normalTextBlack,
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -534,11 +534,12 @@ class EditInformationState extends State<EditInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double padding = MediaQuery.of(context).size.width - 290;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: SportifindTheme.bluePurple),
+          icon: Icon(Icons.arrow_back_ios, color: SportifindTheme.bluePurple),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -583,6 +584,7 @@ class EditInformationState extends State<EditInformationScreen> {
                        const SizedBox(height: 12),
                        CityDropdown(
                          selectedCity: _cityController.text,
+                         type: 'custom_form',
                          onChanged: (value) {
                            setState(() {
                              _cityController.text = value ?? '';
@@ -611,6 +613,7 @@ class EditInformationState extends State<EditInformationScreen> {
                      SizedBox(
                        width: 290,
                        child: DistrictDropdown(
+                        type: 'custom_form',
                          selectedCity: _cityController.text,
                          selectedDistrict: _districtController.text,
                          onChanged: (value) {
@@ -679,7 +682,7 @@ class EditInformationState extends State<EditInformationScreen> {
                 ),
                 const SizedBox(height: 40),
                 Padding(
-                  padding: const EdgeInsets.only(left: 190),
+                  padding: EdgeInsets.only(left: padding),
                   child: _nextButton(context),
                 ),
                 const SizedBox(height: 20),

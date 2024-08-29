@@ -19,6 +19,7 @@ class SettingDialog extends StatelessWidget {
           ],
         ),
       ),
+      backgroundColor: Colors.white,
       actions: <Widget>[
         TextButton(
           child: Text('Close', style: SportifindTheme.normalTextBlack.copyWith(color: SportifindTheme.bluePurple)),
