@@ -11,25 +11,22 @@ import 'package:sportifind/features/team/domain/usecases/get_team.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
 import 'package:sportifind/features/team/domain/usecases/invite_player_to_team.dart';
 import 'package:sportifind/features/team/domain/usecases/kick_player.dart';
+import 'package:sportifind/features/team/domain/usecases/request_accept.dart';
 import 'package:sportifind/features/team/domain/usecases/request_to_join_team.dart';
 
 final GetIt sl = GetIt.instance;
 
-void initializeTeamDependencies (){ 
-  
+void initializeTeamDependencies() {
   // Data sources
   sl.registerLazySingleton<TeamRemoteDataSource>(
-    () => TeamRemoteDataSourceImpl()
-  );
+      () => TeamRemoteDataSourceImpl());
 
   // Repositories
-  sl.registerLazySingleton<TeamRepository>(
-    () => TeamRepositoryImpl(
-      teamRemoteDataSource: sl(),
-      profileRemoteDataSource: sl(),
-      matchRemoteDataSource: sl(),
-    )
-  );
+  sl.registerLazySingleton<TeamRepository>(() => TeamRepositoryImpl(
+        teamRemoteDataSource: sl(),
+        profileRemoteDataSource: sl(),
+        matchRemoteDataSource: sl(),
+      ));
 
   // Use cases
   sl.registerLazySingleton<CreateTeam>(() => CreateTeam(sl()));
@@ -41,5 +38,6 @@ void initializeTeamDependencies (){
   sl.registerLazySingleton<GetTeam>(() => GetTeam(sl()));
   sl.registerLazySingleton<InvitePlayerToTeam>(() => InvitePlayerToTeam(sl()));
   sl.registerLazySingleton<KickPlayer>(() => KickPlayer(sl(), sl()));
+  sl.registerLazySingleton<RequestAccept>(() => RequestAccept(sl()));
   sl.registerLazySingleton<RequestToJoinTeam>(() => RequestToJoinTeam(sl()));
 }

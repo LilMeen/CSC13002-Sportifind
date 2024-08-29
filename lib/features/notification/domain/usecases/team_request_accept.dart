@@ -9,16 +9,16 @@ class TeamRequestAccept implements UseCase<void, TeamRequestAcceptParams> {
 
   @override
   Future<Result<void>> call(TeamRequestAcceptParams params) async {
-    return await repository.requestAccepted(params.sender, params.receiver);
+    return await repository.requestAccepted(params.userId, params.teamId);
   }
 }
 
 class TeamRequestAcceptParams {
-  final String sender;
-  final String receiver;
+  final String userId;
+  final String teamId;
 
   TeamRequestAcceptParams({
-    required this.sender,
-    required this.receiver,
+    required this.userId,
+    required this.teamId,
   });
 }

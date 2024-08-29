@@ -576,19 +576,19 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       await userDoc.update({
         'joinedTeams': FieldValue.arrayUnion([teamId]),
       });
-
+    
       await teamDoc.update({
         'members': FieldValue.arrayUnion([userId]),
       });
 
       await userDoc.update({
-        'inviteRequest': FieldValue.arrayRemove(teamId),
-        'sentRequest': FieldValue.arrayRemove(teamId)
+        'inviteRequest': FieldValue.arrayRemove([teamId]),
+        'sentRequest': FieldValue.arrayRemove([teamId])
       });
 
       await teamDoc.update({
-        'joinRequestsFromPlayers': FieldValue.arrayRemove(userId),
-        'invitedPlayers': FieldValue.arrayRemove(userId)
+        'joinRequestsFromPlayers': FieldValue.arrayRemove([userId]),
+        'invitedPlayers': FieldValue.arrayRemove([userId])
       });
 
       teamMembersNoti.map((memberNoti) async {

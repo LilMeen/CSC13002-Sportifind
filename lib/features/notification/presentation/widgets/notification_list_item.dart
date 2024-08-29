@@ -3,7 +3,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
-import 'package:sportifind/core/util/team_util.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/match/domain/usecases/get_match.dart';
 import 'package:sportifind/features/match/presentation/screens/match_info_screen.dart';
@@ -25,6 +24,7 @@ import 'package:sportifind/features/notification/presentation/widgets/reject_mes
 import 'package:sportifind/features/notification/presentation/widgets/sent_message.dart';
 import 'package:sportifind/features/team/presentation/screens/team_details.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationListItem extends StatefulWidget {
   const NotificationListItem({
@@ -73,9 +73,39 @@ class _NotificationListItemState extends State<NotificationListItem> {
   }
 
   Future<String> convertNameToTeamId(String teamName) async {
-    final teamMap = await generateTeamIdMap();
-    final teamId = teamMap[teamName] ?? 'Unknown Team';
-    return teamId;
+    // get all teams doc
+    final teams = await FirebaseFirestore.instance.collection('teams').get();
+    // iterate through all teams, create a map of team name to team id
+    final teamMap = teams.docs.fold<Map<String, String>>(
+      {},
+      (previousValue, element) {
+        final data = element.data();
+        return {
+          ...previousValue,
+          data['name']: element.id,
+        };
+      },
+    );
+    // return the team id
+    return teamMap[teamName] ?? 'Unknown Team';
+  }
+
+  Future<String> converNameToUserId(String userName) async {
+    // get all users doc
+    final users = await FirebaseFirestore.instance.collection('users').get();
+    // iterate through all users, create a map of user name to user id
+    final userMap = users.docs.fold<Map<String, String>>(
+      {},
+      (previousValue, element) {
+        final data = element.data();
+        return {
+          ...previousValue,
+          data['name']: element.id,
+        };
+      },
+    );
+    // return the user id
+    return userMap[userName] ?? 'Unknown User';
   }
 
   String timeAgo(String dateString, String timeString) {
@@ -150,7 +180,7 @@ class _NotificationListItemState extends State<NotificationListItem> {
                     MatchRequestAcceptParams(
                         sender: await convertNameToTeamId(
                             widget.notificationData.receiver),
-                        receiver: await convertNameToTeamId(
+                        receiver: await converNameToUserId(
                             widget.notificationData.sender),
                         matchId: widget.notificationData.matchId,
                         status: widget.notificationData.status));
@@ -229,9 +259,9 @@ class _NotificationListItemState extends State<NotificationListItem> {
               onPressed: () async {
                 await UseCaseProvider.getUseCase<TeamRequestAccept>()
                     .call(TeamRequestAcceptParams(
-                  sender:
+                  teamId:
                       await convertNameToTeamId(widget.notificationData.sender),
-                  receiver: await convertNameToTeamId(
+                  userId: await converNameToUserId(
                       widget.notificationData.receiver),
                 ));
                 await UseCaseProvider.getUseCase<MarkAsRead>()(
@@ -433,8 +463,8 @@ class _NotificationListItemState extends State<NotificationListItem> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TeamDetails(
-                    teamId: widget.notificationData.sender),
+                builder: (context) =>
+                    TeamDetails(teamId: widget.notificationData.sender),
               ),
             );
           case "match accepted":
@@ -462,7 +492,7 @@ class _NotificationListItemState extends State<NotificationListItem> {
           case "delete":
           case "rejected":
           case "denied":
-          case "accepted": 
+          case "accepted":
           case "invite":
             await UseCaseProvider.getUseCase<MarkAsRead>()(
               MarkAsReadParams(notification: widget.notificationData),
