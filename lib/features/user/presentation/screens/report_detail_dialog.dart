@@ -103,6 +103,7 @@ class ReportDetailDialog extends StatelessWidget {
                   controller: TextEditingController(text: report.reason),
                   readOnly: true,
                   maxLines: null,
+                  style: SportifindTheme.normalTextBlack,
                   decoration: const InputDecoration(
                     border: InputBorder.none, 
                     contentPadding: EdgeInsets.symmetric(
@@ -121,12 +122,12 @@ class ReportDetailDialog extends StatelessWidget {
         Row(
           children: [
             const Spacer(),
-            ElevatedButton(
+            TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-              child: Text('Close', style: SportifindTheme.normalTextBlack),
+              child: Text('Close', style: SportifindTheme.smallTextBluePurple.copyWith(fontSize: 16)),
             ),
             const Spacer(),
             ElevatedButton(
@@ -135,7 +136,7 @@ class ReportDetailDialog extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: SportifindTheme.bluePurple),
                 child: Text('Delete',
-                      style: SportifindTheme.normalTextBlack),
+                      style: SportifindTheme.normalTextWhite),
                 ),
             const Spacer(),
           ],
