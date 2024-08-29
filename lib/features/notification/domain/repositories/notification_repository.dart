@@ -19,4 +19,5 @@ abstract interface class NotificationRepository {
   Future<Result<void>>                      removePlayerFromTeam(userId, teamId, type);
 
   Future<Result<void>>                      deleteMatch(senderId, receiverId, matchId);
+  Future<Result<void>>                      deleteTeam(senderId, receiverId, teamId);
 }

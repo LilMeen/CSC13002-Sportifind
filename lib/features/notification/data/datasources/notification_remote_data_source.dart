@@ -30,6 +30,7 @@ abstract interface class NotificationRemoteDataSource {
 
   Future<void> removePlayerFromTeam(userId, teamId, type);
   Future<void> deleteMatch(senderId, matchId);
+  Future<void> deleteTeam(userId, teamId, type);
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
@@ -142,6 +143,25 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       String senderName = senderInformation.data()?['name'] ?? 'Unknow';
       String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
 
+      DocumentReference<Map<String, dynamic>> senderDoc = getTeamDoc(senderId);
+      DocumentReference<Map<String, dynamic>> receiverDoc =
+          getTeamDoc(receiverId);
+
+      //// big note here
+      Map<String, String> matchInfo = {
+        'matchId': matchId,
+        'senderId': senderId,
+        'receiverId': receiverId,
+      };
+
+      await senderDoc.update({
+        'matchSentRequest': FieldValue.arrayUnion([matchInfo]),
+      });
+
+      await receiverDoc.update({
+        'matchInviteRequest': FieldValue.arrayUnion([matchInfo]),
+      });
+
       senderTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
@@ -188,6 +208,24 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
 
       String senderName = senderInformation.data()?['name'] ?? 'Unknow';
       String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
+
+      DocumentReference<Map<String, dynamic>> senderDoc = getTeamDoc(senderId);
+      DocumentReference<Map<String, dynamic>> receiverDoc =
+          getTeamDoc(receiverId);
+
+      Map<String, String> matchInfo = {
+        'matchId': matchId,
+        'senderId': senderId,
+        'receiverId': receiverId,
+      };
+
+      await senderDoc.update({
+        'matchJoinRequest': FieldValue.arrayUnion([matchInfo]),
+      });
+
+      await receiverDoc.update({
+        'joinMatchRequest': FieldValue.arrayUnion([matchInfo]),
+      });
 
       senderTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
@@ -356,6 +394,26 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       String senderName = senderInformation.data()?['name'] ?? 'Unknow';
       String receiverName = receiverInformation.data()?['name'] ?? 'Unknow';
 
+      DocumentReference<Map<String, dynamic>> senderDoc = getTeamDoc(senderId);
+      DocumentReference<Map<String, dynamic>> receiverDoc =
+          getTeamDoc(receiverId);
+      //DocumentReference<Map<String, dynamic>> matchDoc = getMatchDoc(matchId);
+
+      Map<String, String> matchInfo = {
+        'matchId': matchId,
+        'senderId': receiverId,
+        'receiverId': senderId,
+      };
+
+      await receiverDoc.update({
+        'matchSentRequest': FieldValue.arrayRemove([matchInfo]),
+        'matchJoinRequest': FieldValue.arrayRemove([matchInfo]),
+      });
+
+      await senderDoc.update({
+        'matchInviteRequest': FieldValue.arrayRemove([matchInfo]),
+        'joinMatchRequest': FieldValue.arrayRemove([matchInfo]),
+      });
       senderTeamMembersNoti.forEach((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
@@ -402,6 +460,17 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       String userName = userInformation.data()?['name'] ?? 'Unknow';
       String teamName = teamInformation.data()?['name'] ?? 'Unknow';
 
+      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
+      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
+
+      await userDoc.update({
+        'sentRequest': FieldValue.arrayUnion(teamId),
+      });
+
+      await teamDoc.update({
+        'joinRequestsFromPlayers': FieldValue.arrayUnion(userId),
+      });
+
       teamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message.
@@ -446,6 +515,18 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
 
       String userName = userInformation.data()?['name'] ?? 'Unknow';
       String teamName = teamInformation.data()?['name'] ?? 'Unknow';
+
+      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
+      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
+
+      await userDoc.update({
+        'inviteRequest': FieldValue.arrayUnion(teamId),
+      });
+
+      await teamDoc.update({
+        'invitedPlayers': FieldValue.arrayUnion(userId),
+      });
+
       teamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
           'type': 'request', // request, evaluate, announce, message
@@ -488,6 +569,28 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
 
       String userName = userInformation.data()?['name'] ?? 'Unknow';
       String teamName = teamInformation.data()?['name'] ?? 'Unknow';
+
+      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
+      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
+
+      await userDoc.update({
+        'joinedTeams': FieldValue.arrayUnion(teamId),
+      });
+
+      await teamDoc.update({
+        'members': FieldValue.arrayUnion(userId),
+      });
+
+      await userDoc.update({
+        'inviteRequest': FieldValue.arrayRemove(teamId),
+        'sentRequest': FieldValue.arrayRemove(teamId)
+      });
+
+      await teamDoc.update({
+        'joinRequestsFromPlayers': FieldValue.arrayRemove(userId),
+        'invitedPlayers': FieldValue.arrayRemove(userId)
+      });
+
       teamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
           'type':
@@ -533,6 +636,17 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       String userName = userInformation.data()?['name'] ?? 'Unknow';
       String teamName = teamInformation.data()?['name'] ?? 'Unknow';
 
+      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
+      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
+
+      await userDoc.update({
+        'sentRequest': FieldValue.arrayRemove(teamId),
+      });
+
+      await teamDoc.update({
+        'joinRequestsFromPlayers': FieldValue.arrayRemove(userId),
+      });
+
       teamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
           'type':
@@ -575,6 +689,17 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
 
       String userName = userInformation.data()?['name'] ?? 'Unknow';
       String teamName = teamInformation.data()?['name'] ?? 'Unknow';
+
+      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
+      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
+
+      await userDoc.update({
+        'inviteRequest': FieldValue.arrayRemove(teamId),
+      });
+
+      await teamDoc.update({
+        'invitedPlayers': FieldValue.arrayRemove(userId),
+      });
 
       teamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
@@ -621,6 +746,17 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       String userName = userInformation.data()?['name'] ?? 'Unknow';
       String teamName = teamInformation.data()?['name'] ?? 'Unknow';
 
+      DocumentReference<Map<String, dynamic>> userDoc = getUserDoc(userId);
+      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
+
+      await userDoc.update({
+        'joinedTeams': FieldValue.arrayRemove(teamId),
+      });
+
+      await teamDoc.update({
+        'members': FieldValue.arrayRemove(userId),
+      });
+
       teamMembersNoti.map((memberNoti) async {
         await memberNoti.add({
           'type':
@@ -666,6 +802,68 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   }
 
   @override
+  Future<void> deleteTeam(userId, teamId, type) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> teamInformation =
+          await getTeamDocInformation(teamId);
+
+      List<String>? members =
+          List<String>.from(teamInformation.data()?['members'] ?? []);
+
+      members.forEach((memberId) async {
+        CollectionReference userNoti = getUserNotificationCollection(memberId);
+        DocumentSnapshot<Map<String, dynamic>> userInformation =
+            await getUserDocInformation(memberId);
+        String userName = userInformation.data()?['name'] ?? 'Unknow';
+
+        // hoi thanh cho delete match
+
+        await userNoti.add({
+          'type':
+              'announce', // invite request, sent request, evaluate, announce, message, accepted request
+          'status': 'delete',
+          'senderType': 'team', // player, admin, stadium owner, team
+          'sender': teamInformation.data()?['name'] ?? 'Unknow', // username
+          'receiver': userName,
+          'time': Timestamp.now(), // time to sort
+          'isRead': false,
+        });
+      });
+      DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
+      // delete match of this team
+      QuerySnapshot<Map<String, dynamic>> matchSnapshot1 =
+          await FirebaseFirestore.instance
+              .collection('matches')
+              .where('team1', isEqualTo: teamId)
+              .get();
+      QuerySnapshot<Map<String, dynamic>> matchSnapshot2 =
+          await FirebaseFirestore.instance
+              .collection('matches')
+              .where('team2', isEqualTo: teamId)
+              .get();
+
+      matchSnapshot1.docs.forEach((element) {
+        element.reference.delete();
+      });
+      matchSnapshot2.docs.forEach((element) {
+        element.reference.delete();
+      });
+
+      // delete this team id from joinedTeams of all users
+      QuerySnapshot<Map<String, dynamic>> userSnapshot =
+          await FirebaseFirestore.instance.collection('users').get();
+      userSnapshot.docs.forEach((element) {
+        element.reference.update({
+          'joinedTeams': FieldValue.arrayRemove(teamId),
+        });
+      });
+      await teamDoc.delete();
+    } catch (e) {
+      throw ('Error: $e');
+    }
+  }
+
+  @override
   Future<void> deleteMatch(senderId, matchId) async {
     try {
       List<CollectionReference<Map<String, dynamic>>> senderTeamMembersNoti =
@@ -688,6 +886,8 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
           'isRead': false,
         });
       });
+
+      await getMatchDoc(matchId).delete();
     } catch (e) {
       throw ('Error: $e');
     }
