@@ -246,6 +246,7 @@ class ProfileScreenState extends State<ProfileScreen> {
         centerTitle: true,
         backgroundColor: SportifindTheme.backgroundColor,
         elevation: 0.0,
+        surfaceTintColor: SportifindTheme.backgroundColor,
         actions: [
           IconButton(
             onPressed: () {

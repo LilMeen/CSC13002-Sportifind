@@ -92,7 +92,7 @@ class _TeamDetailsState extends State<TeamDetails>
           return Scaffold(
             backgroundColor: const Color.fromARGB(255, 255, 255, 255),
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: SportifindTheme.backgroundColor,
               title: Text(
                 'Team Information',
                 style: SportifindTheme.sportifindAppBarForFeature.copyWith(
@@ -110,6 +110,15 @@ class _TeamDetailsState extends State<TeamDetails>
                   },
                 )
               ],
+              iconTheme: IconThemeData(color: SportifindTheme.bluePurple),
+              elevation: 0,
+              surfaceTintColor: SportifindTheme.backgroundColor,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
             body: SingleChildScrollView(
               child: Padding(

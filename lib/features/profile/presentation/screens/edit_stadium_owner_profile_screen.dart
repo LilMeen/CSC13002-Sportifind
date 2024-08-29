@@ -453,19 +453,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
   @override
   Widget build(BuildContext context) {
     return Scaffold( 
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: SportifindTheme.bluePurple),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Text(
-          'Edit Information',
-          style: SportifindTheme.sportifindFeatureAppBarBluePurple,
-        ),
-      ),
+      appBar: const FeatureAppBarBluePurple(title: 'Edit information'),
       backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(

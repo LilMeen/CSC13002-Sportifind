@@ -65,22 +65,22 @@ class _GeneralDropdownState extends State<GeneralDropdown> {
             fillColor: widget.fillColor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(
-                color: Colors.black,
+              borderSide: BorderSide(
+                color: SportifindTheme.bluePurple,
                 width: 1.0,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(
-                color: Colors.black,
+              borderSide: BorderSide(
+                color: SportifindTheme.bluePurple,
                 width: 1.0,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(
-                color: Colors.black,
+              borderSide: BorderSide(
+                color: SportifindTheme.bluePurple,
                 width: 1.0,
               ),
             ),

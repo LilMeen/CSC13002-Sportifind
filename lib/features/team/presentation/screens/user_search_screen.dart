@@ -74,6 +74,15 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
+        iconTheme: IconThemeData(color: SportifindTheme.bluePurple),
+        elevation: 0,
+        surfaceTintColor: SportifindTheme.backgroundColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),

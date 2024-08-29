@@ -7,6 +7,7 @@ import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/location_util.dart';
+import 'package:sportifind/core/widgets/app_bar/flutter_app_bar_blue_purple.dart';
 import 'package:sportifind/core/widgets/city_dropdown.dart';
 import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
@@ -536,20 +537,8 @@ class EditInformationState extends State<EditInformationScreen> {
   Widget build(BuildContext context) {
     double padding = MediaQuery.of(context).size.width - 290;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: SportifindTheme.bluePurple),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Text(
-          'Edit Information',
-          style: SportifindTheme.sportifindFeatureAppBarBluePurple,
-        ),
-      ),
-      backgroundColor: Colors.white,
+      appBar: const FeatureAppBarBluePurple(title: "Edit information"),
+      backgroundColor: SportifindTheme.backgroundColor,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),

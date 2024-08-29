@@ -52,9 +52,6 @@ class StadiumMapSearchState {
   }
 }
 
-
-
-
 class StadiumMapSearchBloc {
   final BuildContext context;
   final Location userLocation;
@@ -68,7 +65,9 @@ class StadiumMapSearchBloc {
   Stream<StadiumMapSearchState> get stateStream => _stateController.stream;
   StadiumMapSearchState get currentState => _state;
 
-  StadiumMapSearchBloc(this.context, this.userLocation, this.stadiums, this.owners) : _state = StadiumMapSearchState() {
+  StadiumMapSearchBloc(
+      this.context, this.userLocation, this.stadiums, this.owners)
+      : _state = StadiumMapSearchState() {
     _initState();
   }
 
@@ -89,11 +88,11 @@ class StadiumMapSearchBloc {
     mapController?.dispose();
   }
 
-  void _updateState(StadiumMapSearchState Function(StadiumMapSearchState) update) {
+  void _updateState(
+      StadiumMapSearchState Function(StadiumMapSearchState) update) {
     _state = update(_state);
     _stateController.add(_state);
   }
-
 
   void onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -112,19 +111,23 @@ class StadiumMapSearchBloc {
             title: 'Current location',
             snippet: location.fullAddress,
           ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
         );
 
-        final nearbyStadiums = NonFutureUseCaseProvider.getUseCase<GetNearbyStadium>().call(
-          GetNearbyStadiumParams(stadiums, location),
-        ).data!;
+        final nearbyStadiums =
+            NonFutureUseCaseProvider.getUseCase<GetNearbyStadium>()
+                .call(
+                  GetNearbyStadiumParams(stadiums, location),
+                )
+                .data!;
 
         _updateState((state) => state.copyWith(
-          searchLocation: location,
-          searchMarker: searchMarker,
-          nearbyStadiums: nearbyStadiums,
-          markers: _createMarkers(),
-        ));
+              searchLocation: location,
+              searchMarker: searchMarker,
+              nearbyStadiums: nearbyStadiums,
+              markers: _createMarkers(),
+            ));
 
         mapController?.animateCamera(
           CameraUpdate.newCameraPosition(
@@ -153,10 +156,25 @@ class StadiumMapSearchBloc {
     }
     for (var stadium in stadiums) {
       if (searchText.toLowerCase() == stadium.name.toLowerCase()) {
+        final nearbyStadiums =
+            NonFutureUseCaseProvider.getUseCase<GetNearbyStadium>()
+                .call(
+                  GetNearbyStadiumParams(stadiums, stadium.location),
+                )
+                .data!;
+
+        _updateState((state) => state.copyWith(
+              searchLocation: null,
+              searchMarker: null,
+              nearbyStadiums: nearbyStadiums,
+              markers: _createMarkers(),
+            ));
+
         mapController?.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
-              target: LatLng(stadium.location.latitude, stadium.location.longitude),
+              target:
+                  LatLng(stadium.location.latitude, stadium.location.longitude),
               zoom: 14.0,
             ),
           ),
@@ -175,19 +193,23 @@ class StadiumMapSearchBloc {
             title: searchLocation.name,
             snippet: searchLocation.fullAddress,
           ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
         );
 
-        final nearbyStadiums = NonFutureUseCaseProvider.getUseCase<GetNearbyStadium>().call(
-          GetNearbyStadiumParams(stadiums, searchLocation),
-        ).data!;
+        final nearbyStadiums =
+            NonFutureUseCaseProvider.getUseCase<GetNearbyStadium>()
+                .call(
+                  GetNearbyStadiumParams(stadiums, searchLocation),
+                )
+                .data!;
 
         _updateState((state) => state.copyWith(
-          searchLocation: searchLocation,
-          searchMarker: searchMarker,
-          nearbyStadiums: nearbyStadiums,
-          markers: _createMarkers(),
-        ));
+              searchLocation: searchLocation,
+              searchMarker: searchMarker,
+              nearbyStadiums: nearbyStadiums,
+              markers: _createMarkers(),
+            ));
 
         mapController?.animateCamera(
           CameraUpdate.newCameraPosition(
@@ -205,7 +227,6 @@ class StadiumMapSearchBloc {
     }
   }
 
-
   // PRIVATE METHODS
   Set<Marker> _createMarkers() {
     Set<Marker> markers = stadiums.map((stadium) {
@@ -214,7 +235,8 @@ class StadiumMapSearchBloc {
         position: LatLng(stadium.location.latitude, stadium.location.longitude),
         infoWindow: InfoWindow(
           title: stadium.name,
-          snippet: '${stadium.location.address}, ${stadium.location.district}, ${stadium.location.city}',
+          snippet:
+              '${stadium.location.address}, ${stadium.location.district}, ${stadium.location.city}',
         ),
       );
     }).toSet();
@@ -224,8 +246,11 @@ class StadiumMapSearchBloc {
         markerId: const MarkerId('userLocation'),
         position: LatLng(userLocation.latitude, userLocation.longitude),
         infoWindow: userLocation.address.isEmpty
-            ? InfoWindow(title: 'Your location', snippet: userLocation.fullAddress)
-            : InfoWindow(title: 'Your location', snippet: '${userLocation.district}, ${userLocation.city}'),
+            ? InfoWindow(
+                title: 'Your location', snippet: userLocation.fullAddress)
+            : InfoWindow(
+                title: 'Your location',
+                snippet: '${userLocation.district}, ${userLocation.city}'),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
       ),
     );

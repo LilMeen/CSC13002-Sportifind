@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/core/widgets/app_bar/flutter_app_bar_blue_purple.dart';
 import 'package:sportifind/features/auth/domain/usecases/sign_out.dart';
 import 'package:sportifind/features/auth/presentations/screens/sign_in_screen.dart';
 import 'package:sportifind/features/profile/presentation/widgets/setting_menu.dart';
@@ -200,19 +201,8 @@ void deleteAccount(BuildContext context) async {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.arrow_back_ios, color: SportifindTheme.bluePurple),
-        ),
-        title: Text('Setting', style: SportifindTheme.sportifindFeatureAppBarBluePurple,),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-      ),
-      backgroundColor: Colors.white,
+      appBar: const FeatureAppBarBluePurple(title: "Setting"),
+      backgroundColor: SportifindTheme.backgroundColor,
       body: Column(
         children: [
           const SettingMenu(

@@ -140,6 +140,7 @@ class _PlayerHomeScreenState extends State<PlayerHomeScreen> {
     return AppBar(
       automaticallyImplyLeading: false,
       toolbarHeight: 80,
+      surfaceTintColor: SportifindTheme.backgroundColor,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,

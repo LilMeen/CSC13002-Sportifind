@@ -6,7 +6,6 @@ class SportifindTheme {
   SportifindTheme._();
   static const Color nearlyWhite = Color(0xFFFAFAFA);
   static const Color white = Color(0xFFFFFFFF);
-  static const Color background = Color.fromARGB(255, 242, 242, 242);
   static Color bluePurple2 = HexColor("4B70F5");
   static Color bluePurple1 = HexColor("3DC2EC");
   static Color bluePurple3 = HexColor("4C3BCF");
@@ -384,29 +383,6 @@ class SportifindTheme {
     fontSize: 14,
     height: 1.5,
     color: Colors.black,
-  );
-
-  static TextStyle dropdownGreen = GoogleFonts.lexend(
-    fontWeight: FontWeight.w400,
-    fontSize: 14,
-    color: Colors.green,
-  );
-  static TextStyle dropdownGreenBold = GoogleFonts.lexend(
-    fontWeight: FontWeight.w900,
-    fontSize: 14,
-    color: Colors.green,
-  );
-
-  static TextStyle dropdownRed = GoogleFonts.lexend(
-    fontWeight: FontWeight.w400,
-    fontSize: 14,
-    color: Colors.red,
-  );
-
-  static TextStyle dropdownRedBold = GoogleFonts.lexend(
-    fontWeight: FontWeight.w900,
-    fontSize: 14,
-    color: Colors.red,
   );
 
   static TextStyle sportifindFeatureAppBarBluePurple = GoogleFonts.rowdies(

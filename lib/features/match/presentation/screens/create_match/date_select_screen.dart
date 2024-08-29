@@ -168,7 +168,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
         Container(
           padding: const EdgeInsets.only(left: 10.0),
           height: 50,
-          width: width-265,
+          width: width - 265,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: SportifindTheme.bluePurple,
@@ -359,7 +359,7 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
       home: SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: SportifindTheme.white,
+            backgroundColor: SportifindTheme.backgroundColor,
             leading: IconButton(
               color: SportifindTheme.bluePurple,
               icon: const Icon(Icons.arrow_back_ios),
@@ -377,8 +377,10 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
               "Create match",
               style: SportifindTheme.sportifindAppBarForFeature,
             ),
+            elevation: 0,
+            surfaceTintColor: SportifindTheme.backgroundColor,
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: SportifindTheme.backgroundColor,
           body: SingleChildScrollView(
             child: Padding(
               padding:
@@ -415,7 +417,8 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                       FieldPicker(
                         func: refreshByField,
                         fields: widget.stadiumData.fields
-                          .where((element) => element.status == true).toList(),
+                            .where((element) => element.status == true)
+                            .toList(),
                         selectedField: getFirstFields(widget.stadiumData.fields,
                             selectedFieldType, selectedField!),
                         selectedFieldType: selectedFieldType,

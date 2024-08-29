@@ -108,7 +108,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
           return Scaffold(
             backgroundColor: const Color.fromARGB(255, 255, 255, 255),
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: SportifindTheme.backgroundColor,
               title: Text(
                 'Player information',
                 style: SportifindTheme.sportifindAppBarForFeature.copyWith(
@@ -118,6 +118,15 @@ class _PlayerDetailsState extends State<PlayerDetails>
                 textAlign: TextAlign.center,
               ),
               centerTitle: true,
+              iconTheme: IconThemeData(color: SportifindTheme.bluePurple),
+              elevation: 0,
+              surfaceTintColor: SportifindTheme.backgroundColor,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
               actions: role == 'other'
                   ? <Widget>[
                       IconButton(

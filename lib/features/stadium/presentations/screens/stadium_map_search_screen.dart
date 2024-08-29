@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
 import 'package:sportifind/features/profile/domain/entities/stadium_owner_entity.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/stadium_card.dart';
@@ -40,7 +41,8 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
   @override
   void initState() {
     super.initState();
-    _bloc = StadiumMapSearchBloc(context, widget.userLocation, widget.stadiums, widget.owners);
+    _bloc = StadiumMapSearchBloc(
+        context, widget.userLocation, widget.stadiums, widget.owners);
   }
 
   @override
@@ -63,7 +65,8 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
               GoogleMap(
                 onMapCreated: _bloc.onMapCreated,
                 initialCameraPosition: CameraPosition(
-                  target: LatLng(widget.userLocation.latitude, widget.userLocation.longitude),
+                  target: LatLng(widget.userLocation.latitude,
+                      widget.userLocation.longitude),
                   zoom: 11.0,
                 ),
                 markers: state.markers,
@@ -75,15 +78,20 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
                 left: 8.0,
                 right: 8.0,
                 child: Card(
+                  color: Colors.white,
                   child: ListTile(
                     leading: IconButton(
-                      icon: const Icon(Icons.arrow_back),
+                      icon: Icon(Icons.arrow_back_ios,
+                          color: SportifindTheme.bluePurple),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                     title: TextField(
                       controller: searchController,
-                      decoration: const InputDecoration(
+                      style: SportifindTheme.normalText,
+                      decoration: InputDecoration(
                         hintText: 'Search for a place, location',
+                        hintStyle: SportifindTheme.normalText
+                            .copyWith(color: Colors.grey),
                         border: InputBorder.none,
                       ),
                       onSubmitted: _bloc.searchLocation,
@@ -98,21 +106,23 @@ class _StadiumMapSearchScreenState extends State<StadiumMapSearchScreen> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.318,
+                  height: 265,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: state.nearbyStadiums.length + 1,
                     itemBuilder: (ctx, index) {
                       if (index == 0) {
-                        return SizedBox(width: MediaQuery.of(context).size.width * 0.2);
+                        return SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.2);
                       } else {
                         final stadium = state.nearbyStadiums[index - 1];
                         final ownerName = state.ownerMap[stadium.ownerId] ?? '';
 
                         return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 4.0),
                           child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.47,
+                            width: 195,
                             child: StadiumCard(
                               stadium: stadium,
                               ownerName: ownerName,

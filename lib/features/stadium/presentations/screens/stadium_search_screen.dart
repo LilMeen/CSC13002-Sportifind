@@ -13,8 +13,6 @@ import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/
 import 'package:sportifind/features/stadium/presentations/widgets/custom_search_bar.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
-const double floatingDistance = 65.0;
-
 class StadiumSearchScreen extends StatefulWidget {
   final Location userLocation;
   final List<StadiumEntity> stadiums;
