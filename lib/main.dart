@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:sportifind/core/di/injection_container.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sportifind/features/auth/presentations/screens/splash_screen.dart';
+import 'package:sportifind/features/team/presentation/screens/team_main_screen.dart';
 import 'package:sportifind/firebase_options.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-Future <void> main() async{
+Future<void> main() async {
   initializeDateFormatting();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
