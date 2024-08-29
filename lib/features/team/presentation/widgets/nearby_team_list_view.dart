@@ -32,13 +32,19 @@ class _NearbyTeamListViewState extends State<NearbyTeamListView>
   }
 
   Future<void> _initialize() async {
-    final PlayerEntity playerData = await UseCaseProvider.getUseCase<GetPlayer>().call(
-      GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid),
-    ).then((value) => value.data!);
-    
-    List<TeamEntity> nearbyTeams = await UseCaseProvider.getUseCase<GetNearbyTeam>().call(
-      GetNearbyTeamParams(player: playerData),
-    ).then((value) => value.data!);
+    final PlayerEntity playerData =
+        await UseCaseProvider.getUseCase<GetPlayer>()
+            .call(
+              GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid),
+            )
+            .then((value) => value.data!);
+
+    List<TeamEntity> nearbyTeams =
+        await UseCaseProvider.getUseCase<GetNearbyTeam>()
+            .call(
+              GetNearbyTeamParams(player: playerData),
+            )
+            .then((value) => value.data ?? []);
 
     setState(() {
       teams = nearbyTeams;
@@ -56,7 +62,7 @@ class _NearbyTeamListViewState extends State<NearbyTeamListView>
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return const Center(child: Text("Error loading data"));
+            return const Center(child: Text("No data exists"));
           } else {
             return SizedBox(
               height: teams.length * 200.0,

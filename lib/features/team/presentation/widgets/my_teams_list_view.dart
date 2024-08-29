@@ -32,7 +32,7 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
 
     List<TeamEntity> fetchedInformation = await UseCaseProvider.getUseCase<GetTeamByPlayer>().call(
       GetTeamByPlayerParams(playerId: FirebaseAuth.instance.currentUser!.uid),
-    ).then((value) => value.data!); 
+    ).then((value) => value.data ?? []); 
 
     setState(() {
       teamsInformation = fetchedInformation;
@@ -59,7 +59,7 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return const Center(child: Text("Error loading data"));
+              return const Center(child: Text("No data exists, please create a team"));
             } else if (teamsInformation.isEmpty) {
               return const SizedBox(
                 height: 100,
