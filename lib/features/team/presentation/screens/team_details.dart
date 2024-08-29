@@ -9,6 +9,7 @@ import 'package:sportifind/features/team/domain/usecases/delete_team.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sportifind/features/team/domain/usecases/kick_player.dart';
+import 'package:sportifind/features/team/domain/usecases/request_accept.dart';
 import 'package:sportifind/features/team/domain/usecases/request_to_join_team.dart';
 import 'package:sportifind/features/team/presentation/screens/edit_team_screen.dart';
 import 'package:sportifind/features/team/presentation/widgets/player_list.dart';
@@ -107,6 +108,12 @@ class _TeamDetailsState extends State<TeamDetails>
             });
             UseCaseProvider.getUseCase<RequestToJoinTeam>().call(
               RequestToJoinTeamParams(
+                userId: FirebaseAuth.instance.currentUser!.uid,
+                teamId: teamInformation!.id,
+              ),
+            );
+            UseCaseProvider.getUseCase<RequestAccept>().call(
+              RequestAcceptParams(
                 userId: FirebaseAuth.instance.currentUser!.uid,
                 teamId: teamInformation!.id,
               ),
