@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/features/notification/domain/usecases/send_request_to_user.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 import 'package:sportifind/features/team/domain/usecases/send_invite_to_team.dart';
@@ -27,6 +28,7 @@ class _AddToTeamListState extends State<AddToTeamList> {
     if (team.invitedPlayers == null) {
       return false;
     }
+
     return team.invitedPlayers!.contains(playerId);
   }
 
@@ -41,10 +43,7 @@ class _AddToTeamListState extends State<AddToTeamList> {
         _buttonStates.add(2); // not joined
       }
     }
-    for (var i = 0; i < _buttonStates.length; i++) {
-      print(_buttonStates[i]);
-    }
-    print(widget.viewerTeams.length);
+
     super.initState();
     // Initialize the button states to false (not joined) for all teams
   }
@@ -175,18 +174,20 @@ class _AddToTeamListState extends State<AddToTeamList> {
                     ),
                     onPressed: _buttonStates[index] == 2
                         ? () {
+                            // Toggle the state of the button when tapped
+                            setState(() {
+                              _buttonStates[index] = 1;
+                            });
                             // Add player here
                             setState(() async {
                               await UseCaseProvider.getUseCase<
-                                      SendInviteToTeam>()
+                                      SendTeamRequest>()
                                   .call(
-                                SendInviteToTeamParams(
-                                  teamId: widget.viewerTeams[index]!.id,
-                                  playerId: widget.player.id,
+                                SendTeamRequestParams(
+                                  sender: widget.viewerTeams[index]!.id,
+                                  receiver: widget.player.id,
                                 ),
                               );
-                              // Toggle the state of the button when tapped
-                              _buttonStates[index] = 1;
                             });
                           }
                         : null,

@@ -7,7 +7,7 @@ import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart
 import 'package:sportifind/features/team/presentation/screens/team_add_list.dart';
 import 'package:sportifind/features/team/presentation/widgets/team_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
+import 'package:sportifind/features/user/presentation/screens/report_form.dart';
 
 class PlayerDetails extends StatefulWidget {
   const PlayerDetails({super.key, required this.user});
@@ -118,6 +118,16 @@ class _PlayerDetailsState extends State<PlayerDetails>
                 textAlign: TextAlign.center,
               ),
               centerTitle: true,
+              actions: role == 'other'
+                  ? <Widget>[
+                      IconButton(
+                        icon: const Icon(Icons.settings),
+                        onPressed: () {
+                          _showCustomDialog(context);
+                        },
+                      )
+                    ]
+                  : null,
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -383,6 +393,77 @@ class _PlayerDetailsState extends State<PlayerDetails>
             ),
           );
         }
+      },
+    );
+  }
+
+  void _showCustomDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+            side: BorderSide(color: SportifindTheme.bluePurple, width: 2.0),
+          ),
+          backgroundColor: Colors.white,
+          title: Center(
+            child: Text(
+              'Choose an Option',
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+                color: SportifindTheme.bluePurple,
+              ),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              role == 'other'
+                  ? Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey.withOpacity(0.5),
+                            width: 1.0,
+                          ),
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: Icon(Icons.bug_report_outlined,
+                            color: SportifindTheme.bluePurple),
+                        title: Text(
+                          'Report',
+                          style: SportifindTheme.normalTextBlack.copyWith(
+                            fontSize: 16,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => ReportDialog(
+                                reportedUserId: widget.user.id,
+                              ),
+                            ),
+                          );
+                          // Handle the edit action
+                          //Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Moving to Edit Team'),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : const SizedBox(
+                      height: 0,
+                      width: 0,
+                    ),
+            ],
+          ),
+        );
       },
     );
   }
