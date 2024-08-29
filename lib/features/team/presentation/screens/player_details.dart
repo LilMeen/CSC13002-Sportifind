@@ -4,9 +4,10 @@ import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
-import 'package:sportifind/features/team/presentation/widgets/team/team_add_dialog.dart';
+import 'package:sportifind/features/team/presentation/screens/team_add_list.dart';
 import 'package:sportifind/features/team/presentation/widgets/team_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class PlayerDetails extends StatefulWidget {
   const PlayerDetails({super.key, required this.user});
@@ -64,13 +65,20 @@ class _PlayerDetailsState extends State<PlayerDetails>
   }
 
   int get age {
-    String dob = widget.user.dob;
-    int year = int.parse(dob.substring(6, 10));
-    int month = int.parse(dob.substring(3, 5));
-    int day = int.parse(dob.substring(0, 2));
-    DateTime now = DateTime.now();
-    int age = now.year - year;
-    if (now.month < month || (now.month == month && now.day < day)) {
+    List<String> parts = widget.user.dob.split('/');
+
+    // Parse day, month, and year as integers
+    int day = int.parse(parts[0]);
+    int month = int.parse(parts[1]);
+    int year = int.parse(parts[2]);
+    // Get the current date
+    DateTime today = DateTime.now();
+
+    // Calculate the age
+    int age = today.year - year;
+
+    // Adjust the age if the birthday hasn't occurred yet this year
+    if (today.month < month || (today.month == month && today.day < day)) {
       age--;
     }
     return age;
@@ -166,7 +174,9 @@ class _PlayerDetailsState extends State<PlayerDetails>
                                         ),
                                       ),
                                       Text(
-                                        overallStat.toStringAsFixed(2),
+                                        overallStat == 0
+                                            ? 'unknow'
+                                            : overallStat.toStringAsFixed(2),
                                         style: SportifindTheme.normalTextBlack
                                             .copyWith(
                                           fontSize: 16,
@@ -232,7 +242,10 @@ class _PlayerDetailsState extends State<PlayerDetails>
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  widget.user.preferredFoot, // height here
+                                  widget.user.preferredFoot == ''
+                                      ? 'unknow'
+                                      : widget
+                                          .user.preferredFoot, // height here
                                   style:
                                       SportifindTheme.normalTextWhite.copyWith(
                                     fontSize: 16,
@@ -280,7 +293,9 @@ class _PlayerDetailsState extends State<PlayerDetails>
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  widget.user.height, // height here
+                                  widget.user.height == ''
+                                      ? 'unknow'
+                                      : widget.user.height, // height here
                                   style:
                                       SportifindTheme.normalTextWhite.copyWith(
                                     fontSize: 16,
@@ -304,7 +319,9 @@ class _PlayerDetailsState extends State<PlayerDetails>
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  widget.user.height, // height here
+                                  widget.user.weight == ''
+                                      ? 'unknow'
+                                      : widget.user.weight, // height here
                                   style:
                                       SportifindTheme.normalTextWhite.copyWith(
                                     fontSize: 16,
@@ -330,8 +347,33 @@ class _PlayerDetailsState extends State<PlayerDetails>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          TeamListDialog(
-                              viewerTeams: viewerTeams, player: widget.user),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddToTeamList(
+                                    player: widget.user,
+                                    viewerTeams: viewerTeams,
+                                  ),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              minimumSize: const Size(200, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: Text(
+                              'Add',
+                              style: SportifindTheme.featureTitleBlack.copyWith(
+                                fontSize: 28,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],

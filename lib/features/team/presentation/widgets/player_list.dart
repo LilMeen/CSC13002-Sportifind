@@ -47,14 +47,21 @@ class PlayerBox extends StatelessWidget {
   final String role;
 
   int get age {
-    String dob = player.dob;
-    // dd/mm/yyyy get month,day, year and calculate age
-    int year = int.parse(dob.substring(6, 10));
-    int month = int.parse(dob.substring(3, 5));
-    int day = int.parse(dob.substring(0, 2));
-    DateTime now = DateTime.now();
-    int age = now.year - year;
-    if (now.month < month || (now.month == month && now.day < day)) {
+    List<String> parts = player.dob.split('/');
+
+    // Parse day, month, and year as integers
+    int day = int.parse(parts[0]);
+    int month = int.parse(parts[1]);
+    int year = int.parse(parts[2]);
+    
+    // Get the current date
+    DateTime today = DateTime.now();
+
+    // Calculate the age
+    int age = today.year - year;
+
+    // Adjust the age if the birthday hasn't occurred yet this year
+    if (today.month < month || (today.month == month && today.day < day)) {
       age--;
     }
     return age;
