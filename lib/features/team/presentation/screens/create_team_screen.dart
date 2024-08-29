@@ -19,7 +19,7 @@ class CreateTeamScreen extends StatefulWidget {
 
 class _CreateTeamScreenState extends State<CreateTeamScreen> {
   final TeamBloc _bloc = TeamBloc();
-  
+
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {
     'teamName': TextEditingController(),

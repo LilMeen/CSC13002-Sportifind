@@ -5,6 +5,7 @@ import 'package:sportifind/features/user/domain/entities/user_entity.dart';
 import 'package:sportifind/features/chat/domain/entities/message_entity.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/chat/domain/usecases/get_message_by_team.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 
 class GroupChatTile extends StatefulWidget {
   const GroupChatTile({
@@ -31,7 +32,10 @@ class _GroupChatTileState extends State<GroupChatTile> {
         .then((value) => value.data ?? []);
   }
 
-  Future<MessageEntity> getLatestMessage() async {
+  Future<MessageEntity?> getLatestMessage() async {
+    if (_messages.isEmpty) {
+      return null;
+    }
     return _messages.last;
   }
 
@@ -45,6 +49,42 @@ class _GroupChatTileState extends State<GroupChatTile> {
 
   String get getFirstCharacters {
     return _latestMessage!.message.substring(0, 12);
+  }
+
+  Widget get getLatestMessageWidget {
+    if (_latestMessage == null) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            "Jump in and start chatting!",
+            style: SportifindTheme.normalTextBlack
+                .copyWith(fontSize: 13.0, color: Colors.grey),
+          ),
+        ],
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _latestMessage!.message.length < 13
+            ? Text(
+                "${_latestMessage!.sender.name}: ${_latestMessage!.message}",
+                style: SportifindTheme.normalTextBlack
+                    .copyWith(fontSize: 13.0, color: Colors.grey),
+              )
+            : Text(
+                "${_latestMessage!.sender.name}: $getFirstCharacters...",
+                style: SportifindTheme.normalTextBlack
+                    .copyWith(fontSize: 13.0, color: Colors.grey),
+              ),
+        Text(
+          "${_latestMessage!.time.hour}:${_latestMessage!.time.minute}",
+          style: SportifindTheme.normalTextBlack
+              .copyWith(fontSize: 13.0, color: Colors.grey),
+        ),
+      ],
+    );
   }
 
   @override
@@ -84,24 +124,7 @@ class _GroupChatTileState extends State<GroupChatTile> {
           ),
           title: Text(widget.team.name,
               style: const TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _latestMessage!.message.length < 13
-                  ? Text(
-                      "${_latestMessage!.sender.name}: ${_latestMessage!.message}",
-                      style: const TextStyle(fontSize: 13.0),
-                    )
-                  : Text(
-                      "${_latestMessage!.sender.name}: $getFirstCharacters...",
-                      style: const TextStyle(fontSize: 13.0),
-                    ),
-              Text(
-                "${_latestMessage!.time.hour}:${_latestMessage!.time.minute}",
-                style: const TextStyle(fontSize: 13.0),
-              ),
-            ],
-          ),
+          subtitle: getLatestMessageWidget,
         ),
       ),
     );

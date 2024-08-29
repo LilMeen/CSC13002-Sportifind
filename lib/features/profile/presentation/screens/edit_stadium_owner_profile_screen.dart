@@ -43,7 +43,6 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
 
   var _enteredName = '';
   var _enteredPhone = '';
-  var _enteredAddress = '';
 
   @override
   void dispose() {
@@ -98,7 +97,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
       _formKey.currentState!.save();
 
       Location newLocation = await findLatAndLngFull(
-        _enteredAddress,
+        _addressController.text,
         _districtController.text,
         _cityController.text,
       );

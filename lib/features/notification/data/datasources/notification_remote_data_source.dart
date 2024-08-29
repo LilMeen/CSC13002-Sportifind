@@ -464,11 +464,11 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
 
       await userDoc.update({
-        'sentRequest': FieldValue.arrayUnion(teamId),
+        'sentRequest': FieldValue.arrayUnion([teamId]),
       });
 
       await teamDoc.update({
-        'joinRequestsFromPlayers': FieldValue.arrayUnion(userId),
+        'joinRequestsFromPlayers': FieldValue.arrayUnion([userId]),
       });
 
       teamMembersNoti.map((memberNoti) async {
@@ -520,11 +520,11 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
 
       await userDoc.update({
-        'inviteRequest': FieldValue.arrayUnion(teamId),
+        'inviteRequest': FieldValue.arrayUnion([teamId]),
       });
 
       await teamDoc.update({
-        'invitedPlayers': FieldValue.arrayUnion(userId),
+        'invitedPlayers': FieldValue.arrayUnion([userId]),
       });
 
       teamMembersNoti.map((memberNoti) async {
@@ -574,11 +574,11 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
 
       await userDoc.update({
-        'joinedTeams': FieldValue.arrayUnion(teamId),
+        'joinedTeams': FieldValue.arrayUnion([teamId]),
       });
 
       await teamDoc.update({
-        'members': FieldValue.arrayUnion(userId),
+        'members': FieldValue.arrayUnion([userId]),
       });
 
       await userDoc.update({
@@ -640,11 +640,11 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
 
       await userDoc.update({
-        'sentRequest': FieldValue.arrayRemove(teamId),
+        'sentRequest': FieldValue.arrayRemove([teamId]),
       });
 
       await teamDoc.update({
-        'joinRequestsFromPlayers': FieldValue.arrayRemove(userId),
+        'joinRequestsFromPlayers': FieldValue.arrayRemove([userId]),
       });
 
       teamMembersNoti.map((memberNoti) async {
@@ -694,11 +694,11 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
 
       await userDoc.update({
-        'inviteRequest': FieldValue.arrayRemove(teamId),
+        'inviteRequest': FieldValue.arrayRemove([teamId]),
       });
 
       await teamDoc.update({
-        'invitedPlayers': FieldValue.arrayRemove(userId),
+        'invitedPlayers': FieldValue.arrayRemove([userId]),
       });
 
       teamMembersNoti.map((memberNoti) async {
@@ -750,11 +750,11 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       DocumentReference<Map<String, dynamic>> teamDoc = getTeamDoc(teamId);
 
       await userDoc.update({
-        'joinedTeams': FieldValue.arrayRemove(teamId),
+        'joinedTeams': FieldValue.arrayRemove([teamId]),
       });
 
       await teamDoc.update({
-        'members': FieldValue.arrayRemove(userId),
+        'members': FieldValue.arrayRemove([userId]),
       });
 
       teamMembersNoti.map((memberNoti) async {
@@ -854,7 +854,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
           await FirebaseFirestore.instance.collection('users').get();
       userSnapshot.docs.forEach((element) {
         element.reference.update({
-          'joinedTeams': FieldValue.arrayRemove(teamId),
+          'joinedTeams': FieldValue.arrayRemove([teamId]),
         });
       });
       await teamDoc.delete();

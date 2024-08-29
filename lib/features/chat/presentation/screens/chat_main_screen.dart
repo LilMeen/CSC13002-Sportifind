@@ -35,7 +35,6 @@ class _ChatMainScreenState extends State<ChatMainScreen>
         .call(GetTeamByPlayerParams(
             playerId: FirebaseAuth.instance.currentUser!.uid))
         .then((value) => value.data ?? []);
-
     user = await UseCaseProvider.getUseCase<GetCurrentProfile>()
         .call(NoParams())
         .then((value) => value.data!);

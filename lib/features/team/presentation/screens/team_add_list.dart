@@ -20,15 +20,17 @@ class _AddToTeamListState extends State<AddToTeamList> {
   final List<int> _buttonStates = [];
 
   bool _isJoined(PlayerEntity player, TeamEntity team) {
-    return team.players.contains(player);
+    List<String> playersId = team.players.map((e) => e.id).toList();
+
+    return playersId.contains(player.id);
   }
 
-  bool _hasSentInvitation(PlayerEntity playerId, TeamEntity team) {
+  bool _hasSentInvitation(PlayerEntity player, TeamEntity team) {
     if (team.invitedPlayers == null) {
       return false;
     }
-
-    return team.invitedPlayers!.contains(playerId);
+    List<String> teamsId = team.invitedPlayers!.map((e) => e.id).toList();
+    return teamsId.contains(player.id);
   }
 
   @override
@@ -178,16 +180,18 @@ class _AddToTeamListState extends State<AddToTeamList> {
                               _buttonStates[index] = 1;
                             });
                             // Add player here
-                            setState(() async {
-                              await UseCaseProvider.getUseCase<
-                                      InvitePlayerToTeam>()
-                                  .call(
-                                InvitePlayerToTeamParams(
-                                  teamId: widget.viewerTeams[index]!.id,
-                                  userId: widget.player.id,
-                                ),
-                              );
-                            });
+                            setState(
+                              () async {
+                                await UseCaseProvider.getUseCase<
+                                        InvitePlayerToTeam>()
+                                    .call(
+                                  InvitePlayerToTeamParams(
+                                    teamId: widget.viewerTeams[index]!.id,
+                                    userId: widget.player.id,
+                                  ),
+                                );
+                              },
+                            );
                           }
                         : null,
                     child: _getButtonText(index),

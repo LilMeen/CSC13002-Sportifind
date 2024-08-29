@@ -34,6 +34,17 @@ class _TeamDetailsState extends State<TeamDetails>
   String role = '';
   late AnimationController animationController;
   late Future<void> _initializationFuture;
+  bool _sentRequestState = false;
+  late Widget _button;
+
+  bool _hasSentJoinRequest(TeamEntity team, String playerId) {
+    if (team.joinRequestsFromPlayers == null) {
+      return false;
+    }
+    List<String> playersId =
+        team.joinRequestsFromPlayers!.map((e) => e.id).toList();
+    return playersId.contains(playerId);
+  }
 
   @override
   void initState() {
@@ -63,6 +74,10 @@ class _TeamDetailsState extends State<TeamDetails>
     } else {
       role = 'other';
     }
+
+    _sentRequestState = _hasSentJoinRequest(teamInformation, currentUserId);
+    _button = await _elevatedButton();
+
     setState(() {
       this.teamInformation = teamInformation;
       isLoading = false;
@@ -71,6 +86,65 @@ class _TeamDetailsState extends State<TeamDetails>
 
   String get foundedDate {
     return '${teamInformation!.foundedDate.day}/${teamInformation!.foundedDate.month}/${teamInformation!.foundedDate.year}';
+  }
+
+  Future<Widget> _elevatedButton() async {
+    if (role == 'captain' || role == 'member') {
+      return const SizedBox(height: 0, width: 0);
+    } else {
+      if (!_sentRequestState) {
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: SportifindTheme.bluePurple,
+            minimumSize: const Size(180, 50),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+          onPressed: () {
+            setState(() {
+              _sentRequestState = true;
+            });
+            UseCaseProvider.getUseCase<RequestToJoinTeam>().call(
+              RequestToJoinTeamParams(
+                userId: FirebaseAuth.instance.currentUser!.uid,
+                teamId: teamInformation!.id,
+              ),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Request sent'),
+              ),
+            );
+          },
+          child: Text(
+            'Join',
+            style: SportifindTheme.featureTitleBlack.copyWith(
+              fontSize: 28,
+              color: Colors.white,
+            ),
+          ),
+        );
+      } else {
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey.withOpacity(0.9),
+            minimumSize: const Size(240, 78),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+          onPressed: () {},
+          child: Text(
+            'Request sent',
+            style: SportifindTheme.featureTitleBlack.copyWith(
+              fontSize: 28,
+              color: Colors.white,
+            ),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -102,14 +176,16 @@ class _TeamDetailsState extends State<TeamDetails>
                 textAlign: TextAlign.center,
               ),
               centerTitle: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  onPressed: () {
-                    _showCustomDialog(context);
-                  },
-                )
-              ],
+              actions: role != 'other'
+                  ? <Widget>[
+                      IconButton(
+                        icon: const Icon(Icons.settings),
+                        onPressed: () {
+                          _showCustomDialog(context);
+                        },
+                      )
+                    ]
+                  : null,
               iconTheme: IconThemeData(color: SportifindTheme.bluePurple),
               elevation: 0,
               surfaceTintColor: SportifindTheme.backgroundColor,
@@ -132,7 +208,7 @@ class _TeamDetailsState extends State<TeamDetails>
                           const EdgeInsets.only(top: 8, bottom: 8, right: 8),
                       child: SizedBox(
                         height: 100,
-                        width: 300,
+                        width: double.infinity,
                         child: Row(
                           children: [
                             CircleAvatar(
@@ -345,49 +421,12 @@ class _TeamDetailsState extends State<TeamDetails>
                     ),
 
                     // create a elevated button here
-                    (role == 'captain' || role == 'member')
-                        ? const SizedBox(
-                            height: 0,
-                            width: 0,
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: SportifindTheme.bluePurple,
-                                  minimumSize: const Size(200, 50),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  UseCaseProvider.getUseCase<
-                                          RequestToJoinTeam>()
-                                      .call(
-                                    RequestToJoinTeamParams(
-                                      userId: FirebaseAuth
-                                          .instance.currentUser!.uid,
-                                      teamId: teamInformation!.id,
-                                    ),
-                                  );
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Request sent'),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  'Join',
-                                  style: SportifindTheme.featureTitleBlack
-                                      .copyWith(
-                                    fontSize: 28,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _button,
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -432,8 +471,8 @@ class _TeamDetailsState extends State<TeamDetails>
                         ),
                       ),
                       child: ListTile(
-                        leading:
-                            Icon(Icons.edit, color: SportifindTheme.bluePurple),
+                        leading: Icon(Icons.find_in_page,
+                            color: SportifindTheme.bluePurple),
                         title: Text(
                           'Find Players',
                           style: SportifindTheme.normalTextBlack.copyWith(

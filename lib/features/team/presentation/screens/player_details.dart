@@ -43,6 +43,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
 
   Future<void> _initialize() async {
     String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
     if (currentUserId == widget.user.id) {
       role = 'myself';
     } else {
@@ -141,7 +142,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
             body: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
-                child: Expanded(
+                child: SizedBox(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,8 +242,8 @@ class _PlayerDetailsState extends State<PlayerDetails>
                           children: [
                             Text(
                               'Details',
-                              style: SportifindTheme.normalTextBlack.copyWith(
-                                fontSize: 24,
+                              style: SportifindTheme.normalTextWhite.copyWith(
+                                fontSize: 16,
                                 color: Colors.black,
                               ),
                             ),
@@ -356,8 +357,8 @@ class _PlayerDetailsState extends State<PlayerDetails>
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Joined Teams',
-                          style: SportifindTheme.normalTextBlack.copyWith(
-                            fontSize: 24,
+                          style: SportifindTheme.normalTextWhite.copyWith(
+                            fontSize: 16,
                             color: Colors.black,
                           ),
                         ),
@@ -368,7 +369,7 @@ class _PlayerDetailsState extends State<PlayerDetails>
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => AddToTeamList(

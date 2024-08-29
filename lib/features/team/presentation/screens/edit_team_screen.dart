@@ -11,12 +11,10 @@ import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 import 'package:sportifind/features/team/presentation/bloc/team_bloc.dart';
 import 'package:sportifind/features/team/presentation/screens/team_main_screen.dart';
-import 'package:sportifind/features/team/presentation/widgets/player_list.dart';
 
 class EditTeamScreen extends StatefulWidget {
   const EditTeamScreen({super.key, required this.team});
   final TeamEntity? team;
-
 
   @override
   State<EditTeamScreen> createState() => _EditTeamScreenState();
@@ -55,8 +53,9 @@ class _EditTeamScreenState extends State<EditTeamScreen> {
     //_avatar = widget.team!.avatar;
     //_images = widget.team!.images ?? [];
     _avatar = await _bloc.downloadAvatarFile(widget.team!.id);
-    if (widget.team!.images != null){
-      _images = await _bloc.downloadImageFiles( widget.team!.id, widget.team!.images!.length);
+    if (widget.team!.images != null) {
+      _images = await _bloc.downloadImageFiles(
+          widget.team!.id, widget.team!.images!.length);
     }
 
     setState(() {
@@ -97,7 +96,8 @@ class _EditTeamScreenState extends State<EditTeamScreen> {
 
   Future<void> _editTeam() async {
     if (!_formKey.currentState!.validate()) return;
-
+    _location =
+        _location!.copyWith(city: _selectedCity, district: _selectedDistrict);
     try {
       await _bloc.teamProcessing(
         action: 'edit',
@@ -214,7 +214,6 @@ class _EditTeamScreenState extends State<EditTeamScreen> {
                 deleteImage: _deleteImageInList,
               ),
               const SizedBox(height: 16),
-              PlayerList(members: teamMembers, team: widget.team, role: 'captain'),
               SizedBox(
                 width: double.infinity,
                 child: BluePurpleWhiteLoadingButton(
