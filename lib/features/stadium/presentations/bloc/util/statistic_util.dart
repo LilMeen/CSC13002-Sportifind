@@ -41,19 +41,25 @@ class StatisticUtil {
     return dateTime;
   }
 
+  Future<List<StadiumEntity>> getStadiumsByOwner() async {
+    final List<StadiumEntity> ownerStadium =
+        await UseCaseProvider.getUseCase<GetStadiumsByOwner>()
+            .call(GetStadiumsByOwnerParams(
+                ownerId: FirebaseAuth.instance.currentUser!.uid))
+            .then((value) => value.data ?? []);
+    return ownerStadium;
+  }
+
   Future<Map<String, List<MatchEntity>>> getFilteredMatch(
-      DateTimeRange week) async {
+      DateTimeRange week, List<StadiumEntity> ownerStadium) async {
     Map<String, List<MatchEntity>> matchOfEachStadium = {};
     List<MatchEntity> filteredMatch = [];
 
-    final List<StadiumEntity> ownerStadium = await UseCaseProvider.getUseCase<GetStadiumsByOwner>().call(
-        GetStadiumsByOwnerParams(ownerId: FirebaseAuth.instance.currentUser!.uid)
-    ).then((value) => value.data ?? []);
-
     for (var i = 0; i < ownerStadium.length; ++i) {
-      final List<MatchEntity> matchData = await UseCaseProvider.getUseCase<GetMatchByStadium>().call(
-          GetMatchByStadiumParams(stadiumId: ownerStadium[i].id)
-      ).then((value) => value.data ?? []);
+      final List<MatchEntity> matchData =
+          await UseCaseProvider.getUseCase<GetMatchByStadium>()
+              .call(GetMatchByStadiumParams(stadiumId: ownerStadium[i].id))
+              .then((value) => value.data ?? []);
 
       for (var j = 0; j < matchData.length; ++j) {
         DateTime matchDate =
@@ -74,9 +80,11 @@ class StatisticUtil {
     Map<String, double> result = {};
 
     // Get and preprocess owner stadium data
-    final List<StadiumEntity> ownerStadiums = await UseCaseProvider.getUseCase<GetStadiumsByOwner>().call(
-        GetStadiumsByOwnerParams(ownerId: FirebaseAuth.instance.currentUser!.uid)
-    ).then((value) => value.data ?? []);
+    final List<StadiumEntity> ownerStadiums =
+        await UseCaseProvider.getUseCase<GetStadiumsByOwner>()
+            .call(GetStadiumsByOwnerParams(
+                ownerId: FirebaseAuth.instance.currentUser!.uid))
+            .then((value) => value.data ?? []);
 
     // Create a map from stadium ID to its data
     Map<String, StadiumEntity> stadiumDataMap = {
@@ -96,8 +104,10 @@ class StatisticUtil {
       StadiumEntity stadiumData = stadiumDataMap[stadiumKey]!;
 
       for (var matchCard in matchCards) {
-        if (stadiumData.fields.any((element) => element.id == matchCard.field.id)) {
-            revenue += timeStringToDouble(matchCard.playTime) * matchCard.field.price;
+        if (stadiumData.fields
+            .any((element) => element.id == matchCard.field.id)) {
+          revenue +=
+              timeStringToDouble(matchCard.playTime) * matchCard.field.price;
         }
       }
 
@@ -135,14 +145,17 @@ class StatisticUtil {
     List<MatchEntity> filteredMatch = [];
     Map<DateTime, int> mostDateMap = {};
 
-    final List<StadiumEntity> ownerStadium = await UseCaseProvider.getUseCase<GetStadiumsByOwner>().call(
-        GetStadiumsByOwnerParams(ownerId: FirebaseAuth.instance.currentUser!.uid)
-    ).then((value) => value.data ?? []);
+    final List<StadiumEntity> ownerStadium =
+        await UseCaseProvider.getUseCase<GetStadiumsByOwner>()
+            .call(GetStadiumsByOwnerParams(
+                ownerId: FirebaseAuth.instance.currentUser!.uid))
+            .then((value) => value.data ?? []);
 
     for (var i = 0; i < ownerStadium.length; ++i) {
-      final List<MatchEntity> matchData = await UseCaseProvider.getUseCase<GetMatchByStadium>().call(
-          GetMatchByStadiumParams(stadiumId: ownerStadium[i].id)
-      ).then((value) => value.data ?? []);
+      final List<MatchEntity> matchData =
+          await UseCaseProvider.getUseCase<GetMatchByStadium>()
+              .call(GetMatchByStadiumParams(stadiumId: ownerStadium[i].id))
+              .then((value) => value.data ?? []);
 
       for (var j = 0; j < matchData.length; ++j) {
         DateTime matchDate =
@@ -155,7 +168,7 @@ class StatisticUtil {
 
     for (DateTime date = week.start;
         date.isBefore(week.end) || date.isAtSameMomentAs(week.end);
-        date = date.add(const Duration(days: 1))){
+        date = date.add(const Duration(days: 1))) {
       int count = 0;
       for (var i = 0; i < filteredMatch.length; ++i) {
         if (date == parseDateTime(filteredMatch[i].date, "00:00")) {
@@ -172,14 +185,17 @@ class StatisticUtil {
     List<MatchEntity> filteredMatch = [];
     int count = 0;
 
-    final List<StadiumEntity> ownerStadium = await UseCaseProvider.getUseCase<GetStadiumsByOwner>().call(
-        GetStadiumsByOwnerParams(ownerId: FirebaseAuth.instance.currentUser!.uid)
-    ).then((value) => value.data ?? []);
+    final List<StadiumEntity> ownerStadium =
+        await UseCaseProvider.getUseCase<GetStadiumsByOwner>()
+            .call(GetStadiumsByOwnerParams(
+                ownerId: FirebaseAuth.instance.currentUser!.uid))
+            .then((value) => value.data ?? []);
 
     for (var i = 0; i < ownerStadium.length; ++i) {
-      final List<MatchEntity> matchData = await UseCaseProvider.getUseCase<GetMatchByStadium>().call(
-          GetMatchByStadiumParams(stadiumId: ownerStadium[i].id)
-      ).then((value) => value.data ?? []);
+      final List<MatchEntity> matchData =
+          await UseCaseProvider.getUseCase<GetMatchByStadium>()
+              .call(GetMatchByStadiumParams(stadiumId: ownerStadium[i].id))
+              .then((value) => value.data ?? []);
 
       for (var j = 0; j < matchData.length; ++j) {
         DateTime matchDate =
@@ -207,9 +223,11 @@ class StatisticUtil {
     Map<String, int> result = {};
 
     // Get and preprocess owner stadium data
-    final List<StadiumEntity> ownerStadiums = await UseCaseProvider.getUseCase<GetStadiumsByOwner>().call(
-        GetStadiumsByOwnerParams(ownerId: FirebaseAuth.instance.currentUser!.uid)
-    ).then((value) => value.data ?? []);
+    final List<StadiumEntity> ownerStadiums =
+        await UseCaseProvider.getUseCase<GetStadiumsByOwner>()
+            .call(GetStadiumsByOwnerParams(
+                ownerId: FirebaseAuth.instance.currentUser!.uid))
+            .then((value) => value.data ?? []);
 
     // Create a map from stadium ID to its data
     Map<String, StadiumEntity> stadiumDataMap = {
@@ -247,15 +265,16 @@ class StatisticUtil {
     Map<DateTime, double> result = {};
 
     // Get and preprocess owner stadium data
-    final List<StadiumEntity> ownerStadiums = await UseCaseProvider.getUseCase<GetStadiumsByOwner>().call(
-        GetStadiumsByOwnerParams(ownerId: FirebaseAuth.instance.currentUser!.uid)
-    ).then((value) => value.data ?? []);
+    final List<StadiumEntity> ownerStadiums =
+        await UseCaseProvider.getUseCase<GetStadiumsByOwner>()
+            .call(GetStadiumsByOwnerParams(
+                ownerId: FirebaseAuth.instance.currentUser!.uid))
+            .then((value) => value.data ?? []);
 
     // Create a map from stadium ID to its data
     Map<String, StadiumEntity> stadiumDataMap = {
       for (var stadium in ownerStadiums) stadium.id: stadium
     };
-
 
     // Iterate over each stadium in matchMap
     for (DateTime date = week.start;
@@ -272,9 +291,11 @@ class StatisticUtil {
         StadiumEntity stadiumData = stadiumDataMap[stadiumKey]!;
 
         for (var matchCard in matchCards) {
-          if (stadiumData.fields.any((element) => element.id == matchCard.field.id)) {
+          if (stadiumData.fields
+              .any((element) => element.id == matchCard.field.id)) {
             if (date == parseDateTime(matchCard.date, "00:00")) {
-              dailyRevenue += timeStringToDouble(matchCard.playTime) * matchCard.field.price;
+              dailyRevenue += timeStringToDouble(matchCard.playTime) *
+                  matchCard.field.price;
             }
           }
         }
@@ -294,19 +315,19 @@ class StatisticUtil {
     while (startOfWeek.weekday != DateTime.monday) {
       startOfWeek = startOfWeek.subtract(const Duration(days: 1));
     }
-    DateTime endOfWeek =
-        startOfWeek.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+    DateTime endOfWeek = startOfWeek
+        .add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
 
     return DateTimeRange(start: startOfWeek, end: endOfWeek);
   }
 
-  Future<List<double>> getDataForBarChart(int weekNumber) async {
+  Future<List<double>> getDataForBarChart(int weekNumber, List<StadiumEntity> ownerStadium) async {
     DateTime currentDate = DateTime.now();
     DateTimeRange selectedWeek =
         getDateTimeRangeFromWeekNumber(weekNumber, currentDate.year);
 
     Map<String, List<MatchEntity>> matchMap =
-        await getFilteredMatch(selectedWeek);
+        await getFilteredMatch(selectedWeek, ownerStadium);
 
     Map<DateTime, double> revenueMap =
         await getRevenueForEachDate(matchMap, selectedWeek);
@@ -330,13 +351,13 @@ class StatisticUtil {
     return DateTimeRange(start: startOfMonth, end: endOfMonth);
   }
 
-  Future<List<double>> getDataForLineChart(int monthNumber) async {
+  Future<List<double>> getDataForLineChart(int monthNumber, List<StadiumEntity> ownerStadium) async {
     DateTime currentDate = DateTime.now();
     DateTimeRange selectedMonth =
         getDateTimeRangeFromMonthNumber(monthNumber, currentDate.year);
 
     Map<String, List<MatchEntity>> matchMap =
-        await getFilteredMatch(selectedMonth);
+        await getFilteredMatch(selectedMonth, ownerStadium);
 
     Map<DateTime, double> revenueMap =
         await getRevenueForEachDate(matchMap, selectedMonth);

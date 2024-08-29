@@ -75,6 +75,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     for (var i = 0; i < notifications.length; ++i) {
       userNotification.add(notifications[i]);
     }
+    userNotification.sort((a, b) => a.time.compareTo(b.time));
     return userNotification;
   }
 
