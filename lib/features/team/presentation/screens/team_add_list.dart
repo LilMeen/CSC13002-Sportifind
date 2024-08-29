@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
-import 'package:sportifind/features/notification/domain/usecases/send_request_to_user.dart';
+import 'package:sportifind/features/team/domain/usecases/invite_player_to_team.dart';
 import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
-import 'package:sportifind/features/team/domain/usecases/send_invite_to_team.dart';
 
 class AddToTeamList extends StatefulWidget {
   const AddToTeamList(
@@ -181,11 +180,11 @@ class _AddToTeamListState extends State<AddToTeamList> {
                             // Add player here
                             setState(() async {
                               await UseCaseProvider.getUseCase<
-                                      SendTeamRequest>()
+                                      InvitePlayerToTeam>()
                                   .call(
-                                SendTeamRequestParams(
-                                  sender: widget.viewerTeams[index]!.id,
-                                  receiver: widget.player.id,
+                                InvitePlayerToTeamParams(
+                                  teamId: widget.viewerTeams[index]!.id,
+                                  userId: widget.player.id,
                                 ),
                               );
                             });

@@ -27,8 +27,6 @@ void initializeNotificationDependencies() {
   sl.registerLazySingleton<MatchRequestAccept>(() => MatchRequestAccept(sl()));
   sl.registerLazySingleton<MatchRequestDeny>(() => MatchRequestDeny(sl()));
   sl.registerLazySingleton<TeamRequestAccept>(() => TeamRequestAccept(sl()));
-  sl.registerLazySingleton<TeamRequestDenyUser>(
-      () => TeamRequestDenyUser(sl()));
-  sl.registerLazySingleton<TeamRequestDenyTeam>(
-      () => TeamRequestDenyTeam(sl()));
+  sl.registerLazySingleton<TeamRequestDenyUser>(() => TeamRequestDenyUser(sl()));
+  sl.registerLazySingleton<TeamRequestDenyTeam>(() => TeamRequestDenyTeam(sl()));
 }

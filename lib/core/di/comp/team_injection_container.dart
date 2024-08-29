@@ -9,6 +9,7 @@ import 'package:sportifind/features/team/domain/usecases/get_all_team.dart';
 import 'package:sportifind/features/team/domain/usecases/get_nearby_team.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team.dart';
 import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
+import 'package:sportifind/features/team/domain/usecases/invite_player_to_team.dart';
 import 'package:sportifind/features/team/domain/usecases/kick_player.dart';
 import 'package:sportifind/features/team/domain/usecases/request_to_join_team.dart';
 
@@ -36,8 +37,9 @@ void initializeTeamDependencies (){
   sl.registerLazySingleton<EditTeam>(() => EditTeam(sl()));
   sl.registerLazySingleton<GetAllTeam>(() => GetAllTeam(sl()));
   sl.registerLazySingleton<GetNearbyTeam>(() => GetNearbyTeam(sl()));
-  sl.registerLazySingleton<GetTeam>(() => GetTeam(sl()));
   sl.registerLazySingleton<GetTeamByPlayer>(() => GetTeamByPlayer(sl()));
+  sl.registerLazySingleton<GetTeam>(() => GetTeam(sl()));
+  sl.registerLazySingleton<InvitePlayerToTeam>(() => InvitePlayerToTeam(sl()));
   sl.registerLazySingleton<KickPlayer>(() => KickPlayer(sl(), sl()));
   sl.registerLazySingleton<RequestToJoinTeam>(() => RequestToJoinTeam(sl()));
 }
