@@ -21,11 +21,45 @@ class ReportDetailDialog extends StatelessWidget {
   });
 
   Future<void> deleteReport(BuildContext context) async {
+  bool? confirmed = await showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Center(
+          child: Text('Confirm Deletion', style: SportifindTheme.normalTextBlack),),
+        content: Text('Are you sure you want to delete this report?', style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14)),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false); 
+                },
+                child: Text('Cancel', style: SportifindTheme.smallTextBluePurple),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true); 
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, 
+                ),
+                child: Text('Delete', style: SportifindTheme.normalTextWhite.copyWith(fontSize: 14)),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
+
+  if (confirmed == true) {
     try {
       await UseCaseProvider.getUseCase<DeleteReport>().call(
-        DeleteReportParams(reportId: report.id)
+        DeleteReportParams(reportId: report.id),
       );
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(); // Close the screen or dialog after deletion
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -34,6 +68,8 @@ class ReportDetailDialog extends StatelessWidget {
       );
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

@@ -3,8 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/usecases/usecase.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/search_util.dart';
+import 'package:sportifind/features/auth/domain/usecases/sign_out.dart';
+import 'package:sportifind/features/auth/presentations/screens/sign_in_screen.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/custom_search_bar.dart';
 import 'package:sportifind/features/user/domain/entities/user_entity.dart';
 import 'package:sportifind/features/user/domain/usecases/delete_user.dart';
@@ -57,30 +60,97 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Are you sure?', style: SportifindTheme.normalTextBlack),
-        content: Text('Do you want to delete this user?', style: SportifindTheme.normalTextBlack),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () async {
-              UserEntity userEntity = await UseCaseProvider.getUseCase<GetUser>().call(
-                GetUserParams(id: user.id),
-              ).then((value) => value.data!);
-              await UseCaseProvider.getUseCase<DeleteUser>().call(
-                DeleteUserParams(user: userEntity),
-              );
-              Navigator.of(ctx).pop();
-            },
-            child: Text('Yes', style: SportifindTheme.normalTextBlack),
+        title: Center(
+            child:
+                Text('Are you sure?', style: SportifindTheme.normalTextBlack)),
+        content: Text('Do you want to delete this user?',
+            style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14)),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Spacer(),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pop(false); // Dismiss the dialog and return false
+                },
+                child: Text('No', style: SportifindTheme.smallTextBluePurple),
+              ),
+              const Spacer(),
+              TextButton(
+                onPressed: () async {
+                  UserEntity userEntity =
+                      await UseCaseProvider.getUseCase<GetUser>()
+                          .call(
+                            GetUserParams(id: user.id),
+                          )
+                          .then((value) => value.data!);
+                  await UseCaseProvider.getUseCase<DeleteUser>().call(
+                    DeleteUserParams(user: userEntity),
+                  );
+                  Navigator.of(ctx).pop();
+                },
+                child: Text('Yes',
+                    style: SportifindTheme.smallTextBluePurple.copyWith(
+                      fontSize: 14,
+                    )),
+              ),
+              const Spacer(),
+            ],
           ),
         ],
       ),
     );
+  }
+
+  void confirmSignOut(BuildContext context) async {
+    bool confirmed = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(
+            child: Text('Confirm Sign Out',
+                style: SportifindTheme.normalTextBlack),
+          ),
+          content: Text('Are you sure you want to sign out?',
+              style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14)),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pop(false); // Dismiss the dialog and return false
+                  },
+                  child: Text('Cancel',
+                      style: SportifindTheme.smallTextBluePurple),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pop(true); // Dismiss the dialog and return true
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: SportifindTheme.bluePurple,
+                  ),
+                  child: Text('Sign out',
+                      style: SportifindTheme.normalTextWhite
+                          .copyWith(fontSize: 14)),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed) {
+      await UseCaseProvider.getUseCase<SignOut>().call(NoParams());
+
+      Navigator.of(context).pushReplacement(SignInScreen.route());
+    }
   }
 
   @override
@@ -89,7 +159,16 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admin Home', style: SportifindTheme.sportifindFeatureAppBarBluePurple),
+        title: Text('Admin Home',
+            style: SportifindTheme.sportifindFeatureAppBarBluePurple),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout, color: SportifindTheme.bluePurple),
+            onPressed: () async {
+              confirmSignOut(context);
+            },
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Column(
@@ -136,26 +215,35 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     searchController: _searchController,
                     hintText: 'Search by email or role',
                   ),
-                  const SizedBox(height: 8.0), // Space between search bar and list
+                  const SizedBox(
+                      height: 8.0), // Space between search bar and list
                 ],
                 Expanded(
                   child: status == 0
                       ? StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseFirestore.instance.collection('users').snapshots(),
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .snapshots(),
                           builder: (ctx, userSnapshot) {
-                            if (userSnapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: CircularProgressIndicator());
+                            if (userSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             }
                             if (userSnapshot.hasError) {
                               return AlertDialog(
-                                title: Text('Error', style: SportifindTheme.normalTextBlack),
-                                content: Text('An error occurred while fetching data.', style: SportifindTheme.normalTextBlack),
+                                title: Text('Error',
+                                    style: SportifindTheme.normalTextBlack),
+                                content: Text(
+                                    'An error occurred while fetching data.',
+                                    style: SportifindTheme.normalTextBlack),
                                 actions: <Widget>[
                                   TextButton(
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: Text('OK', style: SportifindTheme.normalTextBlack),
+                                    child: Text('OK',
+                                        style: SportifindTheme.normalTextBlack),
                                   ),
                                 ],
                               );
@@ -169,22 +257,28 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             );
 
                             if (filteredUsers.isEmpty) {
-                              return Center(child: Text('No users found.', style: SportifindTheme.normalTextBlack));
+                              return Center(
+                                  child: Text('No users found.',
+                                      style: SportifindTheme.normalTextBlack));
                             }
 
                             return ListView.builder(
                               itemCount: filteredUsers.length,
                               itemBuilder: (ctx, index) => Card(
                                 elevation: 4,
-                                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 16),
                                 child: ListTile(
                                   leading: const CircleAvatar(
                                     backgroundColor: Colors.transparent,
                                     child: Icon(Icons.person),
                                   ),
-                                  title: Text(filteredUsers[index]['email'], style: SportifindTheme.normalTextBlack),
-                                  subtitle: Text(filteredUsers[index]['role'], style: SportifindTheme.normalTextBlack),
-                                  onTap: () => _showDeleteDialog(ctx, filteredUsers[index]),
+                                  title: Text(filteredUsers[index]['email'],
+                                      style: SportifindTheme.normalTextBlack),
+                                  subtitle: Text(filteredUsers[index]['role'],
+                                      style: SportifindTheme.normalTextBlack),
+                                  onTap: () => _showDeleteDialog(
+                                      ctx, filteredUsers[index]),
                                 ),
                               ),
                             );
