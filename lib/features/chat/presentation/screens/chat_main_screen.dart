@@ -17,27 +17,28 @@ class ChatMainScreen extends StatefulWidget {
 
 class _ChatMainScreenState extends State<ChatMainScreen>
     with TickerProviderStateMixin {
-
-  List<TeamEntity> myTeams = []; 
+  List<TeamEntity> myTeams = [];
   AnimationController? animationController;
   late UserEntity user;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
 
     animationController = AnimationController(
-      duration: const Duration(milliseconds: 2000), vsync: this
-    );
+        duration: const Duration(milliseconds: 2000), vsync: this);
     _initialize();
   }
 
-  Future<void> _initialize() async{
-    myTeams = await UseCaseProvider.getUseCase<GetTeamByPlayer>().call(
-      GetTeamByPlayerParams(playerId: FirebaseAuth.instance.currentUser!.uid)
-    ).then((value) => value.data ?? []);
+  Future<void> _initialize() async {
+    myTeams = await UseCaseProvider.getUseCase<GetTeamByPlayer>()
+        .call(GetTeamByPlayerParams(
+            playerId: FirebaseAuth.instance.currentUser!.uid))
+        .then((value) => value.data ?? []);
 
-    user = await UseCaseProvider.getUseCase<GetCurrentProfile>().call(NoParams()).then((value) => value.data!);
+    user = await UseCaseProvider.getUseCase<GetCurrentProfile>()
+        .call(NoParams())
+        .then((value) => value.data!);
     setState(() {});
   }
 
@@ -68,36 +69,36 @@ class _ChatMainScreenState extends State<ChatMainScreen>
       itemCount: myTeams.length,
       itemBuilder: (context, index) {
         final team = myTeams[index];
-        return GroupChatTile(
-            team: team, 
-            currentUser: user);
+        return GroupChatTile(team: team, currentUser: user);
       },
     );
-  }       
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-              backgroundColor: Colors.white,
-              title: Text(
-                'Messages',
-                style: SportifindTheme.sportifindAppBarForFeature.copyWith(
-                  fontSize: 32,
-                  color: SportifindTheme.bluePurple,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              centerTitle: true,
-              shadowColor: Colors.black.withOpacity(0.8),
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
+        backgroundColor: Colors.white,
+        title: Text(
+          'Messages',
+          style: SportifindTheme.sportifindAppBarForFeature.copyWith(
+            fontSize: 32,
+            color: SportifindTheme.bluePurple,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+        iconTheme: IconThemeData(color: SportifindTheme.bluePurple),
+        elevation: 0,
+        surfaceTintColor: SportifindTheme.backgroundColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
       body: teamList(),
     );
   }
