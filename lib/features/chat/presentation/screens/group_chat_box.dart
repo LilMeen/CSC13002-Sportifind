@@ -46,7 +46,7 @@ class _GroupChatBoxState extends State<GroupChatBox> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
-          ); 
+          );
         } else if (snapshot.hasError) {
           return const Center(
             child: Text('Error loading messages'),
@@ -124,13 +124,15 @@ class _GroupChatBoxState extends State<GroupChatBox> {
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
-        shadowColor: Colors.black.withOpacity(0.8),
+        iconTheme: IconThemeData(color: SportifindTheme.bluePurple),
+        elevation: 0,
+        surfaceTintColor: SportifindTheme.backgroundColor,
         leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () {
-          Navigator.pop(context, _messages.last);
-        },
-      ),
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context, _messages.last);
+          },
+        ),
       ),
       body: Stack(
         children: <Widget>[

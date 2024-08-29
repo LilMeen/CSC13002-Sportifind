@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
+
 class StatisticCard extends StatelessWidget {
   final IconData icon;
   final String value;
@@ -107,6 +108,7 @@ class StatisticCard extends StatelessWidget {
               Text(
                 value,
                 style: SportifindTheme.normalTextBlack.copyWith(fontSize: 20),
+                overflow: TextOverflow.ellipsis,
               ),
               buildExtraInformation(),
             ],

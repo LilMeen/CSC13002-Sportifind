@@ -73,7 +73,7 @@ class StadiumMapSearchBloc {
 
   void _initState() {
     final ownerMap = {for (var owner in owners) owner.id: owner.name};
-    final markers = _createMarkers();
+    final markers = _createMarkers(null);
     _state = StadiumMapSearchState(
       nearbyStadiums: stadiums,
       ownerMap: ownerMap,
@@ -126,7 +126,7 @@ class StadiumMapSearchBloc {
               searchLocation: location,
               searchMarker: searchMarker,
               nearbyStadiums: nearbyStadiums,
-              markers: _createMarkers(),
+              markers: _createMarkers(searchMarker),
             ));
 
         mapController?.animateCamera(
@@ -167,7 +167,7 @@ class StadiumMapSearchBloc {
               searchLocation: null,
               searchMarker: null,
               nearbyStadiums: nearbyStadiums,
-              markers: _createMarkers(),
+              markers: _createMarkers(null),
             ));
 
         mapController?.animateCamera(
@@ -208,7 +208,7 @@ class StadiumMapSearchBloc {
               searchLocation: searchLocation,
               searchMarker: searchMarker,
               nearbyStadiums: nearbyStadiums,
-              markers: _createMarkers(),
+              markers: _createMarkers(searchMarker),
             ));
 
         mapController?.animateCamera(
@@ -228,7 +228,7 @@ class StadiumMapSearchBloc {
   }
 
   // PRIVATE METHODS
-  Set<Marker> _createMarkers() {
+  Set<Marker> _createMarkers(Marker? searchMarker) {
     Set<Marker> markers = stadiums.map((stadium) {
       return Marker(
         markerId: MarkerId(stadium.id),
@@ -255,8 +255,8 @@ class StadiumMapSearchBloc {
       ),
     );
 
-    if (_state.searchMarker != null) {
-      markers.add(_state.searchMarker!);
+    if (searchMarker != null) {
+      markers.add(searchMarker);
     }
 
     return markers;

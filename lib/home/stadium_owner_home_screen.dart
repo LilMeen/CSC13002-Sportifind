@@ -20,7 +20,7 @@ class _StadiumOwnerHomeScreenState extends State<StadiumOwnerHomeScreen> {
 
   int _selectedIndex = 2;
   static const List<Widget> _widgetOptions = <Widget>[
-    //StadiumStatisticScreen(),
+    StadiumStatisticScreen(),
     ScheduleScreen(),
     OwnerStadiumScreen(),
     StadiumOwnerProfileScreen(),
