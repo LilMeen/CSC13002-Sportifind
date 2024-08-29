@@ -35,18 +35,7 @@ class ReportDialogState extends State<ReportDialog> {
         'timestamp': FieldValue.serverTimestamp(),
       };
 
-      QuerySnapshot adminSnapshot = await firestore
-          .collection('users')
-          .where('role', isEqualTo: 'admin')
-          .get();
-
-      for (var doc in adminSnapshot.docs) {
-        await firestore
-            .collection('users')
-            .doc(doc.id)
-            .collection('reports')
-            .add(reportData);
-      }
+      await firestore.collection('reports').add(reportData);
     } catch (e) {
       throw Exception('Failed to report user: $e');
     }
