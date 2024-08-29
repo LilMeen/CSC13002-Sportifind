@@ -376,7 +376,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                     screenWidth: MediaQuery.of(context).size.width,
                     ratings: defaultRatings,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),

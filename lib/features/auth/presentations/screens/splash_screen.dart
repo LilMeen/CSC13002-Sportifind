@@ -52,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration (
-          color: Color.fromRGBO(33, 33, 33, 1)
+          color: Colors.white
         ),
         child: Column (
           mainAxisAlignment: MainAxisAlignment.center,
@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             FadeTransition(
               opacity: _animation,
               child: const Image(
-                image: AssetImage('lib/assets/logo/logo_white_text.png'),
+                image: AssetImage('lib/assets/logo/logo_black_text.png'),
                 height: 250,
               )
             )
