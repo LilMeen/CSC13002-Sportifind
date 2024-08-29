@@ -41,19 +41,16 @@ class StatisticUtil {
     return dateTime;
   }
 
-  Future<List<StadiumEntity>> getStadiumsByOwner() async {
+  Future<Map<String, List<MatchEntity>>> getFilteredMatch(
+      DateTimeRange week) async {
+    Map<String, List<MatchEntity>> matchOfEachStadium = {};
+    List<MatchEntity> filteredMatch = [];
+
     final List<StadiumEntity> ownerStadium =
         await UseCaseProvider.getUseCase<GetStadiumsByOwner>()
             .call(GetStadiumsByOwnerParams(
                 ownerId: FirebaseAuth.instance.currentUser!.uid))
             .then((value) => value.data ?? []);
-    return ownerStadium;
-  }
-
-  Future<Map<String, List<MatchEntity>>> getFilteredMatch(
-      DateTimeRange week, List<StadiumEntity> ownerStadium) async {
-    Map<String, List<MatchEntity>> matchOfEachStadium = {};
-    List<MatchEntity> filteredMatch = [];
 
     for (var i = 0; i < ownerStadium.length; ++i) {
       final List<MatchEntity> matchData =
@@ -321,13 +318,14 @@ class StatisticUtil {
     return DateTimeRange(start: startOfWeek, end: endOfWeek);
   }
 
-  Future<List<double>> getDataForBarChart(int weekNumber, List<StadiumEntity> ownerStadium) async {
+  Future<List<double>> getDataForBarChart(
+      int weekNumber) async {
     DateTime currentDate = DateTime.now();
     DateTimeRange selectedWeek =
         getDateTimeRangeFromWeekNumber(weekNumber, currentDate.year);
 
     Map<String, List<MatchEntity>> matchMap =
-        await getFilteredMatch(selectedWeek, ownerStadium);
+        await getFilteredMatch(selectedWeek);
 
     Map<DateTime, double> revenueMap =
         await getRevenueForEachDate(matchMap, selectedWeek);
@@ -351,13 +349,13 @@ class StatisticUtil {
     return DateTimeRange(start: startOfMonth, end: endOfMonth);
   }
 
-  Future<List<double>> getDataForLineChart(int monthNumber, List<StadiumEntity> ownerStadium) async {
+  Future<List<double>> getDataForLineChart(int monthNumber) async {
     DateTime currentDate = DateTime.now();
     DateTimeRange selectedMonth =
         getDateTimeRangeFromMonthNumber(monthNumber, currentDate.year);
 
     Map<String, List<MatchEntity>> matchMap =
-        await getFilteredMatch(selectedMonth, ownerStadium);
+        await getFilteredMatch(selectedMonth);
 
     Map<DateTime, double> revenueMap =
         await getRevenueForEachDate(matchMap, selectedMonth);
