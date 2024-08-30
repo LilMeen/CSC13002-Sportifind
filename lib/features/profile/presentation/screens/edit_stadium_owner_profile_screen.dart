@@ -41,14 +41,15 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
 
   final Map<String, String> citiesNameAndId = {};
 
-  var _enteredName = '';
-  var _enteredPhone = '';
-
   @override
   void dispose() {
     _nameController.dispose();
     _dateController.dispose();
     _phoneController.dispose();
+    _genderController.dispose();
+    _cityController.dispose();
+    _districtController.dispose();
+    _addressController.dispose();
     _delayCityTime?.cancel();
     _delayDistrictTime?.cancel();
     super.dispose();
@@ -58,10 +59,6 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
   void initState() {
     super.initState();
     _fetchUserData();
-    setState(() {
-      _cityController.text = '';
-      _districtController.text = '';
-    });
   }
 
   Future<void> _fetchUserData() async {
@@ -73,7 +70,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
       _genderController.text = widget.stadiumOwner.gender;
 
       _delayCityTime?.cancel();
-      _delayCityTime = Timer(const Duration(milliseconds: 100), () {
+      _delayCityTime = Timer(const Duration(milliseconds: 300), () {
         setState(() {
           _cityController.text = widget.stadiumOwner.location.city;
         });
@@ -85,8 +82,6 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
           _districtController.text = widget.stadiumOwner.location.district;
         });
       });
-
-      _addressController.text = widget.stadiumOwner.location.address;
     });
   }
 
@@ -101,12 +96,13 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
         _districtController.text,
         _cityController.text,
       );
-      widget.stadiumOwner.name = _enteredName;
-      widget.stadiumOwner.phone = _enteredPhone;
+
+      widget.stadiumOwner.name = _nameController.text;
+      widget.stadiumOwner.phone = _phoneController.text;
       widget.stadiumOwner.dob = _dateController.text;
       widget.stadiumOwner.location = newLocation;
       widget.stadiumOwner.gender = _genderController.text;
-      widget.stadiumOwner.location = newLocation;
+      
       try {
         await UseCaseProvider.getUseCase<UpdateStadiumOwner>()
             .call(UpdateStadiumOwnerParams(stadiumOwner: widget.stadiumOwner));
@@ -348,16 +344,6 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
                 ],
               );
             },
-            onSaved: (value) {
-              switch (type) {
-                case 'Name':
-                  _enteredName = controller.text;
-                  break;
-                case 'Phone Number':
-                  _enteredPhone = controller.text;
-                  break;
-              }
-            },
           ),
         ),
       ],
@@ -488,7 +474,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
                         ),
                         const SizedBox(height: 12),
                         CityDropdown(
-                          type: 'custom_form',
+                          type: 'custom form',
                           selectedCity: _cityController.text,
                           onChanged: (value) {
                             setState(() {
@@ -518,7 +504,7 @@ class EditStadiumOwnerInformationState extends State<EditStadiumOwnerInformation
                       SizedBox(
                         width: 290,
                         child: DistrictDropdown(
-                          type: 'custom_form',
+                          type: 'custom form',
                           selectedCity: _cityController.text,
                           selectedDistrict: _districtController.text,
                           onChanged: (value) {

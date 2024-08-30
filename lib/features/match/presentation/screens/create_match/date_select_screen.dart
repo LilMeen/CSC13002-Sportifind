@@ -33,9 +33,10 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   DateTime? selectedDate;
   List<DateTimeRange> bookedSlot = [];
   String selectedPlayTime = '1:00';
-  String selectedFieldType = '5-Player';
+  String selectedFieldType = '';
   int? selectedField;
   List<String> typeOfField = [];
+  List<FieldEntity> activeFields = [];
 
   var playTime = [
     '1:00',
@@ -46,22 +47,25 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
   @override
   void initState() {
     super.initState();
-    getFieldType(widget.stadiumData.fields);
-    selectedField = 1;
+    activeFields = widget.stadiumData.fields
+        .where((field) => field.status == true)
+        .toList()
+      ..sort((a, b) => a.numberId.compareTo(b.numberId));
+    getFieldType();
+    if(activeFields.isNotEmpty) {
+      selectedField = activeFields[0].numberId;
+      selectedFieldType = activeFields[0].type;
+    }
   }
 
-  List<String> getFieldType(List<FieldEntity> fields) {
-    if (widget.stadiumData.getNumberOfTypeField('5-Player') != 0) {
-      typeOfField.add('5-Player');
+  void getFieldType() {
+    String typeField = '';
+    for(var i = 0; i < activeFields.length; ++i) {
+      if(activeFields[i].type != typeField) {
+        typeField = activeFields[i].type;
+        typeOfField.add(typeField);
+      }
     }
-
-    if (widget.stadiumData.getNumberOfTypeField('7-Player') != 0) {
-      typeOfField.add('7-Player');
-    }
-    if (widget.stadiumData.getNumberOfTypeField('11-Player') != 0) {
-      typeOfField.add('11-Player');
-    }
-    return typeOfField;
   }
 
   List<DateTimeRange> generatePauseSlot(int selectedPlayTime) {
@@ -301,24 +305,14 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
           );
   }
 
-  int getFirstFields(
-      List<FieldEntity> fields, String selectedFieldType, int selectedField) {
-    List<int> numberId = [];
-    fields = List.from(widget.stadiumData.fields)
-      ..sort((a, b) => a.numberId.compareTo(b.numberId));
-    for (var i = 0; i < fields.length; ++i) {
-      if (fields[i].type == selectedFieldType) {
-        numberId.add(fields[i].numberId);
+  int getFirstFields() {
+    for (var i = 0; i < activeFields.length; ++i) {
+      if (activeFields[i].type == selectedFieldType) {
+        selectedField = activeFields[i].numberId;
+        break;
       }
     }
-    if (selectedField != 0 &&
-        numberId.every((element) => element != selectedField)) {
-      return numberId[0];
-    } else if (numberId.any((element) => element == selectedField)) {
-      return selectedField;
-    } else {
-      return -1;
-    }
+    return selectedField ?? -1;
   }
 
   Widget displayBox(String title, String displayItem) {
@@ -416,11 +410,8 @@ class _DateSelectScreenState extends State<DateSelectScreen> {
                       ),
                       FieldPicker(
                         func: refreshByField,
-                        fields: widget.stadiumData.fields
-                            .where((element) => element.status == true)
-                            .toList(),
-                        selectedField: getFirstFields(widget.stadiumData.fields,
-                            selectedFieldType, selectedField!),
+                        fields: activeFields,
+                        selectedField: getFirstFields(),
                         selectedFieldType: selectedFieldType,
                       ),
                     ],
