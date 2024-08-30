@@ -55,14 +55,18 @@ class EditInformationState extends State<EditInformationScreen> {
 
   final Map<String, String> citiesNameAndId = {};
 
-  var _enteredName = '';
-  var _enteredPhone = '';
-
   @override
   void dispose() {
     _nameController.dispose();
+    _heightController.dispose();
+    _weightController.dispose();
     _dateController.dispose();
     _phoneController.dispose();
+    _genderController.dispose();
+    _cityController.dispose();
+    _districtController.dispose();
+    _addressController.dispose();
+    _footController.dispose();
     _delayCityTime?.cancel();
     _delayDistrictTime?.cancel();
     super.dispose();
@@ -72,10 +76,6 @@ class EditInformationState extends State<EditInformationScreen> {
   void initState() {
     super.initState();
     _fetchUserData();
-    setState(() {
-      _cityController.text = '';
-      _districtController.text = '';
-    });
   }
 
   Future<void> _fetchUserData() async {
@@ -93,19 +93,16 @@ class EditInformationState extends State<EditInformationScreen> {
         });
       });
       _delayDistrictTime?.cancel();
-      _delayDistrictTime =
-          Timer(const Duration(milliseconds: 900), () {
+      _delayDistrictTime = Timer(const Duration(milliseconds: 900), () {
         setState(() {
           _districtController.text = widget.player.location.district;
         });
       });
 
-      _addressController.text = widget.player.location.address;
       _weightController.text = widget.player.weight;
       _heightController.text = widget.player.height;
       _footController.text = widget.player.preferredFoot;
 
-                
       stats['DEF'] = widget.player.stats.def;
       stats['DRIVE'] = widget.player.stats.drive;
       stats['PACE'] = widget.player.stats.pace;
@@ -121,30 +118,14 @@ class EditInformationState extends State<EditInformationScreen> {
     if (isValid) {
       _formKey.currentState!.save();
 
-      if (_districtController.text.isEmpty || _cityController.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please select a city and district'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
       Location newLocation = await findLatAndLngFull(
         _addressController.text,
         _districtController.text,
         _cityController.text,
       );
-      
-      newLocation = newLocation.copyWith(
-        address: _addressController.text,
-        district: _districtController.text,
-        city: _cityController.text,
-      );
-      
-      widget.player.name = _enteredName;
-      widget.player.phone = _enteredPhone;
+
+      widget.player.name = _nameController.text;
+      widget.player.phone = _phoneController.text;
       widget.player.dob = _dateController.text;
       widget.player.location = newLocation;
       widget.player.gender = _genderController.text;
@@ -157,8 +138,10 @@ class EditInformationState extends State<EditInformationScreen> {
       widget.player.stats.pass = stats['PASS']!;
       widget.player.stats.physic = stats['PHYSIC']!;
       widget.player.stats.shoot = stats['SHOOTING']!;
+
       try {
-        await UseCaseProvider.getUseCase<UpdatePlayer>().call(UpdatePlayerParams(player: widget.player));
+        await UseCaseProvider.getUseCase<UpdatePlayer>()
+            .call(UpdatePlayerParams(player: widget.player));
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => const PlayerHomeScreen(),
@@ -309,9 +292,6 @@ class EditInformationState extends State<EditInformationScreen> {
 
   Widget _buildSection(String type, TextEditingController controller) {
     double width = 290; // Default width
-
-    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -326,90 +306,61 @@ class EditInformationState extends State<EditInformationScreen> {
         const SizedBox(height: 12),
         SizedBox(
           width: width,
-          child: FormField<String>(
-            key: fieldKey,
-            validator: (value) {
-              if (controller.text.isEmpty) {
-                return 'Please enter a value';
-              }
-              if (type == "Height" || type == "Weight") {
-                if (double.tryParse(controller.text) == null) {
-                  return 'Please enter a valid number';
-                }
-              }
-              return null;
-            },
-            builder: (FormFieldState<String> state) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    controller: controller,
-                    style:
-                        SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
-                    decoration: InputDecoration(
-                      hintText: controller.text.isEmpty
-                          ? getHint(type)
-                          : controller.text,
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 12),
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                        borderSide: const BorderSide(
-                          width: 1,
-                          color: Colors.black,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                        borderSide: const BorderSide(
-                          width: 1,
-                          color: Colors.black,
-                        ),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                        borderSide: const BorderSide(
-                          width: 1,
-                          color: Colors.black,
-                        ),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                        borderSide: const BorderSide(
-                          width: 1,
-                          color: Colors.black,
-                        ),
-                      ),
-                      // Remove the default errorStyle
-                      errorStyle: const TextStyle(height: 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: controller,
+                style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
+                decoration: InputDecoration(
+                  hintText:
+                      controller.text.isEmpty ? getHint(type) : controller.text,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                    borderSide: const BorderSide(
+                      width: 1,
+                      color: Colors.black,
                     ),
-                    onChanged: (value) {
-                      state.didChange(value);
-                    },
                   ),
-                  if (state.hasError)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5.0),
-                      child: Text(
-                        state.errorText ?? '',
-                        style: SportifindTheme.warningText,
-                      ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                    borderSide: const BorderSide(
+                      width: 1,
+                      color: Colors.black,
                     ),
-                ],
-              );
-            },
-            onSaved: (value) {
-              switch (type) {
-                case 'Name':
-                  _enteredName = controller.text;
-                  break;
-                case 'Phone Number':
-                  _enteredPhone = controller.text;
-                  break;
-              }
-            },
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                    borderSide: const BorderSide(
+                      width: 1,
+                      color: Colors.black,
+                    ),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                    borderSide: const BorderSide(
+                      width: 1,
+                      color: Colors.black,
+                    ),
+                  ),
+                  // Remove the default errorStyle
+                  errorStyle: const TextStyle(height: 0),
+                ),
+                validator: (value) {
+                  if (controller.text.isEmpty) {
+                    return 'Please enter a value';
+                  }
+                  if (type == "Height" || type == "Weight") {
+                    if (double.tryParse(controller.text) == null) {
+                      return 'Please enter a valid number';
+                    }
+                  }
+                  return null;
+                },
+              ),
+            ],
           ),
         ),
       ],
@@ -476,7 +427,6 @@ class EditInformationState extends State<EditInformationScreen> {
     );
   }
 
-
   void _handleSaved(String stat, int value) {
     setState(() {
       stats[stat] = value;
@@ -520,7 +470,8 @@ class EditInformationState extends State<EditInformationScreen> {
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
-          backgroundColor: WidgetStateProperty.all<Color>(SportifindTheme.bluePurple),
+          backgroundColor:
+              WidgetStateProperty.all<Color>(SportifindTheme.bluePurple),
           shadowColor: WidgetStateProperty.all<Color>(
             SportifindTheme.bluePurple,
           ),
@@ -535,7 +486,7 @@ class EditInformationState extends State<EditInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double padding = MediaQuery.of(context).size.width - 290;
+    double padding = (MediaQuery.of(context).size.width - 290 - 16 * 2) / 2;
     return Scaffold(
       appBar: const FeatureAppBarBluePurple(title: "Edit information"),
       backgroundColor: SportifindTheme.backgroundColor,
@@ -557,65 +508,65 @@ class EditInformationState extends State<EditInformationScreen> {
                 const SizedBox(height: 16),
                 _buildDobSection('Date Of Birth', _dateController),
                 const SizedBox(height: 16),
-                 SizedBox(
-                   width: 290,
-                   child: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                       RichText(
-                         text: TextSpan(
-                           style: SportifindTheme.normalTextBlack,
-                           children: const <TextSpan>[
-                             TextSpan(text: 'City'),
-                           ],
-                         ),
-                       ),
-                       const SizedBox(height: 12),
-                       CityDropdown(
-                         selectedCity: _cityController.text,
-                         type: 'custom_form',
-                         onChanged: (value) {
-                           setState(() {
-                             _cityController.text = value ?? '';
-                             _districtController.text = '';
-                           });
-                         },
-                         citiesNameAndId: citiesNameAndId,
-                         fillColor: Colors.white,
-                       ),
-                     ],
-                   ),
-                 ),
-                 const SizedBox(height: 16),
-                 Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     RichText(
-                       text: TextSpan(
-                         style: SportifindTheme.normalTextBlack,
-                         children: const <TextSpan>[
-                           TextSpan(text: 'District'),
-                         ],
-                       ),
-                     ),
-                     const SizedBox(height: 12),
-                     SizedBox(
-                       width: 290,
-                       child: DistrictDropdown(
-                        type: 'custom_form',
-                         selectedCity: _cityController.text,
-                         selectedDistrict: _districtController.text,
-                         onChanged: (value) {
-                           setState(() {
-                             _districtController.text = value ?? '';
-                           });
-                         },
-                         citiesNameAndId: citiesNameAndId,
-                         fillColor: Colors.white,
-                       ),
-                     ),
-                   ],
-                 ),
+                SizedBox(
+                  width: 290,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: SportifindTheme.normalTextBlack,
+                          children: const <TextSpan>[
+                            TextSpan(text: 'City'),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      CityDropdown(
+                        selectedCity: _cityController.text,
+                        type: 'custom form',
+                        onChanged: (value) {
+                          setState(() {
+                            _cityController.text = value ?? '';
+                            _districtController.text = '';
+                          });
+                        },
+                        citiesNameAndId: citiesNameAndId,
+                        fillColor: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        style: SportifindTheme.normalTextBlack,
+                        children: const <TextSpan>[
+                          TextSpan(text: 'District'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: 290,
+                      child: DistrictDropdown(
+                        type: 'custom form',
+                        selectedCity: _cityController.text,
+                        selectedDistrict: _districtController.text,
+                        onChanged: (value) {
+                          setState(() {
+                            _districtController.text = value ?? '';
+                          });
+                        },
+                        citiesNameAndId: citiesNameAndId,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 _buildSection('Address', _addressController),
                 const SizedBox(height: 16),
@@ -654,8 +605,9 @@ class EditInformationState extends State<EditInformationScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Text('Preferred Foot', style: SportifindTheme.normalTextBlack),
+                      padding: EdgeInsets.only(left: padding),
+                      child: Text('Preferred Foot',
+                          style: SportifindTheme.normalTextBlack),
                     ),
                   ],
                 ),
@@ -664,14 +616,14 @@ class EditInformationState extends State<EditInformationScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 20),
+                      padding: EdgeInsets.only(left: padding),
                       child: FootPicker(controller: _footController),
                     ),
                   ],
                 ),
                 const SizedBox(height: 40),
                 Padding(
-                  padding: EdgeInsets.only(left: padding),
+                  padding: const EdgeInsets.only(left: 190),
                   child: _nextButton(context),
                 ),
                 const SizedBox(height: 20),

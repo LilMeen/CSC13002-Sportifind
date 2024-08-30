@@ -465,7 +465,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                       ),
                       const SizedBox(height: 12),
                       CityDropdown(
-                        type: 'custom_form',
+                        type: 'custom form',
                         selectedCity: _cityController.text,
                         onChanged: (value) {
                           setState(() {
@@ -495,7 +495,7 @@ class BasicInformationState extends State<BasicInfoScreen> {
                     SizedBox(
                       width: 290,
                       child: DistrictDropdown(
-                        type: 'custom_form',
+                        type: 'custom form',
                         selectedCity: _cityController.text,
                         selectedDistrict: _districtController.text,
                         onChanged: (value) {
