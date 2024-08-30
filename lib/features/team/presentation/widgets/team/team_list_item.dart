@@ -4,6 +4,7 @@ import 'package:sportifind/core/theme/sportifind_theme.dart';
 import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/features/match/domain/usecases/send_invitation_to_match.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/home/player_home_screen.dart';
 
 class TeamListItem extends StatefulWidget {
   const TeamListItem({
@@ -141,11 +142,18 @@ class _TeamListItemState extends State<TeamListItem> {
               height: 40,
               child: TextButton(
                 onPressed: () {
-                  UseCaseProvider.getUseCase<SendInvitationToMatch>().call(
-                    SendInvitationToMatchParams(
-                      teamSendId: widget.hostId,
-                      teamReceiveId: widget.team.id,
-                      matchId: widget.matchId,
+                  // UseCaseProvider.getUseCase<SendInvitationToMatch>().call(
+                  //   SendInvitationToMatchParams(
+                  //     teamSendId: widget.hostId,
+                  //     teamReceiveId: widget.team.id,
+                  //     matchId: widget.matchId,
+                  //   ),
+                  // );
+
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PlayerHomeScreen(),
                     ),
                   );
                 },

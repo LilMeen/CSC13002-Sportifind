@@ -3,12 +3,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sportifind/core/entities/location.dart';
 import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
 import 'package:sportifind/core/util/team_util.dart';
 import 'package:sportifind/core/widgets/city_dropdown.dart';
 import 'package:sportifind/core/widgets/district_dropdown.dart';
 import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
+import 'package:sportifind/features/profile/domain/usecases/get_player.dart';
 import 'package:sportifind/features/stadium/presentations/widgets/custom_search_bar.dart';
 import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/features/team/domain/usecases/get_nearby_team.dart';
 import 'package:sportifind/features/team/presentation/widgets/team/team_cards.dart';
 
 
@@ -41,6 +45,7 @@ class _InviteTeamScreenState extends State<InviteTeamScreen> {
   String selectedDistrict = '';
   late Location currentLocation;
   bool isLoadingLocation = false;
+  List<TeamEntity> teams = [];
 
 
   @override
@@ -52,6 +57,14 @@ class _InviteTeamScreenState extends State<InviteTeamScreen> {
     searchedTeam = widget.teams;
     currentLocation = widget.userLocation;
     searchedTeam = sortNearbyTeams(searchedTeam, currentLocation);
+    setState(() {
+      _initTeam();
+    });
+  }
+
+  void _initTeam() async{
+    PlayerEntity userEntity = await UseCaseProvider.getUseCase<GetPlayer>().call(GetPlayerParams(id: user.uid)).then((value) => value.data!);
+    teams = await UseCaseProvider.getUseCase<GetNearbyTeam>().call(GetNearbyTeamParams(player: userEntity)).then((value) => value.data!);
   }
 
   @override
@@ -160,7 +173,7 @@ class _InviteTeamScreenState extends State<InviteTeamScreen> {
             ),
             Flexible(
               child: TeamCards(
-                otherTeam: searchedTeam,
+                otherTeam: teams,
                 hostId: widget.matchInfo.team1.id,
                 matchId: widget.matchInfo.id,
               ),
