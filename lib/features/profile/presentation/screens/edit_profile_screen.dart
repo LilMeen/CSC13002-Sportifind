@@ -291,76 +291,37 @@ class EditInformationState extends State<EditInformationScreen> {
   }
 
   Widget _buildSection(String type, TextEditingController controller) {
-    double width = 290; // Default width
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichText(
-          text: TextSpan(
-            style: SportifindTheme.normalTextBlack,
-            children: <TextSpan>[
-              TextSpan(text: type),
-            ],
-          ),
-        ),
+        Text(type, style: SportifindTheme.normalTextBlack),
         const SizedBox(height: 12),
         SizedBox(
-          width: width,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: controller,
-                style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
-                decoration: InputDecoration(
-                  hintText:
-                      controller.text.isEmpty ? getHint(type) : controller.text,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.0),
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.black,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.0),
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.black,
-                    ),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.0),
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.black,
-                    ),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.0),
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Colors.black,
-                    ),
-                  ),
-                  // Remove the default errorStyle
-                  errorStyle: const TextStyle(height: 0),
-                ),
-                validator: (value) {
-                  if (controller.text.isEmpty) {
-                    return 'Please enter a value';
-                  }
-                  if (type == "Height" || type == "Weight") {
-                    if (double.tryParse(controller.text) == null) {
-                      return 'Please enter a valid number';
-                    }
-                  }
-                  return null;
-                },
+          width: 290,
+          child: TextFormField(
+            controller: controller,
+            style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
+            decoration: InputDecoration(
+              hintText: getHint(type),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              hintStyle: const TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                borderSide: const BorderSide(color: Colors.black, width: 1),
               ),
-            ],
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a value';
+              }
+              if (type == "Height" || type == "Weight") {
+                if (double.tryParse(value) == null) {
+                  return 'Please enter a valid number';
+                }
+              }
+              return null;
+            },
+            onSaved: (value) {},
           ),
         ),
       ],
