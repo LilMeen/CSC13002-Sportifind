@@ -4,7 +4,10 @@ import 'package:sportifind/core/theme/sportifind_theme.dart';
 ========
 import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:sportifind/widgets/form/custom_form.dart';
+<<<<<<<< HEAD:lib/features/stadium/presentations/widgets/stadium_form_dropdown.dart
 >>>>>>>> a341086 ([style] new UI for create, edit, adjust UI for map, update status):lib/core/widgets/custom_form_dropdown.dart
+========
+>>>>>>>> d5e0b20d04d0dd4f476c8e536c2a4878caed3eb4:lib/core/widgets/custom_form_dropdown.dart
 
 class CustomFormDropdown extends StatefulWidget {
   final String selectedValue;
