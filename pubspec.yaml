@@ -36,7 +36,6 @@ dependencies:
   location: ^7.0.0
   http: ^0.13.1
   diacritic: ^0.1.5
-  fl_chart: ^0.68.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -58,10 +57,17 @@ dependencies:
   path_provider: ^2.0.9
   firebase_storage: 12.1.1
   google_sign_in: ^6.2.1
-  flutter_svg: ^2.0.9
+  flutter_svg: ^1.0.0
   toggle_switch: ^2.3.0
+  get_it: ^7.7.0
+  darq: ^2.0.0
+  shared_preferences: ^2.3.2
   cached_network_image: ^3.3.1
-
+  fl_chart: ^0.69.0
+  navigation_view: ^1.0.6
+  flutter_animate: ^4.5.0
+  flutter_dotenv: ^5.1.0
+  flutter_config: ^2.0.2
   
 dev_dependencies:
   flutter_test:
@@ -95,27 +101,6 @@ flutter:
      - 'lib/assets/button_icon/tab_2s.png'
      - 'lib/assets/button_icon/tab_1.png'
      - 'lib/assets/button_icon/tab_1s.png'
-     - 'lib/assets/button_icon/arrow-right.svg'
-     - 'lib/assets/button_icon/bell (1).svg'
-     - 'lib/assets/button_icon/bell.svg'
-     - 'lib/assets/button_icon/captainamerica.svg'
-     - 'lib/assets/button_icon/caret-left.svg'
-     - 'lib/assets/button_icon/caret-sort-down.svg'
-     - 'lib/assets/button_icon/events.svg'
-     - 'lib/assets/button_icon/image.svg'
-     - 'lib/assets/button_icon/info-circle.svg'
-     - 'lib/assets/button_icon/location-pin.svg'
-     - 'lib/assets/button_icon/message (1).svg'
-     - 'lib/assets/button_icon/message-notif.svg'
-     - 'lib/assets/button_icon/message.svg'
-     - 'lib/assets/button_icon/notification-new.svg'
-     - 'lib/assets/button_icon/pen.svg'
-     - 'lib/assets/button_icon/photo-camera.svg'
-     - 'lib/assets/button_icon/plus.svg'
-     - 'lib/assets/button_icon/scorecard.svg'
-     - 'lib/assets/button_icon/select-arrows.svg'
-     - 'lib/assets/button_icon/send-filled.svg'
-     - 'lib/assets/button_icon/side-menu.svg'
      - 'lib/assets/logo/logo_white_text.png'
      - 'lib/assets/logo/logo_black_text.png'
      - 'lib/assets/logo/logo.png'
@@ -136,6 +121,11 @@ flutter:
      - 'lib/assets/left.png'
      - 'lib/assets/right.png'
      - 'lib/assets/sole.png'
+     - 'lib/assets/weight.png'
+     - 'lib/assets/height.png'
+     - 'lib/assets/crown.png'
+     - 'lib/assets/player_unpicked.png'
+     - 'lib/assets/player_picked.png'
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

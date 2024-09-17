@@ -1,25 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sportifind/models/booking_service.dart';
-import 'package:sportifind/models/match_card.dart';
-import 'package:sportifind/screens/player/match/screens/match_main_screen.dart';
-import 'package:sportifind/screens/player/match/util/booking_util.dart';
 import 'package:flutter/material.dart';
-import 'package:sportifind/util/stadium_service.dart';
+import 'package:intl/intl.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/core/util/booking_util.dart';
+import 'package:sportifind/features/match/domain/entities/booking_entity.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/match/domain/usecases/create_match.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/home/player_home_screen.dart';
 
-class BookingController extends ChangeNotifier {
-  BookingService bookingService;
-  BookingController({
+
+class BookingBloc extends ChangeNotifier {
+  BookingEntity bookingService;
+  BookingBloc({
     required this.bookingService,
     this.pauseSlots,
+    required this.selectedTeam,
     required this.selectedStadium,
-    required this.selectedStadiumOwner,
-    required this.selectedTeamId,
-    required this.selectedTeamAvatar,
-    required this.addMatchCard,
     required this.bookedTime,
     required this.selectedDate,
-    required this.selectedField,
+    required this.selectedFieldNumberId,
   }) {
     serviceOpening = bookingService.bookingStart;
     serviceClosing = bookingService.bookingEnd;
@@ -33,13 +35,10 @@ class BookingController extends ChangeNotifier {
 
   late DateTime base;
 
-  final String selectedTeamId;
-  final String selectedTeamAvatar;
-  final String selectedStadium;
+  final TeamEntity selectedTeam;
+  final StadiumEntity selectedStadium;
   final DateTime selectedDate;
-  final String selectedStadiumOwner;
-  final int selectedField;
-  final void Function(MatchCard matchcard) addMatchCard;
+  final int selectedFieldNumberId;
   final user = FirebaseAuth.instance.currentUser!;
 
   DateTime? serviceOpening;
@@ -61,7 +60,6 @@ class BookingController extends ChangeNotifier {
   bool _successfullUploaded = false;
   bool get isSuccessfullUploaded => _successfullUploaded;
 
-  StadiumService stadiumService = StadiumService();
 
   void initBack() {
     _isUploading = false;
@@ -202,11 +200,6 @@ class BookingController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void toggleUploading() {
-  //   _isUploading = !_isUploading;
-  //   notifyListeners();
-  // }
-
   void generateBookedSlots(List<DateTimeRange> data) {
     bookedSlots.clear();
     _generateBookingSlots();
@@ -224,7 +217,7 @@ class BookingController extends ChangeNotifier {
     return '$hours${hours > 0 ? ':' : ''}$minutesStr';
   }
 
-  BookingService generateNewBookingForUploading(int selectedPlayTime) {
+  BookingEntity generateNewBookingForUploading(int selectedPlayTime) {
     final bookingDate = allBookingSlots.elementAt(selectedSlot);
     bookingService
       ..bookingStart = (bookingDate)
@@ -232,38 +225,22 @@ class BookingController extends ChangeNotifier {
     return bookingService;
   }
 
-  Future<void> addData(BookingService bookingDate, int selectedPlayTime) async {
-    final fieldMap = await stadiumService.generateFieldIdMap(selectedStadium);
-    MatchCard newMatchCard = MatchCard(
-      stadium: selectedStadium,
-      stadiumOwner: selectedStadiumOwner,
-      start: formattedTime.format(bookingDate.bookingStart),
-      end: formattedTime.format(bookingDate.bookingEnd),
-      date: formatter.format(selectedDate),
-      playTime: convertMinutesToDurationString(selectedPlayTime),
-      team1: selectedTeamId,
-      team2: "",
-      field: fieldMap[selectedField]!,
+  Future<void> createMatch(BookingEntity bookingDate, int selectedPlayTime) async {
+    await UseCaseProvider.getUseCase<CreateMatch>().call(
+      CreateMatchParams(
+        stadium: selectedStadium,
+        fieldNumberId: selectedFieldNumberId,
+        date: DateFormat.yMd().format(selectedDate),
+        start: DateFormat.Hm().format(bookingDate.bookingStart),
+        end: DateFormat.Hm().format(bookingDate.bookingEnd),
+        playTime: convertMinutesToDurationString(selectedPlayTime),
+        team1: selectedTeam,
+      ),
     );
-    addMatchCard(newMatchCard);
-
-    FirebaseFirestore.instance.collection('matches').doc(newMatchCard.id).set({
-      'stadium': newMatchCard.stadium,
-      'stadiumOwner': newMatchCard.stadiumOwner,
-      'start': newMatchCard.start,
-      'end': newMatchCard.end,
-      'playTime': newMatchCard.playTime,
-      'date': newMatchCard.date,
-      'team1': newMatchCard.team1,
-      'team2': newMatchCard.team2,
-      'field': fieldMap[selectedField],
-    });
-
-    updateTeamsWhereCaptainIsUser(newMatchCard);
   }
 
   // Assume `user` is already defined and has a `uid` field
-  Future<void> updateTeamsWhereCaptainIsUser(MatchCard newMatchCard) async {
+  Future<void> updateTeamsWhereCaptainIsUser(MatchEntity newMatchCard) async {
     String userUid = user.uid;
     // Reference to the Firestore collection
     CollectionReference teamsCollection =
@@ -282,7 +259,7 @@ class BookingController extends ChangeNotifier {
   void returnToMainScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const MatchMainScreen()),
+      MaterialPageRoute(builder: (context) => const PlayerHomeScreen()),
     );
   }
 }

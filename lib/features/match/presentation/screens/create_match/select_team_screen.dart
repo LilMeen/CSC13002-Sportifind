@@ -1,25 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sportifind/models/match_card.dart';
-import 'package:sportifind/models/player_data.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/screens/player/stadium/player_stadium_screen.dart';
-import 'package:sportifind/screens/player/team/models/team_information.dart';
-import 'package:sportifind/util/object_handling.dart';
-import 'package:sportifind/util/team_service.dart';
-import 'package:sportifind/util/user_service.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/features/match/domain/usecases/send_request_to_join_match.dart';
+import 'package:sportifind/features/match/presentation/screens/match_main_screen.dart';
+import 'package:sportifind/features/stadium/presentations/screens/player/player_stadium_screen.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
 
 class SelectTeamScreen extends StatefulWidget {
   const SelectTeamScreen({
     super.key,
-    this.addMatchCard,
     this.forMatchCreate = true,
     this.forJoinRequest = false,
     this.hostId,
     this.matchId,
   });
 
-  final void Function(MatchCard matchcard)? addMatchCard;
   final bool forMatchCreate;
   final bool forJoinRequest;
   final String? hostId;
@@ -30,19 +27,20 @@ class SelectTeamScreen extends StatefulWidget {
 }
 
 class _SelectTeamScreenState extends State<SelectTeamScreen> {
-  UserService userService = UserService();
-  TeamService teamService = TeamService();
-  MatchHandling matchHandling = MatchHandling();
-
-  PlayerData? user;
-  List<TeamInformation> userTeams = [];
+  List<TeamEntity> userTeams = [];
 
   Future<void> fetchingData() async {
     if (widget.forMatchCreate == true || widget.forJoinRequest == true) {
-      user = await userService.getUserPlayerData();
-      for (var i = 0; i < user!.teams.length; ++i) {
-        final team = await teamService.getTeamInformation(user!.teams[i]);
-        userTeams.add(team!);
+      userTeams = await UseCaseProvider.getUseCase<GetTeamByPlayer>()
+          .call(
+            GetTeamByPlayerParams(
+                playerId: FirebaseAuth.instance.currentUser!.uid),
+          )
+          .then((value) => value.data ?? []);
+    }
+    for (var i = 0; i < userTeams.length; ++i) {
+      if (userTeams[i].captain.id != FirebaseAuth.instance.currentUser!.uid) {
+        userTeams.remove(userTeams[i]);
       }
     }
   }
@@ -50,9 +48,6 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Select Team"),
-      ),
       body: Stack(
         children: <Widget>[
           Container(
@@ -105,127 +100,160 @@ class _SelectTeamScreenState extends State<SelectTeamScreen> {
     );
   }
 
-  Widget makeTeamItem(TeamInformation team) {
-    return Container(
-      height: 100,
-      width: 200,
-      margin: const EdgeInsets.only(right: 20),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        border: Border.all(color: SportifindTheme.bluePurple, width: 2),
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.white,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 4.0, top: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              team.name,
-              style: TextStyle(
-                color: SportifindTheme.bluePurple,
-                fontSize: 24,
+  Widget makeTeamItem(TeamEntity team) {
+    return GestureDetector(
+      onTap: () {
+        if (widget.forMatchCreate == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PlayerStadiumScreen(
+                forMatchCreate: true,
+                selectedTeam: team,
               ),
             ),
-            const SizedBox(height: 20),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.location_on_outlined,
+          );
+        } else if (widget.forJoinRequest == true) {
+          UseCaseProvider.getUseCase<SendRequestToJoinMatch>().call(
+            SendRequestToJoinMatchParams(
+              teamSendId: team.id,
+              teamReceiveId: widget.hostId!,
+              matchId: widget.matchId!,
+            ),
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MatchMainScreen(),
+            ),
+          );
+        }
+      },
+      child: Container(
+        height: 100,
+        width: 200,
+        margin: const EdgeInsets.only(right: 20),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border.all(color: SportifindTheme.bluePurple, width: 2),
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 4.0, top: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                team.name,
+                style: TextStyle(
                   color: SportifindTheme.bluePurple,
-                  size: 20,
+                  fontSize: 24,
                 ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: Text(
-                    "${team.location.district}, ${team.location.city}",
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 2, // Maximum number of lines for the text
-                    overflow: TextOverflow
-                        .clip, // Add ellipsis (...) if text overflows
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: SvgPicture.asset(
-                    'lib/assets/button_icon/events.svg',
+              ),
+              const SizedBox(height: 20),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.location_on_outlined,
                     color: SportifindTheme.bluePurple,
+                    size: 20,
                   ),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: Text(
-                    "${team.members.length} members",
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      "${team.location.district}, ${team.location.city}",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2, // Maximum number of lines for the text
+                      overflow: TextOverflow
+                          .clip, // Add ellipsis (...) if text overflows
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 25,
-              width: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                color: SportifindTheme.bluePurple,
+                ],
               ),
-              child: FittedBox(
-                fit: BoxFit.fitWidth,
-                child: TextButton(
-                  onPressed: () {
-                    if (widget.forMatchCreate == true) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PlayerStadiumScreen(
-                            forMatchCreate: true,
-                            selectedTeamId: team.teamId,
-                            selectedTeamName: team.name,
-                            selectedTeamAvatar: team.avatarImageUrl,
-                            addMatchCard: widget.addMatchCard,
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.group_outlined,
+                    color: SportifindTheme.bluePurple,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      "${team.players.length} members",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: 25,
+                width: 120,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  color: SportifindTheme.bluePurple,
+                ),
+                child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: TextButton(
+                    onPressed: () {
+                      if (widget.forMatchCreate == true) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PlayerStadiumScreen(
+                              forMatchCreate: true,
+                              selectedTeam: team,
+                            ),
                           ),
-                        ),
-                      );
-                    } else if (widget.forJoinRequest == true) {
-                      print(team.teamId);
-                      print(widget.hostId);
-                      matchHandling.joinMatchRequest(
-                          team.teamId, widget.hostId, widget.matchId);
-                    }
-                  },
-                  child: const Text(
-                    "Pick this team",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
+                        );
+                      } else if (widget.forJoinRequest == true) {
+                        UseCaseProvider.getUseCase<SendRequestToJoinMatch>()
+                            .call(
+                          SendRequestToJoinMatchParams(
+                            teamSendId: team.id,
+                            teamReceiveId: widget.hostId!,
+                            matchId: widget.matchId!,
+                          ),
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MatchMainScreen(),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text(
+                      "Pick this team",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

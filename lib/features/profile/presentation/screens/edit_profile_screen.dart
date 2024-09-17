@@ -1,20 +1,29 @@
-import 'dart:async';
+// ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:sportifind/screens/player/player_home_screen.dart';
-import 'package:sportifind/widgets/dropdown_button.dart';
-import 'package:sportifind/screens/player/profile/widgets/number_wheel.dart';
-import 'package:sportifind/screens/player/profile/widgets/pick_foot.dart';
-import 'package:sportifind/widgets/dropdown_button/city_dropdown.dart';
-import 'package:sportifind/widgets/dropdown_button/district_dropdown.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sportifind/core/entities/location.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/core/util/location_util.dart';
+import 'package:sportifind/core/widgets/app_bar/flutter_app_bar_blue_purple.dart';
+import 'package:sportifind/core/widgets/city_dropdown.dart';
+import 'package:sportifind/core/widgets/district_dropdown.dart';
+import 'package:sportifind/features/auth/presentations/widgets/dropdown_button.dart';
+import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
+import 'package:sportifind/features/profile/domain/usecases/update_player.dart';
+import 'package:sportifind/features/profile/presentation/widgets/foot_picker.dart';
+import 'package:sportifind/features/profile/presentation/widgets/number_wheel.dart';
+import 'package:sportifind/home/player_home_screen.dart';
 
 final _formKey = GlobalKey<FormState>();
-final _firebase = FirebaseAuth.instance;
 
+// ignore: must_be_immutable
 class EditInformationScreen extends StatefulWidget {
-  const EditInformationScreen({super.key});
+  PlayerEntity player;
+
+  EditInformationScreen({required this.player, super.key});
 
   @override
   EditInformationState createState() => EditInformationState();
@@ -32,22 +41,32 @@ class EditInformationState extends State<EditInformationScreen> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _footController = TextEditingController();
 
+  Map<String, int> stats = {
+    'PACE': 0,
+    'DEF': 0,
+    'SHOOTING': 0,
+    'PASS': 0,
+    'DRIVE': 0,
+    'PHYSIC': 0,
+  };
+
   Timer? _delayCityTime;
   Timer? _delayDistrictTime;
 
   final Map<String, String> citiesNameAndId = {};
 
-  var _enteredName = '';
-  var _enteredPhone = '';
-  var _enteredAddress = '';
-
-  late Future<DocumentSnapshot> userDataFuture;
-
   @override
   void dispose() {
     _nameController.dispose();
+    _heightController.dispose();
+    _weightController.dispose();
     _dateController.dispose();
     _phoneController.dispose();
+    _genderController.dispose();
+    _cityController.dispose();
+    _districtController.dispose();
+    _addressController.dispose();
+    _footController.dispose();
     _delayCityTime?.cancel();
     _delayDistrictTime?.cancel();
     super.dispose();
@@ -57,113 +76,73 @@ class EditInformationState extends State<EditInformationScreen> {
   void initState() {
     super.initState();
     _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
     setState(() {
-      _cityController.text = '';
-      _districtController.text = '';
+      _nameController.text = widget.player.name;
+      _phoneController.text = widget.player.phone;
+      _addressController.text = widget.player.location.address;
+      _dateController.text = widget.player.dob;
+      _genderController.text = widget.player.gender;
+
+      _delayCityTime?.cancel();
+      _delayCityTime = Timer(const Duration(milliseconds: 300), () {
+        setState(() {
+          _cityController.text = widget.player.location.city;
+        });
+      });
+      _delayDistrictTime?.cancel();
+      _delayDistrictTime = Timer(const Duration(milliseconds: 900), () {
+        setState(() {
+          _districtController.text = widget.player.location.district;
+        });
+      });
+
+      _weightController.text = widget.player.weight;
+      _heightController.text = widget.player.height;
+      _footController.text = widget.player.preferredFoot;
+
+      stats['DEF'] = widget.player.stats.def;
+      stats['DRIVE'] = widget.player.stats.drive;
+      stats['PACE'] = widget.player.stats.pace;
+      stats['PASS'] = widget.player.stats.pass;
+      stats['PHYSIC'] = widget.player.stats.physic;
+      stats['SHOOTING'] = widget.player.stats.shoot;
     });
-
-    userDataFuture = getUserData();
   }
 
-  Future<DocumentSnapshot> getUserData() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      return await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-    } else {
-      throw Exception('User not logged in');
-    }
-  }
-
-  Future<DocumentSnapshot> _fetchUserData() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-      if (userDoc.exists) {
-        final userData = userDoc.data();
-        if (userData != null) {
-          setState(() {
-            _nameController.text = userData['name'] ?? '';
-            _phoneController.text = userData['phone'] ?? '';
-            _addressController.text = userData['address'] ?? '';
-            _dateController.text = userData['dob'] ?? '';
-            _genderController.text = userData['gender'] ?? '';
-
-            _delayCityTime?.cancel();
-            _delayCityTime = Timer(const Duration(seconds: 2), () {
-              setState(() {
-                _cityController.text = userData['city'] ?? '';
-              });
-            });
-            _delayDistrictTime?.cancel();
-            _delayDistrictTime =
-                Timer(const Duration(seconds: 5, milliseconds: 300), () {
-              setState(() {
-                _districtController.text = userData['district'] ?? '';
-              });
-            });
-
-            _addressController.text = userData['address'] ?? '';
-            _weightController.text = userData['weight'] ?? '';
-            _heightController.text = userData['height'] ?? '';
-            stats = Map<String, int>.from(userData['stats'] ?? stats);
-            _footController.text =
-                userData['preferred_foot'] == true ? '1' : '0';
-
-            print(_nameController.text);
-            print(_phoneController.text);
-            print(_addressController.text);
-            print(_dateController.text);
-            print(_genderController.text);
-            print(_cityController.text);
-            print(_districtController.text);
-            print(_weightController.text);
-            print(_heightController.text);
-            print(_footController.text);
-          });
-        }
-      }
-      return userDoc;
-    } else {
-      throw Exception('User not logged in');
-    }
-  }
-
-  void _done() {
+  Future<void> _done() async {
     final isValid = _formKey.currentState!.validate();
 
     if (isValid) {
       _formKey.currentState!.save();
 
-      print(stats);
-      //print(statConditioner.text);
-      bool isRightPicked = _footController.text == '1';
+      Location newLocation = await findLatAndLngFull(
+        _addressController.text,
+        _districtController.text,
+        _cityController.text,
+      );
+
+      widget.player.name = _nameController.text;
+      widget.player.phone = _phoneController.text;
+      widget.player.dob = _dateController.text;
+      widget.player.location = newLocation;
+      widget.player.gender = _genderController.text;
+      widget.player.weight = _weightController.text;
+      widget.player.height = _heightController.text;
+      widget.player.preferredFoot = _footController.text;
+      widget.player.stats.def = stats['DEF']!;
+      widget.player.stats.drive = stats['DRIVE']!;
+      widget.player.stats.pace = stats['PACE']!;
+      widget.player.stats.pass = stats['PASS']!;
+      widget.player.stats.physic = stats['PHYSIC']!;
+      widget.player.stats.shoot = stats['SHOOTING']!;
 
       try {
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .update({
-          'name': _enteredName,
-          'phone': _enteredPhone,
-          'dob': _dateController.text,
-          'address': _enteredAddress,
-          'gender': _genderController.text,
-          'city': _cityController.text,
-          'district': _districtController.text,
-          'height': _weightController.text,
-          'weight': _heightController.text,
-          'stats': stats,
-          'preferred_foot': isRightPicked,
-        });
-
-        Navigator.push(
-          context,
+        await UseCaseProvider.getUseCase<UpdatePlayer>()
+            .call(UpdatePlayerParams(player: widget.player));
+        Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => const PlayerHomeScreen(),
           ),
@@ -210,14 +189,14 @@ class EditInformationState extends State<EditInformationScreen> {
   Widget _buildDobSection(String type, TextEditingController controller) {
     double width = 290; // Default width for Date Of Birth
 
-    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
           text: TextSpan(
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: SportifindTheme.normalTextBlack,
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -227,7 +206,7 @@ class EditInformationState extends State<EditInformationScreen> {
         SizedBox(
           width: width,
           child: FormField<String>(
-            key: _fieldKey,
+            key: fieldKey,
             validator: (value) {
               if (controller.text.isEmpty) {
                 return 'Please select a date';
@@ -261,11 +240,10 @@ class EditInformationState extends State<EditInformationScreen> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Colors.transparent, // Remove background color
-                            shadowColor: Colors.transparent, // Remove shadow
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
                             side: const BorderSide(
-                              color: Colors.white, // Match the border color
+                              color: Colors.black,
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             shape: RoundedRectangleBorder(
@@ -278,11 +256,11 @@ class EditInformationState extends State<EditInformationScreen> {
                               controller.text.isNotEmpty
                                   ? controller.text
                                   : getHint(type),
-                              style: TextStyle(
+                              style: GoogleFonts.lexend(
                                 color: controller.text.isEmpty
                                     ? Colors.grey
-                                    : Colors.white,
-                                fontSize: 16,
+                                    : Colors.black,
+                                fontSize: 14,
                               ),
                             ),
                           ),
@@ -295,7 +273,7 @@ class EditInformationState extends State<EditInformationScreen> {
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
                         state.errorText ?? '',
-                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                        style: SportifindTheme.warningText,
                       ),
                     ),
                 ],
@@ -313,118 +291,37 @@ class EditInformationState extends State<EditInformationScreen> {
   }
 
   Widget _buildSection(String type, TextEditingController controller) {
-    double width = 290; // Default width
-
-    if (type == "Height" || type == "Weight") {
-      width = 137;
-    }
-
-    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichText(
-          text: TextSpan(
-            style: const TextStyle(color: Colors.white, fontSize: 14),
-            children: <TextSpan>[
-              TextSpan(text: type),
-            ],
-          ),
-        ),
+        Text(type, style: SportifindTheme.normalTextBlack),
         const SizedBox(height: 12),
         SizedBox(
-          width: width,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Stack(
-                children: [
-                  TextFormField(
-                    key: _fieldKey,
-                    controller: controller,
-                    decoration: InputDecoration(
-                      hintText: controller.text.isEmpty
-                          ? getHint(type)
-                          : controller.text,
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 12),
-                      hintStyle: const TextStyle(color: Colors.white54),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                        borderSide: const BorderSide(
-                          width: 1,
-                          color: Color.fromARGB(255, 255, 255, 255),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                        borderSide: const BorderSide(
-                          width: 1,
-                          color: Colors.white,
-                        ),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                        borderSide: const BorderSide(
-                          width: 1,
-                          color: Colors.white,
-                        ),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                        borderSide: const BorderSide(
-                          width: 1,
-                          color: Colors.white,
-                        ),
-                      ),
-                      errorStyle: const TextStyle(
-                          height: 0), // Hide the default error message
-                    ),
-                    style: const TextStyle(color: Colors.white),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a value';
-                      }
-                      if (type == "Height" || type == "Weight") {
-                        if (double.tryParse(value) == null) {
-                          return 'Please enter a valid number';
-                        }
-                      }
-                      // Additional validation logic
-                      return null;
-                    },
-                    onSaved: (value) {
-                      switch (type) {
-                        case 'Name':
-                          _enteredName = value!;
-                          break;
-                        case 'Phone Number':
-                          _enteredPhone = value!;
-                          break;
-                        case 'Address':
-                          _enteredAddress = value!;
-                          break;
-                      }
-                    },
-                  ),
-                  Positioned(
-                    bottom: -20,
-                    left: 0,
-                    child: Builder(
-                      builder: (context) {
-                        final formFieldState = _fieldKey.currentState;
-                        return Text(
-                          formFieldState?.errorText ?? '',
-                          style:
-                              const TextStyle(color: Colors.red, fontSize: 12),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+          width: 290,
+          child: TextFormField(
+            controller: controller,
+            style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
+            decoration: InputDecoration(
+              hintText: getHint(type),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              hintStyle: const TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                borderSide: const BorderSide(color: Colors.black, width: 1),
               ),
-            ],
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a value';
+              }
+              if (type == "Height" || type == "Weight") {
+                if (double.tryParse(value) == null) {
+                  return 'Please enter a valid number';
+                }
+              }
+              return null;
+            },
+            onSaved: (value) {},
           ),
         ),
       ],
@@ -433,14 +330,14 @@ class EditInformationState extends State<EditInformationScreen> {
 
   Widget _buildDropdownSection(String type, TextEditingController controller) {
     double width = 290; // Default width
-    GlobalKey<FormFieldState> _fieldKey = GlobalKey<FormFieldState>();
+    GlobalKey<FormFieldState> fieldKey = GlobalKey<FormFieldState>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
           text: TextSpan(
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: SportifindTheme.normalTextBlack,
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -450,7 +347,7 @@ class EditInformationState extends State<EditInformationScreen> {
         SizedBox(
           width: width,
           child: FormField<String>(
-            key: _fieldKey,
+            key: fieldKey,
             initialValue: controller.text.isNotEmpty ? controller.text : null,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -491,15 +388,6 @@ class EditInformationState extends State<EditInformationScreen> {
     );
   }
 
-  Map<String, int> stats = {
-    'PACE': 0,
-    'DEF': 0,
-    'SHOOTING': 0,
-    'PASS': 0,
-    'DRIVE': 0,
-    'PHYSIC': 0,
-  };
-
   void _handleSaved(String stat, int value) {
     setState(() {
       stats[stat] = value;
@@ -507,13 +395,12 @@ class EditInformationState extends State<EditInformationScreen> {
   }
 
   Widget _buildWheelSection(String type) {
-    int stat = stats[type] ?? 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
           text: TextSpan(
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14),
             children: <TextSpan>[
               TextSpan(text: type),
             ],
@@ -525,7 +412,7 @@ class EditInformationState extends State<EditInformationScreen> {
           height: 40,
           child: NumberWheel(
             onSaved: (value) => _handleSaved(type, value),
-            stat: stat,
+            initValue: stats[type] ?? 80,
           ),
         ),
       ],
@@ -534,7 +421,7 @@ class EditInformationState extends State<EditInformationScreen> {
 
   Widget _nextButton(BuildContext context) {
     return SizedBox(
-      width: 80,
+      width: 100,
       height: 40,
       child: ElevatedButton(
         onPressed: () {
@@ -544,16 +431,15 @@ class EditInformationState extends State<EditInformationScreen> {
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
-          backgroundColor: WidgetStateProperty.all<Color>(Colors.tealAccent),
+          backgroundColor:
+              WidgetStateProperty.all<Color>(SportifindTheme.bluePurple),
           shadowColor: WidgetStateProperty.all<Color>(
-            const Color.fromARGB(255, 213, 211, 211),
+            SportifindTheme.bluePurple,
           ),
         ),
-        child: const Text(
+        child: Text(
           'Next',
-          style: TextStyle(
-            color: Colors.black,
-          ),
+          style: SportifindTheme.normalTextWhite.copyWith(fontSize: 14),
         ),
       ),
     );
@@ -561,20 +447,20 @@ class EditInformationState extends State<EditInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double padding = (MediaQuery.of(context).size.width - 290 - 16 * 2) / 2;
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 240, 197, 197),
+      appBar: const FeatureAppBarBluePurple(title: "Edit information"),
+      backgroundColor: SportifindTheme.backgroundColor,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 10),
-                const Text('Basic Information',
-                    style: TextStyle(color: Colors.white, fontSize: 27)),
-                const SizedBox(height: 27),
+                const SizedBox(height: 20),
                 _buildSection('Name', _nameController),
                 const SizedBox(height: 16),
                 _buildSection('Phone Number', _phoneController),
@@ -583,16 +469,15 @@ class EditInformationState extends State<EditInformationScreen> {
                 const SizedBox(height: 16),
                 _buildDobSection('Date Of Birth', _dateController),
                 const SizedBox(height: 16),
-                //_buildDropdownSection('City/Province', _cityController),
                 SizedBox(
                   width: 290,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       RichText(
-                        text: const TextSpan(
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                          children: <TextSpan>[
+                        text: TextSpan(
+                          style: SportifindTheme.normalTextBlack,
+                          children: const <TextSpan>[
                             TextSpan(text: 'City'),
                           ],
                         ),
@@ -600,15 +485,15 @@ class EditInformationState extends State<EditInformationScreen> {
                       const SizedBox(height: 12),
                       CityDropdown(
                         selectedCity: _cityController.text,
+                        type: 'custom form',
                         onChanged: (value) {
                           setState(() {
                             _cityController.text = value ?? '';
                             _districtController.text = '';
                           });
                         },
-                        //controller: _cityController,
                         citiesNameAndId: citiesNameAndId,
-                        fillColor: Colors.transparent,
+                        fillColor: Colors.white,
                       ),
                     ],
                   ),
@@ -618,9 +503,9 @@ class EditInformationState extends State<EditInformationScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RichText(
-                      text: const TextSpan(
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                        children: <TextSpan>[
+                      text: TextSpan(
+                        style: SportifindTheme.normalTextBlack,
+                        children: const <TextSpan>[
                           TextSpan(text: 'District'),
                         ],
                       ),
@@ -629,6 +514,7 @@ class EditInformationState extends State<EditInformationScreen> {
                     SizedBox(
                       width: 290,
                       child: DistrictDropdown(
+                        type: 'custom form',
                         selectedCity: _cityController.text,
                         selectedDistrict: _districtController.text,
                         onChanged: (value) {
@@ -637,22 +523,17 @@ class EditInformationState extends State<EditInformationScreen> {
                           });
                         },
                         citiesNameAndId: citiesNameAndId,
-                        fillColor: Colors.transparent,
+                        fillColor: Colors.white,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 _buildSection('Address', _addressController),
-                const SizedBox(height: 22),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildSection('Height', _heightController),
-                    const SizedBox(width: 15),
-                    _buildSection('Weight', _weightController),
-                  ],
-                ),
+                const SizedBox(height: 16),
+                _buildSection('Height', _heightController),
+                const SizedBox(height: 16),
+                _buildSection('Weight', _weightController),
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -682,23 +563,31 @@ class EditInformationState extends State<EditInformationScreen> {
                 ),
                 const SizedBox(height: 20),
                 Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      const Text(
-                        'Preferred Foot',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                      //const SizedBox(width: 10),
-                      FootPicker(controller: _footController),
-                    ]),
-                const SizedBox(height: 30),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: padding),
+                      child: Text('Preferred Foot',
+                          style: SportifindTheme.normalTextBlack),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: padding),
+                      child: FootPicker(controller: _footController),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40),
                 Padding(
-                  padding: const EdgeInsets.only(left: 210),
+                  padding: const EdgeInsets.only(left: 190),
                   child: _nextButton(context),
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

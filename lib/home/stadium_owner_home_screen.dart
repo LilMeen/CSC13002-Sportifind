@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/screens/stadium_owner/schedule/schedule_screen.dart';
-import 'package:sportifind/screens/stadium_owner/stadium/stadium_screen.dart';
-import 'package:sportifind/screens/stadium_owner/statistic/statistic_screen.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/features/profile/presentation/screens/stadium_owner_profile_screen.dart'; 
+import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/owner_stadium_screen.dart';
+import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/schedule_screen.dart';
+import 'package:sportifind/features/stadium/presentations/screens/stadium_owner/statistic/statistic_screen.dart';
 
 class StadiumOwnerHomeScreen extends StatefulWidget {
+  static route () =>
+      MaterialPageRoute(builder: (context) => const StadiumOwnerHomeScreen());
   const StadiumOwnerHomeScreen({super.key});
 
   @override
@@ -14,21 +18,12 @@ class StadiumOwnerHomeScreen extends StatefulWidget {
 
 class _StadiumOwnerHomeScreenState extends State<StadiumOwnerHomeScreen> {
 
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  int _selectedIndex = 2;
   static const List<Widget> _widgetOptions = <Widget>[
     StadiumStatisticScreen(),
     ScheduleScreen(),
-    Text(
-      'Index 2: Home',
-      style: optionStyle,
-    ),
     OwnerStadiumScreen(),
-    Text(
-      'Index 4: Personal',
-      style: optionStyle,
-    ),
+    StadiumOwnerProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -49,27 +44,27 @@ class _StadiumOwnerHomeScreenState extends State<StadiumOwnerHomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart_outlined),
             label: 'Data',
+            backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_month_outlined),
             label: 'Schedule',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home'       
+            backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.stadium_outlined),
             label: 'Stadium',
+            backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Personal',
+            backgroundColor: Colors.white,
           ),
         ],
         unselectedItemColor: Colors.grey[600],  
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: SportifindTheme.bluePurple,
         onTap: _onItemTapped,
       ),
     );

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/adapter/hex_color.dart';
-import 'package:sportifind/models/location_info.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/features/team/domain/usecases/get_team_by_player.dart';
+import 'package:sportifind/features/team/presentation/screens/team_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/screens/player/team/models/team_information.dart';
-import 'package:sportifind/screens/player/team/screens/team_details.dart';
-import 'package:sportifind/util/team_service.dart';
 
 class MyTeamsListView extends StatefulWidget {
   const MyTeamsListView({super.key});
@@ -18,9 +16,8 @@ class MyTeamsListView extends StatefulWidget {
 class _MyTeamsListViewState extends State<MyTeamsListView>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-  List<TeamInformation?> teamsInformation = [];
+  List<TeamEntity> teamsInformation = [];
   bool isLoading = true;
-  TeamService teamService = TeamService();
   late Future<void> initializationFuture;
 
   @override
@@ -33,7 +30,10 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
 
   Future<void> _initialize() async {
 
-    List<TeamInformation?> fetchedInformation = await teamService.joinedTeam();
+    List<TeamEntity> fetchedInformation = await UseCaseProvider.getUseCase<GetTeamByPlayer>().call(
+      GetTeamByPlayerParams(playerId: FirebaseAuth.instance.currentUser!.uid),
+    ).then((value) => value.data ?? []); 
+
     setState(() {
       teamsInformation = fetchedInformation;
       isLoading = false;
@@ -51,7 +51,7 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: SizedBox(
-        height: 403,
+        height: teamsInformation.isEmpty? 100 : 405,
         width: double.infinity,
         child: FutureBuilder<void>(
           future: initializationFuture,
@@ -59,8 +59,17 @@ class _MyTeamsListViewState extends State<MyTeamsListView>
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return const Center(child: Text("Error loading data"));
-            } else {
+              return const Center(child: Text("No data exists, please create a team"));
+            } else if (teamsInformation.isEmpty) {
+              return const SizedBox(
+                height: 100,
+                child: Center(
+                  child: Text("No teams found, lets create one!")
+                )
+              );
+            }
+            
+            else {
               return ListView.builder(
                 padding: const EdgeInsets.only(top: 0, bottom: 0, left: 8),
                 itemCount: teamsInformation.length,
@@ -101,15 +110,15 @@ class TeamBox extends StatelessWidget {
     this.animation,
   });
 
-  final TeamInformation? teamInformation;
+  final TeamEntity? teamInformation;
   final AnimationController? animationController;
   final Animation<double>? animation;
 
   int get getMemberCount {
-    return teamInformation!.members.length;
+    return teamInformation!.players.length;
   }
   bool get isCaptain {
-    return teamInformation!.captain == FirebaseAuth.instance.currentUser!.uid;
+    return teamInformation!.captain.id == FirebaseAuth.instance.currentUser!.uid;
   }
 
   @override
@@ -131,7 +140,7 @@ class TeamBox extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return TeamDetails(teamId: teamInformation!.teamId, role: isCaptain ? 'captain' : 'normal',);
+                        return TeamDetails(teamId: teamInformation!.id);
                       },
                     ),
                   ),
@@ -178,7 +187,7 @@ class TeamBox extends StatelessWidget {
                             borderRadius: BorderRadius.circular(
                                 16), // Specify the border radius
                             child: Image.network(
-                              teamInformation!.avatarImageUrl,
+                              teamInformation!.avatar.path,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -205,8 +214,7 @@ class TeamBox extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                      //teamInformation!.captain,
-                                      'Pham Gia Bao',
+                                      teamInformation!.captain.name,
                                       overflow: TextOverflow.ellipsis,
                                       style: SportifindTheme.normalTextBlack),
                                 ],
@@ -215,7 +223,7 @@ class TeamBox extends StatelessWidget {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text('${getMemberCount} members',
+                                  Text('$getMemberCount members',
                                       overflow: TextOverflow.ellipsis,
                                       style: SportifindTheme.normalTextBlack),
                                 ],
@@ -237,8 +245,7 @@ class TeamBox extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return TeamDetails(
-                                            teamId: teamInformation!.teamId, role: 'teamMember');
+                                        return TeamDetails(teamId: teamInformation!.id);
                                       },
                                     ),
                                   );

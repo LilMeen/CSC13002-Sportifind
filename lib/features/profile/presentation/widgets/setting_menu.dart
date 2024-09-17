@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/features/profile/presentation/widgets/setting_dialog.dart'; 
 
 class SettingMenu extends StatelessWidget {
   const SettingMenu({
     super.key,
     required this.title,
-    required this.onPress,
     required this.endIcon,
     required this.textColor,
   });
 
-  IconData getIcon(String title){
-    switch(title){
+  final String title;
+  final bool endIcon;
+  final Color? textColor;
+
+  IconData getIcon(String title) {
+    switch (title) {
       case "Help & Feedback":
         return Icons.feedback_rounded;
       case "Policy":
@@ -23,15 +27,30 @@ class SettingMenu extends StatelessWidget {
     }
   }
 
-  final String title;
-  final VoidCallback onPress;
-  final bool endIcon;
-  final Color? textColor;
+  SettingDialogType getDialogType(String title) {
+    switch (title) {
+      case "Help & Feedback":
+        return SettingDialogType.helpAndFeedback;
+      case "Policy":
+        return SettingDialogType.policy;
+      case "About us":
+        return SettingDialogType.aboutUs;
+      default:
+        return SettingDialogType.helpAndFeedback;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: onPress,
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return SettingDialog(type: getDialogType(title));
+          },
+        );
+      },
       leading: Container(
         width: 30,
         height: 30,
@@ -47,8 +66,7 @@ class SettingMenu extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: 
-          SportifindTheme.normalTextBlack.copyWith(fontSize : 16)
+        style: SportifindTheme.normalTextBlack.copyWith(fontSize: 16),
       ),
       trailing: endIcon
           ? Container(
@@ -68,4 +86,3 @@ class SettingMenu extends StatelessWidget {
     );
   }
 }
-

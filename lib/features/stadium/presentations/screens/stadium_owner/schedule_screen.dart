@@ -1,13 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/field_data.dart';
-import 'package:sportifind/models/match_card.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/models/stadium_data.dart';
-import 'package:sportifind/screens/player/match/screens/match_info_screen.dart';
-import 'package:sportifind/util/match_service.dart';
-import 'package:sportifind/util/stadium_service.dart';
-import 'package:sportifind/widgets/app_bar/feature_app_bar_blue_purple.dart';
-import 'package:sportifind/widgets/dropdown_button/general_dropdown.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/core/util/datetime_util.dart';
+import 'package:sportifind/core/widgets/app_bar/flutter_app_bar_blue_purple.dart';
+import 'package:sportifind/core/widgets/general_dropdown.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/match/domain/usecases/get_match_by_field.dart';
+import 'package:sportifind/features/match/domain/usecases/get_match_by_stadium.dart';
+import 'package:sportifind/features/match/presentation/screens/match_info_screen.dart';
+import 'package:sportifind/features/stadium/domain/entities/field_entity.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
+import 'package:sportifind/features/stadium/domain/usecases/get_stadiums_by_owner.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class ScheduleScreen extends StatefulWidget {
@@ -24,8 +28,8 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   late double stadiumOpenTime;
   late double stadiumCloseTime;
 
-  List<StadiumData> stadiums = [];
-  List<MatchCard> matches = [];
+  List<StadiumEntity> stadiums = [];
+  List<MatchEntity> matches = [];
   List<Color> bookedColors = [
     SportifindTheme.shovelKnight,
     SportifindTheme.blueOyster,
@@ -37,18 +41,18 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
   String _selectedStadiumName = '';
   String _selectedFieldName = '';
-  StadiumData? _selectedStadium;
-  FieldData? _selectedField;
+  StadiumEntity? _selectedStadium;
+  FieldEntity? _selectedField;
 
   bool isLoadingStadiums = true;
   String errorMessage = '';
 
-  final StadiumService stadService = StadiumService();
-  final MatchService matService = MatchService();
 
   Future<void> fetchStadiumData() async {
     try {
-      final stadiumsData = await stadService.getOwnerStadiumsData();
+      List<StadiumEntity> stadiumsData = await UseCaseProvider.getUseCase<GetStadiumsByOwner>().call(
+        GetStadiumsByOwnerParams(ownerId: FirebaseAuth.instance.currentUser!.uid),
+      ).then((value) => value.data ?? []);
       setState(() {
         stadiums = stadiumsData;
         isLoadingStadiums = false;
@@ -64,31 +68,25 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   Future<void> updateData() async {
     try {
       if (_selectedStadiumName.isNotEmpty && _selectedFieldName.isNotEmpty) {
-        final matchesData = await matService.getMatchDataByStadiumAndFieldId(
-            _selectedStadium!.id, _selectedField!.id);
+        List<MatchEntity> matchesData = await UseCaseProvider.getUseCase<GetMatchByField>().call(
+          GetMatchByFieldParams(fieldId: _selectedField!.id),
+        ).then((value) => value.data ?? []);
         setState(() {
-          stadiumOpenTime = matService
-              .timeToDouble(_selectedStadium!.openTime)
-              .floorToDouble();
-          stadiumCloseTime = matService
-              .timeToDouble(_selectedStadium!.closeTime)
-              .ceilToDouble();
+          stadiumOpenTime = timeToDouble(_selectedStadium!.openTime).floorToDouble();
+          stadiumCloseTime = timeToDouble(_selectedStadium!.closeTime).ceilToDouble();
           fieldMap = {_selectedField!.id: _selectedField!.numberId};
           matches = matchesData;
         });
       } else if (_selectedStadiumName.isNotEmpty) {
-        final matchesData =
-            await matService.getMatchDataByStadiumId(_selectedStadium!.id);
+        List<MatchEntity> matchesData = await UseCaseProvider.getUseCase<GetMatchByStadium>().call(
+          GetMatchByStadiumParams(stadiumId: _selectedStadium!.id),
+        ).then((value) => value.data ?? []);
         setState(() {
-          stadiumOpenTime = matService
-              .timeToDouble(_selectedStadium!.openTime)
-              .floorToDouble();
-          stadiumCloseTime = matService
-              .timeToDouble(_selectedStadium!.closeTime)
-              .ceilToDouble();
+          stadiumOpenTime = timeToDouble(_selectedStadium!.openTime).floorToDouble();
+          stadiumCloseTime = timeToDouble(_selectedStadium!.closeTime).ceilToDouble();
           fieldMap = {for (var field in _selectedStadium!.fields) field.id: field.numberId};
           matches = matchesData;
-          matches.sort((a, b) => fieldMap[a.field]!.compareTo(fieldMap[b.field]!));
+          matches.sort((a, b) => a.field.numberId.compareTo(b.field.numberId));
         });
       } else {
         setState(() {
@@ -160,7 +158,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
   Widget _buildFieldDropdown() {
     List<String> fieldNames = [];
-    List<FieldData> fields = [];
+    List<FieldEntity> fields = [];
 
     if (_selectedStadiumName.isNotEmpty &&
         _selectedStadium!.fields.isNotEmpty) {
@@ -192,14 +190,14 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   List<Appointment> _getDataSource() {
     List<Appointment> meetings = <Appointment>[];
     meetings = matches.map((match) {
-      final startTime = matService.parseDateTime(match.date, match.start);
-      final endTime = matService.parseDateTime(match.date, match.end);
+      final startTime = parseDateTime(match.date, match.start);
+      final endTime = parseDateTime(match.date, match.end);
       return Appointment(
         startTime: startTime,
         endTime: endTime,
         subject: 'Booked',
         notes: match.id,
-        color: bookedColors[(fieldMap[match.field]! - 1) % bookedColors.length],
+        color: bookedColors[(match.field.numberId - 1) % bookedColors.length],
       );
     }).toList();
 
@@ -242,7 +240,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     return RefreshIndicator(
       onRefresh: _refreshStadiums,
       child: Scaffold(
-        appBar: const FeatureAppBarBluePurple(title: 'Schedule'),
+        appBar: const MainFeatureAppBarBluePurple(title: 'Schedule'),
         backgroundColor: Colors.white,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,13 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/match_card.dart';
-import 'package:sportifind/models/player_data.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/models/tab_icon.dart';
-import 'package:sportifind/screens/player/match/screens/select_team_screen.dart';
-import 'package:sportifind/screens/player/team/models/team_information.dart';
-import 'package:sportifind/util/team_service.dart';
-import 'package:sportifind/util/user_service.dart';
-import 'package:sportifind/widgets/match_list/match_cards.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/features/match/domain/entities/match_entity.dart';
+import 'package:sportifind/features/match/presentation/screens/create_match_screen.dart';
+import 'package:sportifind/features/match/presentation/widgets/match_cards.dart';
+import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
+import 'package:sportifind/features/profile/domain/usecases/get_player.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/features/team/domain/usecases/get_team.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class MatchMainScreen extends StatefulWidget {
@@ -22,28 +23,26 @@ bool isCaptain = false;
 class _MatchMainScreenState extends State<MatchMainScreen>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-  final List<MatchCard> _yourMatch = [];
-  final List<MatchCard> _nearByMatch = [];
+  final List<MatchEntity> _yourMatch = [];
+  final List<MatchEntity> _nearByMatch = [];
   int status = 0;
 
-  UserService userService = UserService();
-  TeamService teamService = TeamService();
-  PlayerData? userData;
-  TeamInformation? userTeamData;
+
+  PlayerEntity? userData;
+  TeamEntity? userTeamData;
 
   String errorMessage = '';
 
-  List<TabIconData> tabIconsList = TabIconData.tabIconsList;
-
-  Widget tabBody = Container(
-    color: Colors.white,
-  );
-
   Future<void> checkCaptain() async {
-    userData = await userService.getUserPlayerData();
-    for (var i = 0; i < userData!.teams.length; ++i) {
-      userTeamData = await teamService.getTeamInformation(userData!.teams[i]);
-      if (userTeamData!.captain == userData!.id) {
+    userData = await UseCaseProvider.getUseCase<GetPlayer>().call(
+      GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid),
+    ).then((value) => value.data);
+
+    for (var i = 0; i < userData!.teamsId.length; ++i) {
+      userTeamData = await UseCaseProvider.getUseCase<GetTeam>().call(
+        GetTeamParams(id: userData!.teamsId[i]),
+      ).then((value) => value.data);
+      if (userTeamData!.captain.id == userData!.id) {
         setState(() {
           isCaptain = true;
         });
@@ -56,12 +55,6 @@ class _MatchMainScreenState extends State<MatchMainScreen>
   void initState() {
     super.initState();
     checkCaptain();
-
-    for (var tab in tabIconsList) {
-      tab.isSelected = false;
-    }
-    tabIconsList[0].isSelected = true;
-
     animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -74,7 +67,7 @@ class _MatchMainScreenState extends State<MatchMainScreen>
     super.dispose();
   }
 
-  void addMatchCard(MatchCard matchcard) {
+  void addMatchCard(MatchEntity matchcard) {
     setState(() {
       _yourMatch.add(matchcard);
     });
@@ -94,8 +87,7 @@ class _MatchMainScreenState extends State<MatchMainScreen>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            SelectTeamScreen(addMatchCard: addMatchCard),
+                        builder: (context) => const CreateMatchScreen(),
                       ),
                     );
                   },
@@ -154,7 +146,7 @@ class _MatchMainScreenState extends State<MatchMainScreen>
                   status: status,
                 ),
                 if (errorMessage.isNotEmpty)
-                  Text(errorMessage, style: TextStyle(color: Colors.red)),
+                  Text(errorMessage, style: const TextStyle(color: Colors.red)),
               ],
             ),
           ),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
 import 'dart:async';
 
-import 'package:sportifind/models/stadium_data.dart';
 
 class StadiumSlidingPhotos extends StatefulWidget {
-  final StadiumData stadium;
+  final StadiumEntity stadium;
 
   const StadiumSlidingPhotos({
     super.key,
@@ -27,8 +27,10 @@ class _StadiumSlidingPhotosState extends State<StadiumSlidingPhotos> {
   void initState() {
     super.initState();
 
-    photoUrls.add(widget.stadium.avatar);
-    photoUrls.addAll(widget.stadium.images);
+    photoUrls.add(widget.stadium.avatar.path);
+    for (var image in widget.stadium.images) {
+      photoUrls.add(image.path);
+    }
 
     _pageController = PageController(initialPage: 0);
 

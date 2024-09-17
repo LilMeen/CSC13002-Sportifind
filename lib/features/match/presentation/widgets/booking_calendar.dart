@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sportifind/models/match_card.dart';
-import '../screens/booking_calendar_main.dart';
-import '/models/booking_service.dart';
-import 'booking_controller.dart';
+import 'package:sportifind/features/match/domain/entities/booking_entity.dart';
+import 'package:sportifind/features/match/presentation/bloc/booking_bloc.dart';
+import 'package:sportifind/features/match/presentation/screens/create_match/booking_calendar_screen.dart';
+import 'package:sportifind/features/stadium/domain/entities/stadium_entity.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
 
 class BookingCalendar extends StatelessWidget {
   const BookingCalendar({
     super.key,
-    required this.bookingService,
+    required this.bookingEntity,
     required this.selectedPlayTime,
     required this.selectedStadium,
-    required this.selectedStadiumOwner,
     required this.selectedTeam,
-    required this.selectedTeamAvatar,
     required this.selectedDate,
     required this.selectedField,
     required this.bookedSlot,
-    required this.addMatchCard,
     this.bookingExplanation,
     this.bookingGridCrossAxisCount,
     this.bookingGridChildAspectRatio,
@@ -54,7 +52,7 @@ class BookingCalendar extends StatelessWidget {
   ///initial [BookingService] which contains the details of the service,
   ///and this service will get additional two parameters:
   ///the [BookingService.bookingStart] and [BookingService.bookingEnd] date of the booking
-  final BookingService bookingService;
+  final BookingEntity bookingEntity;
 
   ///this will be display above the Booking Slots, which can be used to give the user
   ///extra informations of the booking calendar (like Colors: default)
@@ -126,30 +124,23 @@ class BookingCalendar extends StatelessWidget {
   final List<DateTime>? disabledDates;
 
   final int selectedPlayTime;
-  final String selectedTeam;
-  final String selectedTeamAvatar;
-  final String selectedStadium;
-  final String selectedStadiumOwner;
+  final TeamEntity selectedTeam;
+  final StadiumEntity selectedStadium;
   final DateTime selectedDate;
   final int selectedField;
   final List<DateTimeRange>? bookedSlot;
-  final void Function(MatchCard matchcard) addMatchCard;
-
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
-      value: BookingController(
-        bookingService: bookingService,
+      value: BookingBloc(
+        bookingService: bookingEntity,
         pauseSlots: pauseSlots,
         selectedStadium: selectedStadium,
-        selectedStadiumOwner: selectedStadiumOwner,
-        selectedTeamId: selectedTeam,
-        selectedTeamAvatar: selectedTeamAvatar,
-        addMatchCard: addMatchCard,
+        selectedTeam: selectedTeam,
         bookedTime: bookedSlot!,
         selectedDate: selectedDate,
-        selectedField: selectedField,
+        selectedFieldNumberId: selectedField,
       ),
       child: BookingCalendarMain(
         key: key,
@@ -184,7 +175,6 @@ class BookingCalendar extends StatelessWidget {
         selectedTeam: selectedTeam,
         selectedDate: selectedDate,
         bookedSlot: bookedSlot!,
-        addMatchCard: addMatchCard,
       ),
     );
   }

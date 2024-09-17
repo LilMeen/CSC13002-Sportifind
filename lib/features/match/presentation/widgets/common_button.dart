@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
 
 class CommonButton extends StatelessWidget {
   const CommonButton({
@@ -22,26 +22,6 @@ class CommonButton extends StatelessWidget {
   final Color? buttonActiveColor;
   final Color? buttonInActiveColor;
   final double? width;
-
-  Color _getButtonColor() {
-    if (isActive == true && isDisabled == false) {
-      return buttonActiveColor ?? SportifindTheme.grey;
-    } else if (isActive == false && isDisabled == false) {
-      return Colors.white;
-    } else {
-      return buttonInActiveColor ?? SportifindTheme.darkGrey;
-    }
-  }
-
-  Color _getTextColor() {
-    if (isActive == true && isDisabled == false) {
-      return SportifindTheme.darkGrey;
-    } else if (isActive == false && isDisabled == false) {
-      return buttonActiveColor ?? Colors.teal;
-    } else {
-      return SportifindTheme.grey;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

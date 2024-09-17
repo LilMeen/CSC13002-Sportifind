@@ -1,21 +1,20 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/widgets/setting_menu.dart';
-import 'package:sportifind/screens/auth/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/usecases/usecase.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/core/widgets/app_bar/flutter_app_bar_blue_purple.dart';
+import 'package:sportifind/features/auth/domain/usecases/sign_out.dart';
+import 'package:sportifind/features/auth/presentations/screens/sign_in_screen.dart';
+import 'package:sportifind/features/profile/presentation/widgets/setting_menu.dart';
 
 class SettingScreen extends StatelessWidget {
-  SettingScreen({Key? key}) : super(key: key);
+  SettingScreen({super.key});
 
   final user = FirebaseAuth.instance.currentUser;
-
-  void signOut(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => SignInScreen()),
-    );
-  }
 
 Future<void> deleteUserData() async {
   if (user != null) {
@@ -88,10 +87,8 @@ Future<void> deleteUserData() async {
       await userDoc.delete();
 
     } catch (e) {
-      print("Error updating Firestore: $e");
 
       if (e is FirebaseException && e.code == 'failed-precondition') {
-        print("Index required for query is missing. Please create the required index in Firestore.");
         throw Exception("Firestore index is missing. Please create the required index.");
       } else {
         throw Exception("Failed to update Firestore: $e");
@@ -105,21 +102,29 @@ void deleteAccount(BuildContext context) async {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Confirm Delete Account', style: SportifindTheme.normalTextBlack),
-        content: Text(
-            'Are you sure you want to delete your account? This action cannot be undone.', style: SportifindTheme.normalTextBlack),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: Text('Cancel', style: SportifindTheme.normalTextBlack),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: Text('Delete', style: SportifindTheme.normalTextBlack),
+        title: Center(
+          child: Text('Confirm Deletion', style: SportifindTheme.normalTextBlack),),
+        content: Text('Are you sure you want to delete this account?', style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14)),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false); // Dismiss the dialog and return false
+                },
+                child: Text('Cancel', style: SportifindTheme.smallTextBluePurple),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true); // Dismiss the dialog and return true
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, 
+                ),
+                child: Text('Delete', style: SportifindTheme.normalTextWhite.copyWith(fontSize: 14)),
+              ),
+            ],
           ),
         ],
       );
@@ -134,9 +139,10 @@ void deleteAccount(BuildContext context) async {
       await user!.delete();
 
       // Sign out the user
-      signOut(context);
+      await UseCaseProvider.getUseCase<SignOut>().call(NoParams());
+      
+      Navigator.of(context).pushReplacement(SignInScreen.route());
     } catch (e) {
-      print("Error deleting user: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Failed to delete account: $e"),
@@ -152,70 +158,67 @@ void deleteAccount(BuildContext context) async {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Sign Out', style: SportifindTheme.normalTextBlack),
-          content: Text('Are you sure you want to sign out?', style: SportifindTheme.normalTextBlack),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false); 
-              },
-              child: Text('Cancel', style: SportifindTheme.normalTextBlack),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              child: Text('Sign Out', style: SportifindTheme.normalTextBlack),
-            ),
-          ],
-        );
+        title: Center(
+          child: Text('Confirm Sign Out', style: SportifindTheme.normalTextBlack),),
+        content: Text('Are you sure you want to sign out?', style: SportifindTheme.normalTextBlack.copyWith(fontSize: 14)),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false); // Dismiss the dialog and return false
+                },
+                child: Text('Cancel', style: SportifindTheme.smallTextBluePurple),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true); // Dismiss the dialog and return true
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: SportifindTheme.bluePurple, 
+                ),
+                child: Text('Sign out', style: SportifindTheme.normalTextWhite.copyWith(fontSize: 14)),
+              ),
+            ],
+          ),
+        ],
+      );
       },
     );
 
-    if (confirmed ?? false) {
-      signOut(context);
+    if (confirmed) {
+      await UseCaseProvider.getUseCase<SignOut>().call(NoParams());
+      
+      Navigator.of(context).pushReplacement(SignInScreen.route());
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (user == null) {
-      return SignInScreen();
+      return const SignInScreen();
     }
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back_ios),
-        ),
-        title: Text('Setting', style: SportifindTheme.sportifindFeatureAppBarBluePurple),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-      ),
-      backgroundColor: Colors.white,
+      appBar: const FeatureAppBarBluePurple(title: "Setting"),
+      backgroundColor: SportifindTheme.backgroundColor,
       body: Column(
         children: [
-          SettingMenu(
+          const SettingMenu(
             title: "Help & Feedback",
-            onPress: () {},
             endIcon: true,
             textColor: Colors.black,
           ),
           const SizedBox(height: 10),
-          SettingMenu(
+          const SettingMenu(
             title: "Policy",
-            onPress: () {},
             endIcon: true,
             textColor: Colors.black,
           ),
           const SizedBox(height: 10),
-          SettingMenu(
+          const SettingMenu(
             title: "About us",
-            onPress: () {},
             endIcon: true,
             textColor: Colors.black,
           ),
@@ -229,21 +232,21 @@ void deleteAccount(BuildContext context) async {
                     confirmSignOut(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: SportifindTheme.bluePurple, 
+                    backgroundColor: const Color.fromARGB(255, 24, 24, 207), 
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: BorderSide(
+                    side: const BorderSide(
                         width: 6,
-                        color: SportifindTheme.bluePurple),
+                        color: Color.fromARGB(255, 24, 24, 207)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: SizedBox(
+                  child: const SizedBox(
                     width: double.infinity, 
-                    height: 20, 
+                    height: 30, 
                     child: Center(
                       child: Text('Sign out',
-                          style: SportifindTheme.normalTextWhite.copyWith(fontSize: 18)),
+                          style: TextStyle(color: Colors.white, fontSize: 18)),
                     ),
                   ),
                 ),
@@ -262,12 +265,12 @@ void deleteAccount(BuildContext context) async {
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: SizedBox(
+                  child: const SizedBox(
                     width: double.infinity, 
-                    height: 20, 
+                    height: 30, 
                     child: Center(
                       child: Text('Delete Account',
-                          style: SportifindTheme.normalTextWhite.copyWith(fontSize: 18)),
+                          style: TextStyle(color: Colors.white, fontSize: 18)),
                     ),
                   ),
                 ),

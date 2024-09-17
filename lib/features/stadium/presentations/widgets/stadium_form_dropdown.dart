@@ -1,15 +1,7 @@
 import 'package:flutter/material.dart';
-<<<<<<<< HEAD:lib/features/stadium/presentations/widgets/stadium_form_dropdown.dart
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-========
-import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/widgets/form/custom_form.dart';
-<<<<<<<< HEAD:lib/features/stadium/presentations/widgets/stadium_form_dropdown.dart
->>>>>>>> a341086 ([style] new UI for create, edit, adjust UI for map, update status):lib/core/widgets/custom_form_dropdown.dart
-========
->>>>>>>> d5e0b20d04d0dd4f476c8e536c2a4878caed3eb4:lib/core/widgets/custom_form_dropdown.dart
 
-class CustomFormDropdown extends StatefulWidget {
+class StadiumFormDropdown extends StatefulWidget {
   final String selectedValue;
   final String hint;
   final List<String> items;
@@ -18,39 +10,38 @@ class CustomFormDropdown extends StatefulWidget {
   final bool isLoading;
   final String validatorText;
 
-  const CustomFormDropdown({
+  const StadiumFormDropdown({
     super.key,
     required this.selectedValue,
     required this.hint,
     required this.items,
     required this.onChanged,
     required this.validatorText,
-    this.fillColor = SportifindTheme.whiteSmoke,
+    this.fillColor = Colors.white,
     this.isLoading = false,
   });
 
   @override
-  State<CustomFormDropdown> createState() => _CustomFormDropdownState();
+  State<StadiumFormDropdown> createState() => _StadiumFormDropdownState();
 }
 
-class _CustomFormDropdownState extends State<CustomFormDropdown> {
+class _StadiumFormDropdownState extends State<StadiumFormDropdown> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return DropdownButtonFormField<String>(
           value: widget.selectedValue.isEmpty ? null : widget.selectedValue,
-          hint: Text(
-            widget.hint,
-            style: SportifindTheme.smallTextSmokeScreen,
-          ),
+          hint: Text(widget.hint),
           isExpanded: true,
           items: [
                 DropdownMenuItem(
                   value: '',
                   child: Text(
                     widget.hint,
-                    style: SportifindTheme.smallTextSmokeScreen,
+                    style: const TextStyle(
+                      color: Colors.black45,
+                    ),
                   ),
                 )
               ] +
@@ -62,7 +53,6 @@ class _CustomFormDropdownState extends State<CustomFormDropdown> {
                         48, // Adjust this value as needed
                     child: Text(
                       item,
-                      style: SportifindTheme.smallTextBlack,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
                     ),
@@ -70,25 +60,18 @@ class _CustomFormDropdownState extends State<CustomFormDropdown> {
                 );
               }).toList(),
           onChanged: widget.isLoading ? null : widget.onChanged,
-          decoration: CustomForm().customInputDecoration('').copyWith(
-            filled: true,
-            fillColor: widget.fillColor,
-          ),
-          dropdownColor: widget.fillColor,
+          dropdownColor: Colors.white,
           icon: widget.isLoading
               ? SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    backgroundColor: SportifindTheme.bluePurple,
+                width: 15,
+                height: 15,
+                child: CircularProgressIndicator(
+                    backgroundColor: SportifindTheme.bluePurple3,
                     color: Colors.white,
                   ),
-                )
-              : const Icon(
-                  Icons.expand_more,
-                  color: Colors.black,
-                ),
-          iconSize: 24,
+              )
+              : const Icon(Icons.arrow_drop_down),
+          iconSize: 20,
           validator: (value) {
         if (value == null || value.isEmpty) {
           return widget.validatorText;

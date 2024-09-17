@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-<<<<<<<< HEAD:lib/features/stadium/presentations/widgets/stadium_form_dropdown.dart
 import 'package:sportifind/core/theme/sportifind_theme.dart';
-========
-import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/widgets/form/custom_form.dart';
->>>>>>>> a341086 ([style] new UI for create, edit, adjust UI for map, update status):lib/core/widgets/custom_form_dropdown.dart
+import 'package:sportifind/core/widgets/form/custom_form.dart';
 
 class CustomFormDropdown extends StatefulWidget {
   final String selectedValue;

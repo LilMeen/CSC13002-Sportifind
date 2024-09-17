@@ -1,18 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:sportifind/adapter/hex_color.dart';
-import 'package:sportifind/models/location_info.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sportifind/screens/player/team/models/team_information.dart';
-import 'package:sportifind/util/team_service.dart';
-import 'package:sportifind/screens/player/team/screens/team_details.dart';
-import 'package:sportifind/util/user_service.dart';
-import 'package:sportifind/models/player_data.dart';
+import 'package:flutter/material.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/usecases/usecase_provider.dart';
+import 'package:sportifind/features/profile/domain/entities/player_entity.dart';
+import 'package:sportifind/features/profile/domain/usecases/get_player.dart';
+import 'package:sportifind/features/team/domain/entities/team_entity.dart';
+import 'package:sportifind/features/team/domain/usecases/get_nearby_team.dart';
+import 'package:sportifind/features/team/presentation/screens/team_details.dart';
 
 class NearbyTeamListView extends StatefulWidget {
   const NearbyTeamListView({super.key, this.myTeam});
-  final TeamInformation? myTeam;
+  final TeamEntity? myTeam;
 
   @override
   State<NearbyTeamListView> createState() => _NearbyTeamListViewState();
@@ -21,9 +19,7 @@ class NearbyTeamListView extends StatefulWidget {
 class _NearbyTeamListViewState extends State<NearbyTeamListView>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-  List<TeamInformation> teams = [];
-  TeamService teamService = TeamService();
-  UserService userService = UserService();
+  List<TeamEntity> teams = [];
   late Future<void> initializationFuture;
   bool isLoading = true;
 
@@ -36,12 +32,22 @@ class _NearbyTeamListViewState extends State<NearbyTeamListView>
   }
 
   Future<void> _initialize() async {
-    final PlayerData playerData = await userService.getUserPlayerData();
-    List<TeamInformation> currentTeams = await teamService.getNearbyTeam();
-    List<TeamInformation> fetchedTeam =
-        teamService.sortTeamByLocation(currentTeams, playerData.location);
+    final PlayerEntity playerData =
+        await UseCaseProvider.getUseCase<GetPlayer>()
+            .call(
+              GetPlayerParams(id: FirebaseAuth.instance.currentUser!.uid),
+            )
+            .then((value) => value.data!);
+
+    List<TeamEntity> nearbyTeams =
+        await UseCaseProvider.getUseCase<GetNearbyTeam>()
+            .call(
+              GetNearbyTeamParams(player: playerData),
+            )
+            .then((value) => value.data ?? []);
+
     setState(() {
-      teams = fetchedTeam;
+      teams = nearbyTeams;
       isLoading = false;
     });
   }
@@ -56,7 +62,7 @@ class _NearbyTeamListViewState extends State<NearbyTeamListView>
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return const Center(child: Text("Error loading data"));
+            return const Center(child: Text("No data exists"));
           } else {
             return SizedBox(
               height: teams.length * 200.0,
@@ -110,12 +116,12 @@ class TeamBox2 extends StatelessWidget {
     this.animation,
   });
 
-  final TeamInformation? teamInformation;
+  final TeamEntity? teamInformation;
   final AnimationController? animationController;
   final Animation<double>? animation;
 
   int get getMemberCount {
-    return teamInformation!.members.length;
+    return teamInformation!.players.length;
   }
 
   @override
@@ -137,7 +143,7 @@ class TeamBox2 extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return TeamDetails(teamId: teamInformation!.teamId, role: 'other');
+                        return TeamDetails(teamId: teamInformation!.id);
                       },
                     ),
                   );
@@ -185,7 +191,7 @@ class TeamBox2 extends StatelessWidget {
                             borderRadius: BorderRadius.circular(
                                 10), // Specify the border radius
                             child: Image.network(
-                              teamInformation!.avatarImageUrl,
+                              teamInformation!.avatar.path,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -248,7 +254,7 @@ class TeamBox2 extends StatelessWidget {
                                     MaterialPageRoute(
                                       builder: (context) {
                                         return TeamDetails(
-                                            teamId: teamInformation!.teamId, role: 'other');
+                                            teamId: teamInformation!.id);
                                       },
                                     ),
                                   );

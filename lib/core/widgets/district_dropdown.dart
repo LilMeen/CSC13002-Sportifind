@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:diacritic/diacritic.dart';
-import 'package:sportifind/models/sportifind_theme.dart';
-import 'package:sportifind/widgets/dropdown_button/general_dropdown.dart';
-import 'package:sportifind/widgets/dropdown_button/custom_form_dropdown.dart';
+import 'package:sportifind/core/theme/sportifind_theme.dart';
+import 'package:sportifind/core/widgets/custom_form_dropdown.dart';
+import 'package:sportifind/core/widgets/general_dropdown.dart';
 
 class DistrictDropdown extends StatefulWidget {
   final String selectedCity;
@@ -64,50 +64,6 @@ class _DistrictDropdownState extends State<DistrictDropdown> {
   return input.replaceAll(RegExp(r'\s+'), ' ');
 }
 
-
-/////////////////////////////////////////////////////////
-/*
-  Future<void> _fetchDistricts(String city) async {
-    setState(() {
-      _isLoading = true;
-      _districts.clear();
-    });
-
-    if (city.isEmpty) {
-      setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
-
-    try {
-      final response = await http.get(Uri.parse(
-          'https://vapi.vnappmob.com/api/province/district/${widget.citiesNameAndId[city]}'));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body)['results'];
-        setState(() {
-          _districts = data
-              .map((item) =>
-                  eraseType(removeDiacritics(item['district_name'] as String)))
-              .toList();
-        });
-      } else {
-        throw Exception('Failed to fetch districts');
-      }
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.toString())),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-  */
-////////////////////////////////////////////////////////////
-// second option
 Future<void> _fetchDistricts(String city) async {
   setState(() {
     _isLoading = true;
@@ -153,7 +109,6 @@ Future<void> _fetchDistricts(String city) async {
     });
   }
 }
-////////////////////////////////////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
